@@ -1,0 +1,7 @@
+{
+    "server":"localhost",
+    "user":"root",
+    "password":"root",
+    "database":"therapy_coach",
+    "port":3306
+}
