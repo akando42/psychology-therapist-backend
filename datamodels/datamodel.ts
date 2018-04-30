@@ -26,5 +26,15 @@ export class DataModel{
     public static responseStatus={
         tokenError:513,
         originError:514,
+
+        loginError:525,
+
+        registerError:535,
+
+        addressError:545,
+
+        paymentError:555,
+
+        bookingError:565,
     }
 }

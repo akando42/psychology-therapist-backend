@@ -1,5 +1,5 @@
 /token:
-    get:
+    post:
 		summary:
 			returns the code after validations
 			origin must be encoded with a key and the mac address combined. The encoded passphrase should be package name
@@ -9,11 +9,236 @@
 			origin:<Encoded Source Location>
 		responses:
 			200:
-				{
-					code:<Store this code in System Preference>
-				}
+			{
+				code:<Store this code in System Preference>
+			}
 			514
-				{
-					description:"Origin Error. Its a faulty encryption"
-				}
+			{
+				description:"Origin Error. Its a faulty encryption"
+			}
 
+
+/user/login:
+	post:
+		summary:
+			This API will make the user login
+			Store all the details in the system preferences
+			Store the ID returned in the response. You would need it in all the further calls
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			email:<email ID>
+			password:<Password>
+		response:
+			200:
+			{
+				id:<Store this. Would need this in any further calls>
+				Name:<>
+				image:<Link of the profie picture | null if empty>
+				email:<>
+			}
+			513:
+			{
+				description:"Token Error"
+			}
+			525:
+			{
+				description:<Any errors that comes while loging in>
+			}
+
+
+/user/register
+	post:
+		summary:
+			This API will make the user Register
+			Send all the information
+			Dont forget to have validation on all the fields
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			name: <Full name>
+			email:<Email ID>
+			password:<password>
+			phone:<Phone number with country code>
+		response:
+			200:
+			{
+				description:"Successfully registered. Please verify your Email"
+			}
+			513:
+			{
+				description:"Token Error"
+			}
+			535:
+			{
+				description:<Any errors that comes while registering>
+			}
+
+
+/user/address/add
+	post:
+		summary:
+			Adds the address to the address list of the user
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+			name:<Name of the address, like Home, etc>
+			lattitude:<>
+			longitude:<>
+			address:<reverse geocoded address>
+		response:
+			200:
+			{
+				description:"Successfully Added the addresses"
+			}
+			513:
+			{
+				description:"Token Error"
+			}
+			545:
+			{
+				description:<Any errors that comes while adding payments>
+			}
+
+/user/address/get
+	get:
+		summary:
+			Retrieves all the addresses
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+		response:
+			200:
+			{
+				description:"Retrieved all the addresses"
+				data:[
+					{
+						name:<>
+						lattitude:<>
+						logitude:<>
+						address:<>
+					},
+					...
+				]
+			}
+			513:
+			{
+				description:"Token Error"
+			}
+			545:
+			{
+				description:<Any errors that comes while getting address>
+			}
+
+
+/user/payments/add
+	post:
+		summary:
+			Adds a payment which you processed
+			Store the payment Id. You would need to use the payment ID when the transaction is complete
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+			amount:<Amount Transfered>
+			sessionId:<The Session ID for which you paid>
+		response:
+			200:
+			{
+				description:"Successfully Added payments"
+				paymentId:<Store this Id>
+			}
+			513:
+			{
+				description:"Token Error! Contact the proiders"
+			}
+			555:
+			{
+				description:<Any errors that comes while adding payments>
+			}
+
+/user/payments/complete
+	post:
+		summary:
+			Completes the transacions by putting a transaction ID
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+			paymentId:<Payment ID>
+			transactionId:<Transactin ID from the Stripe>
+		response:
+			200:
+			{
+				description:"Successfully Added payments"
+				paymentId:<Store this Id>
+			}
+			513:
+			{
+				description:"Token Error! Contact the proiders"
+			}
+			555:
+			{
+				description:<Any errors that comes while adding payments>
+			}
+
+
+/user/payments/get
+	get:
+		summary:
+			Retrieves all the payments
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+		response:
+			200:
+			{
+				description:"Retrieved all the payments"
+				pending:[
+					{
+						transactionId:<>
+						sessionId:<>
+						amount:<>
+						providerName:<>
+						massageType:<>
+						massageLength:<>
+						massageDate:<>
+					},
+					....
+				],
+				present:[
+					{
+						transactionId:<>
+						sessionId:<>
+						amount:<>
+						providerName:<>
+						massageType:<>
+						massageLength:<>
+						massageDate:<>
+					},
+					....
+				],
+				past:[
+					{
+						transactionId:<>
+						sessionId:<>
+						amount:<>
+						providerName:<>
+						massageType:<>
+						massageLength:<>
+						massageDate:<>
+					},
+					....
+				]
+			}
+			513:
+			{
+				description:"Token Error"
+			}
+			555:
+			{
+				description:<Any errors that comes while getting payments>
+			}
