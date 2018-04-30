@@ -34,7 +34,7 @@
 			{
 				id:<Store this. Would need this in any further calls>
 				Name:<>
-				image:<Link of the profie picture | null if empty>
+				image:<base64 encoded image | null if empty>
 				email:<>
 			}
 			513:
@@ -56,7 +56,8 @@
 		request:
 			code:<Code Stored in the System Preferences>
 			mac:<Mac Address>
-			name: <Full name>
+			firstName: <Full name>
+			lastName: <Last name>
 			email:<Email ID>
 			password:<password>
 			phone:<Phone number with country code>
@@ -75,6 +76,65 @@
 			}
 
 
+/user/profile/update
+	post:
+		summary:
+			Update information about the profile
+			Note: Just send the parameters you want to update, it will be taken care on the server
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+			firstName: <Full name>
+			lastName: <Last name>
+			password:{
+				oldPassword:<>
+				newPassword:<>
+			}
+			phone:<Phone number with country code>
+			image:<base64 encoded Image>
+		response:
+			200:
+			{
+				description:"Successfully Updated your informations"
+			}
+			513:
+			{
+				description:"Token Error"
+			}
+			575:
+			{
+				description:<Any errors that comes while updating your profile>
+			}
+
+/user/profile/get
+	get:
+		summary:
+			Retrieves all information about the profile
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+		response:
+			200:
+			{
+				description:"Retrieved about the profile"
+				fisrtName:<Full Name>
+				lastName:<Full Name>
+				phone:<>
+				email:<>
+				image:<base64 encoded Image | null>
+			}
+			513:
+			{
+				description:"Token Error"
+			}
+			575:
+			{
+				description:<Any errors that comes while getting profile>
+			}
+
+
 /user/address/add
 	post:
 		summary:
@@ -87,6 +147,9 @@
 			lattitude:<>
 			longitude:<>
 			address:<reverse geocoded address>
+			parkLat:<>
+			parkLong:<>
+			parkAddress:<reverse geocoded parking address>
 		response:
 			200:
 			{
@@ -115,10 +178,14 @@
 				description:"Retrieved all the addresses"
 				data:[
 					{
+						addressId:<>
 						name:<>
 						lattitude:<>
 						logitude:<>
 						address:<>
+						parkLat:<>
+						parkLong:<>
+						parkAddress:<>
 					},
 					...
 				]
@@ -241,4 +308,94 @@
 			555:
 			{
 				description:<Any errors that comes while getting payments>
+			}
+
+
+/user/session/add
+	post:
+		summary:
+			Add the sessions to the database
+			Store Sessions Id, might need in later queries
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+			massageType:<>
+			preferredGender:<>
+			massageLength:<>
+			dateTime:<In the form YYYY-MM-DD hh:mm:ss>
+			addressId:<Id of the Address>
+			extras:{
+				equipements:<true|false>
+				pets:<cat|dog>
+				medicalInformation:<>
+			}
+		response:
+			200:
+			{
+				description:"Successfully Booked a session. Proceed to pay"
+				sessionId:<Store this session Id>
+			}
+			513:
+			{
+				description:"Token Error"
+			}
+			565:
+			{
+				description:<Any errors that comes while adding payments>
+			}
+
+/user/session/get
+	get:
+		summary:
+			Retrieves all the sessions booked
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+		response:
+			200:
+			{
+				description:"Retrieved all the sessions booked"
+				pending:[
+					{
+						sessionId:<>
+						amount:<>
+						providerName:<>
+						massageType:<>
+						massageLength:<>
+						massageDate:<>
+					},
+					....
+				],
+				present:[
+					{
+						sessionId:<>
+						amount:<>
+						providerName:<>
+						massageType:<>
+						massageLength:<>
+						massageDate:<>
+					},
+					....
+				],
+				past:[
+					{
+						sessionId:<>
+						amount:<>
+						providerName:<>
+						massageType:<>
+						massageLength:<>
+						massageDate:<>
+					},
+					....
+				]
+			}
+			513:
+			{
+				description:"Token Error"
+			}
+			545:
+			{
+				description:<Any errors that comes while getting address>
 			}

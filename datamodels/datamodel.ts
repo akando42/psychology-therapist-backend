@@ -36,5 +36,7 @@ export class DataModel{
         paymentError:555,
 
         bookingError:565,
+
+        profileError:575,
     }
 }
