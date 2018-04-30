@@ -1,0 +1,19 @@
+/token:
+    get:
+		summary:
+			returns the code after validations
+			origin must be encoded with a key and the mac address combined. The encoded passphrase should be package name
+		request:
+			mac:<MacAdress>
+			ip:<IP Address>
+			origin:<Encoded Source Location>
+		responses:
+			200:
+				{
+					code:<Store this code in System Preference>
+				}
+			514
+				{
+					description:"Origin Error. Its a faulty encryption"
+				}
+

@@ -1,0 +1,114 @@
+
+/token:
+    get:
+      summary: 
+        returns and validates an account token
+      description:
+        If the cookie named "account_token" doesn't exist in the user's browser, it will validate the request by verifying that it is being made from an authorized domain name, upon successful validation, it will set a cookie in the user's browser named "account_token" that will be used to validate every request made by the user. If the user is logged then it will validate the "account_token" and if it is not valid, it will generate a new account token. Each token must depend on the user's IP address being used to make the calls and must be encrypted using symetric AES 256 encription with a 32 bit key to be able to decode the cookie. The key to decode the cookie will be obtained from the IP address of the request and the domain name of the request. The cookie will be the result of encrypting a JSON object with the properties ip: which corresponds to the user's IP address, date: which containes the time in unix format when the cookie was set, domain: which contains the domain name from which the request has been made and signature: which is the result of encrypting using md5 the IP address, the date and the domain name together.
+      produces:
+        This endGETpoint doesn't return any values.
+      parameters:
+        This endpoint doesn't receive any parameters.
+      responses:
+        200:
+          description: 
+            The token has been validated or set successfully.
+/provider/signup
+    post:
+        summary: registers a provider in the system
+        description: 
+            Receives all the provider information and verifies that the information provided is valid and correct, it checks if there is already a provider registered with the same email address and it validates the "account_token". If all the checks are passed, it will proceed to add the new provider to the database. The provider will be added to the database as unverified, and it will generate a temporary link to validate the email address which will be sent to the newly registered provider.
+        produces:
+            - application/json
+        parameters:
+            - name: firstname
+              description: First name of the provider
+              type: string
+              minlength: 2
+              maxlength: 20
+            - name: lastname
+              description: Lastname of the provider
+              type: string
+              minlength: 2
+              maxlength: 40
+            - name: qualifications
+              description: Array with the ids of the provider's qualifications
+              type: Array:string
+              minlength:1
+            - name: experience
+              description: Text describing the work experience of the provider
+              type: string
+              minlength: 10
+            - name: resume
+              description: Name of the temporary uploaded file containing the resume/CV of the provider
+              type: string
+              minlength: 10
+            - name: email
+              description: Email address of the provider
+              type: string
+              minlength: 6
+              maxlength: 255
+            - name: phone
+              description: Phone number of the provider
+              type: number
+              minlength: 6
+              maxlength: 20
+              format: [0-9]+
+            - name: password
+              description: Account password for the provider
+              minlength: 8
+              maxlength: 20
+              format: Must contain a capital letter, a lower case letter, a number and a special character
+        responses:
+            200
+                description:
+                    The provider has been registered successfuly and verification email has been sent.
+            400
+                description:
+                    Invalid input, the parameters were not valid.
+            409
+                description:
+                    There is already a provider registered with the same email address.
+            403
+                description:
+                    The account_token is not valid.
+/provider/login
+    post:
+        summary: validates a provider's credentials
+        description: 
+            Receives all the login information of a provider, and validates them along with the account_token. If the login information is correct, it will create a cookie named session_token in the provider's browser. The session_token cookie will be valid for 30 minutes, and will depend on the ID of the provider in the database, the IP address from where the request originated, the domain name from the request is being made, the date when the request was made, and the signature of the provider in the database. The session_token cookie will be encrypted using AES 256 symetric encription, using a 32 bit key, the key will be obtained from a combination of the provider ID in the database and the date when the provider signed up. The token will be the encrypted value of a JSON object containing provider: the ID of the provider in the database, date: the date when the cookie was created, ip: the IP address that originated the request, domain: the domain name that originated the request, footprint: the last 10 digits of the provider signature in the database, signature: the result of encrypting using md5 all the values combined.
+        produces:
+            - application/json
+        parameters:
+            - name: email
+              description: Email address of the provider
+              type: string
+              minlength: 6
+              maxlength: 255
+            - name: password
+              description: Account password for the provider
+              minlength: 8
+              maxlength: 20
+              format: Must contain a capital letter, a lower case letter, a number and a special character
+        responses:
+            200
+                description:
+                    The login credentials are valid and the session_token cookie has been set.
+                value:
+                    type: application/json
+                    values:
+                        - name: email
+                          description: Indicates whethere the email address has been validated or not
+                          type: boolean
+                        - name: phone
+                          description: Indicates whether the phone number has been validated or not
+                          type: boolean
+                        - name: verification
+                          description: Indicates whether two step verification is required or not
+                          type: boolean
+            400
+                description:
+                    Invalid input, the login credentials are not valid.
+            403
+                description:
+                    The account_token is not valid.
