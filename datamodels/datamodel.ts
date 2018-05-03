@@ -1,6 +1,52 @@
 export class DataModel{
     public static tables= {
-        
+
+        users:{
+            table:"USERS",
+            id:"UserID",
+            firstName:"FisrtName",
+            lastName:"LastName",
+            email:"EmailID",
+            password:"Password",
+            phone:"Phone",
+            image:"ProfileImage"
+        },
+
+        userAddress:{
+            table:"USERADDRESS",
+            id:"AddressID",
+            userID:"UserID",
+            name:"AddressName",
+            latitude:"Lattitude",
+            longitude:"Longitude",
+            address:"Address",
+            parkingLatitude:"ParkingLattitude",
+            parkingLongitude:"ParkingLongitude",
+            parkingAddress:"ParkingAddress"
+        },
+
+        sessions:{
+            table:"SESSIONS",
+            id:"SessionID",
+            userID:"UserID",
+            providerID:"ProviderID",
+            addressID:"AddressID",
+            massageType:"MassageType",
+            preferredGender:"PreferredGender",
+            massageLength:"MassageLength",
+            dateTime:"SessionDateTime",
+            equipements:"Equipements",
+            pets:"Pets",
+            medicalInformation:"MedicalInformation"
+        },
+
+        payments:{
+            table:"PAYMENTS",
+            id:"PaymentID",
+            sessionID:"SessionID",
+            amount:"Amount",
+            transactionId:"TransactionID"
+        }
     }
     public static accountStatus={
         waiting:0,
@@ -24,8 +70,10 @@ export class DataModel{
         docIgnored:53,
     }
     public static responseStatus={
-        tokenError:513,
+        success:200,
+        tokenError:513,        
         originError:514,
+        inputError:515,
 
         loginError:525,
 

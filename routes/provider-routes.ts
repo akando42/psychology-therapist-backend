@@ -2,7 +2,7 @@ import * as express from 'express';
 import {MySqlDatabase} from '../class/class.mysql-database';
 import {CryptoFunctions} from '../class/class.crypto-functions'
 import {ExpressServer,HTTPMethod} from '../class/class.server';
-import {UtilityRoutes} from "./utility-routes";
+import {ProvidersUtility} from "./providers-utility-routes";
 import { RoutesHandler } from "../class/class.routeshandler";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
@@ -25,9 +25,9 @@ export class ProviderRoutes{
     }
 
     private signUp(req:express.Request, res:express.Response):boolean{
-        var parsedVal  = UtilityRoutes.getParsedToken(req)
+        var parsedVal  = ProvidersUtility.getParsedToken(req)
         if(!parsedVal){
-            UtilityRoutes.sendErrorMessage(res, req, 403, "The account_token is not valid.");
+            ProvidersUtility.sendErrorMessage(res, req, 403, "The account_token is not valid.");
             return false;
         }
         console.log("Signup with proper account_token");
@@ -42,14 +42,14 @@ export class ProviderRoutes{
         var password:string = req.body.password;
 
 
-        if(!(UtilityRoutes.validateStringFields(firstname, 2, 20, res, req)
-            &&UtilityRoutes.validateStringFields(lastname, 2, 40, res, req)
-            &&UtilityRoutes.validateStringFields(qualifications, 2, -1, res, req)
-            &&UtilityRoutes.validateStringFields(experience, 10, -1, res, req)
-            &&UtilityRoutes.validateStringFields(resume, 10, -1, res, req)
-            &&UtilityRoutes.validateStringFields(email, 6, 255, res, req)
-            &&UtilityRoutes.validateStringFields(phone, 6, 20, res, req)
-            &&UtilityRoutes.validateStringFields(password, 8, 20, res, req))){
+        if(!(ProvidersUtility.validateStringFields(firstname, 2, 20, res, req)
+            &&ProvidersUtility.validateStringFields(lastname, 2, 40, res, req)
+            &&ProvidersUtility.validateStringFields(qualifications, 2, -1, res, req)
+            &&ProvidersUtility.validateStringFields(experience, 10, -1, res, req)
+            &&ProvidersUtility.validateStringFields(resume, 10, -1, res, req)
+            &&ProvidersUtility.validateStringFields(email, 6, 255, res, req)
+            &&ProvidersUtility.validateStringFields(phone, 6, 20, res, req)
+            &&ProvidersUtility.validateStringFields(password, 8, 20, res, req))){
                 return;
             }
         
@@ -80,10 +80,10 @@ export class ProviderRoutes{
                 };
                 RoutesHandler.respond(res, req, response, false, response["description"], response["status"]);
             }, error => {
-                UtilityRoutes.sendErrorMessage(res, req, 409, "There is already a provider registered with the same email address.\n"+error);
+                ProvidersUtility.sendErrorMessage(res, req, 409, "There is already a provider registered with the same email address.\n"+error);
                 return;
             }).catch(error=>{
-                UtilityRoutes.sendErrorMessage(res, req, 500, "Server Error");
+                ProvidersUtility.sendErrorMessage(res, req, 500, "Server Error");
                 return;
             })
         }
@@ -96,13 +96,13 @@ export class ProviderRoutes{
         //Set cookie account_token
         console.log("Login Route");
         if(!req.cookies.account_token){
-            UtilityRoutes.sendErrorMessage(res, req, 403, "The account_token is not valid");
+            ProvidersUtility.sendErrorMessage(res, req, 403, "The account_token is not valid");
             return false;
         }else{
-            var parsedVal  = UtilityRoutes.getParsedToken(req)
+            var parsedVal  = ProvidersUtility.getParsedToken(req)
             console.log("parsed Val : "+JSON.stringify(parsedVal));
             if(!parsedVal){
-                UtilityRoutes.sendErrorMessage(res, req, 403, "The account_toekn is not valid");
+                ProvidersUtility.sendErrorMessage(res, req, 403, "The account_toekn is not valid");
                     return false;
             }
         }
@@ -111,8 +111,8 @@ export class ProviderRoutes{
         var password:string = String(req.body.password);
 
         // console.log(email+" : "+password);
-        if(!(UtilityRoutes.validateStringFields(email, 6, 255, res, req)
-            && UtilityRoutes.validateStringFields(password, 8, 20, res, req))){
+        if(!(ProvidersUtility.validateStringFields(email, 6, 255, res, req)
+            && ProvidersUtility.validateStringFields(password, 8, 20, res, req))){
                 return false;
             }
             
@@ -134,12 +134,12 @@ export class ProviderRoutes{
         this.database.getQueryResults(sql, [email]).then(result=>{
             console.log(JSON.stringify(result));
             if(result.length==0){
-                UtilityRoutes.sendErrorMessage(res, req, 400, "We cannot find any User registered with that email ID");
+                ProvidersUtility.sendErrorMessage(res, req, 400, "We cannot find any User registered with that email ID");
                 return false;
             }else{
                 var out = result[0];
                 if(out['Password']!=pass){
-                    UtilityRoutes.sendErrorMessage(res, req, 400, "The email ID and password doesnt match");
+                    ProvidersUtility.sendErrorMessage(res, req, 400, "The email ID and password doesnt match");
                     return false;
                 }
                 var response = {
@@ -150,10 +150,10 @@ export class ProviderRoutes{
                         verification : out['TwoStepVerification']=='Y'?true:false
                     }
                 }
-                var tokenKey:string = UtilityRoutes.getTokenKey(req);
+                var tokenKey:string = ProvidersUtility.getTokenKey(req);
                 var date = Math.floor(new Date().getTime());
                 var jsonStr={
-                    ip:UtilityRoutes.getIPAddress(req),
+                    ip:ProvidersUtility.getIPAddress(req),
                     date:date,
                     origin:req.get("origin")
                 }
@@ -164,10 +164,10 @@ export class ProviderRoutes{
                 return true;
             }
         }, error=>{
-            UtilityRoutes.sendErrorMessage(res, req, 400, error);
+            ProvidersUtility.sendErrorMessage(res, req, 400, error);
             return false;
         }).catch(error=>{
-            UtilityRoutes.sendErrorMessage(res, req, 400, error);
+            ProvidersUtility.sendErrorMessage(res, req, 400, error);
             return false;
         })
     }

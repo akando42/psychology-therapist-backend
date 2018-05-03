@@ -5,6 +5,9 @@ import {ExpressServer,HTTPMethod} from './class/class.server';
 import {RoutesHandler} from './class/class.routeshandler';
 import {MySqlDatabase} from './class/class.mysql-database';
 import {CryptoFunctions} from './class/class.crypto-functions';
+import { ProvidersUtility } from "./routes/providers-utility-routes";
+import { UsersUtility } from "./routes/users-utility-routes";
+import { UserRoutes } from "./routes/user-routes";
 
 const appConfig=require('./config/app.json');
 const dbConfig=require('./config/db.json');
@@ -18,6 +21,12 @@ server.setRoute('/', (req:express.Request, res:express.Response)=>
 {
     RoutesHandler.respond(res,req,{},false,'The server is working!');
 },HTTPMethod.GET);
+
+
+let provicersUtility = new ProvidersUtility(server,database);
+let usersUtility = new UsersUtility(server,database);
+let users = new UserRoutes(server, database);
+
 
 /** Example database insert *****/
 /* database.insert("TABLE",{colum1:value1,column2:value2}).then(result=>//do something with the result,error=> //handle the error).catch(error=>//handle the error) */

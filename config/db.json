@@ -1,7 +1,7 @@
 {
     "server":"localhost",
     "user":"root",
-    "password":"root",
+    "password":"mysql12345",
     "database":"massage_demand",
     "port":3306
 }

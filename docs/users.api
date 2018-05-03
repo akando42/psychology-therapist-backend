@@ -1,20 +1,24 @@
-/token:
+/token/users:
     post:
 		summary:
 			returns the code after validations
 			origin must be encoded with a key and the mac address combined. The encoded passphrase should be package name
+		description:
+			The token which is returned will contain the json containing mac-address, 
 		request:
 			mac:<MacAdress>
-			ip:<IP Address>
 			origin:<Encoded Source Location>
 		responses:
 			200:
 			{
-				code:<Store this code in System Preference>
+				data:{
+					code:<Store this code in System Preference>
+				},
+				message:"Successfully got the token"
 			}
 			514
 			{
-				description:"Origin Error. Its a faulty encryption"
+				message:"Origin Error. Its a faulty encryption"
 			}
 
 
@@ -32,18 +36,22 @@
 		response:
 			200:
 			{
-				id:<Store this. Would need this in any further calls>
-				Name:<>
-				image:<base64 encoded image | null if empty>
-				email:<>
+				data: {
+					id:<Store this. Would need this in any further calls>
+					fName:<>
+					lName:<>
+					image:<base64 encoded image | null if empty>
+					email:<>
+				},
+				message:"Successfully logged in"
 			}
 			513:
 			{
-				description:"Token Error"
+				message:"Token Error"
 			}
 			525:
 			{
-				description:<Any errors that comes while loging in>
+				message:<Any errors that comes while loging in>
 			}
 
 
@@ -64,15 +72,15 @@
 		response:
 			200:
 			{
-				description:"Successfully registered. Please verify your Email"
+				message:"Successfully registered. Please verify your Email"
 			}
 			513:
 			{
-				description:"Token Error"
+				message:"Token Error"
 			}
 			535:
 			{
-				description:<Any errors that comes while registering>
+				message:<Any errors that comes while registering>
 			}
 
 
@@ -96,19 +104,19 @@
 		response:
 			200:
 			{
-				description:"Successfully Updated your informations"
+				message:"Successfully Updated your informations"
 			}
 			513:
 			{
-				description:"Token Error"
+				message:"Token Error"
 			}
 			575:
 			{
-				description:<Any errors that comes while updating your profile>
+				message:<Any errors that comes while updating your profile>
 			}
 
 /user/profile/get
-	get:
+	post:
 		summary:
 			Retrieves all information about the profile
 		request:
@@ -118,20 +126,22 @@
 		response:
 			200:
 			{
-				description:"Retrieved about the profile"
-				fisrtName:<Full Name>
-				lastName:<Full Name>
-				phone:<>
-				email:<>
-				image:<base64 encoded Image | null>
+				data:{
+					fisrtName:<Full Name>
+					lastName:<Full Name>
+					phone:<>
+					email:<>
+					image:<base64 encoded Image | null>
+				},
+				message:"Retrieved about the profile"
 			}
 			513:
 			{
-				description:"Token Error"
+				message:"Token Error"
 			}
 			575:
 			{
-				description:<Any errors that comes while getting profile>
+				message:<Any errors that comes while getting profile>
 			}
 
 
@@ -153,19 +163,19 @@
 		response:
 			200:
 			{
-				description:"Successfully Added the addresses"
+				message:"Successfully Added the addresses"
 			}
 			513:
 			{
-				description:"Token Error"
+				message:"Token Error"
 			}
 			545:
 			{
-				description:<Any errors that comes while adding payments>
+				message:<Any errors that comes while adding payments>
 			}
 
 /user/address/get
-	get:
+	post:
 		summary:
 			Retrieves all the addresses
 		request:
@@ -175,7 +185,6 @@
 		response:
 			200:
 			{
-				description:"Retrieved all the addresses"
 				data:[
 					{
 						addressId:<>
@@ -188,15 +197,16 @@
 						parkAddress:<>
 					},
 					...
-				]
+				],
+				message:"Retrieved all the addresses"
 			}
 			513:
 			{
-				description:"Token Error"
+				message:"Token Error"
 			}
 			545:
 			{
-				description:<Any errors that comes while getting address>
+				message:<Any errors that comes while getting address>
 			}
 
 
@@ -214,16 +224,18 @@
 		response:
 			200:
 			{
-				description:"Successfully Added payments"
-				paymentId:<Store this Id>
+				data: {	
+					paymentId:<Store this Id>
+				},
+				message:"Successfully Added payments"
 			}
 			513:
 			{
-				description:"Token Error! Contact the proiders"
+				message:"Token Error! Contact the proiders"
 			}
 			555:
 			{
-				description:<Any errors that comes while adding payments>
+				message:<Any errors that comes while adding payments>
 			}
 
 /user/payments/complete
@@ -239,21 +251,23 @@
 		response:
 			200:
 			{
-				description:"Successfully Added payments"
-				paymentId:<Store this Id>
+				data: {
+					paymentId:<Store this Id>
+				},
+				message:"Successfully Added payments"
 			}
 			513:
 			{
-				description:"Token Error! Contact the proiders"
+				message:"Token Error! Contact the proiders"
 			}
 			555:
 			{
-				description:<Any errors that comes while adding payments>
+				message:<Any errors that comes while adding payments>
 			}
 
 
 /user/payments/get
-	get:
+	post:
 		summary:
 			Retrieves all the payments
 		request:
@@ -263,51 +277,53 @@
 		response:
 			200:
 			{
-				description:"Retrieved all the payments"
-				pending:[
-					{
-						transactionId:<>
-						sessionId:<>
-						amount:<>
-						providerName:<>
-						massageType:<>
-						massageLength:<>
-						massageDate:<>
-					},
-					....
-				],
-				present:[
-					{
-						transactionId:<>
-						sessionId:<>
-						amount:<>
-						providerName:<>
-						massageType:<>
-						massageLength:<>
-						massageDate:<>
-					},
-					....
-				],
-				past:[
-					{
-						transactionId:<>
-						sessionId:<>
-						amount:<>
-						providerName:<>
-						massageType:<>
-						massageLength:<>
-						massageDate:<>
-					},
-					....
-				]
+				data:{
+					pending:[
+						{
+							transactionId:<>
+							sessionId:<>
+							amount:<>
+							providerName:<>
+							massageType:<>
+							massageLength:<>
+							massageDate:<>
+						},
+						....
+					],
+					present:[
+						{
+							transactionId:<>
+							sessionId:<>
+							amount:<>
+							providerName:<>
+							massageType:<>
+							massageLength:<>
+							massageDate:<>
+						},
+						....
+					],
+					past:[
+						{
+							transactionId:<>
+							sessionId:<>
+							amount:<>
+							providerName:<>
+							massageType:<>
+							massageLength:<>
+							massageDate:<>
+						},
+						....
+					]
+				},
+				message:"Retrieved all the payments"
 			}
 			513:
 			{
-				description:"Token Error"
+				message:"Token Error"
 			}
 			555:
 			{
-				description:<Any errors that comes while getting payments>
+				message:<Any errors that comes while getting payments>
 			}
 
 
@@ -333,20 +349,22 @@
 		response:
 			200:
 			{
-				description:"Successfully Booked a session. Proceed to pay"
-				sessionId:<Store this session Id>
+				data:{
+					sessionId:<Store this session Id>
+				},
+				message:"Successfully Booked a session. Proceed to pay"
 			}
 			513:
 			{
-				description:"Token Error"
+				message:"Token Error"
 			}
 			565:
 			{
-				description:<Any errors that comes while adding payments>
+				message:<Any errors that comes while adding payments>
 			}
 
 /user/session/get
-	get:
+	post:
 		summary:
 			Retrieves all the sessions booked
 		request:
@@ -356,46 +374,48 @@
 		response:
 			200:
 			{
-				description:"Retrieved all the sessions booked"
-				pending:[
-					{
-						sessionId:<>
-						amount:<>
-						providerName:<>
-						massageType:<>
-						massageLength:<>
-						massageDate:<>
-					},
-					....
-				],
-				present:[
-					{
-						sessionId:<>
-						amount:<>
-						providerName:<>
-						massageType:<>
-						massageLength:<>
-						massageDate:<>
-					},
-					....
-				],
-				past:[
-					{
-						sessionId:<>
-						amount:<>
-						providerName:<>
-						massageType:<>
-						massageLength:<>
-						massageDate:<>
-					},
-					....
-				]
+				data:{
+					pending:[
+						{
+							sessionId:<>
+							amount:<>
+							providerName:<>
+							massageType:<>
+							massageLength:<>
+							massageDate:<>
+						},
+						....
+					],
+					present:[
+						{
+							sessionId:<>
+							amount:<>
+							providerName:<>
+							massageType:<>
+							massageLength:<>
+							massageDate:<>
+						},
+						....
+					],
+					past:[
+						{
+							sessionId:<>
+							amount:<>
+							providerName:<>
+							massageType:<>
+							massageLength:<>
+							massageDate:<>
+						},
+						....
+					]
+				},
+				message:"Retrieved all the sessions booked"
 			}
 			513:
 			{
-				description:"Token Error"
+				message:"Token Error"
 			}
 			545:
 			{
-				description:<Any errors that comes while getting address>
+				message:<Any errors that comes while getting address>
 			}

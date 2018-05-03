@@ -298,9 +298,13 @@ export class ExpressServer
         return new Promise((resolve,reject)=>
         {
             let origin:any=req.get('origin')?req.get('origin'):req.get('host');
-            if(!origin||this.config.urls.indexOf(origin)==-1)
-                resolve(false);
-            else
+            if(!origin||this.config.urls.indexOf(origin)==-1){
+                if(req.body.mac || req.query.mac){
+                    resolve(true);
+                }else{
+                    resolve(false);
+                }
+            }else
                 resolve(true);
         });
     }
