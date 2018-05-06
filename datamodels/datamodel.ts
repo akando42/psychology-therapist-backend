@@ -4,12 +4,13 @@ export class DataModel{
         users:{
             table:"USERS",
             id:"UserID",
-            firstName:"FisrtName",
+            firstName:"FirstName",
             lastName:"LastName",
             email:"EmailID",
             password:"Password",
             phone:"Phone",
-            image:"ProfileImage"
+            image:"ProfileImage",
+            status:"AccountStatus"
         },
 
         userAddress:{
