@@ -7,23 +7,26 @@ import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 
 var nodemailer = require('nodemailer');
+var appConfig=require('../config/app.json');
 
 export class UserRoutes{
     private database:MySqlDatabase;
     private server:ExpressServer;
     private transporter;
 
+    private randomPatternToVerify="!47218fah8y5&^%^$76T21358GUfutT6%$&68327Q5";
+    
+
     constructor(server:ExpressServer, db:MySqlDatabase){
         this.server=server;
         this.database=db;  
-
         var me=this;
 
         this.transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'youremail@gmail.com',
-            pass: 'yourpassword'
+            user: 'rahul.test1908@gmail.com',
+            pass: 'rahulkatest'
         }
         });
 
@@ -31,8 +34,12 @@ export class UserRoutes{
             me.loginUser(req, res);
         }, HTTPMethod.POST);
         server.setRoute("/user/register", (req:express.Request, res:express.Response)=>{
-            me.loginUser(req, res);
+            me.registerUser(req, res);
         }, HTTPMethod.POST);
+        server.setRoute("/user/verify", (req:express.Request, res:express.Response)=>{
+            console.log("Hello")
+            me.verifyEmail(req, res);
+        }, HTTPMethod.GET);
     }
 
     private loginUser(req:express.Request, res:express.Response){
@@ -108,6 +115,8 @@ export class UserRoutes{
             }
         
         let users = DataModel.tables.users;
+        
+        
         this.database.insert(users.table,{
             [users.firstName]:fname,
             [users.lastName]:lname,
@@ -116,12 +125,79 @@ export class UserRoutes{
             [users.phone]:phone,
             [users.status]:DataModel.accountStatus.waiting,
         }).then(result=>{
-
+            this.sendEmailConfirmation(email, fname, lname, res);
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Something went wrong!!");
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, error);
         }).catch(error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Server Error");
         })
         
+    }
+    private sendEmailConfirmation(email:string, fname:String, lname:String, res:express.Response){
+        let link=appConfig.baseURL+"user/verify?key=";
+
+        let encKey = CryptoFunctions.get256BitKey(["To", "Verify", "Email", this.randomPatternToVerify])
+        //console.log("Token : "+token);
+        let json={
+            email:email,
+            fname:fname,
+            lname:lname
+        };
+        console.log("JSON : "+JSON.stringify(json));
+        let key = encodeURIComponent(CryptoFunctions.aes256Encrypt(JSON.stringify(json), encKey));
+        console.log("Key : "+key);
+
+        let myStr="Hello "+fname+" "+lname+",\nThanks for registering wiht us\nPlease Click on the following link to verify you email Address\n"+link+key;
+        var mailOptions = {
+            from: 'rahul.test1908@gmail.com',
+            to: email,
+            subject: 'Verification Mail | Massage On Demand',
+            text: myStr
+        };
+        this.transporter.sendMail(mailOptions, function(error, info){
+            if (error) {
+                console.log(error);
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Server Error");
+            } else {
+                console.log('Email sent: ' + info.response);
+                return UsersUtility.sendSuccess(res,[], "Successfully registered!! We have sent you a cofirmation mail!");
+            }
+        });
+
+    }
+    private verifyEmail(req:express.Request, res:express.Response){
+        console.log("Reached here");
+        let encKey = CryptoFunctions.get256BitKey(["To", "Verify", "Email", this.randomPatternToVerify])
+        console.log("Encryption Key : "+encKey);
+        let keyVal=req.query.key;
+
+        if(!keyVal){
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Sorry Couldn't verify your email");
+        }
+        let actVal = CryptoFunctions.aes256Decrypt(keyVal, encKey);
+        console.log("actual Value : "+actVal);
+        let json:{email:string, fname:string, lname:string} = JSON.parse(actVal)
+        if(!json || !json.email || !json.fname || !json.lname)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Sorry Couldn't verify your email");
+        
+
+        var users=DataModel.tables.users;
+        this.database.update(users.table, {
+            [users.status]:DataModel.accountStatus.accepted
+        }, {
+            [users.email]:json.email,
+            [users.firstName]:json.fname,
+            [users.lastName]:json.lname
+        }).then(result=>{
+            if(result){
+                return UsersUtility.sendSuccess(res, [], "Congratulations!! You email ID is verified. Please go to the login screen");
+            }else{
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "The email Id in the token doesnt exists");
+            }
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Something went Wrong!! "+error);
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Server Error");
+        })
     }
 }

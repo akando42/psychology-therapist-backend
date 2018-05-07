@@ -26,7 +26,7 @@ export class UsersUtility {
 
     private createToken(req:express.Request, res:express.Response){
         if(!req.body.mac || !req.body.origin)
-            return UsersUtility.sendErrorMessage(res, req, DataModel.responseStatus.tokenError, "The Request is invalid");
+            return UsersUtility.sendErrorMessage(res,  DataModel.responseStatus.tokenError, "The Request is invalid");
 
         let mac = req.body.mac;
         let origin = this.decodeOrigin(req.body.origin, mac);

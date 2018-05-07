@@ -36,7 +36,7 @@ export class MySqlDatabase
             let column=uppercase?property.toUpperCase():property;
             if(typeof mysqlFunctions[property]!="undefined"&&mysqlFunctions[property].length)
                 column=(uppercase?mysqlFunctions[property].toUpperCase():mysqlFunctions[property])+'('+column+')';
-            result.push(column+'='+connection.escape(element[property].toString()));
+            result.push(column+'='+connection.escape(element[property]));
        }
        return result;
    }
