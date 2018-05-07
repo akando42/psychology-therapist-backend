@@ -1,6 +1,5 @@
 {
     "urls":["127.0.0.1:3001"],
     "port":3001,
-    // "baseURL":"http://localhost:3001/"
     "baseURL":"http://35.196.105.106:3001/"
 }
