@@ -21,6 +21,7 @@ SET time_zone = "+00:00";
 --
 
 create database massage_demand;
+use massage_demand;
 -- --------------------------------------------------------
 
 --
