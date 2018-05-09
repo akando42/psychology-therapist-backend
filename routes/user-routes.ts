@@ -167,7 +167,7 @@ export class UserRoutes{
         this.transporter.sendMail(mailOptions, function(error, info){
             if (error) {
                 console.log(error);
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Server Error");
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Server Error : "+error);
             } else {
                 console.log('Email sent: ' + info.response);
                 return UsersUtility.sendSuccess(res,[], "Successfully registered!! We have sent you a cofirmation mail!");

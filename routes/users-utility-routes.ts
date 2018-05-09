@@ -111,10 +111,7 @@ export class UsersUtility {
     }
 
     public static sendErrorMessage(res:express.Response, code:number, description:string){
-        var json={
-            status:code,
-            description:description
-        };
+        var json=[];
         // res.status(code);
         // res.end(JSON.stringify(json));
         RoutesHandler.respond(res, undefined, json, true, json["description"], code);
