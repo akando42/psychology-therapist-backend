@@ -46,6 +46,9 @@ export class UserRoutes{
         server.setRoute("/user/profile/update", (req:express.Request, res:express.Response)=>{
             me.updateProfile(req, res);
         }, HTTPMethod.POST);
+        server.setRoute("/user/profile/get", (req:express.Request, res:express.Response)=>{
+            me.getProfile(req, res);
+        }, HTTPMethod.POST);
     }
 
     private loginUser(req:express.Request, res:express.Response){
@@ -300,6 +303,46 @@ export class UserRoutes{
             return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Something went wrong!! "+error);
         }).catch(error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Server Error");
+        })
+    }
+
+    private getProfile(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+        }
+
+        if(!req.body.id)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+        let id = parseInt(req.body.id);
+        if(id === NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+
+        let users=DataModel.tables.users;
+
+        let sql = SQLUtility.formSelect(["*"]
+            ,users.table
+            ,[users.id]
+            ,["="]
+            ,[]);
+        
+        this.database.getQueryResults(sql, [id]).then(result=>{
+            if(result.length>0){
+                let out=result[0];
+                let json={
+                    firstName:out[users.firstName],
+                    lastName:out[users.lastName],
+                    phone:out[users.phone],
+                    email:out[users.email],
+                    image:out[users.image]
+                }
+                return UsersUtility.sendSuccess(res, json, "Retrieved about the profile");
+            }else{
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Cant find any details for that ID");
+            }
+        }, error=>{
+
+        }).catch(error=>{
+
         })
     }
 

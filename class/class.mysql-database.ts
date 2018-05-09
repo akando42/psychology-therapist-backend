@@ -90,7 +90,7 @@ export class MySqlDatabase
             });
         });
    }
-   public async getQueryResults(query:string,values:string[]):Promise<any>
+   public async getQueryResults(query:string,values:any[]):Promise<any>
    {
         return new Promise<boolean>((resolve,reject)=>
         {
