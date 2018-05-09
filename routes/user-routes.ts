@@ -40,9 +40,12 @@ export class UserRoutes{
             me.registerUser(req, res);
         }, HTTPMethod.POST);
         server.setRoute("/user/verify", (req:express.Request, res:express.Response)=>{
-            console.log("Hello")
             me.verifyEmail(req, res);
         }, HTTPMethod.GET);
+
+        server.setRoute("/user/profile/update", (req:express.Request, res:express.Response)=>{
+            me.updateProfile(req, res);
+        }, HTTPMethod.POST);
     }
 
     private loginUser(req:express.Request, res:express.Response){
@@ -57,7 +60,7 @@ export class UserRoutes{
             || !UsersUtility.validateStringFields(password, 8, 50)
             || !(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/))
             || !email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
-                UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
             }
         
         // UsersUtility.sendSuccess(res, email, "Something");
@@ -114,7 +117,7 @@ export class UserRoutes{
             || !(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/))
             || !email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)
             || !phone.match(/^[0-9]+$/)){
-                UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
             }
         
         let users = DataModel.tables.users;
@@ -210,4 +213,94 @@ export class UserRoutes{
             return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Server Error");
         })
     }
+
+
+    private decodeBase64Image(dataString) {
+        var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        let response = {};
+        if (matches.length !== 3) {
+            return undefined;
+        }
+        response["type"] = matches[1];
+        response["data"] = new Buffer(matches[2], 'base64');
+
+        return response;
+    }
+
+    private updateProfile(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+        }
+
+        if(!req.body.id)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+        let id = parseInt(req.body.id);
+        if(id === NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+
+        let users=DataModel.tables.users;
+        let json={};
+        
+        if(req.body.password){
+            //TODO Write segment to update password.
+            let passwords = req.body.password;
+            if(!UsersUtility.validateStringFields(passwords.oldPassword, 8, 50)
+                || !UsersUtility.validateStringFields(passwords.newPassword, 8, 50)
+                || !(passwords.newPassword.match(/[A-Z]/) && passwords.newPassword.match(/[a-z]/) && passwords.newPassword.match(/[0-9]/) && passwords.newPassword.match(/[^A-Za-z0-9]/))) 
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "The Password should follow the rules");
+            this.database.update(users.table, json, {
+                [users.id]:id,
+                [users.password]:passwords.oldPassword
+            }).then(result=>{
+                if(result){
+                    return UsersUtility.sendSuccess(res, [], "Successfully updated the details");
+                }else{
+                    return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Cannot find profile with that ID and password");
+                }
+            }, error=>{
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Something went wrong!! "+error);
+            }).catch(error=>{
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Server Error");
+            })
+
+            return;
+        }
+
+        if(req.body.firstName){
+            if(!UsersUtility.validateStringFields(req.body.firstName, 1, 50)) 
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+            json[users.firstName]=req.body.firstName
+        }
+        if(req.body.lastName){
+            if(!UsersUtility.validateStringFields(req.body.lastName, 1, 50)) 
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+            json[users.lastName]=req.body.lastName
+        }
+        if(req.body.phone){
+            if(!UsersUtility.validateStringFields(req.body.phone, 1, 10)
+                || !req.body.phone.match(/^[0-9]+$/)) 
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+            json[users.phone]=req.body.phone
+        }
+        if(req.body.image){
+            if(!this.decodeBase64Image(req.body.image))
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "The Image you sent is not base64");
+            json[users.image]=req.body.image
+        }
+
+        this.database.update(users.table, json, {
+            [users.id]:id
+        }).then(result=>{
+            if(result){
+                return UsersUtility.sendSuccess(res, [], "Successfully updated the details");
+            }else{
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Cannot find profile with that ID");
+            }
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Something went wrong!! "+error);
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Server Error");
+        })
+    }
+
 }

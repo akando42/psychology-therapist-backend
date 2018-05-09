@@ -75,6 +75,7 @@ export class DataModel{
         tokenError:513,        
         originError:514,
         inputError:515,
+        idError:516,
 
         loginError:525,
 
