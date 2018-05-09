@@ -114,7 +114,7 @@ export class UsersUtility {
         var json=[];
         // res.status(code);
         // res.end(JSON.stringify(json));
-        RoutesHandler.respond(res, undefined, json, true, json["description"], code);
+        RoutesHandler.respond(res, undefined, json, true, description, code);
     }
     public static sendSuccess(res:express.Response, data:any, description:string){        
         RoutesHandler.respond(res, undefined, data, false, description, DataModel.responseStatus.success);
