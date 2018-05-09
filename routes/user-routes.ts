@@ -23,7 +23,10 @@ export class UserRoutes{
         var me=this;
 
         this.transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        // service: 'gmail',
         auth: {
             user: 'rahul.test1908@gmail.com',
             pass: 'rahulkatest'
@@ -116,17 +119,24 @@ export class UserRoutes{
         
         let users = DataModel.tables.users;
         
-        
+        let debug=false;
+        if(req.body.debug){
+            debug=true;
+        }
+
+        //TODO Change accepted to waiting
         this.database.insert(users.table,{
             [users.firstName]:fname,
             [users.lastName]:lname,
             [users.email]:email,
             [users.password]:password,
             [users.phone]:phone,
-            [users.status]:DataModel.accountStatus.waiting,
+            [users.status]:debug?DataModel.accountStatus.accepted:DataModel.accountStatus.waiting,
         }).then(result=>{
             this.sendEmailConfirmation(email, fname, lname, res);
         }, error=>{
+            if(debug)
+                return this.sendEmailConfirmation(email, fname, lname, res);
             return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, error);
         }).catch(error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Server Error");
@@ -147,12 +157,12 @@ export class UserRoutes{
         let key = encodeURIComponent(CryptoFunctions.aes256Encrypt(JSON.stringify(json), encKey));
         console.log("Key : "+key);
 
-        let myStr="Hello "+fname+" "+lname+",\nThanks for registering wiht us\nPlease Click on the following link to verify you email Address\n"+link+key;
+        let myStr="<H2>Verify Your Email Address</H2><H5>Massage on Demand</H5></br><H4>Hello "+fname+" "+lname+",</H4><p>Thanks for registering with us</p><p>Please Click <a href='"+link+key+"'>here</a> to verify you email Address</p>";
         var mailOptions = {
             from: 'rahul.test1908@gmail.com',
             to: email,
             subject: 'Verification Mail | Massage On Demand',
-            text: myStr
+            html: myStr
         };
         this.transporter.sendMail(mailOptions, function(error, info){
             if (error) {
