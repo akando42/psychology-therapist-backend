@@ -49,6 +49,20 @@ export class UserRoutes{
         server.setRoute("/user/profile/get", (req:express.Request, res:express.Response)=>{
             me.getProfile(req, res);
         }, HTTPMethod.POST);
+
+
+        server.setRoute("/user/address/add", (req:express.Request, res:express.Response)=>{
+            me.addAddress(req, res);
+        }, HTTPMethod.POST);
+        server.setRoute("/user/address/get", (req:express.Request, res:express.Response)=>{
+            me.getAddresses(req, res);
+        }, HTTPMethod.POST);
+        server.setRoute("/user/address/delete", (req:express.Request, res:express.Response)=>{
+            me.deleteAddress(req, res);
+        }, HTTPMethod.POST);
+        
+
+
     }
 
     private loginUser(req:express.Request, res:express.Response){
@@ -346,4 +360,129 @@ export class UserRoutes{
         })
     }
 
+
+    private addAddress(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+        }
+
+        if(!req.body.id)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+        let id = parseInt(req.body.id);
+        if(id === NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+
+        let name=req.body.name;
+        let lattitude = parseFloat(req.body.lattitude);
+        let longitude = parseFloat(req.body.longitude);
+        let address = req.body.address;
+        let parkLat = parseFloat(req.body.parkLat);
+        let parkLong = parseFloat(req.body.parkLong);
+        let parkAddress = req.body.parkAddress;
+
+        if(!UsersUtility.validateStringFields(name, 1, 50)
+            || lattitude==NaN
+            || longitude==NaN
+            || parkLat==NaN
+            || parkLong==NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+        
+        let addressTab = DataModel.tables.userAddress;
+
+        this.database.insert(addressTab.table,{
+            [addressTab.userID]:id,
+            [addressTab.name]:name,
+            [addressTab.latitude]:lattitude,
+            [addressTab.longitude]:longitude,
+            [addressTab.address]:address,
+            [addressTab.parkingLatitude]:parkLat,
+            [addressTab.parkingLongitude]:parkLong,
+            [addressTab.parkingAddress]:parkAddress,
+        }).then(result=>{
+            let json={
+                addressId:result
+            };
+            UsersUtility.sendSuccess(res, json, "Successfully Added the addresses");
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Something went wrong!! "+error);
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Server Error");
+        })
+
+    }
+
+    private getAddresses(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+        }
+
+        if(!req.body.id)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+        let id = parseInt(req.body.id);
+        if(id === NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+
+        let address=DataModel.tables.userAddress;
+        let sql = SQLUtility.formSelect(["*"]
+            ,address.table
+            ,[address.userID]
+            ,["="]
+            ,[]);
+        this.database.getQueryResults(sql, [id]).then(result=>{
+            let data=[];
+            for(var i in result){
+                let out = result[i];
+                let json={
+                    addressId:out[address.userID],
+                    name:out[address.name],
+                    lattitude:out[address.latitude],
+                    longitude:out[address.longitude],
+                    address:out[address.address],
+                    parkLat:out[address.parkingLatitude],
+                    parkLong:out[address.parkingLongitude],
+                    parkAddress:out[address.parkingAddress]
+                };
+                data.push(json);
+            }
+            return UsersUtility.sendSuccess(res, data, "Retrieved all the addresses");
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Something went wrong!! "+error);
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Server Error");
+        })
+    }
+    
+
+    private deleteAddress(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+        }
+
+        if(!req.body.id)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+        let id = parseInt(req.body.id);
+        if(id === NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+
+        if(!req.body.addressId)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The Address ID doesn't exists");
+        let addressId = parseInt(req.body.addressId);
+        if(addressId === NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Address ID");
+
+        let userAddress=DataModel.tables.userAddress;
+        this.database.delete(userAddress.table, {
+            [userAddress.userID]:id,
+            [userAddress.id]:addressId
+        }).then(result=>{
+            if(result)
+                UsersUtility.sendSuccess(res, [], "Successfully Deleted the addresses");
+            else
+                UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Could find any address with that ID");
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Something went wrong!! "+error);
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Server Error");
+        })
+    }
 }

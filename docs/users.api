@@ -163,6 +163,9 @@
 		response:
 			200:
 			{
+				data:{
+					addressId:<Store this. Its the ID of the Address>
+				}
 				message:"Successfully Added the addresses"
 			}
 			513:
@@ -171,7 +174,7 @@
 			}
 			545:
 			{
-				message:<Any errors that comes while adding payments>
+				message:<Any errors that comes while adding address>
 			}
 
 /user/address/get
@@ -190,7 +193,7 @@
 						addressId:<>
 						name:<>
 						lattitude:<>
-						logitude:<>
+						longitude:<>
 						address:<>
 						parkLat:<>
 						parkLong:<>
@@ -199,6 +202,30 @@
 					...
 				],
 				message:"Retrieved all the addresses"
+			}
+			513:
+			{
+				message:"Token Error"
+			}
+			545:
+			{
+				message:<Any errors that comes while getting address>
+			}
+
+/user/address/delete
+	post:
+		summary:
+			Retrieves all the addresses
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+			addressId:<Id of the address>
+		response:
+			200:
+			{
+				data:[],
+				message:"Successfully Deleted the address"
 			}
 			513:
 			{

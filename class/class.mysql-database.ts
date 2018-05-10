@@ -194,6 +194,39 @@ export class MySqlDatabase
             });
         });
    }
+
+   public async delete(table:string,selectors:any,uppercase:boolean = true):Promise<boolean>
+   {
+        return new Promise<boolean>((resolve,reject)=>
+        {
+            this.pool.getConnection((err,connection)=>{
+                if (err) 
+                    reject(err.code);
+                else
+                {
+                    connection.on('error', (err:any)=> {  
+                        try
+                        {
+                            connection.destroy();     
+                        }
+                        catch(err)
+                        {}    
+                        reject(err.code);   
+                     });
+                    let selectorsQueries:string[]=this.getQueriesFromObject(selectors,connection,uppercase);
+                   
+                    connection.query("DELETE FROM "+(uppercase?table.toUpperCase():table)+" WHERE "+selectorsQueries.join(' AND '),(err:any,results:any,fields:any)=>{
+                        connection.destroy();
+                        if(!err)
+                            resolve(results.affectedRows>0);
+                        else
+                            reject(err.code);
+                    });   
+
+                }
+            });
+        });
+   }
    public async transaction(queries:{query:string,values:string[],result_id:string}[]):Promise<number>
    {
         return new Promise<number>((resolve,reject)=>
