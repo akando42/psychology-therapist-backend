@@ -74,7 +74,7 @@ export class UserRoutes{
 
 
         server.setRoute("/user/session/add", (req:express.Request, res:express.Response)=>{
-            me.getPaymentsOrSessions(req, res, true);
+            me.addSession(req, res);
         }, HTTPMethod.POST);
         server.setRoute("/user/session/get", (req:express.Request, res:express.Response)=>{
             me.getPaymentsOrSessions(req, res, true);
@@ -638,5 +638,61 @@ export class UserRoutes{
             if(!isSession)
                 return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.bookingError, "Server Error");
         })
+    }
+
+    private addSession(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+        }
+
+        if(!req.body.id)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+        let id = parseInt(req.body.id);
+        if(id === NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+
+        let massageType=req.body.massageType;
+        let preferredGender=parseInt(req.body.preferredGender);
+        let massageLength=parseInt(req.body.massageLength);
+        let longDateTime=parseInt(req.body.dateTime);
+        let addressId=parseInt(req.body.addressId);
+        
+        if(!req.body.extras)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+
+        let extrasEquipe=req.body.extras.equipements==="true"?1:0;
+        let extrasPets=req.body.extras.pets;
+        let extrasInfo=req.body.extras.medicalInformation;
+        
+        if(!UsersUtility.validateStringFields(name, 1, 50)
+            || longDateTime>Date.now()
+            || preferredGender==NaN
+            || addressId==NaN
+            || !UsersUtility.validateStringFields(extrasPets, 1, 20))
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+        
+        let dateTime = new Date(longDateTime).toISOString().slice(0, 19).replace('T', ' ');
+        let sessions = DataModel.tables.sessions;
+        
+        this.database.insert(sessions.table,{
+            [sessions.massageType]:massageType,
+            [sessions.preferredGender]:preferredGender,
+            [sessions.massageLength]:massageLength,
+            [sessions.dateTime]:dateTime,
+            [sessions.addressID]:addressId,
+            [sessions.equipements]:extrasEquipe,
+            [sessions.pets]:extrasPets,
+            [sessions.medicalInformation]:extrasInfo,
+        }).then(result=>{
+            let json={
+                sessionId:result
+            };
+            UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.bookingError, "Something went wrong!! "+error);
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.bookingError, "Server Error");
+        })
+
     }
 }

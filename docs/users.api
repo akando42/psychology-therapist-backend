@@ -371,7 +371,7 @@
 			addressId:<Id of the Address>
 			extras:{
 				equipements:<true|false>
-				pets:<cat|dog>
+				pets:<cat|dog|none>
 				medicalInformation:<>
 			}
 		response:
