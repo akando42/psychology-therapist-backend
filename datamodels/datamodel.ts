@@ -12,6 +12,17 @@ export class DataModel{
             image:"ProfileImage",
             status:"AccountStatus"
         },
+        providers:{
+            table:"PROVIDERS",
+            id:"ProviderID",
+            firstName:"FirstName",
+            lastName:"LastName",
+            email:"EmailID",
+            password:"Password",
+            phone:"Phone",
+            image:"ProfileImage",
+            status:"AccountStatus"
+        },
 
         userAddress:{
             table:"USERADDRESS",

@@ -62,6 +62,23 @@ export class UserRoutes{
         }, HTTPMethod.POST);
         
 
+        server.setRoute("/user/payments/add", (req:express.Request, res:express.Response)=>{
+            me.addPayment(req, res);
+        }, HTTPMethod.POST);
+        server.setRoute("/user/payments/complete", (req:express.Request, res:express.Response)=>{
+            me.completePayment(req, res);
+        }, HTTPMethod.POST);
+        server.setRoute("/user/payments/get", (req:express.Request, res:express.Response)=>{
+            me.getPaymentsOrSessions(req, res, false);
+        }, HTTPMethod.POST);
+
+
+        server.setRoute("/user/session/add", (req:express.Request, res:express.Response)=>{
+            me.getPaymentsOrSessions(req, res, true);
+        }, HTTPMethod.POST);
+        server.setRoute("/user/session/get", (req:express.Request, res:express.Response)=>{
+            me.getPaymentsOrSessions(req, res, true);
+        }, HTTPMethod.POST);
 
     }
 
@@ -451,7 +468,6 @@ export class UserRoutes{
             return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Server Error");
         })
     }
-    
 
     private deleteAddress(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
@@ -483,6 +499,144 @@ export class UserRoutes{
             return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Something went wrong!! "+error);
         }).catch(error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Server Error");
+        })
+    }
+
+
+    private addPayment(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+        }
+
+        if(!req.body.id)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+        let id = parseInt(req.body.id);
+        
+        if(!req.body.amount)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "The amount doesn't exists in the query");
+        let amount = parseInt(req.body.amount);
+        
+        if(!req.body.sessionId)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "The Session ID doesn't exists in the query");
+        let sessionId = parseInt(req.body.sessionId);
+        
+        if(id === NaN || amount == NaN || sessionId == NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Inputs");
+
+        let payments=DataModel.tables.payments;
+
+        this.database.insert(payments.table,{
+            [payments.amount]:amount,
+            [payments.sessionID]:sessionId,
+        }).then(result=>{
+            let json={
+                paymentId:result
+            };
+            return UsersUtility.sendSuccess(res, json, "Successfully Added the Payment Details");
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Something went wrong!! "+error);
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Server Error");
+        })
+    }
+
+    private completePayment(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+        }
+
+        if(!req.body.id)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+        let id = parseInt(req.body.id);
+        
+        if(!req.body.paymentId)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "The Payment ID doesn't exists in the query");
+        let paymentId = parseInt(req.body.paymentId);
+        
+        if(!req.body.transactionId)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "The Transaction ID doesn't exists in the query");
+        let transactionId = req.body.sessionId;
+
+        if(id === NaN || paymentId == NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Inputs");
+
+        let payments = DataModel.tables.payments;
+        this.database.update(payments.table,{
+            [payments.transactionId]:transactionId
+        }, {
+            [payments.id]:paymentId
+        }).then(result=>{
+            if(result)
+                return UsersUtility.sendSuccess(res, [], "Successfully Completed the payment");
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Cannot Find any entry with that Payment ID");
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Something went wrong!! "+error);
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Server Error");
+        })
+
+    }
+    private getPaymentsOrSessions(req:express.Request, res:express.Response, isSession:boolean=false){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+        }
+
+        if(!req.body.id)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+        let id = parseInt(req.body.id);
+        if(id === NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+
+        let payments=DataModel.tables.payments;
+        let providers=DataModel.tables.providers;
+        let sessions=DataModel.tables.sessions;
+
+        let sql = "SELECT * \
+            FROM "+payments.table+" natural join "+sessions.table+" natural join "+providers.table+" \
+            WHERE "+sessions.userID+"="+id;
+
+        this.database.getQueryResults(sql, [id]).then(result=>{
+            let pending=[];
+            let present=[];
+            let past=[];
+            let myJson={
+                pending:pending,
+                present:present,
+                past:past
+            }
+
+            for(var i in result){
+                let out = result[i];
+                let json={
+                    sessionId:out[payments.sessionID],
+                    amount:out[payments.amount],
+                    providerName:out[providers.firstName]+" "+out[providers.lastName],
+                    massageType:out[sessions.massageType],
+                    massageLength:out[sessions.massageLength],
+                    massageDate:out[sessions.dateTime],
+                };
+                if(!isSession){
+                    json["paymentId"]=out[payments.id];
+                    json["transactionId"]=out[payments.transactionId];
+                }
+                if(parseInt(out[sessions.dateTime])<Date.now()){
+                    past.push(json);
+                }else if(out[payments.transactionId]==="NOTDONE"){
+                    pending.push(json);
+                }else{
+                    present.push(json);
+                }
+            }
+            if(!isSession)
+                return UsersUtility.sendSuccess(res, myJson, "Retrieved all the Payment Details");
+            return UsersUtility.sendSuccess(res, myJson, "Retrieved all the Session Details");
+        }, error=>{
+            if(!isSession)
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Something went wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.bookingError, "Something went wrong!! "+error);
+        }).catch(error=>{
+            if(!isSession)
+                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.bookingError, "Server Error");
         })
     }
 }
