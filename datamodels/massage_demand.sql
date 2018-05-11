@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 06, 2018 at 08:02 PM
+-- Generation Time: May 11, 2018 at 08:00 PM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -33,7 +33,7 @@ CREATE TABLE `PAYMENTS` (
   `PaymentID` int(11) NOT NULL,
   `SessionID` int(11) NOT NULL,
   `Amount` int(11) NOT NULL,
-  `TransactionID` varchar(255) NOT NULL
+  `TransactionID` varchar(255) NOT NULL DEFAULT 'NOTDONE'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -52,7 +52,7 @@ CREATE TABLE `SESSIONS` (
   `MassageLength` int(11) NOT NULL,
   `SessionDateTime` datetime NOT NULL,
   `Equipements` tinyint(1) NOT NULL,
-  `Pets` tinyint(1) NOT NULL,
+  `Pets` varchar(20) NOT NULL,
   `MedicalInformation` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -88,8 +88,10 @@ CREATE TABLE `USERS` (
   `Password` varchar(50) NOT NULL,
   `Phone` varchar(11) NOT NULL,
   `ProfileImage` text NOT NULL,
+  `Gender` varchar(10) NOT NULL,
   `AccountStatus` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 --
 -- Indexes for dumped tables
