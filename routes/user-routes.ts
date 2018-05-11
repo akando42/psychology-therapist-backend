@@ -117,6 +117,8 @@ export class UserRoutes{
                     id:out[users.id],
                     fName:out[users.firstName],
                     lName:out[users.lastName],
+                    phone:out[users.phone],
+                    gender:out[users.gender],
                     image:out[users.image],
                     email:out[users.email]
                 }
@@ -141,6 +143,7 @@ export class UserRoutes{
         let lname = req.body.lastName;
         let email = req.body.email;
         let password = req.body.password;
+        let gender = req.body.gender;
         let phone = req.body.phone;
 
         if(!UsersUtility.validateStringFields(email, 1, 155)
@@ -148,6 +151,8 @@ export class UserRoutes{
             || !UsersUtility.validateStringFields(fname, 1, 50)
             || !UsersUtility.validateStringFields(lname, 1, 50)
             || !UsersUtility.validateStringFields(phone, 1, 10)
+            || !UsersUtility.validateStringFields(gender, 4, 10)
+            || gender!=="Male" || gender!=="Female" || gender!=="Others"
             || !(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/))
             || !email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)
             || !phone.match(/^[0-9]+$/)){
@@ -168,6 +173,7 @@ export class UserRoutes{
             [users.email]:email,
             [users.password]:password,
             [users.phone]:phone,
+            [users.gender]:gender,
             [users.status]:debug?DataModel.accountStatus.accepted:DataModel.accountStatus.waiting,
         }).then(result=>{
             this.sendEmailConfirmation(email, fname, lname, res);
@@ -363,6 +369,7 @@ export class UserRoutes{
                     firstName:out[users.firstName],
                     lastName:out[users.lastName],
                     phone:out[users.phone],
+                    gender:out[users.gender],
                     email:out[users.email],
                     image:out[users.image]
                 }

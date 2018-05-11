@@ -10,6 +10,7 @@ export class DataModel{
             password:"Password",
             phone:"Phone",
             image:"ProfileImage",
+            gender:"Gender",
             status:"AccountStatus"
         },
         providers:{

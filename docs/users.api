@@ -42,6 +42,8 @@
 					lName:<>
 					image:<base64 encoded image | null if empty>
 					email:<>
+					phone:<>
+					gender:<>
 				},
 				message:"Successfully logged in"
 			}
@@ -68,6 +70,7 @@
 			lastName: <Last name>
 			email:<Email ID>
 			password:<password>
+			gender:<Male|Female|Others> //Keep in care that you dont send exact thing(case sensitive)
 			phone:<Phone number with country code>
 			debug:<Done for only now>
 		response:
@@ -132,6 +135,7 @@
 					lastName:<Full Name>
 					phone:<>
 					email:<>
+					gender:<>
 					image:<base64 encoded Image | null>
 				},
 				message:"Retrieved about the profile"
