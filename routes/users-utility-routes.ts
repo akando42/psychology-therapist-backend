@@ -63,6 +63,7 @@ export class UsersUtility {
             if(UsersUtility.validateParsedToken(parsedVal, req, aliveTime)){
                 return parsedVal;
             }else{
+                console.log("Its invalidated");
                 return undefined;
             }
         }else{

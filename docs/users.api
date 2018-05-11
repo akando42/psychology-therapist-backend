@@ -69,6 +69,7 @@
 			email:<Email ID>
 			password:<password>
 			phone:<Phone number with country code>
+			debug:<Done for only now>
 		response:
 			200:
 			{
