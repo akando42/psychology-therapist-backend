@@ -152,7 +152,7 @@ export class UserRoutes{
             || !UsersUtility.validateStringFields(lname, 1, 50)
             || !UsersUtility.validateStringFields(phone, 1, 10)
             || !UsersUtility.validateStringFields(gender, 4, 10)
-            || gender!=="Male" || gender!=="Female" || gender!=="Others"
+            || !(gender=="Male" || gender=="Female" || gender=="Others")
             || !(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/))
             || !email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)
             || !phone.match(/^[0-9]+$/)){
