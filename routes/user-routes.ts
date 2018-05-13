@@ -288,6 +288,8 @@ export class UserRoutes{
                 || !UsersUtility.validateStringFields(passwords.newPassword, 8, 50)
                 || !(passwords.newPassword.match(/[A-Z]/) && passwords.newPassword.match(/[a-z]/) && passwords.newPassword.match(/[0-9]/) && passwords.newPassword.match(/[^A-Za-z0-9]/))) 
                 return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "The Password should follow the rules");
+
+            json[users.password]=passwords.newPassword;
             this.database.update(users.table, json, {
                 [users.id]:id,
                 [users.password]:passwords.oldPassword
@@ -664,6 +666,7 @@ export class UserRoutes{
         let longDateTime=parseInt(req.body.dateTime);
         let addressId=parseInt(req.body.addressId);
         
+        console.log("Time : "+longDateTime+" : "+Date.now());
         if(!req.body.extras)
             return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
 
@@ -671,8 +674,9 @@ export class UserRoutes{
         let extrasPets=req.body.extras.pets;
         let extrasInfo=req.body.extras.medicalInformation;
         
-        if(!UsersUtility.validateStringFields(name, 1, 50)
-            || longDateTime>Date.now()
+        if(!UsersUtility.validateStringFields(massageType, 1, 50)
+            || longDateTime==NaN
+            || longDateTime<Date.now()
             || preferredGender==NaN
             || addressId==NaN
             || !UsersUtility.validateStringFields(extrasPets, 1, 20))
