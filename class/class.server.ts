@@ -31,7 +31,8 @@ export class ExpressServer
         this.server=express();
         this.server.use(compression());
         this.server.use(helmet());
-         this.server.use(bodyParser.json());
+        this.server.use(bodyParser({limit: '5mb'}));
+        this.server.use(bodyParser.json());
         this.server.use(bodyParser.urlencoded({extended: false}));
         this.server.use(cors({credentials: true, origin:(origin,callback)=>
         {

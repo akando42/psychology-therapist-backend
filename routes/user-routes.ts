@@ -325,8 +325,8 @@ export class UserRoutes{
             json[users.phone]=req.body.phone
         }
         if(req.body.image){
-            if(!this.decodeBase64Image(req.body.image))
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "The Image you sent is not base64");
+            // if(!this.decodeBase64Image(req.body.image))
+            //     return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "The Image you sent is not base64");
             json[users.image]=req.body.image
         }
 
