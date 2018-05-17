@@ -27,7 +27,7 @@ export class ProviderRoutes{
     private signUp(req:express.Request, res:express.Response):boolean{
         var parsedVal  = ProvidersUtility.getParsedToken(req)
         if(!parsedVal){
-            ProvidersUtility.sendErrorMessage(res, req, 403, "The account_token is not valid.");
+            ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid.");
             return false;
         }
         console.log("Signup with proper account_token");
@@ -81,10 +81,10 @@ export class ProviderRoutes{
                 };
                 RoutesHandler.respond(res, req, response, false, response["description"], response["status"]);
             }, error => {
-                ProvidersUtility.sendErrorMessage(res, req, 409, "There is already a provider registered with the same email address.\n"+error);
+                ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.registerError, "There is already a provider registered with the same email address.\n"+error);
                 return;
             }).catch(error=>{
-                ProvidersUtility.sendErrorMessage(res, req, 500, "Server Error");
+                ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error");
                 return;
             })
         }
@@ -97,12 +97,12 @@ export class ProviderRoutes{
         //Set cookie account_token
         console.log("Login Route");
         if(!req.cookies.account_token){
-            return ProvidersUtility.sendErrorMessage(res, req, 403, "The account_token is not valid");
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
         }else{
             var parsedVal  = ProvidersUtility.getParsedToken(req)
             console.log("parsed Val : "+JSON.stringify(parsedVal));
             if(!parsedVal){
-                return ProvidersUtility.sendErrorMessage(res, req, 403, "The account_toekn is not valid");;
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_toekn is not valid");;
             }
         }
 
@@ -134,7 +134,7 @@ export class ProviderRoutes{
                     session_token:cookieStr
                 }, "Admin Logged in");
             }else{
-                return ProvidersUtility.sendErrorMessage(res, req, DataModel.responseStatus.loginError, "Password is wrong");
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "Password is wrong");
             }
         }
         //TODO Do the actual login here
@@ -155,12 +155,12 @@ export class ProviderRoutes{
         this.database.getQueryResults(sql, [email]).then(result=>{
             console.log(JSON.stringify(result));
             if(result.length==0){
-                ProvidersUtility.sendErrorMessage(res, req, 400, "We cannot find any User registered with that email ID");
+                ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "We cannot find any User registered with that email ID");
                 return false;
             }else{
                 var out = result[0];
                 if(out[providers.password]!=pass){
-                    ProvidersUtility.sendErrorMessage(res, req, 400, "The email ID and password doesnt match");
+                    ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "The email ID and password doesnt match");
                     return false;
                 }
                 var response = {
@@ -186,10 +186,10 @@ export class ProviderRoutes{
                 return true;
             }
         }, error=>{
-            ProvidersUtility.sendErrorMessage(res, req, 400, error);
+            ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, error);
             return false;
         }).catch(error=>{
-            ProvidersUtility.sendErrorMessage(res, req, 400, error);
+            ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
             return false;
         })
     }

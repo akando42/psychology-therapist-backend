@@ -155,7 +155,7 @@ export class ProvidersUtility{
         RoutesHandler.respond(res, req, [], true, description, code);
     }
     public static sendSuccess(res:express.Response, req:express.Request, data:any, description:string){
-        RoutesHandler.respond(res, req, data, false, description, DataModel.responseStatus.success);
+        RoutesHandler.respond(res, req, data, false, description, DataModel.providerResponse.success);
     }
 
 

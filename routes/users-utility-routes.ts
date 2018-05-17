@@ -26,7 +26,7 @@ export class UsersUtility {
 
     private createToken(req:express.Request, res:express.Response){
         if(!req.body.mac || !req.body.origin)
-            return UsersUtility.sendErrorMessage(res,  DataModel.responseStatus.tokenError, "The Request is invalid");
+            return UsersUtility.sendErrorMessage(res,  DataModel.userResponse.tokenError, "The Request is invalid");
 
         let mac = req.body.mac;
         let origin = this.decodeOrigin(req.body.origin, mac);
@@ -118,6 +118,6 @@ export class UsersUtility {
         RoutesHandler.respond(res, undefined, json, true, description, code);
     }
     public static sendSuccess(res:express.Response, data:any, description:string){        
-        RoutesHandler.respond(res, undefined, data, false, description, DataModel.responseStatus.success);
+        RoutesHandler.respond(res, undefined, data, false, description, DataModel.userResponse.success);
     }
 }

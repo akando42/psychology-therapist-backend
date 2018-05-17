@@ -84,7 +84,7 @@ export class UserRoutes{
 
     private loginUser(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         let email = req.body.email;
@@ -94,7 +94,7 @@ export class UserRoutes{
             || !UsersUtility.validateStringFields(password, 8, 50)
             || !(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/))
             || !email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
             }
         
         // UsersUtility.sendSuccess(res, email, "Something");
@@ -106,12 +106,12 @@ export class UserRoutes{
                 []);
         this.database.getQueryResults(sql, [email]).then(result=>{
             if(result.length==0){
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.loginError, "Email ID is not registered");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.loginError, "Email ID is not registered");
             }
             var out = result[0];
             if(out[users.password] == password){
                 if(out[users.status]==DataModel.accountStatus.waiting){
-                    return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.loginError, "The Email is not verified");
+                    return UsersUtility.sendErrorMessage(res, DataModel.userResponse.loginError, "The Email is not verified");
                 }
                 let json={
                     id:out[users.id],
@@ -124,19 +124,19 @@ export class UserRoutes{
                 }
                 return UsersUtility.sendSuccess(res, json, "Successfully logged in");
             }else{
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.loginError, "The username and password dint match");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.loginError, "The username and password dint match");
             }
         }, error=>{
-            UsersUtility.sendErrorMessage(res, DataModel.responseStatus.loginError, error);
+            UsersUtility.sendErrorMessage(res, DataModel.userResponse.loginError, error);
         }).catch(error=>{
-            UsersUtility.sendErrorMessage(res, DataModel.responseStatus.loginError, error);
+            UsersUtility.sendErrorMessage(res, DataModel.userResponse.loginError, error);
         })
         
     }
 
     private registerUser(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         let fname = req.body.firstName;
@@ -156,7 +156,7 @@ export class UserRoutes{
             || !(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/))
             || !email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)
             || !phone.match(/^[0-9]+$/)){
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
             }
         
         let users = DataModel.tables.users;
@@ -180,9 +180,9 @@ export class UserRoutes{
         }, error=>{
             if(debug)
                 return this.sendEmailConfirmation(email, fname, lname, res);
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Server Error");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "Server Error");
         })
         
     }
@@ -210,7 +210,7 @@ export class UserRoutes{
         this.transporter.sendMail(mailOptions, function(error, info){
             if (error) {
                 console.log(error);
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Server Error : "+error);
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "Server Error : "+error);
             } else {
                 console.log('Email sent: ' + info.response);
                 return UsersUtility.sendSuccess(res,[], "Successfully registered!! We have sent you a cofirmation mail!");
@@ -225,13 +225,13 @@ export class UserRoutes{
         let keyVal=req.query.key;
 
         if(!keyVal){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Sorry Couldn't verify your email");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "Sorry Couldn't verify your email");
         }
         let actVal = CryptoFunctions.aes256Decrypt(keyVal, encKey);
         console.log("actual Value : "+actVal);
         let json:{email:string, fname:string, lname:string} = JSON.parse(actVal)
         if(!json || !json.email || !json.fname || !json.lname)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Sorry Couldn't verify your email");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "Sorry Couldn't verify your email");
         
 
         var users=DataModel.tables.users;
@@ -245,12 +245,12 @@ export class UserRoutes{
             if(result){
                 return UsersUtility.sendSuccess(res, [], "Congratulations!! You email ID is verified. Please go to the login screen");
             }else{
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "The email Id in the token doesnt exists");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "The email Id in the token doesnt exists");
             }
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Something went Wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "Something went Wrong!! "+error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.registerError, "Server Error");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "Server Error");
         })
     }
 
@@ -269,14 +269,14 @@ export class UserRoutes{
 
     private updateProfile(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         if(!req.body.id)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "The ID doesn't exists in the query");
         let id = parseInt(req.body.id);
         if(id === NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid ID");
 
         let users=DataModel.tables.users;
         let json={};
@@ -287,7 +287,7 @@ export class UserRoutes{
             if(!UsersUtility.validateStringFields(passwords.oldPassword, 8, 50)
                 || !UsersUtility.validateStringFields(passwords.newPassword, 8, 50)
                 || !(passwords.newPassword.match(/[A-Z]/) && passwords.newPassword.match(/[a-z]/) && passwords.newPassword.match(/[0-9]/) && passwords.newPassword.match(/[^A-Za-z0-9]/))) 
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "The Password should follow the rules");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "The Password should follow the rules");
 
             json[users.password]=passwords.newPassword;
             this.database.update(users.table, json, {
@@ -297,12 +297,12 @@ export class UserRoutes{
                 if(result){
                     return UsersUtility.sendSuccess(res, [], "Successfully updated the details");
                 }else{
-                    return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Cannot find profile with that ID and password");
+                    return UsersUtility.sendErrorMessage(res, DataModel.userResponse.profileError, "Cannot find profile with that ID and password");
                 }
             }, error=>{
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Something went wrong!! "+error);
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.profileError, "Something went wrong!! "+error);
             }).catch(error=>{
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Server Error");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.profileError, "Server Error");
             })
 
             return;
@@ -310,18 +310,18 @@ export class UserRoutes{
 
         if(req.body.firstName){
             if(!UsersUtility.validateStringFields(req.body.firstName, 1, 50)) 
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
             json[users.firstName]=req.body.firstName
         }
         if(req.body.lastName){
             if(!UsersUtility.validateStringFields(req.body.lastName, 1, 50)) 
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
             json[users.lastName]=req.body.lastName
         }
         if(req.body.phone){
             if(!UsersUtility.validateStringFields(req.body.phone, 1, 10)
                 || !req.body.phone.match(/^[0-9]+$/)) 
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
             json[users.phone]=req.body.phone
         }
         if(req.body.image){
@@ -336,25 +336,25 @@ export class UserRoutes{
             if(result){
                 return UsersUtility.sendSuccess(res, [], "Successfully updated the details");
             }else{
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Cannot find profile with that ID");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.profileError, "Cannot find profile with that ID");
             }
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Something went wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.profileError, "Something went wrong!! "+error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Server Error");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.profileError, "Server Error");
         })
     }
 
     private getProfile(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         if(!req.body.id)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "The ID doesn't exists in the query");
         let id = parseInt(req.body.id);
         if(id === NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid ID");
 
         let users=DataModel.tables.users;
 
@@ -377,7 +377,7 @@ export class UserRoutes{
                 }
                 return UsersUtility.sendSuccess(res, json, "Retrieved about the profile");
             }else{
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.profileError, "Cant find any details for that ID");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.profileError, "Cant find any details for that ID");
             }
         }, error=>{
 
@@ -389,14 +389,14 @@ export class UserRoutes{
 
     private addAddress(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         if(!req.body.id)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "The ID doesn't exists in the query");
         let id = parseInt(req.body.id);
         if(id === NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid ID");
 
         let name=req.body.name;
         let lattitude = parseFloat(req.body.lattitude);
@@ -411,7 +411,7 @@ export class UserRoutes{
             || longitude==NaN
             || parkLat==NaN
             || parkLong==NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
         
         let addressTab = DataModel.tables.userAddress;
 
@@ -430,23 +430,23 @@ export class UserRoutes{
             };
             UsersUtility.sendSuccess(res, json, "Successfully Added the addresses");
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Something went wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Something went wrong!! "+error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Server Error");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Server Error");
         })
 
     }
 
     private getAddresses(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         if(!req.body.id)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "The ID doesn't exists in the query");
         let id = parseInt(req.body.id);
         if(id === NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid ID");
 
         let address=DataModel.tables.userAddress;
         let sql = SQLUtility.formSelect(["*"]
@@ -472,28 +472,28 @@ export class UserRoutes{
             }
             return UsersUtility.sendSuccess(res, data, "Retrieved all the addresses");
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Something went wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Something went wrong!! "+error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Server Error");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Server Error");
         })
     }
 
     private deleteAddress(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         if(!req.body.id)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "The ID doesn't exists in the query");
         let id = parseInt(req.body.id);
         if(id === NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid ID");
 
         if(!req.body.addressId)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The Address ID doesn't exists");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "The Address ID doesn't exists");
         let addressId = parseInt(req.body.addressId);
         if(addressId === NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Address ID");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Address ID");
 
         let userAddress=DataModel.tables.userAddress;
         this.database.delete(userAddress.table, {
@@ -503,34 +503,34 @@ export class UserRoutes{
             if(result)
                 UsersUtility.sendSuccess(res, [], "Successfully Deleted the addresses");
             else
-                UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Could find any address with that ID");
+                UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Could find any address with that ID");
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Something went wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Something went wrong!! "+error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.addressError, "Server Error");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Server Error");
         })
     }
 
 
     private addPayment(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         if(!req.body.id)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "The ID doesn't exists in the query");
         let id = parseInt(req.body.id);
         
         if(!req.body.amount)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "The amount doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "The amount doesn't exists in the query");
         let amount = parseInt(req.body.amount);
         
         if(!req.body.sessionId)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "The Session ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "The Session ID doesn't exists in the query");
         let sessionId = parseInt(req.body.sessionId);
         
         if(id === NaN || amount == NaN || sessionId == NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Inputs");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Inputs");
 
         let payments=DataModel.tables.payments;
 
@@ -543,31 +543,31 @@ export class UserRoutes{
             };
             return UsersUtility.sendSuccess(res, json, "Successfully Added the Payment Details");
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Something went wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "Something went wrong!! "+error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Server Error");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "Server Error");
         })
     }
 
     private completePayment(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         if(!req.body.id)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "The ID doesn't exists in the query");
         let id = parseInt(req.body.id);
         
         if(!req.body.paymentId)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "The Payment ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "The Payment ID doesn't exists in the query");
         let paymentId = parseInt(req.body.paymentId);
         
         if(!req.body.transactionId)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "The Transaction ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "The Transaction ID doesn't exists in the query");
         let transactionId = req.body.sessionId;
 
         if(id === NaN || paymentId == NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Inputs");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Inputs");
 
         let payments = DataModel.tables.payments;
         this.database.update(payments.table,{
@@ -577,24 +577,24 @@ export class UserRoutes{
         }).then(result=>{
             if(result)
                 return UsersUtility.sendSuccess(res, [], "Successfully Completed the payment");
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Cannot Find any entry with that Payment ID");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "Cannot Find any entry with that Payment ID");
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Something went wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "Something went wrong!! "+error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Server Error");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "Server Error");
         })
 
     }
     private getPaymentsOrSessions(req:express.Request, res:express.Response, isSession:boolean=false){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         if(!req.body.id)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "The ID doesn't exists in the query");
         let id = parseInt(req.body.id);
         if(id === NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid ID");
 
         let payments=DataModel.tables.payments;
         let providers=DataModel.tables.providers;
@@ -641,24 +641,24 @@ export class UserRoutes{
             return UsersUtility.sendSuccess(res, myJson, "Retrieved all the Session Details");
         }, error=>{
             if(!isSession)
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.paymentError, "Something went wrong!! "+error);
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.bookingError, "Something went wrong!! "+error);
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "Something went wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
         }).catch(error=>{
             if(!isSession)
-                return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.bookingError, "Server Error");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Server Error");
         })
     }
 
     private addSession(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.tokenError, "The token is invalid")
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
         }
 
         if(!req.body.id)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.idError, "The ID doesn't exists in the query");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "The ID doesn't exists in the query");
         let id = parseInt(req.body.id);
         if(id === NaN)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid ID");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid ID");
 
         let massageType=req.body.massageType;
         let preferredGender=parseInt(req.body.preferredGender);
@@ -668,7 +668,7 @@ export class UserRoutes{
         
         console.log("Time : "+longDateTime+" : "+Date.now());
         if(!req.body.extras)
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
 
         let extrasEquipe=req.body.extras.equipements==="true"?1:0;
         let extrasPets=req.body.extras.pets;
@@ -680,7 +680,7 @@ export class UserRoutes{
             || preferredGender==NaN
             || addressId==NaN
             || !UsersUtility.validateStringFields(extrasPets, 1, 20))
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "Invalid Input");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
         
         let dateTime = new Date(longDateTime).toISOString().slice(0, 19).replace('T', ' ');
         let sessions = DataModel.tables.sessions;
@@ -700,9 +700,9 @@ export class UserRoutes{
             };
             UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.bookingError, "Something went wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.bookingError, "Server Error");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Server Error");
         })
 
     }

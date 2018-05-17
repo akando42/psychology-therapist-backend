@@ -92,7 +92,7 @@ export class DataModel{
         docReRequested:52,
         docIgnored:53,
     }
-    public static responseStatus={
+    public static userResponse={
         success:200,
         tokenError:513,        
         originError:514,
@@ -101,6 +101,26 @@ export class DataModel{
 
         loginError:525,
 
+        registerError:535,
+
+        addressError:545,
+
+        paymentError:555,
+
+        bookingError:565,
+
+        profileError:575,
+    }
+
+    public static providerResponse={
+        success:200,
+        account_token_error:513,
+        success_token_error:514,
+        originError:515,
+        inputError:516,
+        serverError:517,
+
+        loginError:525,
         registerError:535,
 
         addressError:545,
