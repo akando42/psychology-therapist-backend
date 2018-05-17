@@ -279,6 +279,7 @@ hr/action/reject
 		request:
 			access_token:<>
 			session_token:<>
+			providerId:<ID of the Provider you recieved>
 		response:
 		200:
 			{

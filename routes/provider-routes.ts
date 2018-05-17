@@ -26,6 +26,9 @@ export class ProviderRoutes{
         server.setRoute("/hr/get/:action", (req:express.Request, res:express.Response)=>{
             me.hrGetAction(req, res);
         }, HTTPMethod.POST);
+        server.setRoute("/hr/action/:action", (req:express.Request, res:express.Response)=>{
+            me.hrAction(req, res);
+        }, HTTPMethod.POST);
     }
 
     private signUp(req:express.Request, res:express.Response):boolean{
@@ -97,17 +100,10 @@ export class ProviderRoutes{
 
 
     private login(req:express.Request, res:express.Response){
-        //Check Token
-        //Set cookie account_token
-        console.log("Login Route");
-        if(!req.cookies.account_token){
-            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
-        }else{
-            var parsedVal  = ProvidersUtility.getParsedToken(req)
-            console.log("parsed Val : "+JSON.stringify(parsedVal));
-            if(!parsedVal){
-                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_toekn is not valid");;
-            }
+        var parsedVal  = ProvidersUtility.getParsedToken(req)
+        console.log("parsed Val : "+JSON.stringify(parsedVal));
+        if(!parsedVal){
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");;
         }
 
         var email:string = String(req.body.email);
@@ -199,6 +195,19 @@ export class ProviderRoutes{
     }
 
     private hrGetAction(req:express.Request, res:express.Response){
+        if(!ProvidersUtility.getParsedToken(req)){
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
+        }
+
+        let session_token  = ProvidersUtility.getParsedToken(req, req.body.session_token, 30);
+        console.log("parsed Val : "+JSON.stringify(session_token));
+        if(!session_token){
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+        }
+        if(session_token["type"]!="Admin"){
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+        }
+
         let action = req.params.action;
         let providers = DataModel.tables.providers;
         let providersDocs = DataModel.tables.providersDoc;
@@ -209,6 +218,8 @@ export class ProviderRoutes{
             sql+=DataModel.accountStatus.accepted;
         }else if(action==="rejected"){
             sql+=DataModel.accountStatus.phaseOneRejected;
+        }else{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "The routing you specified doesnot exists");
         }
         this.database.getQueryResults(sql, []).then(result=>{
             let data={};
@@ -249,6 +260,45 @@ export class ProviderRoutes{
             })
         }, error=>{
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
+        }).catch(error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+        })
+    }
+
+    private hrAction(req:express.Request, res:express.Response){
+        if(!ProvidersUtility.getParsedToken(req)){
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
+        }
+
+        let session_token  = ProvidersUtility.getParsedToken(req, req.body.session_token, 30);
+        console.log("parsed Val : "+JSON.stringify(session_token));
+        if(!session_token){
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+        }
+        if(session_token["type"]!="Admin"){
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+        }
+        let action=req.params.action;
+        let providerId=req.body.providerId;
+
+        let providers = DataModel.tables.providers;
+        let status:number;
+        if(action==="accept"){
+            status=DataModel.accountStatus.accepted;
+        }else if(action==="reject"){
+            status=DataModel.accountStatus.phaseOneRejected;
+        }else{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "The routing you specified doesnot exists");
+        }
+        
+        this.database.update(providers.table,{
+            [providers.status]:status
+        }, {
+            [providers.id]:providerId
+        }).then(result=>{
+            return ProvidersUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the applications");
+        }, error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
         }).catch(error=>{
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
         })

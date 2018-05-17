@@ -112,7 +112,7 @@ export class DataModel{
     public static providerResponse={
         success:200,
         account_token_error:513,
-        success_token_error:514,
+        session_token_error:514,
         originError:515,
         inputError:516,
         serverError:517,
@@ -121,6 +121,7 @@ export class DataModel{
         registerError:535,
 
         hrError:545,
+        hrActionError:546,
 
         paymentError:555,
 
