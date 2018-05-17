@@ -68,11 +68,12 @@ export class ProviderRoutes{
             this.database.insert(providers.table, {
                 [providers.firstName]:firstname,
                 [providers.lastName]:lastname,
-                [providers.emailID]:email,
-                [providers.emailID]:phone,
-                [providers.emailID]:password,
                 [providers.experience]:experience,
-                [providers.qualifications]:qualifications
+                [providers.qualifications]:qualifications,
+                [providers.resume]:resume,
+                [providers.email]:email,
+                [providers.phone]:phone,
+                [providers.password]:password,
             }).then(result=>{
                 var response={
                     status:200,
@@ -125,9 +126,9 @@ export class ProviderRoutes{
     private verifyUser(email:string, pass:string, req:express.Request, res:express.Response){
         //console.log(email+" : "+pass);
         let providers = DataModel.tables.providers;
-        let sql = SQLUtility.formSelect([providers.emailID, providers.password, providers.phone, providers.twoStepsVerification],
+        let sql = SQLUtility.formSelect([providers.email, providers.password, providers.phone, providers.status],
                     providers.table,
-                    [providers.emailID],
+                    [providers.email],
                     ["="],
                     []);
         console.log("My SQL : "+sql);

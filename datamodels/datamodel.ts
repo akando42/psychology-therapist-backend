@@ -22,7 +22,10 @@ export class DataModel{
             password:"Password",
             phone:"Phone",
             image:"ProfileImage",
-            status:"AccountStatus"
+            experience:"Experience",
+            qualifications:"Qualifications",
+            resume:"Resume",
+            status:"AccountStatus",
         },
 
         userAddress:{
