@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 11, 2018 at 08:00 PM
+-- Generation Time: May 18, 2018 at 01:59 AM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -34,6 +34,39 @@ CREATE TABLE `PAYMENTS` (
   `SessionID` int(11) NOT NULL,
   `Amount` int(11) NOT NULL,
   `TransactionID` varchar(255) NOT NULL DEFAULT 'NOTDONE'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `PROVIDERDOCS`
+--
+
+CREATE TABLE `PROVIDERDOCS` (
+  `ProviderDocID` int(11) NOT NULL,
+  `ProviderID` int(11) NOT NULL,
+  `DocTitle` varchar(250) NOT NULL,
+  `DocContent` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `PROVIDERS`
+--
+
+CREATE TABLE `PROVIDERS` (
+  `ProviderID` int(11) NOT NULL,
+  `FirstName` varchar(50) NOT NULL,
+  `LastName` varchar(50) NOT NULL,
+  `EmailID` varchar(150) NOT NULL,
+  `Password` varchar(50) NOT NULL,
+  `Phone` varchar(15) NOT NULL,
+  `ProfileImage` text NOT NULL,
+  `Experience` varchar(50) NOT NULL,
+  `Qualifications` varchar(50) NOT NULL,
+  `Resume` text NOT NULL,
+  `AccountStatus` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -92,7 +125,6 @@ CREATE TABLE `USERS` (
   `AccountStatus` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-
 --
 -- Indexes for dumped tables
 --
@@ -104,10 +136,25 @@ ALTER TABLE `PAYMENTS`
   ADD PRIMARY KEY (`PaymentID`);
 
 --
+-- Indexes for table `PROVIDERDOCS`
+--
+ALTER TABLE `PROVIDERDOCS`
+  ADD PRIMARY KEY (`ProviderDocID`),
+  ADD KEY `PROVIDERDOCS` (`ProviderID`);
+
+--
+-- Indexes for table `PROVIDERS`
+--
+ALTER TABLE `PROVIDERS`
+  ADD PRIMARY KEY (`ProviderID`),
+  ADD UNIQUE KEY `EmailID` (`EmailID`);
+
+--
 -- Indexes for table `SESSIONS`
 --
 ALTER TABLE `SESSIONS`
-  ADD PRIMARY KEY (`SessionID`);
+  ADD PRIMARY KEY (`SessionID`),
+  ADD KEY `SESSIONS` (`ProviderID`);
 
 --
 -- Indexes for table `USERADDRESS`
@@ -133,10 +180,20 @@ ALTER TABLE `USERS`
 ALTER TABLE `PAYMENTS`
   MODIFY `PaymentID` int(11) NOT NULL AUTO_INCREMENT;
 --
+-- AUTO_INCREMENT for table `PROVIDERDOCS`
+--
+ALTER TABLE `PROVIDERDOCS`
+  MODIFY `ProviderDocID` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `PROVIDERS`
+--
+ALTER TABLE `PROVIDERS`
+  MODIFY `ProviderID` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `SESSIONS`
 --
 ALTER TABLE `SESSIONS`
-  MODIFY `SessionID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `SessionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `USERADDRESS`
 --
@@ -146,10 +203,22 @@ ALTER TABLE `USERADDRESS`
 -- AUTO_INCREMENT for table `USERS`
 --
 ALTER TABLE `USERS`
-  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `PROVIDERDOCS`
+--
+ALTER TABLE `PROVIDERDOCS`
+  ADD CONSTRAINT `PROVIDERDOCS` FOREIGN KEY (`ProviderID`) REFERENCES `PROVIDERS` (`ProviderID`);
+
+--
+-- Constraints for table `SESSIONS`
+--
+ALTER TABLE `SESSIONS`
+  ADD CONSTRAINT `SESSIONS` FOREIGN KEY (`ProviderID`) REFERENCES `PROVIDERS` (`ProviderID`);
 
 --
 -- Constraints for table `USERADDRESS`

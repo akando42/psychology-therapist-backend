@@ -130,6 +130,7 @@ export class ProviderRoutes{
                 }
                 var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
                 return ProvidersUtility.sendSuccess(res, req, {
+                    admin:true,
                     message:"Its Admin Login",
                     session_token:cookieStr
                 }, "Admin Logged in");
