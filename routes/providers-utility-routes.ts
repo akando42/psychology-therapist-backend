@@ -24,37 +24,38 @@ export class ProvidersUtility{
     private createToken(req:express.Request, res:express.Response){
         console.log("My Cookies : "+JSON.stringify(req.cookies));
         var ip:string = ProvidersUtility.getIPAddress(req);
-        console.log("My IP : "+ip+" - "+req.get("origin")+" : "+req.cookies.account_token);
+        console.log("My IP : "+ip+" - "+req.get("origin")+" : "+req.body.account_token);
         var tokenKey = ProvidersUtility.getTokenKey(req);
         console.log("0 : "+tokenKey+" - "+tokenKey.length);
-        if(req.cookies.account_token){
+        let account_token="";
+        if(req.body.account_token){
             console.log("02");
             try {
-                var tokenVal:string = CryptoFunctions.aes256Decrypt(req.cookies.account_token, tokenKey);
+                var tokenVal:string = CryptoFunctions.aes256Decrypt(req.body.account_token, tokenKey);
                 var parsedVal = JSON.parse(tokenVal);
                 if(parsedVal){
                     //if(parsedVal.ip!=ip || !parsedVal.date || parsedVal.origin!=req.get("origin"))
                     if(!ProvidersUtility.validateParsedToken(parsedVal, req))
-                        ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                        account_token=ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
                 }else{
-                    ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                    account_token=ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
                 }
             } catch (error) {
-                ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                account_token=ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
             }
             
         }else{
             console.log("01");
             //this.generateToken(ip, tokenKey, req.get("origin"), res);
             try {
-                ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                account_token=ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
             } catch (error) {
                 console.log("Message : "+error);
             }
             console.log("03");
         }
         var response={
-            status:200
+            account_token:account_token
         }
         //res.status(200);
         //res.end(JSON.stringify(response));
@@ -62,9 +63,9 @@ export class ProvidersUtility{
         
     }
 
-    public static getParsedToken(req:express.Request, aliveTime?:number, token?:string):{ip:string, date:string, origin:string}{
+    public static getParsedToken(req:express.Request, token?:string, aliveTime?:number):{ip:string, date:string, origin:string}{
         if(token===undefined)
-            token=req.cookies.account_token;
+            token=req.body.account_token;
         try {
             var tokenVal:string = CryptoFunctions.aes256Decrypt(token, ProvidersUtility.getTokenKey(req));
         } catch (error) {
@@ -101,7 +102,7 @@ export class ProvidersUtility{
             return false;
         }
     }
-    public static generateToken(ip:string, key:string, origin:string, res:express.Response){
+    public static generateToken(ip:string, key:string, origin:string, res:express.Response):string{
         console.log("1");
         var date = Math.floor(new Date().getTime());
         var jsonStr={
@@ -112,7 +113,8 @@ export class ProvidersUtility{
         console.log("2");
         var cookieStr:string = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), key);
         console.log("3 : "+cookieStr);
-        res.cookie("account_token", cookieStr);
+        //res.cookie("account_token", cookieStr);
+        return cookieStr;
     }
 
     public static getIPAddress(req:express.Request):string{
@@ -150,14 +152,12 @@ export class ProvidersUtility{
         }
     }
     public static sendErrorMessage(res:express.Response, req:express.Request, code:number, description:string){
-        var json={
-            status:code,
-            description:description
-        };
-        // res.status(code);
-        // res.end(JSON.stringify(json));
-        RoutesHandler.respond(res, req, json, true, json["description"], code);
+        RoutesHandler.respond(res, req, [], true, description, code);
     }
+    public static sendSuccess(res:express.Response, req:express.Request, data:any, description:string){
+        RoutesHandler.respond(res, req, data, false, description, DataModel.responseStatus.success);
+    }
+
 
     public static checkTimeThreshold(time:string, req:express.Request):boolean{
         let d1=new Date(time);

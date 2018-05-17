@@ -27,6 +27,13 @@ export class DataModel{
             resume:"Resume",
             status:"AccountStatus",
         },
+        providersDoc:{
+            table:"PROVIDERDOCS",
+            id:"ProviderDocID",
+            providerID:"ProviderID",
+            docTitle:"DocTitle",
+            DocContent:"DocContent"
+        },
 
         userAddress:{
             table:"USERADDRESS",

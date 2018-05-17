@@ -1,18 +1,21 @@
 
-/token:
+/token/providers:
     get:
       summary: 
         returns and validates an account token
-      description:
-        If the cookie named "account_token" doesn't exist in the user's browser, it will validate the request by verifying that it is being made from an authorized domain name, upon successful validation, it will set a cookie in the user's browser named "account_token" that will be used to validate every request made by the user. If the user is logged then it will validate the "account_token" and if it is not valid, it will generate a new account token. Each token must depend on the user's IP address being used to make the calls and must be encrypted using symetric AES 256 encription with a 32 bit key to be able to decode the cookie. The key to decode the cookie will be obtained from the IP address of the request and the domain name of the request. The cookie will be the result of encrypting a JSON object with the properties ip: which corresponds to the user's IP address, date: which containes the time in unix format when the cookie was set, domain: which contains the domain name from which the request has been made and signature: which is the result of encrypting using md5 the IP address, the date and the domain name together.
       produces:
         This endGETpoint doesn't return any values.
       parameters:
         This endpoint doesn't receive any parameters.
       responses:
         200:
-          description: 
-            The token has been validated or set successfully.
+        {
+          data:{
+            access_token:<store this and send in all requests>
+          }
+          message: The token has been validated or set successfully.
+        }
+          
 /provider/signup
     post:
         summary: registers a provider in the system
@@ -21,40 +24,42 @@
         produces:
             - application/json
         parameters:
-            - name: firstname
+            - access_token
+              use the access token
+            - firstname
               description: First name of the provider
               type: string
               minlength: 2
               maxlength: 20
-            - name: lastname
+            - lastname
               description: Lastname of the provider
               type: string
               minlength: 2
               maxlength: 40
-            - name: qualifications
+            - qualifications
               description: Array with the ids of the provider's qualifications
               type: Array:string
               minlength:1
-            - name: experience
+            - experience
               description: Text describing the work experience of the provider
               type: string
               minlength: 10
-            - name: resume
+            - resume
               description: Name of the temporary uploaded file containing the resume/CV of the provider
               type: string
               minlength: 10
-            - name: email
+            - email
               description: Email address of the provider
               type: string
               minlength: 6
               maxlength: 255
-            - name: phone
+            - phone
               description: Phone number of the provider
               type: number
               minlength: 6
               maxlength: 20
               format: [0-9]+
-            - name: password
+            - password
               description: Account password for the provider
               minlength: 8
               maxlength: 20
@@ -80,32 +85,27 @@
         produces:
             - application/json
         parameters:
-            - name: email
+            - account_token : <use the account token>
+            - email
               description: Email address of the provider
               type: string
               minlength: 6
               maxlength: 255
-            - name: password
+            - password
               description: Account password for the provider
               minlength: 8
               maxlength: 20
               format: Must contain a capital letter, a lower case letter, a number and a special character
         responses:
             200
-                description:
-                    The login credentials are valid and the session_token cookie has been set.
-                value:
-                    type: application/json
-                    values:
-                        - name: email
-                          description: Indicates whethere the email address has been validated or not
-                          type: boolean
-                        - name: phone
-                          description: Indicates whether the phone number has been validated or not
-                          type: boolean
-                        - name: verification
-                          description: Indicates whether two step verification is required or not
-                          type: boolean
+              {
+                data:{
+                  session_token:"Use this token for all the other requests"
+                  <all profile details>
+                }
+                message: The login credentials are valid and the session_token cookie has been set.
+              }
+                
             400
                 description:
                     Invalid input, the login credentials are not valid.

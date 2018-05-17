@@ -6,6 +6,7 @@ import {RoutesHandler} from './class/class.routeshandler';
 import {MySqlDatabase} from './class/class.mysql-database';
 import {CryptoFunctions} from './class/class.crypto-functions';
 import { ProvidersUtility } from "./routes/providers-utility-routes";
+import { ProviderRoutes } from "./routes/provider-routes";
 import { UsersUtility } from "./routes/users-utility-routes";
 import { UserRoutes } from "./routes/user-routes";
 
@@ -24,6 +25,7 @@ server.setRoute('/', (req:express.Request, res:express.Response)=>
 
 
 let provicersUtility = new ProvidersUtility(server,database);
+let providers = new ProviderRoutes(server,database);
 let usersUtility = new UsersUtility(server,database);
 let users = new UserRoutes(server, database);
 

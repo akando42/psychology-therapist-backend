@@ -11,6 +11,13 @@ export class RoutesHandler
     
     public static async respond(res:express.Response,req:express.Request,values:any,error:boolean = false,message:string = "", code:number=200)
     {
+        if(req!=undefined){
+            if(req.get('origin'))
+                res.set('Access-Control-Allow-Origin', req.get('origin'));
+            res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+            res.header("Access-Control-Allow-Headers", "X-Requested-With");
+        }
+
         res.status(code)
         res.json({
             data:values,
