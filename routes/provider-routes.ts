@@ -22,6 +22,10 @@ export class ProviderRoutes{
         server.setRoute("/provider/login", (req:express.Request, res:express.Response)=>{
             me.login(req, res);
         }, HTTPMethod.POST);
+
+        server.setRoute("/hr/get/:action", (req:express.Request, res:express.Response)=>{
+            me.hrGetAction(req, res);
+        }, HTTPMethod.POST);
     }
 
     private signUp(req:express.Request, res:express.Response):boolean{
@@ -194,5 +198,59 @@ export class ProviderRoutes{
         })
     }
 
-    
+    private hrGetAction(req:express.Request, res:express.Response){
+        let action = req.params.action;
+        let providers = DataModel.tables.providers;
+        let providersDocs = DataModel.tables.providersDoc;
+        let sql = "SELECT * FROM "+providers.table+" WHERE "+providers.status+" = "
+        if(action==="pending"){
+            sql+=DataModel.accountStatus.phaseOneDocSubmitted;
+        }else if(action==="active"){
+            sql+=DataModel.accountStatus.accepted;
+        }else if(action==="rejected"){
+            sql+=DataModel.accountStatus.phaseOneRejected;
+        }
+        this.database.getQueryResults(sql, []).then(result=>{
+            let data={};
+            let ids=[];
+            for(var i in result){
+                let out=result[i];
+                let json={
+                    firstName:out[providers.firstName],
+                    lastName:out[providers.lastName],
+                    email:out[providers.email],
+                    phone:out[providers.phone],
+                    image:out[providers.image],
+                    experience:out[providers.experience],
+                    qualifications:out[providers.qualifications],
+                    resume:out[providers.resume],
+                    status:out[providers.status],
+                    docs:[]
+                }
+                data[out[providers.id]]=json
+                ids.push(out[providers.id])
+            }
+            let sql="SELECT * FROM "+providersDocs.table+" WHERE "+providersDocs.providerID+" IN ("+ids.join(",")+")";
+            this.database.getQueryResults(sql, []).then(result=>{
+                for(var i in result){
+                    let out=result[i];
+                    data[out[providersDocs.providerID]].docs.push({
+                        id:out[providersDocs.id],
+                        docTitle:out[providersDocs.docTitle],
+                        docContent:out[providersDocs.docContent]
+                    })
+                }
+
+                return ProvidersUtility.sendSuccess(res, req, data, "Successfully fetched the datas");
+            }, error=>{
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
+            }).catch(error=>{
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+            })
+        }, error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
+        }).catch(error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+        })
+    }
 }

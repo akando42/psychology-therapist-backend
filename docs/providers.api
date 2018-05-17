@@ -248,9 +248,8 @@ hr/get/rejected
 		response:
 		200:
 			{
-				data:[
-					{
-						id:"ProviderID",
+				data:{
+					<ProviderID>:{
 						firstName:"FirstName",
 						lastName:"LastName",
 						email:"EmailID",
@@ -264,12 +263,12 @@ hr/get/rejected
 							{
 								id:"ProviderDocID",
 								docTitle:"DocTitle",
-								DocContent:"DocContent"
+								docContent:"DocContent"
 							},..
 						]
 					},
 					.....
-				]
+				}
 				message:"Some message"
 			}
 

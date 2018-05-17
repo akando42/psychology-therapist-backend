@@ -32,7 +32,7 @@ export class DataModel{
             id:"ProviderDocID",
             providerID:"ProviderID",
             docTitle:"DocTitle",
-            DocContent:"DocContent"
+            docContent:"DocContent"
         },
 
         userAddress:{
@@ -80,11 +80,8 @@ export class DataModel{
 
         //Different Phase Statuses foe providers
         phaseOne:11,
-        phaseTwo:12,
         phaseOneRejected:13,
-        phaseTwoRejected:14,
         phaseOneDocSubmitted:15,
-        phaseTwoDocSubmitted:16,
 
         //Document Status
         docUploaded:50,
@@ -123,7 +120,7 @@ export class DataModel{
         loginError:525,
         registerError:535,
 
-        addressError:545,
+        hrError:545,
 
         paymentError:555,
 
