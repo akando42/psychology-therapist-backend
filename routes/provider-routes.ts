@@ -33,13 +33,14 @@ export class ProviderRoutes{
 
     private signUp(req:express.Request, res:express.Response):boolean{
         var parsedVal  = ProvidersUtility.getParsedToken(req)
+        console.log("Parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
             ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid.");
             return false;
         }
         console.log("Signup with proper account_token");
-        var firstname:string = req.body.firstname;
-        var lastname:string = req.body.lastname;
+        var firstname:string = req.body.firstName;
+        var lastname:string = req.body.lastName;
         //TODO Need to discuss on qualifications
         var qualifications:string = JSON.stringify(req.body.qualifications);
         var experience:string = req.body.experience;
@@ -52,7 +53,7 @@ export class ProviderRoutes{
         if(!(ProvidersUtility.validateStringFields(firstname, 2, 20, res, req)
             &&ProvidersUtility.validateStringFields(lastname, 2, 40, res, req)
             &&ProvidersUtility.validateStringFields(qualifications, 2, -1, res, req)
-            &&ProvidersUtility.validateStringFields(experience, 10, -1, res, req)
+            &&ProvidersUtility.validateStringFields(experience, 3, -1, res, req)
             &&ProvidersUtility.validateStringFields(resume, 10, -1, res, req)
             &&ProvidersUtility.validateStringFields(email, 6, 255, res, req)
             &&ProvidersUtility.validateStringFields(phone, 6, 20, res, req)
@@ -81,6 +82,7 @@ export class ProviderRoutes{
                 [providers.email]:email,
                 [providers.phone]:phone,
                 [providers.password]:password,
+                [providers.status]:DataModel.accountStatus.waiting,
             }).then(result=>{
                 var response={
                     status:200,
@@ -224,7 +226,7 @@ export class ProviderRoutes{
         }
         this.database.getQueryResults(sql, []).then(result=>{
             let data={};
-            let ids=[];
+            let ids=[-1];
             for(var i in result){
                 let out=result[i];
                 let json={
@@ -243,6 +245,8 @@ export class ProviderRoutes{
                 ids.push(out[providers.id])
             }
             let sql="SELECT * FROM "+providersDocs.table+" WHERE "+providersDocs.providerID+" IN ("+ids.join(",")+")";
+            console.log(sql);
+            
             this.database.getQueryResults(sql, []).then(result=>{
                 for(var i in result){
                     let out=result[i];

@@ -26,24 +26,24 @@
         parameters:
             - access_token
               use the access token
-            - firstname
+            - firstName
               description: First name of the provider
               type: string
               minlength: 2
               maxlength: 20
-            - lastname
+            - lastName
               description: Lastname of the provider
               type: string
               minlength: 2
               maxlength: 40
             - qualifications
-              description: Array with the ids of the provider's qualifications
-              type: Array:string
-              minlength:1
+              description: Highest Qualification Recieved
+              type: string
+              minlength:2
             - experience
               description: Text describing the work experience of the provider
               type: string
-              minlength: 10
+              minlength: 3
             - resume
               description: Name of the temporary uploaded file containing the resume/CV of the provider
               type: string
