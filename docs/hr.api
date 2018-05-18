@@ -1,138 +1,72 @@
-
-/hr/login
+/provider/login
     post:
-        summary: validates a HR's credentials
+        summary: validates a provider's credentials
         description: 
-            Receives all the login information of a HR, and validates them along with the account_token. If the login information is correct, it will create a cookie named session_token in the HR's browser. The session_token cookie will be valid for 30 minutes, and will depend on the ID of the provider in the database, the IP address from where the request originated, the domain name from the request is being made, the date when the request was made, and the signature of the provider in the database. The session_token cookie will be encrypted using AES 256 symetric encription, using a 32 bit key, the key will be obtained from a combination of the provider ID in the database and the date when the provider signed up. The token will be the encrypted value of a JSON object containing provider: the ID of the provider in the database, date: the date when the cookie was created, ip: the IP address that originated the request, domain: the domain name that originated the request, footprint: the last 10 digits of the provider signature in the database, signature: the result of encrypting using md5 all the values combined.
+            Receives all the login information of a provider, and validates them along with the account_token. If the login information is correct, it will create a cookie named session_token in the provider's browser. The session_token cookie will be valid for 30 minutes, and will depend on the ID of the provider in the database, the IP address from where the request originated, the domain name from the request is being made, the date when the request was made, and the signature of the provider in the database. The session_token cookie will be encrypted using AES 256 symetric encription, using a 32 bit key, the key will be obtained from a combination of the provider ID in the database and the date when the provider signed up. The token will be the encrypted value of a JSON object containing provider: the ID of the provider in the database, date: the date when the cookie was created, ip: the IP address that originated the request, domain: the domain name that originated the request, footprint: the last 10 digits of the provider signature in the database, signature: the result of encrypting using md5 all the values combined.
         produces:
             - application/json
         parameters:
-            - name: email
-              description: Email address of the provider
-              type: string
-              minlength: 6
-              maxlength: 255
-            - name: password
-              description: Account password for the provider
-              minlength: 8
-              maxlength: 20
-              format: Must contain a capital letter, a lower case letter, a number and a special character
+            - account_token : <use the account token>
+            - email
+              massage@therapy.coach
+            - password
+              Massage@12345
         responses:
             200
-                description:
-                    The login credentials are valid and the session_token cookie has been set.
-                value:
-                    type: application/json
-                    values:
-                        - name: email
-                          description: Indicates whethere the email address has been validated or not
-                          type: boolean
-                        - name: phone
-                          description: Indicates whether the phone number has been validated or not
-                          type: boolean
-                        - name: image
-                          description: This is return the link of the profile picture
-            400
-                description:
-                    Invalid input, the login credentials are not valid.
-            403
-                description:
-                    The account_token is not valid.
-            500
-                description
-                    Internal Server Error
-            511
-                description
-                    Your account has been blocked
-            512
-                description
-                    Your Account has been deleted
-            513
-                description
-                    You are already logged in.
-
-
-hr/phase1
-    get:
-        summary:
-            Get all the application pending for Phase1
-        description:
-            The user should be logged in. It should have both account_token and the session_token. Check if both the token is set and is valid. If the tokens are set we give all the details.
-        request:
-            name: start
-            name: end
-            description: These two parameters are the integer parameters. This will be used for pagination.
-        response:
-            200
-                {
-                    description: <Successfully fetched the information>
-                    total: <Total number of pending documents>
-                    start: <The starting pointer>
-                    end: <The ending pointer>
-                    data:{
-                        id1: {
-                            name:<Full name of provider>
-                            email:<Email ID of the provider>
-                            image:<Link of the image>
-                            docs:[
-                                {
-                                    docLink:<Link of the doc>
-                                    docType:<Type of the doc>
-                                    docName:<Name of the doc>
-                                    docDescription:<Description about the provided doc>
-                                }, ..//list of docs
-                            ]
-                        }, ..//list of providers
-                    }
-                        
+            {
+                data:{
+                  session_token:"Use this token for all the other requests for HRs"
                 }
-            
-            403
-                description:
-                    The account_token is not valid.
-            405
-                description:
-                    The session_token is not valid.
-            400
-                description:
-                    Invalid input, the login credentials are not valid.
-            500
-                description:
-                    Internal server Error.
-                
-                    
-                    
-hr/docs/action
-    post
-        summary
-            Approves the doc send as input
-        description
-            First checks the account and the session token. If tokens are valid it approves the document send as the input.
-        request
-            name: docId
-                description: It contains the ID of the document we are going to approve,
-            name: providerId
-                description: Contains the provider Id whose doc it belongs to.
-            name: action
-                options:
-                    approve - Approves the document
-                    resubmit - Notifies the user to resubmit a given doc
-            name: comments
-                description: This is the description given by the hr for accepting or rejecting the documents
-        response
-            200
-                description: Successfully performed action on the docs.
-            403
-                description:
-                    The account_token is not valid.
-            405
-                description:
-                    The session_token is not valid.
-            400
-                description:
-                    Invalid input.
-            500
-                description:
-                    Internal server Error.
-            
-                
+                message:""
+            }
+
+
+hr/get/pending
+hr/get/active
+hr/get/rejected
+  	post
+		summary:
+			Gives the desired requests
+		request:
+			access_token:<>
+			session_token:<>
+		response:
+		200:
+			{
+				data:{
+					<ProviderID>:{
+						firstName:"FirstName",
+						lastName:"LastName",
+						email:"EmailID",
+						phone:"Phone",
+						image:"ProfileImage",
+						experience:"Experience",
+						qualifications:"Qualifications",
+						resume:"Resume",
+						status:"AccountStatus",
+						docs:[
+							{
+								id:"ProviderDocID",
+								docTitle:"DocTitle",
+								docContent:"DocContent"
+							},..
+						]
+					},
+					.....
+				}
+				message:"Some message"
+			}
+
+hr/action/accept
+hr/action/reject
+	post:
+		summary: To accept or reject the account
+		request:
+			access_token:<>
+			session_token:<>
+			providerId:<ID of the Provider you recieved>
+		response:
+		200:
+			{
+				message:"successfully accepted/rejected the applications"
+			}

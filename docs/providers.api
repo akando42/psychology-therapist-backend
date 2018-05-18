@@ -103,6 +103,8 @@
                   session_token:"Use this token for all the other requests"
                   <all profile details>
                 }
+                message:""
+              }
            
 /token/providers:
     get:
@@ -131,12 +133,12 @@
         parameters:
             - access_token
               use the access token
-            - firstname
+            - firstName
               description: First name of the provider
               type: string
               minlength: 2
               maxlength: 20
-            - lastname
+            - lastName
               description: Lastname of the provider
               type: string
               minlength: 2
@@ -217,74 +219,6 @@
             403
                 description:
                     The account_token is not valid.
-
-
-hr/get/pending
-hr/get/active
-hr/get/rejected
-  post
-    
-
-     message: The login credentials are valid and the session_token cookie has been set.
-              }
-                
-            400
-                description:
-                    Invalid input, the login credentials are not valid.
-            403
-                description:
-                    The account_token is not valid.
-
-
-hr/get/pending
-hr/get/active
-hr/get/rejected
-  	post
-		summary:
-			Gives the desired requests
-		request:
-			access_token:<>
-			session_token:<>
-		response:
-		200:
-			{
-				data:{
-					<ProviderID>:{
-						firstName:"FirstName",
-						lastName:"LastName",
-						email:"EmailID",
-						phone:"Phone",
-						image:"ProfileImage",
-						experience:"Experience",
-						qualifications:"Qualifications",
-						resume:"Resume",
-						status:"AccountStatus",
-						docs:[
-							{
-								id:"ProviderDocID",
-								docTitle:"DocTitle",
-								docContent:"DocContent"
-							},..
-						]
-					},
-					.....
-				}
-				message:"Some message"
-			}
-
-hr/action/accept
-hr/action/reject
-	post:
-		summary: To accept or reject the account
-		request:
-			access_token:<>
-			session_token:<>
-			providerId:<ID of the Provider you recieved>
-		response:
-		200:
-			{
-				message:"successfully accepted/rejected the applications"
-			}
 			
 
 provider/get/notification
