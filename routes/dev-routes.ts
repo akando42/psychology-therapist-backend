@@ -24,6 +24,6 @@ export class DevelopmentRoutings{
 
     private test1(req:express.Request, res:express.Response){
         let image = req.body.image;
-        ImageUtility.uploadImage(image, DataModel.imageTypes.profileImage, 1, true);
+        res.end(ImageUtility.uploadImage(image, DataModel.imageTypes.profileImage, 1, true));
     }
 }

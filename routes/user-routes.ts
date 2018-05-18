@@ -5,6 +5,7 @@ import {ExpressServer,HTTPMethod} from '../class/class.server';
 import { UsersUtility } from "./users-utility-routes";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
+import { ImageUtility } from "./image-utility";
 
 var nodemailer = require('nodemailer');
 var appConfig=require('../config/app.json');
@@ -312,8 +313,10 @@ export class UserRoutes{
             json[users.phone]=req.body.phone
         }
         if(req.body.image){
-            // if(!this.decodeBase64Image(req.body.image))
-            //     return UsersUtility.sendErrorMessage(res, DataModel.responseStatus.inputError, "The Image you sent is not base64");
+            //this.decodeBase64Image(req.body.image)
+            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, id, true);
+            if(!imageLoc)
+               return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "The Image you sent is not base64");
             json[users.image]=req.body.image
         }
 

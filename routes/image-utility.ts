@@ -32,9 +32,10 @@ export class ImageUtility {
             return undefined;
 
         var buf = new Buffer(response["data"], 'base64');
-        var address="/"+imageType+"/"+(isUser?"user":"provider")+"-"+Date.now()+"-"+id+".jpeg"//+response["type"];
+        var resps = response["type"].split("/");
+        var address="/"+imageType+"/"+(isUser?"user":"provider")+"-"+Date.now()+"-"+id+"."+resps[1];
         console.log(address);
-        fs.writeFile(this.dirLoc+address, buf);
+        fs.writeFileSync(this.dirLoc+address, buf);
         return address;
     }
 
