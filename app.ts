@@ -9,6 +9,9 @@ import { ProvidersUtility } from "./routes/providers-utility-routes";
 import { ProviderRoutes } from "./routes/provider-routes";
 import { UsersUtility } from "./routes/users-utility-routes";
 import { UserRoutes } from "./routes/user-routes";
+import { DevelopmentRoutings } from "./routes/dev-routes";
+import { ImageUtility } from "./routes/image-utility";
+var path = require('path');
 
 const appConfig=require('./config/app.json');
 const dbConfig=require('./config/db.json');
@@ -22,8 +25,11 @@ server.setRoute('/', (req:express.Request, res:express.Response)=>
 {
     RoutesHandler.respond(res,req,{},false,'The server is working!');
 },HTTPMethod.GET);
+server.server.use(express.static(path.join(__dirname, 'public')));
 
+ImageUtility.setLocation(__dirname+"/public");
 
+let dev = new DevelopmentRoutings(server, database);
 let provicersUtility = new ProvidersUtility(server,database);
 let providers = new ProviderRoutes(server,database);
 let usersUtility = new UsersUtility(server,database);

@@ -254,19 +254,6 @@ export class UserRoutes{
         })
     }
 
-
-    private decodeBase64Image(dataString) {
-        var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-        let response = {};
-        if (matches.length !== 3) {
-            return undefined;
-        }
-        response["type"] = matches[1];
-        response["data"] = new Buffer(matches[2], 'base64');
-
-        return response;
-    }
-
     private updateProfile(req:express.Request, res:express.Response){
         if(!UsersUtility.getParsedToken(req)){
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
@@ -402,15 +389,11 @@ export class UserRoutes{
         let lattitude = parseFloat(req.body.lattitude);
         let longitude = parseFloat(req.body.longitude);
         let address = req.body.address;
-        let parkLat = parseFloat(req.body.parkLat);
-        let parkLong = parseFloat(req.body.parkLong);
         let parkAddress = req.body.parkAddress;
 
         if(!UsersUtility.validateStringFields(name, 1, 50)
             || lattitude==NaN
-            || longitude==NaN
-            || parkLat==NaN
-            || parkLong==NaN)
+            || longitude==NaN)
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
         
         let addressTab = DataModel.tables.userAddress;
@@ -421,9 +404,7 @@ export class UserRoutes{
             [addressTab.latitude]:lattitude,
             [addressTab.longitude]:longitude,
             [addressTab.address]:address,
-            [addressTab.parkingLatitude]:parkLat,
-            [addressTab.parkingLongitude]:parkLong,
-            [addressTab.parkingAddress]:parkAddress,
+            [addressTab.parkingInfo]:parkAddress,
         }).then(result=>{
             let json={
                 addressId:result
@@ -464,9 +445,7 @@ export class UserRoutes{
                     lattitude:out[address.latitude],
                     longitude:out[address.longitude],
                     address:out[address.address],
-                    parkLat:out[address.parkingLatitude],
-                    parkLong:out[address.parkingLongitude],
-                    parkAddress:out[address.parkingAddress]
+                    parkAddress:out[address.parkingInfo]
                 };
                 data.push(json);
             }

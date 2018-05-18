@@ -162,8 +162,6 @@
 			lattitude:<>
 			longitude:<>
 			address:<reverse geocoded address>
-			parkLat:<>
-			parkLong:<>
 			parkAddress:<reverse geocoded parking address>
 		response:
 			200:
@@ -200,8 +198,6 @@
 						lattitude:<>
 						longitude:<>
 						address:<>
-						parkLat:<>
-						parkLong:<>
 						parkAddress:<>
 					},
 					...

@@ -34,6 +34,14 @@ export class DataModel{
             docTitle:"DocTitle",
             docContent:"DocContent"
         },
+        providerNotifications:{
+            table:"PROVIDERNOTIFICATION",
+            id:"ProviderNotificationID",
+            providerID:"ProviderID",
+            content:"NotificationContent",
+            dateTime:"NotificationDT",
+            isRead:"NotificationReadStatus"
+        },
 
         userAddress:{
             table:"USERADDRESS",
@@ -43,9 +51,7 @@ export class DataModel{
             latitude:"Lattitude",
             longitude:"Longitude",
             address:"Address",
-            parkingLatitude:"ParkingLattitude",
-            parkingLongitude:"ParkingLongitude",
-            parkingAddress:"ParkingAddress"
+            parkingInfo:"ParkingAddress"
         },
 
         sessions:{
@@ -129,4 +135,11 @@ export class DataModel{
 
         profileError:575,
     }
+
+    public static imageTypes={
+        docs:"docs",
+        profileImage:"profile-images",
+        resume:"resume"
+    }
+    
 }

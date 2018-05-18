@@ -7,6 +7,7 @@ import {UsersUtility} from "./users-utility-routes";
 import { RoutesHandler } from "../class/class.routeshandler";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
+import { ImageUtility } from "./image-utility";
 
 export class DevelopmentRoutings{
     private database:MySqlDatabase;
@@ -18,10 +19,11 @@ export class DevelopmentRoutings{
         var me:DevelopmentRoutings=this;
         server.setRoute("/dev/test1", (req:express.Request, res:express.Response)=>{
             me.test1(req, res);
-        }, HTTPMethod.GET);
+        }, HTTPMethod.POST);
     }
 
     private test1(req:express.Request, res:express.Response){
-        
+        let image = req.body.image;
+        ImageUtility.uploadImage(image, DataModel.imageTypes.profileImage, 1, true);
     }
 }

@@ -286,3 +286,183 @@ hr/action/reject
 				message:"successfully accepted/rejected the applications"
 			}
 			
+
+provider/get/notification
+	post
+		summary: Get all the notification for the user
+		request:
+			access_token:<>
+			session_token:<>
+		response:
+		200:
+			{
+				data:{
+					unreadCount:<Number of unread notifications>
+					notifications:{
+						<notifID>:{
+							content:<Content>
+							dateTime:<YYYY/MM/DD HH:mm:ss>
+							isRead:<true|false>
+						}
+					}
+				}
+				message:"successfully accepted/rejected the applications"
+			}
+
+
+provider/set/notification
+	post
+		summary: Set the notification to be read
+		request:
+			access_token:<>
+			session_token:<>
+			notificationID:<>
+		response:
+		200:
+			{
+				message:"successfully marked the notification as read"
+			}
+
+
+
+provider/get/clients
+	post
+		summary: Get all the clients
+		request:
+			access_token:<>
+			session_token:<>
+		response:
+		200:
+			{
+				data:{
+					<clientId>:{
+						name:<>
+						image:<Image Link>
+						lastBookTime:<Date|time>
+						totalEarning:<>
+						country:<>
+					}
+				}
+				message:<Successfully Fetched all the Clients>
+			}
+
+
+provider/upload/docs
+	post
+		summary: Get all the profile details
+		request:
+			access_token:<>
+			session_token:<>
+			docs:[
+				{
+					docTitle:<>
+					docContent:<Base-64>
+				},
+				...
+			]
+		response:
+		200:
+			{
+				message:<Successfully uploaded the docs>
+			}
+
+
+provider/get/profile
+	post
+		summary: Get all the profile details
+		request:
+			access_token:<>
+			session_token:<>
+		response:
+		200:
+			{
+				data:{
+					firstName:"FirstName",
+					lastName:"LastName",
+					email:"EmailID",
+					phone:"Phone",
+					image:<Image Link>,
+					experience:"Experience",
+					qualifications:"Qualifications",
+					resume:<Image Link>,
+					status:<Please check DataModel to know the integer to status mapping>
+				}
+				message:<Successfully Fetched all the Profile Details>
+			}
+
+provider/set/profile
+	post
+		summary: Get all the profile details. Only put the information you want to update
+		request:
+			access_token:<>
+			session_token:<>
+			firstName:"FirstName",
+			lastName:"LastName",
+			email:"EmailID",
+			phone:"Phone",
+			image:<Base 64 encoded>,
+			experience:"Experience",
+			qualifications:"Qualifications",
+			resume:<Base 64 encoded>,
+			password:{
+				oldPassword:<>
+				newPassword:<>
+			}
+		response:
+		200:
+			{
+				message:<Successfully updated the informations>
+			}
+
+
+provider/get/bookings/present
+provider/get/bookings/past
+	post
+		summary: Get all the profile details
+		request:
+			access_token:<>
+			session_token:<>
+		response:
+		200:
+			{
+				data:{
+					<sessionId>:{
+						name:<Name of the User>
+						phone:<Phone No.>
+						email:<Email Id>
+						gender:<>
+
+						addressLatt:<>
+						addressLong:<>
+						addressDescriiption:<>
+						parkingInfo:<>
+						
+						massageType:"MassageType",
+						massageLength:"MassageLength",
+						dateTime:"SessionDateTime",
+						equipements:"Equipements",
+						pets:"Pets",
+						medicalInformation:"MedicalInformation"
+					},..
+				}
+				message:<Successfully Fetched bookings details>
+			}
+
+provider/get/payments
+	post
+		summary:<Get the summary of the payments>
+		request:
+			access_token:<>
+			session_token:<>
+		response:
+		200:
+			{
+				data:{
+					<paymentID>:{
+						clientName:<>
+						dateTime:<>
+						amount:<>
+						transactionId:<>
+					},..
+				}
+			}
