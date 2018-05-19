@@ -264,6 +264,7 @@ export class ProviderRoutes{
             for(var i in result){
                 let out=result[i];
                 let json={
+                    providerID:out[providers.id],
                     firstName:out[providers.firstName],
                     lastName:out[providers.lastName],
                     email:out[providers.email],
@@ -381,6 +382,7 @@ export class ProviderRoutes{
             for(var i in result){
                 let out=result[i];
                 let json={
+                    notificationID:out[providersNotif.id],
                     content:out[providersNotif.content],
                     dateTime:out[providersNotif.dateTime],
                     isRead:out[providersNotif.isRead],
@@ -475,7 +477,7 @@ export class ProviderRoutes{
         let users=DataModel.tables.users;
         let sessions=DataModel.tables.sessions;
 
-        let sql="SELECT  "+users.id+", MAX("+users.firstName+") AS fisrtName, MAX("+users.lastName+") AS lastName, MAX("+users.image+") AS image, MAX("+sessions.dateTime+") AS lastBookTime, SUM(*) AS totalBookings\
+        let sql="SELECT  "+users.id+" AS userID, MAX("+users.firstName+") AS fisrtName, MAX("+users.lastName+") AS lastName, MAX("+users.image+") AS image, MAX("+sessions.dateTime+") AS lastBookTime, SUM(*) AS totalBookings\
             FROM "+sessions.table+" natural join "+users.table+" natural join "+providers.table+" \
             WHERE "+providers.id+"="+providerId+" \
             ORDER BY "+sessions.dateTime+" DESC \
@@ -658,6 +660,7 @@ export class ProviderRoutes{
                     address:out[userAddress.address],
                     parkingInfo:out[userAddress.parkingInfo],
                     
+                    sessionID:out[sessions.id],
                     massageType:out[sessions.massageType],
                     massageLength:out[sessions.massageLength],
                     dateTime:out[sessions.dateTime],
@@ -695,6 +698,7 @@ export class ProviderRoutes{
             for(var i in result){
                 let out = result[i];
                 let json={
+                    paymentID:out[payments.id],
                     clientName:out[users.firstName]+" "+out[users.lastName],
                     dateTime:out[sessions.dateTime],
                     amount:out[payments.amount],
