@@ -75,10 +75,10 @@ export class ProviderRoutes{
         var lastname:string = req.body.lastName;
         //TODO Need to discuss on qualifications
         var qualifications:string = req.body.qualifications;
-        var experience:string = req.body.experience;
-        var resume:string = req.body.resume;
+        var experience:string = req.body.experience;        
         var email:string = req.body.email;
         var phone:string = ""+req.body.phone;
+        var resume:string = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.resume, phone, false);;
         var password:string = req.body.password;
         req.body.resume="";
         console.log(JSON.stringify(req.body));

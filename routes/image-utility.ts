@@ -26,7 +26,7 @@ export class ImageUtility {
         return response;
     }
     
-    public static uploadImage(data:string, imageType:string ,id:number, isUser:boolean=true):string{
+    public static uploadImage(data:string, imageType:string ,id:any, isUser:boolean=true):string{
         let response = this.decodeBase64Image(data);
         if(!response)
             return undefined;
