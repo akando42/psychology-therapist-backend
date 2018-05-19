@@ -178,7 +178,7 @@ export class ProviderRoutes{
     private verifyUser(email:string, pass:string, req:express.Request, res:express.Response){
         //console.log(email+" : "+pass);
         let providers = DataModel.tables.providers;
-        let sql = SQLUtility.formSelect([providers.email, providers.password, providers.phone, providers.status],
+        let sql = SQLUtility.formSelect(["*"],
                     providers.table,
                     [providers.email],
                     ["="],
@@ -211,6 +211,8 @@ export class ProviderRoutes{
                     providersId : out[providers.id],
                     type:"Provider"
                 }
+                // console.log("MySTR : "+JSON.stringify(jsonStr));
+                // console.log("MySTR 2 : "+out[providers.id]);
                 var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
                 response["session_token"] = cookieStr;
                 //res.end(JSON.stringify(response));
@@ -503,7 +505,7 @@ export class ProviderRoutes{
         let sql = "SELECT * \
                 FROM "+providers.table+" \
                 WHERE "+providers.id+"="+providerId;
-        
+        console.log(sql);
         this.database.getQueryResults(sql, []).then(result=>{
             let out=result[0];
             let data={
@@ -519,7 +521,7 @@ export class ProviderRoutes{
             };
             return ProvidersUtility.sendSuccess(res, req, data, "Successfully fetched all the informations");
         }, error=>{
-            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "Something went wrong : "+error);
         }).catch(error=>{
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
         })
