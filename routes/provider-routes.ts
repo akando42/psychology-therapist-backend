@@ -450,17 +450,23 @@ export class ProviderRoutes{
                 query:"INSERT INTO "+providersDoc.table+"("+providersDoc.docTitle+", "+providersDoc.docContent+", "+providersDoc.providerID+") \
                         VALUES ('"+doc.docTitle+"', '"+imgLoc+"', "+providerId+")",
                 values:[],
-                result_id:""
+                result_id:""+i
             }
             queries.push(query);
         }
-        let query="UPDATE "+providers.table+" SET "+providers.status+"="+DataModel.accountStatus.phaseOneDocSubmitted+" \
-                WHERE "+providers.id+"="+providerId;
+        let query={
+                query:"UPDATE "+providers.table+" SET "+providers.status+"="+DataModel.accountStatus.phaseOneDocSubmitted+" \
+                    WHERE "+providers.id+"="+providerId,
+                values:[],
+                result_id:""+i
+            }
         queries.push(query);
+        console.log(JSON.stringify(queries));
+        
         this.database.transaction(queries).then(result=>{
                 return ProvidersUtility.sendSuccess(res, req, [], "Successfully uploaded all the docs");
             }, error=>{
-                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "Something went wrong : "+error);
             }).catch(error=>{
                 return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
             })
