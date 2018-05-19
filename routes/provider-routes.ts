@@ -595,5 +595,33 @@ export class ProviderRoutes{
             return;
         let providerId=session_token["providersId"];
 
+        let providers=DataModel.tables.providers;
+        let payments=DataModel.tables.payments;
+        let users=DataModel.tables.users;
+        let sessions=DataModel.tables.sessions;
+
+        let sql="SELECT * \
+                FROM "+payments.table+" natural join "+sessions.table+" natural join "+users.table+" \
+                WHERE "+sessions.providerID+"="+providerId+" \
+                ORDER BY "+sessions.dateTime+" DESC";
+        
+        this.database.getQueryResults(sql, []).then(result=>{
+            let data={};
+            for(var i in result){
+                let out = result[i];
+                let json={
+                    clientName:out[users.firstName]+" "+out[users.lastName],
+                    dateTime:out[sessions.dateTime],
+                    amount:out[payments.amount],
+                    transactionId:out[payments.transactionId],
+                }
+                data[out[payments.id]]=json;
+            }
+            return ProvidersUtility.sendSuccess(res, req, data, "Successfully fetched all transaction details");
+        }, error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+        }).catch(error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+        })
     }
 }
