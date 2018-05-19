@@ -214,8 +214,11 @@ export class ProviderRoutes{
                 var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
                 response["session_token"] = cookieStr;
                 //res.end(JSON.stringify(response));
-                RoutesHandler.respond(res, req, response, false, "Successfully verified the user", response["status"])
-                return true;
+                return ProvidersUtility.sendSuccess(res, req, {
+                    admin:false,
+                    message:"Its User Login",
+                    session_token:cookieStr
+                }, "User Logged in");
             }
         }, error=>{
             ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, error);
