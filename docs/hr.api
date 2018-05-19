@@ -28,14 +28,14 @@ hr/get/rejected
 		summary:
 			Gives the desired requests
 		request:
-			access_token:<>
+			account_token:<>
 			session_token:<>
 		response:
 		200:
 			{
 				data:{
 					<ProviderID>:{
-						providerID:<>
+                        providerID:<>
 						firstName:"FirstName",
 						lastName:"LastName",
 						email:"EmailID",
@@ -63,7 +63,7 @@ hr/action/reject
 	post:
 		summary: To accept or reject the account
 		request:
-			access_token:<>
+			account_token:<>
 			session_token:<>
 			providerId:<ID of the Provider you recieved>
 		response:
