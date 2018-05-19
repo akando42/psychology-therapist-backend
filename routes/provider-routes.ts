@@ -111,7 +111,7 @@ export class ProviderRoutes{
                 [providers.email]:email,
                 [providers.phone]:phone,
                 [providers.password]:password,
-                [providers.status]:DataModel.accountStatus.waiting,
+                [providers.status]:DataModel.accountStatus.phaseOne,
             }).then(result=>{
                 var response={
                     status:200,
@@ -237,7 +237,7 @@ export class ProviderRoutes{
         }
 
         let session_token  = ProvidersUtility.getParsedToken(req, req.body.session_token, 30);
-        console.log("parsed Val : "+JSON.stringify(session_token));
+        console.log("parsed Val 2: "+JSON.stringify(session_token));
         if(!session_token){
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
         }
