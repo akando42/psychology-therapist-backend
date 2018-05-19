@@ -6,6 +6,7 @@ import {ProvidersUtility} from "./providers-utility-routes";
 import { RoutesHandler } from "../class/class.routeshandler";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
+import { ImageUtility } from "./image-utility";
 
 export class ProviderRoutes{
 
@@ -28,6 +29,37 @@ export class ProviderRoutes{
         }, HTTPMethod.POST);
         server.setRoute("/hr/action/:action", (req:express.Request, res:express.Response)=>{
             me.hrAction(req, res);
+        }, HTTPMethod.POST);
+
+
+        server.setRoute("/provider/get/notification", (req:express.Request, res:express.Response)=>{
+            me.getNotifications(req, res);
+        }, HTTPMethod.POST);
+        server.setRoute("/provider/set/notification", (req:express.Request, res:express.Response)=>{
+            me.setNotifications(req, res);
+        }, HTTPMethod.POST);
+        
+        server.setRoute("/provider/get/clients", (req:express.Request, res:express.Response)=>{
+            me.getClients(req, res);
+        }, HTTPMethod.POST);
+
+        server.setRoute("/provider/upload/docs", (req:express.Request, res:express.Response)=>{
+            me.uploadDocs(req, res);
+        }, HTTPMethod.POST);
+
+        server.setRoute("/provider/get/profile", (req:express.Request, res:express.Response)=>{
+            me.getProfile(req, res);
+        }, HTTPMethod.POST);
+        server.setRoute("/provider/set/profile", (req:express.Request, res:express.Response)=>{
+            me.setProfile(req, res);
+        }, HTTPMethod.POST);
+
+        server.setRoute("/provider/get/bookings/:time", (req:express.Request, res:express.Response)=>{
+            me.getClients(req, res);
+        }, HTTPMethod.POST);
+
+        server.setRoute("/provider/get/payments", (req:express.Request, res:express.Response)=>{
+            me.getClients(req, res);
         }, HTTPMethod.POST);
     }
 
@@ -307,5 +339,163 @@ export class ProviderRoutes{
         }).catch(error=>{
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
         })
+    }
+
+    private authorizeProviders(req:express.Request, res:express.Response){
+        if(!ProvidersUtility.getParsedToken(req)){
+            ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
+            return undefined;
+        }
+
+        let session_token  = ProvidersUtility.getParsedToken(req, req.body.session_token, 30);
+        console.log("parsed Val : "+JSON.stringify(session_token));
+        if(!session_token){
+            ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+            return undefined;
+        }
+        if(session_token["type"]!="Provider"){
+            ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+            return undefined;
+        }
+        return session_token;
+    }
+    private getNotifications(req:express.Request, res:express.Response){
+        let session_token=this.authorizeProviders(req, res);
+        if(!session_token)
+            return;
+        let providerId=session_token["providersId"];
+        
+        let providers=DataModel.tables.providers;
+        let providersNotif=DataModel.tables.providerNotifications;
+
+        let sql = "SELECT * \
+                FROM "+providersNotif.table+" \
+                WHERE "+providersNotif.providerID+"="+providerId+" \
+                ORDER BY "+providersNotif.isRead+", "+providersNotif.dateTime+"";
+
+        this.database.getQueryResults(sql,[]).then(result=>{
+            let data={};
+            let unread=0;
+            for(var i in result){
+                let out=result[i];
+                let json={
+                    content:out[providersNotif.content],
+                    dateTime:out[providersNotif.dateTime],
+                    isRead:out[providersNotif.isRead],
+                }
+                data[out[providersNotif.id]]=json
+                if(parseInt(out[providersNotif.isRead])!=1)
+                    unread++
+            }
+            data["unreadCount"]=unread;
+            return ProvidersUtility.sendSuccess(res, req, data, "Successfully got all the notifications");
+        }, error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+        }).catch(error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+        })
+    }
+    private setNotifications(req:express.Request, res:express.Response){
+        let session_token=this.authorizeProviders(req, res);
+        if(!session_token)
+            return;
+        let providerId=session_token["providersId"];
+        let notifId=parseInt(req.body.notificationID);
+        if(notifId==NaN){
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invaild inputs");
+        }
+        
+        let providers=DataModel.tables.providers;
+        let providersNotif=DataModel.tables.providerNotifications;
+
+        this.database.update(providersNotif.table,{
+            [providersNotif.isRead]:1
+        }, {
+            [providersNotif.providerID]:providerId,
+            [providersNotif.id]:notifId
+        }).then(result=>{
+            if(result){
+                return ProvidersUtility.sendSuccess(res, req, [], "Successfully set the notification as read");
+            }
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "Something went wrong");
+        }, error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+        }).catch(error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+        })
+
+    }
+
+    private uploadDocs(req:express.Request, res:express.Response){
+        let session_token=this.authorizeProviders(req, res);
+        if(!session_token)
+            return;
+        let providerId=session_token["providersId"];
+        let docs=req.body.docs;
+        if(docs==undefined){
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invaild inputs");
+        }
+
+        let providers=DataModel.tables.providers;
+        let providersDoc=DataModel.tables.providersDoc;
+        let queries=[];
+        for(var i in docs){
+            let doc=docs[i];
+            let imgLoc = ImageUtility.uploadImage(doc.docContent, DataModel.imageTypes.docs, providerId, false);
+            let query={
+                query:"INSERT INTO "+providersDoc.table+"("+providersDoc.docTitle+", "+providersDoc.docContent+", "+providersDoc.providerID+") \
+                        VALUES ('"+doc.docTitle+"', '"+imgLoc+"', "+providerId+")",
+                values:[],
+                result_id:""
+            }
+            queries.push(query);
+        }
+        this.database.transaction(queries).then(result=>{
+                return ProvidersUtility.sendSuccess(res, req, [], "Successfully uploaded all the docs");
+            }, error=>{
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+            }).catch(error=>{
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+            })
+        
+    }
+
+    private getClients(req:express.Request, res:express.Response){
+        let session_token=this.authorizeProviders(req, res);
+        if(!session_token)
+            return;
+        let providerId=session_token["providersId"];
+
+    }
+
+    private getProfile(req:express.Request, res:express.Response){
+        let session_token=this.authorizeProviders(req, res);
+        if(!session_token)
+            return;
+        let providerId=session_token["providersId"];
+
+    }
+
+    private setProfile(req:express.Request, res:express.Response){
+        let session_token=this.authorizeProviders(req, res);
+        if(!session_token)
+            return;
+        let providerId=session_token["providersId"];
+
+    }
+
+    private getBookings(req:express.Request, res:express.Response){
+        let session_token=this.authorizeProviders(req, res);
+        if(!session_token)
+            return;
+        let providerId=session_token["providersId"];
+
+    }
+    private getPayments(req:express.Request, res:express.Response){
+        let session_token=this.authorizeProviders(req, res);
+        if(!session_token)
+            return;
+        let providerId=session_token["providersId"];
+
     }
 }
