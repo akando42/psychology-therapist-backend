@@ -129,13 +129,12 @@ export class ProvidersUtility{
     }
 
     //Returns true on valid string. False on invalid
-    public static validateStringFields(value:string, min:number, max:number, res:express.Response, req:express.Request):boolean{
+    public static validateStringFields(value:string, min:number, max:number):boolean{
         if(value===undefined){
             var response = {
                 status:400,
                 description:"Invalid input, the login credentials are not valid."
             };
-            RoutesHandler.respond(res, req,response, true, response["description"], 400);
             return false;
         }
         if(value.length>=min && max==-1?true:value.length<=max){
@@ -147,7 +146,6 @@ export class ProvidersUtility{
             };
             // res.status(400);
             // res.end(JSON.stringify(response));
-            RoutesHandler.respond(res, req,response, true, response["description"], 400);
             return false;
         }
     }

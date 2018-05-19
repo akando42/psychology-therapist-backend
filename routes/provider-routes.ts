@@ -530,7 +530,90 @@ export class ProviderRoutes{
         if(!session_token)
             return;
         let providerId=session_token["providersId"];
+        
+        let providers=DataModel.tables.providers;
+        let json={};
+        if(req.body.password){
+            //TODO Write segment to update password.
+            let passwords = req.body.password;
+            if(!ProvidersUtility.validateStringFields(passwords.oldPassword, 8, 50)
+                || !ProvidersUtility.validateStringFields(passwords.newPassword, 8, 50)
+                || !(passwords.newPassword.match(/[A-Z]/) && passwords.newPassword.match(/[a-z]/) && passwords.newPassword.match(/[0-9]/) && passwords.newPassword.match(/[^A-Za-z0-9]/))) 
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The Password should follow the rules");
 
+            json[providers.password]=passwords.newPassword;
+            this.database.update(providers.table, json, {
+                [providers.id]:providerId,
+                [providers.password]:passwords.oldPassword
+            }).then(result=>{
+                if(result){
+                    return ProvidersUtility.sendSuccess(res, req, [], "Successfully updated the details");
+                }else{
+                    return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.profileError, "Cannot find profile with that ID and password");
+                }
+            }, error=>{
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.profileError, "Something went wrong!! "+error);
+            }).catch(error=>{
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.profileError, "Server Error");
+            })
+
+            return;
+        }
+
+        if(req.body.firstName){
+            if(!ProvidersUtility.validateStringFields(req.body.firstName, 1, 50)) 
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invalid Input");
+            json[providers.firstName]=req.body.firstName
+        }
+        if(req.body.lastName){
+            if(!ProvidersUtility.validateStringFields(req.body.lastName, 1, 50)) 
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invalid Input");
+            json[providers.lastName]=req.body.lastName
+        }
+        if(req.body.experience){
+            if(!ProvidersUtility.validateStringFields(req.body.experience, 3, -1)) 
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invalid Input");
+            json[providers.experience]=req.body.experience
+        }
+        if(req.body.qualifications){
+            if(!ProvidersUtility.validateStringFields(req.body.qualifications, 2, -1)) 
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invalid Input");
+            json[providers.qualifications]=req.body.qualifications
+        }
+        if(req.body.phone){
+            if(!ProvidersUtility.validateStringFields(req.body.phone, 1, 10)
+                || !req.body.phone.match(/^[0-9]+$/)) 
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invalid Input");
+            json[providers.phone]=req.body.phone
+        }
+        if(req.body.image){
+            //this.decodeBase64Image(req.body.image)
+            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, providerId, false);
+            if(!imageLoc)
+               return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The Image you sent is not base64");
+            json[providers.image]=imageLoc
+        }
+        if(req.body.resume){
+            //this.decodeBase64Image(req.body.image)
+            let imageLoc = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.docs, providerId, false);
+            if(!imageLoc)
+               return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The Image you sent is not base64");
+            json[providers.resume]=imageLoc
+        }
+
+        this.database.update(providers.table, json, {
+            [providers.id]:providerId
+        }).then(result=>{
+            if(result){
+                return ProvidersUtility.sendSuccess(res, req, [], "Successfully updated the details");
+            }else{
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.profileError, "Cannot find profile with that ID");
+            }
+        }, error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.profileError, "Something went wrong!! "+error);
+        }).catch(error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.profileError, "Server Error");
+        })
     }
 
     private getBookings(req:express.Request, res:express.Response){
