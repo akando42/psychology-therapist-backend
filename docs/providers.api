@@ -294,11 +294,11 @@ provider/get/clients
 			{
 				data:{
 					<clientId>:{
-						name:<>
+						firstName:<>
+						lastName:<>
 						image:<Image Link>
 						lastBookTime:<Date|time>
-						totalEarning:<>
-						country:<>
+						totalBookings:<>
 					}
 				}
 				message:<Successfully Fetched all the Clients>
@@ -372,7 +372,7 @@ provider/get/bookings/past
 
 						addressLatt:<>
 						addressLong:<>
-						addressDescriiption:<>
+						address:<>
 						parkingInfo:<>
 						
 						massageType:"MassageType",

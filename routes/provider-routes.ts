@@ -450,6 +450,9 @@ export class ProviderRoutes{
             }
             queries.push(query);
         }
+        let query="UPDATE "+providers.table+" SET "+providers.status+"="+DataModel.accountStatus.phaseOneDocSubmitted+" \
+                WHERE "+providers.id+"="+providerId;
+        queries.push(query);
         this.database.transaction(queries).then(result=>{
                 return ProvidersUtility.sendSuccess(res, req, [], "Successfully uploaded all the docs");
             }, error=>{
@@ -466,6 +469,27 @@ export class ProviderRoutes{
             return;
         let providerId=session_token["providersId"];
 
+        let providers=DataModel.tables.providers;
+        let users=DataModel.tables.users;
+        let sessions=DataModel.tables.sessions;
+
+        let sql="SELECT  "+users.id+", MAX("+users.firstName+") AS fisrtName, MAX("+users.lastName+") AS lastName, MAX("+users.image+") AS image, MAX("+sessions.dateTime+") AS lastBookTime, SUM(*) AS totalBookings\
+            FROM "+sessions.table+" natural join "+users.table+" natural join "+providers.table+" \
+            WHERE "+providers.id+"="+providerId+" \
+            ORDER BY "+sessions.dateTime+" DESC \
+            GROUP BY "+users.id+" ";
+        this.database.getQueryResults(sql, []).then(result=>{
+            let data={};
+            for(var i in result){
+                let out=result[i];
+                data[out[users.id]]=out;
+            }
+            return ProvidersUtility.sendSuccess(res, req, data, "Successfully fetched all the clients");
+        }, error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+        }).catch(error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+        })
     }
 
     private getProfile(req:express.Request, res:express.Response){
@@ -474,6 +498,31 @@ export class ProviderRoutes{
             return;
         let providerId=session_token["providersId"];
 
+        let providers=DataModel.tables.providers;
+
+        let sql = "SELECT * \
+                FROM "+providers.table+" \
+                WHERE "+providers.id+"="+providerId;
+        
+        this.database.getQueryResults(sql, []).then(result=>{
+            let out=result[0];
+            let data={
+                firstName:out[providers.firstName],
+                lastName:out[providers.lastName],
+                email:out[providers.email],
+                phone:out[providers.phone],
+                image:out[providers.image],
+                experience:out[providers.experience],
+                qualifications:out[providers.qualifications],
+                resume:out[providers.resume],
+                status:out[providers.status]
+            };
+            return ProvidersUtility.sendSuccess(res, req, data, "Successfully fetched all the informations");
+        }, error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+        }).catch(error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+        })
     }
 
     private setProfile(req:express.Request, res:express.Response){
@@ -489,7 +538,56 @@ export class ProviderRoutes{
         if(!session_token)
             return;
         let providerId=session_token["providersId"];
+        let time = req.params.time;
+        let comparator="";
 
+        if(time=="present"){
+            comparator=" >= ";
+        }else if(time=="past"){
+            comparator=" < ";
+        }else{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The path specified is wrong");
+        }
+
+        let providers=DataModel.tables.providers;
+        let users=DataModel.tables.users;
+        let sessions=DataModel.tables.sessions;
+        let userAddress=DataModel.tables.userAddress;
+        
+        let sql = "SELECT  * \
+                FROM "+sessions.table+" natural join "+users.table+" natural join "+userAddress.table+" \
+                WHERE "+sessions.providerID+"="+providerId+" \
+                AND "+sessions.dateTime+comparator+"now()";
+        this.database.getQueryResults(sql, []).then(result=>{
+            let data={};
+            for(var i in result){
+                let out=result[i];
+                let json={
+                    name:out[users.firstName]+" "+out[users.lastName],
+                    phone:out[users.phone],
+                    email:out[users.email],
+                    gender:out[users.gender],
+
+                    addressLatt:out[userAddress.latitude],
+                    addressLong:out[userAddress.longitude],
+                    address:out[userAddress.address],
+                    parkingInfo:out[userAddress.parkingInfo],
+                    
+                    massageType:out[sessions.massageType],
+                    massageLength:out[sessions.massageLength],
+                    dateTime:out[sessions.dateTime],
+                    equipements:out[sessions.equipements],
+                    pets:out[sessions.pets],
+                    medicalInformation:out[sessions.medicalInformation]
+                }
+                data[out[sessions.id]]=json;
+            }
+            return ProvidersUtility.sendSuccess(res, req, data, "Successfully fetched all the session details");
+        }, error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+        }).catch(error=>{
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+        })
     }
     private getPayments(req:express.Request, res:express.Response){
         let session_token=this.authorizeProviders(req, res);
