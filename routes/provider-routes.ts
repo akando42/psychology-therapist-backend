@@ -63,7 +63,7 @@ export class ProviderRoutes{
         }, HTTPMethod.POST);
     }
 
-    private signUp(req:express.Request, res:express.Response):boolean{
+    private signUp(req:express.Request, res:express.Response){
         var parsedVal  = ProvidersUtility.getParsedToken(req)
         console.log("Parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
@@ -74,23 +74,24 @@ export class ProviderRoutes{
         var firstname:string = req.body.firstName;
         var lastname:string = req.body.lastName;
         //TODO Need to discuss on qualifications
-        var qualifications:string = JSON.stringify(req.body.qualifications);
+        var qualifications:string = req.body.qualifications;
         var experience:string = req.body.experience;
         var resume:string = req.body.resume;
         var email:string = req.body.email;
-        var phone:string = req.body.phone;
+        var phone:string = ""+req.body.phone;
         var password:string = req.body.password;
+        req.body.resume="";
+        console.log(JSON.stringify(req.body));
 
-
-        if(!(ProvidersUtility.validateStringFields(firstname, 2, 20, res, req)
-            &&ProvidersUtility.validateStringFields(lastname, 2, 40, res, req)
-            &&ProvidersUtility.validateStringFields(qualifications, 2, -1, res, req)
-            &&ProvidersUtility.validateStringFields(experience, 3, -1, res, req)
-            &&ProvidersUtility.validateStringFields(resume, 10, -1, res, req)
-            &&ProvidersUtility.validateStringFields(email, 6, 255, res, req)
-            &&ProvidersUtility.validateStringFields(phone, 6, 20, res, req)
-            &&ProvidersUtility.validateStringFields(password, 8, 20, res, req))){
-                return;
+        if(!(ProvidersUtility.validateStringFields(firstname, 2, 50)
+            &&ProvidersUtility.validateStringFields(lastname, 2, 50)
+            &&ProvidersUtility.validateStringFields(qualifications, 2, -1)
+            &&ProvidersUtility.validateStringFields(experience, 3, -1)
+            &&ProvidersUtility.validateStringFields(resume, 10, -1)
+            &&ProvidersUtility.validateStringFields(email, 6, 255)
+            &&ProvidersUtility.validateStringFields(phone, 6, 20)
+            &&ProvidersUtility.validateStringFields(password, 8, 20))){
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The input is invalid...");;
             }
         
         // /[0-9]+/.
@@ -98,11 +99,7 @@ export class ProviderRoutes{
         if(!phone.match(/^[0-9]+$/)
             || !(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/))
             || !email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
-            var response={
-                status:400,
-                description:"Invalid input, the parameters were not valid."
-            };
-            RoutesHandler.respond(res, req, response, true, response["description"],  response["status"]);
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invalid input, the parameters were not valid.");;
         }else{
             var providers = DataModel.tables.providers;
             this.database.insert(providers.table, {
@@ -144,9 +141,9 @@ export class ProviderRoutes{
         var password:string = String(req.body.password);
 
         // console.log(email+" : "+password);
-        if(!(ProvidersUtility.validateStringFields(email, 6, 255, res, req)
-            && ProvidersUtility.validateStringFields(password, 8, 20, res, req))){
-                return false;
+        if(!(ProvidersUtility.validateStringFields(email, 6, 255)
+            && ProvidersUtility.validateStringFields(password, 8, 20))){
+                return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The input is invalid...");;
             }
             
         console.log("My Email : "+email);
