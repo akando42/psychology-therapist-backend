@@ -409,9 +409,13 @@
 							sessionId:<>
 							amount:<>
 							providerName:<>
-							massageType:<>
-							massageLength:<>
-							massageDate:<>
+							massageType:<>,
+							massageLength:<>,
+							preferredGender:<>,
+							massageDate:<>,
+							pets:<>,
+							equipements:<>,
+							medicalInformation:<>,
 						},
 						....
 					],

@@ -606,7 +606,11 @@ export class UserRoutes{
                     providerName:out[providers.firstName]+" "+out[providers.lastName],
                     massageType:out[sessions.massageType],
                     massageLength:out[sessions.massageLength],
+                    preferredGender:out[sessions.preferredGender],
                     massageDate:out[sessions.dateTime],
+                    pets:out[sessions.pets],
+                    equipements:out[sessions.equipements],
+                    medicalInformation:out[sessions.medicalInformation],
                 };
                 if(!isSession){
                     json["paymentId"]=out[payments.id];
