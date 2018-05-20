@@ -338,7 +338,7 @@ export class ProviderRoutes{
         }).then(result=>{
             return ProvidersUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the applications");
         }, error=>{
-            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
         }).catch(error=>{
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
         })
@@ -394,7 +394,7 @@ export class ProviderRoutes{
             data["unreadCount"]=unread;
             return ProvidersUtility.sendSuccess(res, req, data, "Successfully got all the notifications");
         }, error=>{
-            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
         }).catch(error=>{
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
         })
@@ -423,7 +423,7 @@ export class ProviderRoutes{
             }
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "Something went wrong");
         }, error=>{
-            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
         }).catch(error=>{
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
         })
@@ -483,11 +483,12 @@ export class ProviderRoutes{
         let users=DataModel.tables.users;
         let sessions=DataModel.tables.sessions;
 
-        let sql="SELECT  "+users.id+" AS userID, MAX("+users.firstName+") AS fisrtName, MAX("+users.lastName+") AS lastName, MAX("+users.image+") AS image, MAX("+sessions.dateTime+") AS lastBookTime, SUM(*) AS totalBookings\
+        let sql="SELECT  "+users.id+" AS userID, MAX("+users.firstName+") AS fisrtName, MAX("+users.lastName+") AS lastName, MAX("+users.image+") AS image, MAX("+sessions.dateTime+") AS lastBookTime, COUNT(*) AS totalBookings\
             FROM "+sessions.table+" natural join "+users.table+" natural join "+providers.table+" \
             WHERE "+providers.id+"="+providerId+" \
-            ORDER BY "+sessions.dateTime+" DESC \
             GROUP BY "+users.id+" ";
+        console.log(sql);
+        
         this.database.getQueryResults(sql, []).then(result=>{
             let data={};
             for(var i in result){
@@ -496,7 +497,7 @@ export class ProviderRoutes{
             }
             return ProvidersUtility.sendSuccess(res, req, data, "Successfully fetched all the clients");
         }, error=>{
-            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "Something went wrong : "+error);
         }).catch(error=>{
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
         })
@@ -678,7 +679,7 @@ export class ProviderRoutes{
             }
             return ProvidersUtility.sendSuccess(res, req, data, "Successfully fetched all the session details");
         }, error=>{
-            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
         }).catch(error=>{
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
         })
@@ -714,7 +715,7 @@ export class ProviderRoutes{
             }
             return ProvidersUtility.sendSuccess(res, req, data, "Successfully fetched all transaction details");
         }, error=>{
-            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrActionError, "We couldnt find any provider with that ID");
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
         }).catch(error=>{
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
         })
