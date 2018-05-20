@@ -107,6 +107,7 @@ export class DataModel{
         loginError:525,
 
         registerError:535,
+        emailError:536,
 
         addressError:545,
 

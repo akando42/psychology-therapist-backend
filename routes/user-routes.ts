@@ -177,10 +177,10 @@ export class UserRoutes{
             [users.gender]:gender,
             [users.status]:debug?DataModel.accountStatus.accepted:DataModel.accountStatus.waiting,
         }).then(result=>{
+            if(debug)
+                return UsersUtility.sendSuccess(res,[], "Successfully registered!! We have sent you a cofirmation mail!");
             this.sendEmailConfirmation(email, fname, lname, res);
         }, error=>{
-            if(debug)
-                return this.sendEmailConfirmation(email, fname, lname, res);
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, error);
         }).catch(error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "Server Error");
@@ -211,7 +211,7 @@ export class UserRoutes{
         this.transporter.sendMail(mailOptions, function(error, info){
             if (error) {
                 console.log(error);
-                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "Server Error : "+error);
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.emailError, "Server Error : "+error);
             } else {
                 console.log('Email sent: ' + info.response);
                 return UsersUtility.sendSuccess(res,[], "Successfully registered!! We have sent you a cofirmation mail!");
