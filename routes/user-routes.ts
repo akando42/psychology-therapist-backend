@@ -667,8 +667,10 @@ export class UserRoutes{
         
         let dateTime = new Date(longDateTime).toISOString().slice(0, 19).replace('T', ' ');
         let sessions = DataModel.tables.sessions;
-        
+        let providerID=6;
         this.database.insert(sessions.table,{
+            [sessions.providerID]:providerID,
+            [sessions.userID]:id,
             [sessions.massageType]:massageType,
             [sessions.preferredGender]:preferredGender,
             [sessions.massageLength]:massageLength,
