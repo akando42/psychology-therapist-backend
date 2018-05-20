@@ -80,6 +80,8 @@ export class ProviderRoutes{
         var phone:string = ""+req.body.phone;
         var resume:string = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.resume, phone, false);;
         var password:string = req.body.password;
+        var lattitude = parseFloat(req.body.lattitude);
+        var longitude = parseFloat(req.body.longitude);
         req.body.resume="";
         console.log(JSON.stringify(req.body));
 
@@ -90,15 +92,19 @@ export class ProviderRoutes{
             &&ProvidersUtility.validateStringFields(resume, 10, -1)
             &&ProvidersUtility.validateStringFields(email, 6, 255)
             &&ProvidersUtility.validateStringFields(phone, 6, 20)
+            &&lattitude!=NaN
+            &&longitude!=NaN
             &&ProvidersUtility.validateStringFields(password, 8, 20))){
                 return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The input is invalid...");;
             }
         
         // /[0-9]+/.
         console.log("2");
-        if(!phone.match(/^[0-9]+$/)
-            || !(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/))
-            || !email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
+        if(!phone.match(/^[0-9]+$/))
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invalid input, Phone number is not valid");
+        else if(!(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/)))
+            return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invalid input, Password should containg atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
+        else if(!email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
             return ProvidersUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "Invalid input, the parameters were not valid.");;
         }else{
             var providers = DataModel.tables.providers;
@@ -110,6 +116,8 @@ export class ProviderRoutes{
                 [providers.resume]:resume,
                 [providers.email]:email,
                 [providers.phone]:phone,
+                [providers.lattitude]:lattitude,
+                [providers.longitude]:longitude,
                 [providers.password]:password,
                 [providers.status]:DataModel.accountStatus.phaseOne,
             }).then(result=>{

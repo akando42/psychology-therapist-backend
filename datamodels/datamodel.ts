@@ -24,6 +24,8 @@ export class DataModel{
             image:"ProfileImage",
             experience:"Experience",
             qualifications:"Qualifications",
+            lattitude:"ProviderLattitude",
+            longitude:"ProviderLongitude",
             resume:"Resume",
             status:"AccountStatus",
         },
