@@ -55,11 +55,11 @@ export class ProviderRoutes{
         }, HTTPMethod.POST);
 
         server.setRoute("/provider/get/bookings/:time", (req:express.Request, res:express.Response)=>{
-            me.getClients(req, res);
+            me.getBookings(req, res);
         }, HTTPMethod.POST);
 
         server.setRoute("/provider/get/payments", (req:express.Request, res:express.Response)=>{
-            me.getClients(req, res);
+            me.getPayments(req, res);
         }, HTTPMethod.POST);
     }
 

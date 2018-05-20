@@ -312,6 +312,7 @@ export class UserRoutes{
                 return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
             json[users.phone]=req.body.phone
         }
+        console.log("Its here");
         if(req.body.image){
             //this.decodeBase64Image(req.body.image)
             let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, id, true);
@@ -319,7 +320,7 @@ export class UserRoutes{
                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "The Image you sent is not base64");
             json[users.image]=imageLoc
         }
-
+        console.log(JSON.stringify(json));
         this.database.update(users.table, json, {
             [users.id]:id
         }).then(result=>{

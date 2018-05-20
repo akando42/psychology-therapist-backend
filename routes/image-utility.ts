@@ -15,7 +15,7 @@ export class ImageUtility {
     }
 
     private static decodeBase64Image(dataString) {
-        var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+        var matches = dataString.match(/^data:([A-Za-z-+\\\/]+);base64,(.+)$/);
         let response = {};
         if (matches.length !== 3) {
             return undefined;
@@ -27,7 +27,9 @@ export class ImageUtility {
     }
     
     public static uploadImage(data:string, imageType:string ,id:any, isUser:boolean=true):string{
+        console.log("Here1");
         let response = this.decodeBase64Image(data);
+        console.log("Here2");
         if(!response)
             return undefined;
 
