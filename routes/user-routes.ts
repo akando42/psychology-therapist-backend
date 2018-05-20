@@ -439,6 +439,7 @@ export class UserRoutes{
             ,[address.userID]
             ,["="]
             ,[]);
+        console.log(sql);
         this.database.getQueryResults(sql, [id]).then(result=>{
             let data=[];
             for(var i in result){
@@ -586,7 +587,7 @@ export class UserRoutes{
         let sql = "SELECT * \
             FROM "+payments.table+" natural join "+sessions.table+" natural join "+providers.table+" \
             WHERE "+sessions.userID+"="+id;
-
+        console.log(sql);
         this.database.getQueryResults(sql, [id]).then(result=>{
             let pending=[];
             let present=[];
