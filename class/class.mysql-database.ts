@@ -323,7 +323,7 @@ export class MySqlDatabase
                 let processedElement:{columns:string[],values:string[]}=this.processObject(element,connection,uppercase);    
                 
                 let query:string = "INSERT INTO "+(uppercase?table.toUpperCase():table)+"("+processedElement.columns.join(',')+") VALUES("+processedElement.values.join(',')+")";
-
+                 console.log("Insert Query : "+query);
                 if(uniqueFields.length>0 && idColumn.length>0)
                 {
                     let fieldsToMatch:string[]=[];
