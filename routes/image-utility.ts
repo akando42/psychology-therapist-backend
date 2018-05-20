@@ -26,13 +26,16 @@ export class ImageUtility {
         return response;
     }
     
-    public static uploadImage(data:string, imageType:string ,id:any, isUser:boolean=true):string{
-        console.log("Here1");
-        let response = this.decodeBase64Image(data);
-        console.log("Here2");
-        if(!response)
-            return undefined;
-
+    public static uploadImage(data:string, imageType:string ,id:any, isUser:boolean=true, directData:boolean=false):string{
+        let response={};
+        if(!directData){
+            response = this.decodeBase64Image(data);
+            if(!response)
+                return undefined;
+        }else{
+            response["type"] = "images/png";
+            response["data"] = data
+        }
         var buf = new Buffer(response["data"], 'base64');
         var resps = response["type"].split("/");
         var address="/"+imageType+"/"+(isUser?"user":"provider")+"-"+Date.now()+"-"+id+"."+resps[1];
