@@ -672,7 +672,9 @@ export class UserRoutes{
         
         let dateTime = new Date(longDateTime).toISOString().slice(0, 19).replace('T', ' ');
         let sessions = DataModel.tables.sessions;
+        let payments = DataModel.tables.payments;
         let providerID=6;
+        let myThis=this;
         this.database.insert(sessions.table,{
             [sessions.providerID]:providerID,
             [sessions.userID]:id,
@@ -685,10 +687,29 @@ export class UserRoutes{
             [sessions.pets]:extrasPets,
             [sessions.medicalInformation]:extrasInfo,
         }).then(result=>{
-            let json={
-                sessionId:result
-            };
-            UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
+
+            //This is for debug..
+            myThis.database.insert(payments.table, {
+                [payments.amount]:12,
+                [payments.sessionID]:result,
+                [payments.transactionId]:"Somxx235yiasfb"
+            }).then(result2=>{
+                let json={
+                    sessionId:result
+                };
+                UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
+            }, error=>{
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
+            }).catch(error=>{
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Server Error");
+            })
+
+            
+            //TODO Uncomment the below code later
+            // let json={
+            //     sessionId:result
+            // };
+            // UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
         }, error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
         }).catch(error=>{
