@@ -105,6 +105,12 @@ export class DataModel{
             accountStatus:"HRAccountStatus"
         }
     }
+
+    public static userTypes={
+        hr:"HR",
+        admin:"Admin",
+        provider:"Provider"
+    }
     public static accountStatus={
         waiting:0,
         accepted:1,

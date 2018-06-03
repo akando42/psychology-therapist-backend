@@ -2,8 +2,9 @@ import * as express from 'express';
 import {MySqlDatabase} from '../class/class.mysql-database';
 import {CryptoFunctions} from '../class/class.crypto-functions'
 import {ExpressServer,HTTPMethod} from '../class/class.server';
-import {ProvidersUtility} from "./utility-routes";
 import { RoutesHandler } from "../class/class.routeshandler";
+
+import { WebUtility } from "./web-utility-routes";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 
@@ -16,8 +17,8 @@ export class HRAdminRoutes{
         this.database=db;
         this.server=server;
         var me:HRAdminRoutes=this;
-        server.setRoute("/hradmin/login", (req:express.Request, res:express.Response)=>{
-
+        server.setRoute("/admin/login", (req:express.Request, res:express.Response)=>{
+            
         }, HTTPMethod.POST);
     }
 

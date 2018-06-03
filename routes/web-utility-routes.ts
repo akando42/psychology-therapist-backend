@@ -6,7 +6,7 @@ import { RoutesHandler } from "../class/class.routeshandler";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 
-export class ProvidersUtility{
+export class WebUtility{
     private database:MySqlDatabase;
     private server:ExpressServer;
     private static tokenRandText = "#4782q6hjnbb%6^&#&*!*bjhVU^&%^E^%$2jhrf**&$*Q(~)$*";
@@ -16,16 +16,16 @@ export class ProvidersUtility{
         this.database=db;    
         var me=this;
 
-        server.setRoute("/token/providers", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/token/web", (req:express.Request, res:express.Response)=>{
             me.createToken(req, res);
         }, HTTPMethod.GET);
     }
 
     private createToken(req:express.Request, res:express.Response){
         console.log("My Cookies : "+JSON.stringify(req.cookies));
-        var ip:string = ProvidersUtility.getIPAddress(req);
+        var ip:string = WebUtility.getIPAddress(req);
         console.log("My IP : "+ip+" - "+req.get("origin")+" : "+req.body.account_token);
-        var tokenKey = ProvidersUtility.getTokenKey(req);
+        var tokenKey = WebUtility.getTokenKey(req);
         console.log("0 : "+tokenKey+" - "+tokenKey.length);
         let account_token="";
         if(req.body.account_token){
@@ -35,20 +35,20 @@ export class ProvidersUtility{
                 var parsedVal = JSON.parse(tokenVal);
                 if(parsedVal){
                     //if(parsedVal.ip!=ip || !parsedVal.date || parsedVal.origin!=req.get("origin"))
-                    if(!ProvidersUtility.validateParsedToken(parsedVal, req))
-                        account_token=ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                    if(!WebUtility.validateParsedToken(parsedVal, req))
+                        account_token=WebUtility.generateToken(ip, tokenKey, req.get("origin"), res);
                 }else{
-                    account_token=ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                    account_token=WebUtility.generateToken(ip, tokenKey, req.get("origin"), res);
                 }
             } catch (error) {
-                account_token=ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                account_token=WebUtility.generateToken(ip, tokenKey, req.get("origin"), res);
             }
             
         }else{
             console.log("01");
             //this.generateToken(ip, tokenKey, req.get("origin"), res);
             try {
-                account_token=ProvidersUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                account_token=WebUtility.generateToken(ip, tokenKey, req.get("origin"), res);
             } catch (error) {
                 console.log("Message : "+error);
             }
@@ -67,7 +67,7 @@ export class ProvidersUtility{
         if(token===undefined)
             token=req.body.account_token;
         try {
-            var tokenVal:string = CryptoFunctions.aes256Decrypt(token, ProvidersUtility.getTokenKey(req));
+            var tokenVal:string = CryptoFunctions.aes256Decrypt(token, WebUtility.getTokenKey(req));
         } catch (error) {
             //UtilityRoutes.sendErrorMessage(res, req, 403, "The account_token is not valid");
             return undefined;
@@ -75,7 +75,7 @@ export class ProvidersUtility{
         var parsedVal = JSON.parse(tokenVal);
         if(parsedVal){
             console.log("Parsed Val : "+JSON.stringify(parsedVal));
-            if(ProvidersUtility.validateParsedToken(parsedVal, req, aliveTime)){
+            if(WebUtility.validateParsedToken(parsedVal, req, aliveTime)){
                 return parsedVal;
             }else{
                 return undefined;
@@ -85,7 +85,7 @@ export class ProvidersUtility{
         }
     }
     public static validateParsedToken(parsedVal:{ip:string, date:string, origin:string}, req:express.Request, aliveTime?:number):boolean{
-        if(parsedVal.ip==ProvidersUtility.getIPAddress(req) 
+        if(parsedVal.ip==WebUtility.getIPAddress(req) 
             && parsedVal.date 
             && parsedVal.origin==req.get("origin")){
             
@@ -123,8 +123,8 @@ export class ProvidersUtility{
         return ip;
     }
     public static getTokenKey(req:express.Request):string{
-        var ip:string = ProvidersUtility.getIPAddress(req);
-        var tokenKey = CryptoFunctions.get256BitKey([ip, req.get("origin"), ProvidersUtility.tokenRandText]);
+        var ip:string = WebUtility.getIPAddress(req);
+        var tokenKey = CryptoFunctions.get256BitKey([ip, req.get("origin"), WebUtility.tokenRandText]);
         return tokenKey;
     }
 

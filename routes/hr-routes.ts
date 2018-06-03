@@ -2,8 +2,9 @@ import * as express from 'express';
 import {MySqlDatabase} from '../class/class.mysql-database';
 import {CryptoFunctions} from '../class/class.crypto-functions'
 import {ExpressServer,HTTPMethod} from '../class/class.server';
-import {ProvidersUtility} from "./utility-routes";
 import { RoutesHandler } from "../class/class.routeshandler";
+
+import { WebUtility } from "./web-utility-routes";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 
@@ -15,52 +16,97 @@ export class HRRoutes{
         HRRoutes.database=db;
         HRRoutes.server=server;
         var me:HRRoutes=this;
-        server.setRoute("/hr/login", (req:express.Request, res:express.Response)=>{
-            me.login(req, res);
+
+        server.setRoute("/admin/login", (req:express.Request, res:express.Response)=>{
+            me.hrLogin(req, res);
         }, HTTPMethod.POST);
 
-        server.setRoute("/hr/phase1", (req:express.Request, res:express.Response)=>{
-            me.getPhaseDocs(req, res, 1);
-        }, HTTPMethod.GET);
-
-        server.setRoute("/hr/phase2", (req:express.Request, res:express.Response)=>{
-            me.getPhaseDocs(req, res, 2);
-        }, HTTPMethod.GET);
+        server.setRoute("/hr/get/:action", (req:express.Request, res:express.Response)=>{
+            me.hrGetAction(req, res);
+        }, HTTPMethod.POST);
+        server.setRoute("/hr/action/:action", (req:express.Request, res:express.Response)=>{
+            me.hrAction(req, res);
+        }, HTTPMethod.POST);
     }
 
-    private login(req:express.Request, res:express.Response){
-        console.log("Login Route");
-        if(!req.cookies.account_token){
-            ProvidersUtility.sendErrorMessage(res, req, 403, "The account_token is not valid");
-            return false;
-        }else{
-            var parsedVal  = ProvidersUtility.getParsedToken(req)
-            console.log("parsed Val : "+JSON.stringify(parsedVal));
-            if(!parsedVal){
-                ProvidersUtility.sendErrorMessage(res, req, 403, "The account_toekn is not valid");
-                return false;
-            }
+    private hrLogin(req:express.Request, res:express.Response){
+        var parsedVal  = WebUtility.getParsedToken(req)
+        console.log("parsed Val : "+JSON.stringify(parsedVal));
+        if(!parsedVal){
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");;
         }
 
         var email:string = String(req.body.email);
         var password:string = String(req.body.password);
 
         // console.log(email+" : "+password);
-        if(!(ProvidersUtility.validateStringFields(email, 6, 255, res, req)
-            && ProvidersUtility.validateStringFields(password, 8, 20, res, req))){
-                return false;
+        if(!(WebUtility.validateStringFields(email, 6, 255)
+            && WebUtility.validateStringFields(password, 8, 20))){
+                return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The input is invalid...");;
             }
-            
-        //TODO Do the actual login here
-        this.verifyUser(email, password, req, res);
         
-        return true;
+        this.verifyAdmin(email, password, req, res);
     }
-    private verifyUser(email:string, pass:string, req:express.Request, res:express.Response){
+
+    private verifyAdmin(email:string, pass:string, req:express.Request, res:express.Response){
+        //console.log(email+" : "+pass);
+        let admin = DataModel.tables.admin;
+        let sql = SQLUtility.formSelect(["*"],
+                    admin.table,
+                    [admin.email],
+                    ["="],
+                    []);
+        console.log("My SQL : "+sql);
+        HRRoutes.database.getQueryResults(sql, [email]).then(result=>{
+            console.log(JSON.stringify(result));
+            if(result.length==0){
+                return this.verifyHR(email, pass, req, res);
+            }else{
+                var out = result[0];
+                if(out[admin.password]!=pass){
+                    WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "The email ID and password doesnt match");
+                    return false;
+                }
+                var response = {
+                    value:{
+                        email : out[admin.email],
+                        name : out[admin.firstName],
+                        verification : out[admin.accountStatus]=='Y'?true:false
+                    }
+                }
+                var tokenKey:string = WebUtility.getTokenKey(req);
+                var date = Math.floor(new Date().getTime());
+                var jsonStr={
+                    ip:WebUtility.getIPAddress(req),
+                    date:date,
+                    origin:req.get("origin"),
+                    hrId : out[admin.id],
+                    type:DataModel.userTypes.admin
+                }
+
+                var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
+                response["session_token"] = cookieStr;
+                //res.end(JSON.stringify(response));
+                return WebUtility.sendSuccess(res, req, {
+                    admin:true,
+                    type:DataModel.userTypes.admin,
+                    message:"Logged in as an Admin",
+                    session_token:cookieStr
+                }, "Admin Logged in!");
+            }
+        }, error=>{
+            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, error);
+            return false;
+        }).catch(error=>{
+            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+            return false;
+        })
+    }
+
+    private verifyHR(email:string, pass:string, req:express.Request, res:express.Response){
         //console.log(email+" : "+pass);
         let hr = DataModel.tables.hr;
-        let status = DataModel.accountStatus;
-        let sql = SQLUtility.formSelect([hr.name, hr.password, hr.accountStatus, hr.lastLoginAttempt, hr.totalLoginAttempts, hr.imageLink],
+        let sql = SQLUtility.formSelect(["*"],
                     hr.table,
                     [hr.email],
                     ["="],
@@ -69,273 +115,169 @@ export class HRRoutes{
         HRRoutes.database.getQueryResults(sql, [email]).then(result=>{
             console.log(JSON.stringify(result));
             if(result.length==0){
-                ProvidersUtility.sendErrorMessage(res, req, 400, "We cannot find any User registered with that email ID");
+                WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "We cannot find any User registered with that email ID");
                 return false;
             }else{
                 var out = result[0];
-                console.log(pass+" : "+out[hr.password])
                 if(out[hr.password]!=pass){
-                    ProvidersUtility.sendErrorMessage(res, req, 400, "The email ID and password doesnt match");
+                    WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "The email ID and password doesnt match");
                     return false;
-                }else if(out[hr.accountStatus]==status.blocked){
-                    ProvidersUtility.sendErrorMessage(res, req, 511, "This account has been blocked");
-                    return false;
-                }else if(out[hr.accountStatus]==status.deleted){
-                    ProvidersUtility.sendErrorMessage(res, req, 512, "This account has been deleted");
-                    return false;
-                }else if(out[hr.totalLoginAttempts]>=3){
-                    if(!ProvidersUtility.checkTimeThreshold(out[hr.lastLoginAttempt], req)){
-                        HRRoutes.database.update(hr.table,{
-                            [hr.accountStatus] : status.blocked
-                        },{
-                            [hr.email] : email
-                        }).then(result=>{
-                            ProvidersUtility.sendErrorMessage(res, req, 511, "Your account has been blocked");
-                        }, error=>{
-                            ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error");
-                        }).catch(error=>{
-                            ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error");
-                        })
+                }
+                var response = {
+                    value:{
+                        email : out[hr.email],
+                        name : out[hr.firstName],
+                        verification : out[hr.accountStatus]=='Y'?true:false
                     }
                 }
+                var tokenKey:string = WebUtility.getTokenKey(req);
+                var date = Math.floor(new Date().getTime());
+                var jsonStr={
+                    ip:WebUtility.getIPAddress(req),
+                    date:date,
+                    origin:req.get("origin"),
+                    hrId : out[hr.id],
+                    type:DataModel.userTypes.hr
+                }
 
-                HRRoutes.database.update(hr.table, {
-                    [hr.lastLoginAttempt] : new Date(Date.now()),
-                    [hr.totalLoginAttempts] : out[hr.totalLoginAttempts]+1
-                },{
-                    [hr.email] : email
-                }).then(result2=>{
-                    var response = {
-                        status:200,
-                        value:{
-                            name : out[hr.name],
-                            email : out[hr.email],
-                            image : out[hr.imageLink]
-                        }
-                    }
-                    var tokenKey:string = ProvidersUtility.getTokenKey(req);
-                    var date = Math.floor(new Date().getTime());
-                    var jsonStr={
-                        ip:ProvidersUtility.getIPAddress(req),
-                        date:date,
-                        origin:req.get("origin")
-                    }
-                    var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
-                    res.cookie("session_token", cookieStr, {maxAge:1800000});
-                    //res.end(JSON.stringify(response));
-                    RoutesHandler.respond(res, req, response, false, "Successfully verified the user", response["status"])
-                    return true;
-                }, error=>{
-                    ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error");
-                }).catch(error=>{
-                    ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error");
-                })
+                var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
+                response["session_token"] = cookieStr;
+                //res.end(JSON.stringify(response));
+                return WebUtility.sendSuccess(res, req, {
+                    admin:true,
+                    type:DataModel.userTypes.hr,
+                    message:"Logged in as an HR",
+                    session_token:cookieStr
+                }, "HR logged in!");
             }
         }, error=>{
-            ProvidersUtility.sendErrorMessage(res, req, 400, error);
+            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, error);
             return false;
         }).catch(error=>{
-            ProvidersUtility.sendErrorMessage(res, req, 400, error);
+            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
             return false;
         })
     }
 
+    private hrGetAction(req:express.Request, res:express.Response){
 
-
-
-
-//------------------------------------------Get Documents-------------------------------------
-
-    private initialSessionCheck(req:express.Request, res:express.Response):boolean{
-        if(req.cookies.account_token){
-            if(!ProvidersUtility.getParsedToken(req)){
-                ProvidersUtility.sendErrorMessage(res, req, 403, "The account_token is not valid");
-                return false;
-            }
-        }else{
-            ProvidersUtility.sendErrorMessage(res, req, 403, "The account_token is not valid");
-            return false;
-        }
-        if(req.cookies.session_token){
-            if(!ProvidersUtility.getParsedToken(req, 30, req.cookies.session_token)){
-                ProvidersUtility.sendErrorMessage(res, req, 405, "The session_token is not valid");
-                return false;
-            }
-        }else{
-            ProvidersUtility.sendErrorMessage(res, req, 405, "The session_token is not valid");
-            return false;
-        }
-        return true;
-    }
-
-    private getPhaseDocs(req:express.Request, res:express.Response, phase:number){
-        if(!this.initialSessionCheck(req, res))
-            return;
-        
-        let start = parseInt(req.query.start);
-        let end = parseInt(req.query.end);
-        
-        if(start===undefined || end===undefined || start>end){
-            ProvidersUtility.sendErrorMessage(res, req, 400, "Invalid input, the start and end parameters are invalid");
-            return;
+        if(!WebUtility.getParsedToken(req)){
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
         }
 
+        let session_token  = WebUtility.getParsedToken(req, req.body.session_token, 30);
+        console.log("parsed Val 2: "+JSON.stringify(session_token));
+        if(!session_token){
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+        }
+        if(session_token["type"]!=DataModel.userTypes.hr || parseInt(session_token["hrId"])==NaN){
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+        }
+
+        let hrId=session_token["hrId"];
+
+        let action = req.params.action;
         let providers = DataModel.tables.providers;
-        let providersDoc = DataModel.tables.providersDoc;
-        let docTypes = DataModel.tables.docTypes;
-        let accountStatus = DataModel.accountStatus;
-        let phaseInfo:number;
-        if(phase==1){
-            phaseInfo=accountStatus.phaseOneDocSubmitted;
-        }else if(phase==2){
-            phaseInfo=accountStatus.phaseTwoDocSubmitted;
+        let providersDocs = DataModel.tables.providersDoc;
+        let sql = "SELECT * FROM "+providers.table+" WHERE "+providers.accountStatus+" = "
+        if(action==="pending"){
+            sql+=DataModel.accountStatus.phaseOneDocSubmitted;
+        }else if(action==="active"){
+            sql+=DataModel.accountStatus.accepted+" AND "+providers.hrAcceptanceID+"="+hrId;
+        }else if(action==="rejected"){
+            sql+=DataModel.accountStatus.phaseOneRejected+" AND "+providers.hrAcceptanceID+"="+hrId;
         }else{
-            ProvidersUtility.sendErrorMessage(res, req, 400, "Invalid input, the start and end parameters are invalid");
-            return;
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "The routing you specified doesnot exists");
         }
-
-        let sql =SQLUtility.formSelect(["*"],
-            providers.table,
-            [providers.accountStatus],
-            ["="],
-            [])+"\
-            ORDER BY "+providers.id+"\
-            LIMIT "+start+", "+end;
-        
-        console.log("SQL : "+sql);
-        HRRoutes.database.getQueryResults(sql, [phaseInfo]).then(result=>{
-            let count=result.length;
-
-            let response={
-                description: "Successfully fetched the information",
-                total:count,
-                start: start,
-                end:end,
-                data:{}
-            }
-            if(result.length==0){
-                RoutesHandler.respond(res, req, response, false, response.description, 200);
-                return;
-            }
-            let pids=[];
+        HRRoutes.database.getQueryResults(sql, []).then(result=>{
+            let data={};
+            let ids=[-1];
             for(var i in result){
-                pids.push(result[i][providers.id])
-                response.data[result[i][providers.id]]={
-                    name:result[i][providers.firstName]+" "+result[i][providers.lastName],
-                    email:result[i][providers.emailID],
-                    image:result[i][providers.imageLink],
+                let out=result[i];
+                let json={
+                    providerID:out[providers.id],
+                    firstName:out[providers.firstName],
+                    lastName:out[providers.lastName],
+                    email:out[providers.email],
+                    phone:out[providers.phone],
+                    image:out[providers.image],
+                    experience:out[providers.experience],
+                    qualifications:out[providers.qualifications],
+                    resume:out[providers.resume],
+                    status:out[providers.accountStatus],
                     docs:[]
                 }
+                data[out[providers.id]]=json
+                ids.push(out[providers.id])
             }
+            let sql="SELECT * FROM "+providersDocs.table+" WHERE "+providersDocs.providerID+" IN ("+ids.join(",")+")";
+            console.log(sql);
             
-            let sql = SQLUtility.formSelect([providersDoc.providerId, providersDoc.id, providersDoc.documentLink, docTypes.docName, docTypes.docDescription],
-                providersDoc.table+" natural join "+docTypes.table)+"\
-                WHERE "+providersDoc.providerId+" in ("+pids.join(',')+") AND "+providersDoc.phaseInfo+"="+phaseInfo+" \
-                "+providersDoc.docApproved+"="+accountStatus.docUploaded;
-            console.log("Phase1 Doc SQL : "+sql);
-            HRRoutes.database.getQueryResults(sql,[]).then(result=>{
+            HRRoutes.database.getQueryResults(sql, []).then(result=>{
                 for(var i in result){
-                    var out = result[i];
-                    response.data[out[providersDoc.providerId]].docs.push({
-                        docLink:out[providersDoc.documentLink],
-                        docType:out[docTypes.id],
-                        docName:out[docTypes.docName],
-                        docDescription:out[docTypes.docDescription]
+                    let out=result[i];
+                    data[out[providersDocs.providerID]].docs.push({
+                        id:out[providersDocs.id],
+                        docTitle:out[providersDocs.docTitle],
+                        docContent:out[providersDocs.docContent]
                     })
                 }
 
-                RoutesHandler.respond(res, req, response, false, response.description, 200);
+                return WebUtility.sendSuccess(res, req, data, "Successfully fetched the datas");
             }, error=>{
-                console.log(error);
-                ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error");
-                return;
+                return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
             }).catch(error=>{
-                console.log(error);
-                ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error");
-                return;
+                return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
             })
-        },error=>{
-            ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error");
-            return;
-        }).catch(error=>{
-            ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error");
-            return;
-        });
-    }
-
-    private approveDoc(req:express.Request, res:express.Response){
-        if(!this.initialSessionCheck(req, res))
-            return;
-
-        let docId=parseInt(req.body.docId);
-        let providerId=parseInt(req.body.providerId);
-        let action=req.body.action;
-
-        let myAction:number;
-
-        let providersDoc=DataModel.tables.providersDoc;
-        let accountStatus=DataModel.accountStatus;
-        
-        if(docId==NaN || providerId==NaN || !(action=="approve" || action=="resubmit")){
-            ProvidersUtility.sendErrorMessage(res, req, 400, "Invalid input")
-            return;
-        }
-
-        if(action=="approve"){
-            myAction=accountStatus.docApproved;
-        }else if(action=="resubmit"){
-            myAction=accountStatus.docReRequested;
-        }
-        HRRoutes.database.update(providersDoc.table, {
-            [providersDoc.docApproved]:myAction
-        },{
-            [providersDoc.id]:docId,
-            [providersDoc.providerId]:providerId
-        }).then(result=>{
-            if(!result){
-                ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error.");
-                return;
-            }
-            RoutesHandler.respond(res, req, [], false, "Successfully performed action on the docs", 200);
         }, error=>{
-            ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error.");
-            return;
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
         }).catch(error=>{
-            ProvidersUtility.sendErrorMessage(res, req, 500, "Internal Server Error.");
-            return;
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
         })
-
-    }
-    private approvePhase1(req:express.Request, res:express.Response){
-        
     }
 
-    private approvePhase2Docs(req:express.Request, res:express.Response){
+    private hrAction(req:express.Request, res:express.Response){
+        if(!WebUtility.getParsedToken(req)){
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
+        }
+
+        let session_token  = WebUtility.getParsedToken(req, req.body.session_token, 30);
+        console.log("parsed Val : "+JSON.stringify(session_token));
+        if(!session_token){
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+        }
+        if(session_token["type"]!=DataModel.userTypes.hr || parseInt(session_token["hrId"])==NaN){
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+        }
+
+        let hrId=session_token["hrId"];
+
+        let action=req.params.action;
+        let providerId=req.body.providerId;
+
+        let providers = DataModel.tables.providers;
+        let status:number;
+        if(action==="accept"){
+            status=DataModel.accountStatus.accepted;
+        }else if(action==="reject"){
+            status=DataModel.accountStatus.phaseOneRejected;
+        }else{
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "The routing you specified doesnot exists");
+        }
         
+        HRRoutes.database.update(providers.table,{
+            [providers.accountStatus]:status,
+            [providers.hrAcceptanceID]:hrId
+        }, {
+            [providers.id]:providerId
+        }).then(result=>{
+            return WebUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the applications");
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+        })
     }
 
-    private requestPhase1Docs(req:express.Request, res:express.Response){
-        
-    }
-
-    private requestPhase2Docs(req:express.Request, res:express.Response){
-        
-    }
-
-    private declinePhase1Docs(req:express.Request, res:express.Response){
-        
-    }
-
-    private declinePhase2Docs(req:express.Request, res:express.Response){
-        
-    }
-
-    private unlockDeclinedDoc(req:express.Request, res:express.Response){
-        
-    }
-
-    private getLockedProviders(req:express.Request, res:express.Response){
-        
-    }
 
 }

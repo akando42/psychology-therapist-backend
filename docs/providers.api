@@ -83,13 +83,13 @@
         summary: validates a provider's credentials
         description: 
             session token is encrypted as
-			jsonStr={
-                    ip:ProvidersUtility.getIPAddress(req),
-                    date:date,
-                    origin:req.get("origin"),
-                    providersId : -1,
-                    type:"Admin"
-                }
+						jsonStr={
+							ip:ProvidersUtility.getIPAddress(req),
+							date:date,
+							origin:req.get("origin"),
+							providersId : <ID>,
+							type:"Provider"
+            }
         produces:
             - application/json
         parameters:
@@ -108,7 +108,7 @@
             200
               {
                 data:{
-					admin:<true|false>
+										admin:<false>
                   	session_token:"Use this token for all the other requests"
                   <all profile details>
                 }

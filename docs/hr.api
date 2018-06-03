@@ -24,25 +24,24 @@ hr/register
     post:
         summary: validates a provider's credentials
         description: 
-            Receives all the login information of a provider, and validates them along with the account_token. If the login information is correct, it will create a cookie named session_token in the provider's browser. The session_token cookie will be valid for 30 minutes, and will depend on the ID of the provider in the database, the IP address from where the request originated, the domain name from the request is being made, the date when the request was made, and the signature of the provider in the database. The session_token cookie will be encrypted using AES 256 symetric encription, using a 32 bit key, the key will be obtained from a combination of the provider ID in the database and the date when the provider signed up. The token will be the encrypted value of a JSON object containing provider: the ID of the provider in the database, date: the date when the cookie was created, ip: the IP address that originated the request, domain: the domain name that originated the request, footprint: the last 10 digits of the provider signature in the database, signature: the result of encrypting using md5 all the values combined.
-        produces:
-            - application/json
-        parameters:
+            <encoded> session_token={
+        		ip:WebUtility.getIPAddress(req),
+                date:date,
+        		origin:req.get("origin"),
+        		hrId : -1,
+        		type:"HR"
+        	}
+        requests:
             - account_token : <use the account token>
-            - email
-              massage@therapy.coach
-            - password
-              Massage@12345
-		descipription:
-			If success code is 200 open the HR window.
-			If success code is 201, we need to register fist
+            - email:<>
+            - password:<>
         responses:
             200
             {
                 data:{
                   	session_token:"Use this token for all the other requests for HRs"
-					type:"HR"
-					registered:<true>
+					admin:true
+					registered:<true|false>
                 }
                 message:""
             }
