@@ -16,6 +16,7 @@ export class DataModel{
         providers:{
             table:"PROVIDERS",
             id:"ProviderID",
+            hrAcceptanceID:"HRID",
             firstName:"ProviderFirstName",
             lastName:"ProviderLastName",
             email:"ProviderEmailID",

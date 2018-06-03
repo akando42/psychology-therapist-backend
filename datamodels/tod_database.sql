@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 20, 2018 at 04:15 PM
+-- Generation Time: Jun 03, 2018 at 01:00 PM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -17,12 +17,48 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `massage_demand`
+-- Database: `tod_database`
 --
 
-drop database massage_demand;
-create database massage_demand;
-use massage_demand;
+drop database if exists tod_database;
+create database tod_database;
+use tod_database;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ADMINTABLE`
+--
+
+CREATE TABLE `ADMINTABLE` (
+  `AdminID` int(11) NOT NULL,
+  `AdminFirstName` varchar(50) NOT NULL,
+  `AdminLastName` varchar(50) NOT NULL,
+  `AdminEmailID` varchar(150) NOT NULL,
+  `AdminPassword` varchar(50) NOT NULL,
+  `AdminImageLink` text NOT NULL,
+  `AdminPhone` varchar(15) NOT NULL,
+  `AdminOwnerStatus` tinyint(4) NOT NULL DEFAULT '0',
+  `AdminAccountStatus` tinyint(4) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `HRTABLE`
+--
+
+CREATE TABLE `HRTABLE` (
+  `HRID` int(11) NOT NULL,
+  `HRFirstName` varchar(50) NOT NULL,
+  `HRLastName` varchar(50) NOT NULL,
+  `HREmailID` varchar(150) NOT NULL,
+  `HRPassword` varchar(50) NOT NULL,
+  `HRImageLink` text NOT NULL,
+  `HRPhone` tinyint(4) NOT NULL,
+  `HRAccountStatus` tinyint(4) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- --------------------------------------------------------
 
 --
@@ -32,15 +68,15 @@ use massage_demand;
 CREATE TABLE `PAYMENTS` (
   `PaymentID` int(11) NOT NULL,
   `SessionID` int(11) NOT NULL,
-  `Amount` int(11) NOT NULL,
-  `TransactionID` varchar(255) NOT NULL DEFAULT 'NOTDONE'
+  `PaymentAmount` int(11) NOT NULL,
+  `PaymentTransactionID` varchar(255) NOT NULL DEFAULT 'NOTDONE'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `PAYMENTS`
 --
 
-INSERT INTO `PAYMENTS` (`PaymentID`, `SessionID`, `Amount`, `TransactionID`) VALUES
+INSERT INTO `PAYMENTS` (`PaymentID`, `SessionID`, `PaymentAmount`, `PaymentTransactionID`) VALUES
 (1, 1, 150, '&#9362bjkabh');
 
 -- --------------------------------------------------------
@@ -52,8 +88,22 @@ INSERT INTO `PAYMENTS` (`PaymentID`, `SessionID`, `Amount`, `TransactionID`) VAL
 CREATE TABLE `PROVIDERDOCS` (
   `ProviderDocID` int(11) NOT NULL,
   `ProviderID` int(11) NOT NULL,
-  `DocTitle` varchar(250) NOT NULL,
-  `DocContent` text NOT NULL
+  `ProviderDocTitle` varchar(250) NOT NULL,
+  `ProviderDocContent` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `PROVIDERNOTIFICATION`
+--
+
+CREATE TABLE `PROVIDERNOTIFICATION` (
+  `ProviderNotificationID` int(11) NOT NULL,
+  `ProviderID` int(11) NOT NULL,
+  `ProviderNotificationContent` text NOT NULL,
+  `ProviderNotificationDT` datetime NOT NULL,
+  `ProviderNotificationReadStatus` tinyint(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -64,26 +114,27 @@ CREATE TABLE `PROVIDERDOCS` (
 
 CREATE TABLE `PROVIDERS` (
   `ProviderID` int(11) NOT NULL,
-  `FirstName` varchar(50) NOT NULL,
-  `LastName` varchar(50) NOT NULL,
-  `EmailID` varchar(150) NOT NULL,
-  `Password` varchar(50) NOT NULL,
-  `Phone` varchar(15) NOT NULL,
-  `ProfileImage` text NOT NULL,
-  `Experience` varchar(50) NOT NULL,
-  `Qualifications` varchar(50) NOT NULL,
+  `HRID` int(11) DEFAULT NULL,
+  `ProviderFirstName` varchar(50) NOT NULL,
+  `ProviderLastName` varchar(50) NOT NULL,
+  `ProviderEmailID` varchar(150) NOT NULL,
+  `ProviderPassword` varchar(50) NOT NULL,
+  `ProviderPhone` varchar(15) NOT NULL,
+  `ProviderProfileImage` text NOT NULL,
+  `ProviderExperience` varchar(50) NOT NULL,
+  `ProviderQualifications` varchar(50) NOT NULL,
   `ProviderLattitude` float NOT NULL,
   `ProviderLongitude` float NOT NULL,
-  `Resume` text NOT NULL,
-  `AccountStatus` int(11) NOT NULL
+  `ProviderResume` text NOT NULL,
+  `ProviderAccountStatus` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `PROVIDERS`
 --
 
-INSERT INTO `PROVIDERS` (`ProviderID`, `FirstName`, `LastName`, `EmailID`, `Password`, `Phone`, `ProfileImage`, `Experience`, `Qualifications`, `ProviderLattitude`, `ProviderLongitude`, `Resume`, `AccountStatus`) VALUES
-(6, 'Rahul ', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', '9905264774', '', '2-3 years', 'Graduate', 13.0328, 77.5626, '', 11);
+INSERT INTO `PROVIDERS` (`ProviderID`, `HRID`, `ProviderFirstName`, `ProviderLastName`, `ProviderEmailID`, `ProviderPassword`, `ProviderPhone`, `ProviderProfileImage`, `ProviderExperience`, `ProviderQualifications`, `ProviderLattitude`, `ProviderLongitude`, `ProviderResume`, `ProviderAccountStatus`) VALUES
+(6, NULL, 'Rahul ', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', '9905264774', '', '2-3 years', 'Graduate', 13.0328, 77.5626, '', 11);
 
 -- --------------------------------------------------------
 
@@ -121,21 +172,19 @@ INSERT INTO `SESSIONS` (`SessionID`, `UserID`, `ProviderID`, `AddressID`, `Massa
 CREATE TABLE `USERADDRESS` (
   `AddressID` int(11) NOT NULL,
   `UserID` int(11) NOT NULL,
-  `AddressName` varchar(50) NOT NULL,
-  `Lattitude` double NOT NULL,
-  `Longitude` double NOT NULL,
-  `Address` text NOT NULL,
-  `ParkingLattitude` double NOT NULL,
-  `ParkingLongitude` double NOT NULL,
-  `ParkingAddress` text NOT NULL
+  `UserAddressName` varchar(50) NOT NULL,
+  `UserLattitude` double NOT NULL,
+  `UserLongitude` double NOT NULL,
+  `UserAddress` text NOT NULL,
+  `UserParkingAddress` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `USERADDRESS`
 --
 
-INSERT INTO `USERADDRESS` (`AddressID`, `UserID`, `AddressName`, `Lattitude`, `Longitude`, `Address`, `ParkingLattitude`, `ParkingLongitude`, `ParkingAddress`) VALUES
-(1, 1, 'Home', 13.0327576, 77.5625732, '#184-B, 7th Main, 3rd Cross, Mathikere Extension, Bangalore', 0, 0, 'Its near to my flat');
+INSERT INTO `USERADDRESS` (`AddressID`, `UserID`, `UserAddressName`, `UserLattitude`, `UserLongitude`, `UserAddress`, `UserParkingAddress`) VALUES
+(1, 1, 'Home', 13.0327576, 77.5625732, '#184-B, 7th Main, 3rd Cross, Mathikere Extension, Bangalore', 'Its near to my flat');
 
 -- --------------------------------------------------------
 
@@ -145,26 +194,40 @@ INSERT INTO `USERADDRESS` (`AddressID`, `UserID`, `AddressName`, `Lattitude`, `L
 
 CREATE TABLE `USERS` (
   `UserID` int(11) NOT NULL,
-  `FirstName` varchar(50) NOT NULL,
-  `LastName` varchar(50) NOT NULL,
-  `EmailID` varchar(155) NOT NULL,
-  `Password` varchar(50) NOT NULL,
-  `Phone` varchar(11) NOT NULL,
-  `ProfileImage` text NOT NULL,
-  `Gender` varchar(10) NOT NULL,
-  `AccountStatus` int(11) NOT NULL
+  `UserFirstName` varchar(50) NOT NULL,
+  `UserLastName` varchar(50) NOT NULL,
+  `UserEmailID` varchar(155) NOT NULL,
+  `UserPassword` varchar(50) NOT NULL,
+  `UserPhone` varchar(11) NOT NULL,
+  `UserProfileImage` text NOT NULL,
+  `UserGender` varchar(10) NOT NULL,
+  `UserAccountStatus` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `USERS`
 --
 
-INSERT INTO `USERS` (`UserID`, `FirstName`, `LastName`, `EmailID`, `Password`, `Phone`, `ProfileImage`, `Gender`, `AccountStatus`) VALUES
+INSERT INTO `USERS` (`UserID`, `UserFirstName`, `UserLastName`, `UserEmailID`, `UserPassword`, `UserPhone`, `UserProfileImage`, `UserGender`, `UserAccountStatus`) VALUES
 (1, 'Rahul', 'Sinha', 'rahul12345@gmail.com', 'Hello@12345', '9905264774', '', 'Male', 1);
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `ADMINTABLE`
+--
+ALTER TABLE `ADMINTABLE`
+  ADD PRIMARY KEY (`AdminID`),
+  ADD UNIQUE KEY `AdminEmailConstraint` (`AdminEmailID`);
+
+--
+-- Indexes for table `HRTABLE`
+--
+ALTER TABLE `HRTABLE`
+  ADD PRIMARY KEY (`HRID`),
+  ADD UNIQUE KEY `HREmailConstraint` (`HREmailID`);
 
 --
 -- Indexes for table `PAYMENTS`
@@ -181,11 +244,19 @@ ALTER TABLE `PROVIDERDOCS`
   ADD KEY `PROVIDERDOCS` (`ProviderID`);
 
 --
+-- Indexes for table `PROVIDERNOTIFICATION`
+--
+ALTER TABLE `PROVIDERNOTIFICATION`
+  ADD PRIMARY KEY (`ProviderNotificationID`),
+  ADD KEY `ProviderNotificationConstraints` (`ProviderID`);
+
+--
 -- Indexes for table `PROVIDERS`
 --
 ALTER TABLE `PROVIDERS`
   ADD PRIMARY KEY (`ProviderID`),
-  ADD UNIQUE KEY `EmailID` (`EmailID`);
+  ADD UNIQUE KEY `EmailID` (`ProviderEmailID`),
+  ADD KEY `ProviderHRConstraint` (`HRID`);
 
 --
 -- Indexes for table `SESSIONS`
@@ -208,12 +279,22 @@ ALTER TABLE `USERADDRESS`
 --
 ALTER TABLE `USERS`
   ADD PRIMARY KEY (`UserID`),
-  ADD UNIQUE KEY `EmailID` (`EmailID`);
+  ADD UNIQUE KEY `EmailID` (`UserEmailID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
+--
+-- AUTO_INCREMENT for table `ADMINTABLE`
+--
+ALTER TABLE `ADMINTABLE`
+  MODIFY `AdminID` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `HRTABLE`
+--
+ALTER TABLE `HRTABLE`
+  MODIFY `HRID` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `PAYMENTS`
 --
@@ -224,6 +305,11 @@ ALTER TABLE `PAYMENTS`
 --
 ALTER TABLE `PROVIDERDOCS`
   MODIFY `ProviderDocID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+--
+-- AUTO_INCREMENT for table `PROVIDERNOTIFICATION`
+--
+ALTER TABLE `PROVIDERNOTIFICATION`
+  MODIFY `ProviderNotificationID` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `PROVIDERS`
 --
@@ -259,6 +345,18 @@ ALTER TABLE `PAYMENTS`
 --
 ALTER TABLE `PROVIDERDOCS`
   ADD CONSTRAINT `PROVIDERDOCS` FOREIGN KEY (`ProviderID`) REFERENCES `PROVIDERS` (`ProviderID`);
+
+--
+-- Constraints for table `PROVIDERNOTIFICATION`
+--
+ALTER TABLE `PROVIDERNOTIFICATION`
+  ADD CONSTRAINT `ProviderNotificationConstraints` FOREIGN KEY (`ProviderID`) REFERENCES `PROVIDERS` (`ProviderID`);
+
+--
+-- Constraints for table `PROVIDERS`
+--
+ALTER TABLE `PROVIDERS`
+  ADD CONSTRAINT `ProviderHRConstraint` FOREIGN KEY (`HRID`) REFERENCES `HRTABLE` (`HRID`);
 
 --
 -- Constraints for table `SESSIONS`
