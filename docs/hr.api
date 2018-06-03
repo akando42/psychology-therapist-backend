@@ -1,4 +1,26 @@
-/provider/login
+<frontend-url>/hr/register
+	get
+		summary:
+			This is the link send to the HRs on there email ID. clicking this link should direct you to a register page, where you fill up remaining details about yourself
+		request:
+			name:<Full Name of the User>
+			email:<Email ID of the HR>
+			register_token:<This token is supposed to be send along with the form data to register the HR>
+		response:
+			It should be an HTML page with a form to register the HR
+
+hr/register
+	post:
+		summary:
+			This request is directed from the user after register link is clicked
+		request:
+			account_token:<>
+			register_token:<One fetched from frontend URL>
+			email:<This parameter should not change>
+			name:
+			password:
+
+/hr/login
     post:
         summary: validates a provider's credentials
         description: 
@@ -11,11 +33,16 @@
               massage@therapy.coach
             - password
               Massage@12345
+		descipription:
+			If success code is 200 open the HR window.
+			If success code is 201, we need to register fist
         responses:
             200
             {
                 data:{
-                  session_token:"Use this token for all the other requests for HRs"
+                  	session_token:"Use this token for all the other requests for HRs"
+					type:"HR"
+					registered:<true>
                 }
                 message:""
             }

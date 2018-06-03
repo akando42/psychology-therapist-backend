@@ -62,9 +62,9 @@
               minlength: 8
               maxlength: 20
               format: Must contain a capital letter, a lower case letter, a number and a special character
-			- lattitude
-			- longitude
-				location of the user
+						- lattitude
+						- longitude
+							location of the user
         responses:
             200
                 description:

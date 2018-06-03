@@ -111,7 +111,7 @@ export class UserRoutes{
             }
             var out = result[0];
             if(out[users.password] == password){
-                if(out[users.status]==DataModel.accountStatus.waiting){
+                if(out[users.accountStatus]==DataModel.accountStatus.waiting){
                     return UsersUtility.sendErrorMessage(res, DataModel.userResponse.loginError, "The Email is not verified");
                 }
                 let json={
@@ -175,7 +175,7 @@ export class UserRoutes{
             [users.password]:password,
             [users.phone]:phone,
             [users.gender]:gender,
-            [users.status]:debug?DataModel.accountStatus.accepted:DataModel.accountStatus.waiting,
+            [users.accountStatus]:debug?DataModel.accountStatus.accepted:DataModel.accountStatus.waiting,
         }).then(result=>{
             if(debug)
                 return UsersUtility.sendSuccess(res,[], "Successfully registered!! We have sent you a cofirmation mail!");
@@ -237,7 +237,7 @@ export class UserRoutes{
 
         var users=DataModel.tables.users;
         this.database.update(users.table, {
-            [users.status]:DataModel.accountStatus.accepted
+            [users.accountStatus]:DataModel.accountStatus.accepted
         }, {
             [users.email]:json.email,
             [users.firstName]:json.fname,

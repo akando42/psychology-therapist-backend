@@ -4,56 +4,56 @@ export class DataModel{
         users:{
             table:"USERS",
             id:"UserID",
-            firstName:"FirstName",
-            lastName:"LastName",
-            email:"EmailID",
-            password:"Password",
-            phone:"Phone",
-            image:"ProfileImage",
-            gender:"Gender",
-            status:"AccountStatus"
+            firstName:"UserFirstName",
+            lastName:"UserLastName",
+            email:"UserEmailID",
+            password:"UserPassword",
+            phone:"UserPhone",
+            image:"UserProfileImage",
+            gender:"UserGender",
+            accountStatus:"UserAccountStatus"
         },
         providers:{
             table:"PROVIDERS",
             id:"ProviderID",
-            firstName:"FirstName",
-            lastName:"LastName",
-            email:"EmailID",
-            password:"Password",
-            phone:"Phone",
-            image:"ProfileImage",
-            experience:"Experience",
-            qualifications:"Qualifications",
+            firstName:"ProviderFirstName",
+            lastName:"ProviderLastName",
+            email:"ProviderEmailID",
+            password:"ProviderPassword",
+            phone:"ProviderPhone",
+            image:"ProviderProfileImage",
+            experience:"ProviderExperience",
+            qualifications:"ProviderQualifications",
             lattitude:"ProviderLattitude",
             longitude:"ProviderLongitude",
-            resume:"Resume",
-            status:"AccountStatus",
+            resume:"ProviderResume",
+            accountStatus:"ProviderAccountStatus",
         },
         providersDoc:{
             table:"PROVIDERDOCS",
             id:"ProviderDocID",
             providerID:"ProviderID",
-            docTitle:"DocTitle",
-            docContent:"DocContent"
+            docTitle:"ProviderDocTitle",
+            docContent:"ProviderDocContent"
         },
         providerNotifications:{
             table:"PROVIDERNOTIFICATION",
             id:"ProviderNotificationID",
             providerID:"ProviderID",
-            content:"NotificationContent",
-            dateTime:"NotificationDT",
-            isRead:"NotificationReadStatus"
+            content:"ProviderNotificationContent",
+            dateTime:"ProviderNotificationDT",
+            isRead:"ProviderNotificationReadStatus"
         },
 
         userAddress:{
             table:"USERADDRESS",
             id:"AddressID",
             userID:"UserID",
-            name:"AddressName",
-            latitude:"Lattitude",
-            longitude:"Longitude",
-            address:"Address",
-            parkingInfo:"ParkingAddress"
+            name:"UserAddressName",
+            latitude:"UserLattitude",
+            longitude:"UserLongitude",
+            address:"UserAddress",
+            parkingInfo:"UserParkingAddress"
         },
 
         sessions:{
@@ -75,8 +75,33 @@ export class DataModel{
             table:"PAYMENTS",
             id:"PaymentID",
             sessionID:"SessionID",
-            amount:"Amount",
-            transactionId:"TransactionID"
+            amount:"PaymentAmount",
+            transactionId:"PaymentTransactionID"
+        },
+
+        admin:{
+            table:"ADMINTABLE",
+            id:"AdminID",
+            firstName:"AdminFirstName",
+            lastName:"AdminLastName",
+            email:"AdminEmailID",
+            password:"AdminPassword",
+            image:"AdminImageLink",
+            phone:"AdminPhone",
+            owner:"AdminOwnerStatus",  //Default 0. Only one of the the admin can be the owner
+            accountStatus:"AdminAccountStatus"
+        },
+
+        hr:{
+            table:"HRTABLE",
+            id:"HRID",
+            firstName:"HRFirstName",
+            lastName:"HRLastName",
+            email:"HREmailID",
+            password:"HRPassword",
+            image:"HRImageLink",
+            phone:"HRPhone",
+            accountStatus:"HRAccountStatus"
         }
     }
     public static accountStatus={

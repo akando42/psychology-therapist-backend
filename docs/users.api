@@ -44,6 +44,7 @@
 					email:<>
 					phone:<>
 					gender:<>
+					type:"Provider"
 				},
 				message:"Successfully logged in"
 			}

@@ -1,0 +1,52 @@
+admin/login
+    post
+        request
+            account_token:<>
+            email:admin@therapyondemand.io
+            password:Admin@12345
+        response
+            200
+            {
+                data:{
+                    session_token:"Use this token for all the other requests for HRs"
+                    type:"Admin"
+                }
+                message:""
+            }
+
+admin/forgot
+    post
+        summary:
+            Sends a password reset link to info@therapyondemand.io
+        request
+            account_token:<>
+        response:
+            200
+            {
+                message:"Successfully send the message email to info@therapyondemand.io"
+            }
+
+admin/hr/create
+    post
+        summary:
+            Sends an email to the specified Email ID for profile creation
+        request
+            account_token:<>
+            session_token:<>
+            email:<email-address>@therapyondemand.io
+        Description:
+            email : Email ID should end with @therapyondemand.io
+
+admin/hr/remove
+    post
+        summary
+            Removes the already existing HRs from the system
+        request
+            account_token:<>
+            session_token:<>
+            email:<>
+        respose:
+            200
+            {
+                message:"The email has been successfully removed"
+            }

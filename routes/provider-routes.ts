@@ -119,7 +119,7 @@ export class ProviderRoutes{
                 [providers.lattitude]:lattitude,
                 [providers.longitude]:longitude,
                 [providers.password]:password,
-                [providers.status]:DataModel.accountStatus.phaseOne,
+                [providers.accountStatus]:DataModel.accountStatus.phaseOne,
             }).then(result=>{
                 var response={
                     status:200,
@@ -165,7 +165,7 @@ export class ProviderRoutes{
                     date:date,
                     origin:req.get("origin"),
                     providersId : -1,
-                    type:"Admin"
+                    type:"HR"
                 }
                 var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
                 return ProvidersUtility.sendSuccess(res, req, {
@@ -207,7 +207,7 @@ export class ProviderRoutes{
                     value:{
                         email : out[providers.email],
                         name : out[providers.firstName],
-                        verification : out[providers.status]=='Y'?true:false
+                        verification : out[providers.accountStatus]=='Y'?true:false
                     }
                 }
                 var tokenKey:string = ProvidersUtility.getTokenKey(req);
@@ -256,7 +256,7 @@ export class ProviderRoutes{
         let action = req.params.action;
         let providers = DataModel.tables.providers;
         let providersDocs = DataModel.tables.providersDoc;
-        let sql = "SELECT * FROM "+providers.table+" WHERE "+providers.status+" = "
+        let sql = "SELECT * FROM "+providers.table+" WHERE "+providers.accountStatus+" = "
         if(action==="pending"){
             sql+=DataModel.accountStatus.phaseOneDocSubmitted;
         }else if(action==="active"){
@@ -281,7 +281,7 @@ export class ProviderRoutes{
                     experience:out[providers.experience],
                     qualifications:out[providers.qualifications],
                     resume:out[providers.resume],
-                    status:out[providers.status],
+                    status:out[providers.accountStatus],
                     docs:[]
                 }
                 data[out[providers.id]]=json
@@ -340,7 +340,7 @@ export class ProviderRoutes{
         }
         
         this.database.update(providers.table,{
-            [providers.status]:status
+            [providers.accountStatus]:status
         }, {
             [providers.id]:providerId
         }).then(result=>{
@@ -463,7 +463,7 @@ export class ProviderRoutes{
             queries.push(query);
         }
         let query={
-                query:"UPDATE "+providers.table+" SET "+providers.status+"="+DataModel.accountStatus.phaseOneDocSubmitted+" \
+                query:"UPDATE "+providers.table+" SET "+providers.accountStatus+"="+DataModel.accountStatus.phaseOneDocSubmitted+" \
                     WHERE "+providers.id+"="+providerId,
                 values:[],
                 result_id:""+i
@@ -534,7 +534,7 @@ export class ProviderRoutes{
                 experience:out[providers.experience],
                 qualifications:out[providers.qualifications],
                 resume:out[providers.resume],
-                status:out[providers.status]
+                status:out[providers.accountStatus]
             };
             return ProvidersUtility.sendSuccess(res, req, data, "Successfully fetched all the informations");
         }, error=>{
