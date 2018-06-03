@@ -17,10 +17,6 @@ export class HRRoutes{
         HRRoutes.server=server;
         var me:HRRoutes=this;
 
-        server.setRoute("/admin/login", (req:express.Request, res:express.Response)=>{
-            me.hrLogin(req, res);
-        }, HTTPMethod.POST);
-
         server.setRoute("/hr/get/:action", (req:express.Request, res:express.Response)=>{
             me.hrGetAction(req, res);
         }, HTTPMethod.POST);
@@ -29,152 +25,33 @@ export class HRRoutes{
         }, HTTPMethod.POST);
     }
 
-    private hrLogin(req:express.Request, res:express.Response){
-        var parsedVal  = WebUtility.getParsedToken(req)
-        console.log("parsed Val : "+JSON.stringify(parsedVal));
-        if(!parsedVal){
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");;
-        }
-
-        var email:string = String(req.body.email);
-        var password:string = String(req.body.password);
-
-        // console.log(email+" : "+password);
-        if(!(WebUtility.validateStringFields(email, 6, 255)
-            && WebUtility.validateStringFields(password, 8, 20))){
-                return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The input is invalid...");;
-            }
-        
-        this.verifyAdmin(email, password, req, res);
-    }
-
-    private verifyAdmin(email:string, pass:string, req:express.Request, res:express.Response){
-        //console.log(email+" : "+pass);
-        let admin = DataModel.tables.admin;
-        let sql = SQLUtility.formSelect(["*"],
-                    admin.table,
-                    [admin.email],
-                    ["="],
-                    []);
-        console.log("My SQL : "+sql);
-        HRRoutes.database.getQueryResults(sql, [email]).then(result=>{
-            console.log(JSON.stringify(result));
-            if(result.length==0){
-                return this.verifyHR(email, pass, req, res);
-            }else{
-                var out = result[0];
-                if(out[admin.password]!=pass){
-                    WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "The email ID and password doesnt match");
-                    return false;
-                }
-                var response = {
-                    value:{
-                        email : out[admin.email],
-                        name : out[admin.firstName],
-                        verification : out[admin.accountStatus]=='Y'?true:false
-                    }
-                }
-                var tokenKey:string = WebUtility.getTokenKey(req);
-                var date = Math.floor(new Date().getTime());
-                var jsonStr={
-                    ip:WebUtility.getIPAddress(req),
-                    date:date,
-                    origin:req.get("origin"),
-                    hrId : out[admin.id],
-                    type:DataModel.userTypes.admin
-                }
-
-                var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
-                response["session_token"] = cookieStr;
-                //res.end(JSON.stringify(response));
-                return WebUtility.sendSuccess(res, req, {
-                    admin:true,
-                    type:DataModel.userTypes.admin,
-                    message:"Logged in as an Admin",
-                    session_token:cookieStr
-                }, "Admin Logged in!");
-            }
-        }, error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, error);
-            return false;
-        }).catch(error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
-            return false;
-        })
-    }
-
-    private verifyHR(email:string, pass:string, req:express.Request, res:express.Response){
-        //console.log(email+" : "+pass);
-        let hr = DataModel.tables.hr;
-        let sql = SQLUtility.formSelect(["*"],
-                    hr.table,
-                    [hr.email],
-                    ["="],
-                    []);
-        console.log("My SQL : "+sql);
-        HRRoutes.database.getQueryResults(sql, [email]).then(result=>{
-            console.log(JSON.stringify(result));
-            if(result.length==0){
-                WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "We cannot find any User registered with that email ID");
-                return false;
-            }else{
-                var out = result[0];
-                if(out[hr.password]!=pass){
-                    WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "The email ID and password doesnt match");
-                    return false;
-                }
-                var response = {
-                    value:{
-                        email : out[hr.email],
-                        name : out[hr.firstName],
-                        verification : out[hr.accountStatus]=='Y'?true:false
-                    }
-                }
-                var tokenKey:string = WebUtility.getTokenKey(req);
-                var date = Math.floor(new Date().getTime());
-                var jsonStr={
-                    ip:WebUtility.getIPAddress(req),
-                    date:date,
-                    origin:req.get("origin"),
-                    hrId : out[hr.id],
-                    type:DataModel.userTypes.hr
-                }
-
-                var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
-                response["session_token"] = cookieStr;
-                //res.end(JSON.stringify(response));
-                return WebUtility.sendSuccess(res, req, {
-                    admin:true,
-                    type:DataModel.userTypes.hr,
-                    message:"Logged in as an HR",
-                    session_token:cookieStr
-                }, "HR logged in!");
-            }
-        }, error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, error);
-            return false;
-        }).catch(error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
-            return false;
-        })
-    }
-
-    private hrGetAction(req:express.Request, res:express.Response){
-
+    private preProcessToken(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
+            return undefined;
         }
 
         let session_token  = WebUtility.getParsedToken(req, req.body.session_token, 30);
         console.log("parsed Val 2: "+JSON.stringify(session_token));
         if(!session_token){
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+            return undefined;
         }
-        if(session_token["type"]!=DataModel.userTypes.hr || parseInt(session_token["hrId"])==NaN){
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+        if(session_token["type"]!=DataModel.userTypes.hr || parseInt(session_token["adminId"])==NaN){
+            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+            return undefined;
         }
 
-        let hrId=session_token["hrId"];
+        let id=session_token["adminId"];
+        return id
+    }
+
+    
+    private hrGetAction(req:express.Request, res:express.Response){
+
+        let hrId=this.preProcessToken(req, res);
+        if(!hrId)
+            return;
 
         let action = req.params.action;
         let providers = DataModel.tables.providers;
@@ -237,21 +114,10 @@ export class HRRoutes{
     }
 
     private hrAction(req:express.Request, res:express.Response){
-        if(!WebUtility.getParsedToken(req)){
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
-        }
-
-        let session_token  = WebUtility.getParsedToken(req, req.body.session_token, 30);
-        console.log("parsed Val : "+JSON.stringify(session_token));
-        if(!session_token){
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
-        }
-        if(session_token["type"]!=DataModel.userTypes.hr || parseInt(session_token["hrId"])==NaN){
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
-        }
-
-        let hrId=session_token["hrId"];
-
+        let hrId=this.preProcessToken(req, res);
+        if(!hrId)
+            return;
+        
         let action=req.params.action;
         let providerId=req.body.providerId;
 

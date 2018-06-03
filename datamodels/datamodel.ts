@@ -96,6 +96,7 @@ export class DataModel{
         hr:{
             table:"HRTABLE",
             id:"HRID",
+            adminCreatedRefID:"AdminID",
             firstName:"HRFirstName",
             lastName:"HRLastName",
             email:"HREmailID",

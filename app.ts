@@ -5,12 +5,16 @@ import {ExpressServer,HTTPMethod} from './class/class.server';
 import {RoutesHandler} from './class/class.routeshandler';
 import {MySqlDatabase} from './class/class.mysql-database';
 import {CryptoFunctions} from './class/class.crypto-functions';
-import { ProvidersUtility } from "./routes/providers-utility-routes";
+
+import { WebUtility } from "./routes/web-utility-routes";
 import { ProviderRoutes } from "./routes/provider-routes";
 import { UsersUtility } from "./routes/users-utility-routes";
 import { UserRoutes } from "./routes/user-routes";
 import { DevelopmentRoutings } from "./routes/dev-routes";
 import { ImageUtility } from "./routes/image-utility";
+import { HRAdminRoutes } from "./routes/hr-admin-routes";
+import { HRRoutes } from "./routes/hr-routes";
+
 var path = require('path');
 
 const appConfig=require('./config/app.json');
@@ -30,10 +34,12 @@ server.server.use(express.static(path.join(__dirname, 'public')));
 ImageUtility.setLocation(__dirname+"/public");
 
 let dev = new DevelopmentRoutings(server, database);
-let provicersUtility = new ProvidersUtility(server,database);
+let webUtility = new WebUtility(server,database);
 let providers = new ProviderRoutes(server,database);
 let usersUtility = new UsersUtility(server,database);
 let users = new UserRoutes(server, database);
+let hrRoutes = new HRRoutes(server, database);
+let hrAdminRoutes = new HRAdminRoutes(server, database);
 
 
 /** Example database insert *****/

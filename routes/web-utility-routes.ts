@@ -63,7 +63,7 @@ export class WebUtility{
         
     }
 
-    public static getParsedToken(req:express.Request, token?:string, aliveTime?:number):{ip:string, date:string, origin:string}{
+    public static getParsedToken(req:express.Request, token?:string, aliveTimeInMinutes?:number):{ip:string, date:string, origin:string}{
         if(token===undefined)
             token=req.body.account_token;
         try {
@@ -75,7 +75,7 @@ export class WebUtility{
         var parsedVal = JSON.parse(tokenVal);
         if(parsedVal){
             console.log("Parsed Val : "+JSON.stringify(parsedVal));
-            if(WebUtility.validateParsedToken(parsedVal, req, aliveTime)){
+            if(WebUtility.validateParsedToken(parsedVal, req, aliveTimeInMinutes)){
                 return parsedVal;
             }else{
                 return undefined;

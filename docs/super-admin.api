@@ -26,21 +26,50 @@ admin/forgot
                 message:"Successfully send the message email to info@therapyondemand.io"
             }
 
-admin/hr/create
+admin/add/admin
+    post
+        summary:
+            Gives the super admin access to the users
+        [continued..]
+admin/add/hr
     post
         summary:
             Sends an email to the specified Email ID for profile creation
+
         request
             account_token:<>
             session_token:<>
             email:<email-address>@therapyondemand.io
+            firstName:<>
+            lastName:<>
         Description:
             email : Email ID should end with @therapyondemand.io
 
-admin/hr/remove
+
+admin/block/admin
+admin/block/hr
     post
         summary
             Removes the already existing HRs from the system
+            Only the owner gets the right to add or remove super admin
+            Non Adder super admin, only have access to the HRs
+        request
+            account_token:<>
+            session_token:<>
+            email:<>
+        respose:
+            200
+            {
+                message:"The email has been successfully removed"
+            }
+
+admin/unblock/admin
+admin/unblock/hr
+    post
+        summary
+            Removes the already existing HRs from the system
+            Only the owner gets the right to add or remove super admin
+            Non Adder super admin, only have access to the HRs
         request
             account_token:<>
             session_token:<>
