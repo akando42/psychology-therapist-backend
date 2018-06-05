@@ -1,5 +1,5 @@
 {
-    "urls":["127.0.0.1:3001", "http://localhost:4200", "http://localhost", "http://35.196.105.106", "http://127.0.0.1", "https://rahul-sinha1908.github.io"],
+    "urls":["127.0.0.1:3001", "http://localhost:4200", "http://localhost", "http://35.196.105.106", "http://127.0.0.1", "https://rahul-sinha1908.github.io", "http://www.newearthva.com"],
     "port":3001,
     "baseURL":"http://35.196.105.106:3001/",
     "git_pass":"Hello"

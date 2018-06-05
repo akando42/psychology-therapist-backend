@@ -35,7 +35,6 @@ admin/add/hr
     post
         summary:
             Sends an email to the specified Email ID for profile creation
-
         request
             account_token:<>
             session_token:<>
@@ -44,6 +43,11 @@ admin/add/hr
             lastName:<>
         Description:
             email : Email ID should end with @therapyondemand.io
+        response
+            200
+            {
+                message:"Email Successfully sent to the user".
+            }
 
 
 admin/block/admin
@@ -67,9 +71,7 @@ admin/unblock/admin
 admin/unblock/hr
     post
         summary
-            Removes the already existing HRs from the system
-            Only the owner gets the right to add or remove super admin
-            Non Adder super admin, only have access to the HRs
+            Unblocks the already blocked HRs/Admin
         request
             account_token:<>
             session_token:<>
@@ -77,5 +79,5 @@ admin/unblock/hr
         respose:
             200
             {
-                message:"The email has been successfully removed"
+                message:"The HR/Admin has been successfully unblocked"
             }

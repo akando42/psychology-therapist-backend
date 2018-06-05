@@ -24,13 +24,13 @@ export class UserRoutes{
         var me=this;
 
         this.transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
+        host: 'mail.dreamhost.com',
+        //port: 465,
         secure: true,
         // service: 'gmail',
         auth: {
-            user: 'rahul.test1908@gmail.com',
-            pass: 'rahulkatest'
+            user: 'noreply@therapyondemand.xyz',
+            pass: 'R!jL5pSQ'
         }
         });
 
@@ -203,7 +203,7 @@ export class UserRoutes{
 
         let myStr="<H2>Verify Your Email Address</H2><H5>Massage on Demand</H5></br><H4>Hello "+fname+" "+lname+",</H4><p>Thanks for registering with us</p><p>Please Click <a href='"+link+key+"'>here</a> to verify you email Address</p>";
         var mailOptions = {
-            from: 'rahul.test1908@gmail.com',
+            from: 'noreply@therapyondemand.xyz',
             to: email,
             subject: 'Verification Mail | Massage On Demand',
             html: myStr

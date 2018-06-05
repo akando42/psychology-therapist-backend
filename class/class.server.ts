@@ -304,6 +304,7 @@ export class ExpressServer
             }
             let origin:any=req.get('origin')?req.get('origin'):req.get('host');
             if(!origin||this.config.urls.indexOf(origin)==-1){
+                resolve(true);
                 if(req.body.mac || req.query.mac){
                     resolve(true);
                 }else{
