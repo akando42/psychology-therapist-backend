@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 03, 2018 at 01:00 PM
+-- Generation Time: Jun 06, 2018 at 04:51 PM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -32,15 +32,22 @@ use tod_database;
 
 CREATE TABLE `ADMINTABLE` (
   `AdminID` int(11) NOT NULL,
-  `AdminFirstName` varchar(50) NOT NULL,
-  `AdminLastName` varchar(50) NOT NULL,
+  `AdminFirstName` varchar(50) DEFAULT NULL,
+  `AdminLastName` varchar(50) DEFAULT NULL,
   `AdminEmailID` varchar(150) NOT NULL,
-  `AdminPassword` varchar(50) NOT NULL,
-  `AdminImageLink` text NOT NULL,
-  `AdminPhone` varchar(15) NOT NULL,
+  `AdminPassword` varchar(50) DEFAULT NULL,
+  `AdminImageLink` text,
+  `AdminPhone` varchar(15) DEFAULT NULL,
   `AdminOwnerStatus` tinyint(4) NOT NULL DEFAULT '0',
   `AdminAccountStatus` tinyint(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `ADMINTABLE`
+--
+
+INSERT INTO `ADMINTABLE` (`AdminID`, `AdminFirstName`, `AdminLastName`, `AdminEmailID`, `AdminPassword`, `AdminImageLink`, `AdminPhone`, `AdminOwnerStatus`, `AdminAccountStatus`) VALUES
+(1, 'Adam', 'Parsons', 'info@therapyondemand.io', 'Admin@12345', NULL, NULL, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -50,14 +57,22 @@ CREATE TABLE `ADMINTABLE` (
 
 CREATE TABLE `HRTABLE` (
   `HRID` int(11) NOT NULL,
-  `HRFirstName` varchar(50) NOT NULL,
-  `HRLastName` varchar(50) NOT NULL,
+  `AdminID` int(11) NOT NULL,
+  `HRFirstName` varchar(50) DEFAULT NULL,
+  `HRLastName` varchar(50) DEFAULT NULL,
   `HREmailID` varchar(150) NOT NULL,
-  `HRPassword` varchar(50) NOT NULL,
-  `HRImageLink` text NOT NULL,
-  `HRPhone` tinyint(4) NOT NULL,
-  `HRAccountStatus` tinyint(4) NOT NULL
+  `HRPassword` varchar(50) DEFAULT NULL,
+  `HRImageLink` text,
+  `HRPhone` varchar(15) DEFAULT NULL,
+  `HRAccountStatus` tinyint(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `HRTABLE`
+--
+
+INSERT INTO `HRTABLE` (`HRID`, `AdminID`, `HRFirstName`, `HRLastName`, `HREmailID`, `HRPassword`, `HRImageLink`, `HRPhone`, `HRAccountStatus`) VALUES
+(1, 1, 'HR1', 'Title', 'hr@therapyondemand.io', 'Massage@12345', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -92,6 +107,15 @@ CREATE TABLE `PROVIDERDOCS` (
   `ProviderDocContent` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `PROVIDERDOCS`
+--
+
+INSERT INTO `PROVIDERDOCS` (`ProviderDocID`, `ProviderID`, `ProviderDocTitle`, `ProviderDocContent`) VALUES
+(1, 6, 'Licence', '/docs/provider-1528283419853-6.png'),
+(2, 6, 'Proof of Age', '/docs/provider-1528283419855-6.png'),
+(3, 6, 'Proof of Something', '/docs/provider-1528283419857-6.png');
+
 -- --------------------------------------------------------
 
 --
@@ -116,17 +140,17 @@ CREATE TABLE `PROVIDERS` (
   `ProviderID` int(11) NOT NULL,
   `HRID` int(11) DEFAULT NULL,
   `ProviderFirstName` varchar(50) NOT NULL,
-  `ProviderLastName` varchar(50) NOT NULL,
+  `ProviderLastName` varchar(50) DEFAULT NULL,
   `ProviderEmailID` varchar(150) NOT NULL,
   `ProviderPassword` varchar(50) NOT NULL,
-  `ProviderPhone` varchar(15) NOT NULL,
-  `ProviderProfileImage` text NOT NULL,
+  `ProviderPhone` varchar(15) DEFAULT NULL,
+  `ProviderProfileImage` text,
   `ProviderExperience` varchar(50) NOT NULL,
   `ProviderQualifications` varchar(50) NOT NULL,
   `ProviderLattitude` float NOT NULL,
   `ProviderLongitude` float NOT NULL,
-  `ProviderResume` text NOT NULL,
-  `ProviderAccountStatus` int(11) NOT NULL
+  `ProviderResume` text,
+  `ProviderAccountStatus` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -134,7 +158,9 @@ CREATE TABLE `PROVIDERS` (
 --
 
 INSERT INTO `PROVIDERS` (`ProviderID`, `HRID`, `ProviderFirstName`, `ProviderLastName`, `ProviderEmailID`, `ProviderPassword`, `ProviderPhone`, `ProviderProfileImage`, `ProviderExperience`, `ProviderQualifications`, `ProviderLattitude`, `ProviderLongitude`, `ProviderResume`, `ProviderAccountStatus`) VALUES
-(6, NULL, 'Rahul ', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', '9905264774', '', '2-3 years', 'Graduate', 13.0328, 77.5626, '', 11);
+(6, 1, 'Rahul ', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', '9905264774', '/profile-images/provider-1528283488600-6.jpeg', '2-3 years', 'Graduate', 13.0328, 77.5626, '', 1),
+(8, NULL, 'Rahul', 'Sinha', 'rsinha@tod.io', 'Hello@12345', '9352780025', '/profile-images/provider-1528283621275-8.jpeg', 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283570006-9352780025.png', 11),
+(9, NULL, 'Rahul', 'Sinha', 'rsinha1@tod.io', 'Hello@12345', '9905264774', NULL, 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283778628-9905264774.png', 11);
 
 -- --------------------------------------------------------
 
@@ -150,10 +176,10 @@ CREATE TABLE `SESSIONS` (
   `MassageType` varchar(50) NOT NULL,
   `PreferredGender` int(11) NOT NULL,
   `MassageLength` int(11) NOT NULL,
-  `SessionDateTime` datetime NOT NULL,
-  `Equipements` tinyint(1) NOT NULL,
+  `SessionDateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Equipements` tinyint(1) NOT NULL DEFAULT '0',
   `Pets` varchar(20) NOT NULL,
-  `MedicalInformation` text NOT NULL
+  `MedicalInformation` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -227,7 +253,8 @@ ALTER TABLE `ADMINTABLE`
 --
 ALTER TABLE `HRTABLE`
   ADD PRIMARY KEY (`HRID`),
-  ADD UNIQUE KEY `HREmailConstraint` (`HREmailID`);
+  ADD UNIQUE KEY `HREmailConstraint` (`HREmailID`),
+  ADD KEY `HRAdminConstraint` (`AdminID`);
 
 --
 -- Indexes for table `PAYMENTS`
@@ -289,12 +316,12 @@ ALTER TABLE `USERS`
 -- AUTO_INCREMENT for table `ADMINTABLE`
 --
 ALTER TABLE `ADMINTABLE`
-  MODIFY `AdminID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `AdminID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `HRTABLE`
 --
 ALTER TABLE `HRTABLE`
-  MODIFY `HRID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `HRID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT for table `PAYMENTS`
 --
@@ -304,7 +331,7 @@ ALTER TABLE `PAYMENTS`
 -- AUTO_INCREMENT for table `PROVIDERDOCS`
 --
 ALTER TABLE `PROVIDERDOCS`
-  MODIFY `ProviderDocID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ProviderDocID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `PROVIDERNOTIFICATION`
 --
@@ -314,7 +341,7 @@ ALTER TABLE `PROVIDERNOTIFICATION`
 -- AUTO_INCREMENT for table `PROVIDERS`
 --
 ALTER TABLE `PROVIDERS`
-  MODIFY `ProviderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `ProviderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT for table `SESSIONS`
 --
@@ -333,6 +360,12 @@ ALTER TABLE `USERS`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `HRTABLE`
+--
+ALTER TABLE `HRTABLE`
+  ADD CONSTRAINT `HRAdminConstraint` FOREIGN KEY (`AdminID`) REFERENCES `ADMINTABLE` (`AdminID`);
 
 --
 -- Constraints for table `PAYMENTS`

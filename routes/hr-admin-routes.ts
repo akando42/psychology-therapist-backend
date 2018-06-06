@@ -72,7 +72,10 @@ export class HRAdminRoutes{
         HRAdminRoutes.database.getQueryResults(sql, [email]).then(result=>{
             console.log(JSON.stringify(result));
             if(result.length==0){
-                return this.verifyUser(email, pass, req, res, false);
+                if(admin)
+                    return this.verifyUser(email, pass, req, res, false);
+                else
+                    WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "We cannot find any Admin with that name");
             }else{
                 var out = result[0];
                 if(out[myTable.password]!=pass){
