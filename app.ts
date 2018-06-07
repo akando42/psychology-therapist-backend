@@ -14,6 +14,7 @@ import { DevelopmentRoutings } from "./routes/dev-routes";
 import { ImageUtility } from "./routes/image-utility";
 import { HRAdminRoutes } from "./routes/hr-admin-routes";
 import { HRRoutes } from "./routes/hr-routes";
+import { EmailActivity } from "./routes/email-activity";
 
 var path = require('path');
 
@@ -33,6 +34,7 @@ server.server.use(express.static(path.join(__dirname, 'public')));
 
 ImageUtility.setLocation(__dirname+"/public");
 
+let email = new EmailActivity();
 let dev = new DevelopmentRoutings(server, database);
 let webUtility = new WebUtility(server,database);
 let providers = new ProviderRoutes(server,database);

@@ -6,6 +6,7 @@ import { UsersUtility } from "./users-utility-routes";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
+import { EmailActivity } from "./email-activity";
 
 var nodemailer = require('nodemailer');
 var appConfig=require('../config/app.json');
@@ -13,7 +14,6 @@ var appConfig=require('../config/app.json');
 export class UserRoutes{
     private database:MySqlDatabase;
     private server:ExpressServer;
-    private transporter;
 
     private randomPatternToVerify="!47218fah8y5&^%^$76T21358GUfutT6%$&68327Q5";
     
@@ -22,17 +22,6 @@ export class UserRoutes{
         this.server=server;
         this.database=db;  
         var me=this;
-
-        this.transporter = nodemailer.createTransport({
-        host: 'mail.dreamhost.com',
-        //port: 465,
-        secure: true,
-        // service: 'gmail',
-        auth: {
-            user: 'noreply@therapyondemand.xyz',
-            pass: 'R!jL5pSQ'
-        }
-        });
 
         server.setRoute("/user/login", (req:express.Request, res:express.Response)=>{
             me.loginUser(req, res);
@@ -201,14 +190,8 @@ export class UserRoutes{
         let key = encodeURIComponent(CryptoFunctions.aes256Encrypt(JSON.stringify(json), encKey));
         console.log("Key : "+key);
 
-        let myStr="<H2>Verify Your Email Address</H2><H5>Massage on Demand</H5></br><H4>Hello "+fname+" "+lname+",</H4><p>Thanks for registering with us</p><p>Please Click <a href='"+link+key+"'>here</a> to verify you email Address</p>";
-        var mailOptions = {
-            from: 'noreply@therapyondemand.xyz',
-            to: email,
-            subject: 'Verification Mail | Massage On Demand',
-            html: myStr
-        };
-        this.transporter.sendMail(mailOptions, function(error, info){
+        let body="<H2>Verify Your Email Address</H2><H5>Massage on Demand</H5></br><H4>Hello "+fname+" "+lname+",</H4><p>Thanks for registering with us</p><p>Please Click <a href='"+link+key+"'>here</a> to verify you email Address</p>";
+        EmailActivity.instance.sendEmail(email, 'Verification Mail | Massage On Demand', body, function(error, info){
             if (error) {
                 console.log(error);
                 return UsersUtility.sendErrorMessage(res, DataModel.userResponse.emailError, "Server Error : "+error);

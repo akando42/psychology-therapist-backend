@@ -8,6 +8,7 @@ import { RoutesHandler } from "../class/class.routeshandler";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
+import { EmailActivity } from "./email-activity";
 
 var nodemailer = require('nodemailer');
 
@@ -23,7 +24,7 @@ export class DevelopmentRoutings{
         this.transporter = nodemailer.createTransport({
         host: 'mail.dreamhost.com',
         //port: 993,
-        secure: true,
+        secure: false,
         // service: 'gmail',
         auth: {
             user: 'help@newearthva.com',
@@ -39,6 +40,9 @@ export class DevelopmentRoutings{
         server.setRoute("/dev/newearth", (req:express.Request, res:express.Response)=>{
             me.newEarthVer(req, res);
         }, HTTPMethod.POST);
+        server.setRoute("/dev/testmail", (req:express.Request, res:express.Response)=>{
+            me.testEmail(req, res);
+        }, HTTPMethod.GET);
     }
 
     private test1(req:express.Request, res:express.Response){
@@ -82,6 +86,18 @@ export class DevelopmentRoutings{
                 console.log('Email sent: ' + info.response);
                 //return UsersUtility.sendSuccess(res,[], "Successfully registered!! We have sent you a cofirmation mail!");
                 res.redirect("http://www.newearthva.com");
+            }
+        });
+    }
+    private testEmail(req:express.Request, res:express.Response){
+        console.log(JSON.stringify(req.body));
+        EmailActivity.instance.sendEmail("rahul.sinha1908@gmail.com", "Test Email", "The Email Provider is working", function(error, info){
+            if (error) {
+                console.log(error);
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.emailError, "Server Error : "+error);
+            } else {
+                console.log('Email sent: ' + info.response);
+                return UsersUtility.sendSuccess(res,[], "Successfully registered!! We have sent you a cofirmation mail!");
             }
         });
     }
