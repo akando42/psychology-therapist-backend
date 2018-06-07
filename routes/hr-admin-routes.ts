@@ -89,6 +89,18 @@ export class HRAdminRoutes{
                         verification : out[myTable.accountStatus]=='Y'?true:false
                     }
                 }
+
+                let type="";
+                if(admin){
+                    if(out[DataModel.tables.admin.owner]==1){
+                        type=DataModel.userTypes.admin;
+                    }else{
+                        type=DataModel.userTypes.moderator;
+                    }
+                    
+                }else{
+                    type=DataModel.userTypes.hr;
+                }
                 var tokenKey:string = WebUtility.getTokenKey(req);
                 var date = Math.floor(new Date().getTime());
                 var jsonStr={
@@ -96,7 +108,7 @@ export class HRAdminRoutes{
                     date:date,
                     origin:req.get("origin"),
                     adminId : out[myTable.id],
-                    type:admin?DataModel.userTypes.admin:DataModel.userTypes.hr
+                    type:type
                 }
 
                 var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
@@ -104,7 +116,7 @@ export class HRAdminRoutes{
                 //res.end(JSON.stringify(response));
                 return WebUtility.sendSuccess(res, req, {
                     admin:true,
-                    type:DataModel.userTypes.admin,
+                    type:type,
                     message:"Logged in as an Admin",
                     session_token:cookieStr
                 }, "Admin Logged in!");

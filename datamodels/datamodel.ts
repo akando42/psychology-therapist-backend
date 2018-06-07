@@ -109,6 +109,7 @@ export class DataModel{
 
     public static userTypes={
         hr:"HR",
+        moderator:"Moderator",
         admin:"Admin",
         provider:"Provider"
     }
