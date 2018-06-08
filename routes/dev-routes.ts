@@ -70,14 +70,28 @@ export class DevelopmentRoutings{
         let phone = req.body["Phone"];
         let address = req.body["Address"];
         let message = req.body["Message"];
+        
         let myStr="<H2>Email : "+email+"</H2><H5>Phone : "+phone+"</H5><H5>Address : "+address+"</H5><br><p>Messsage : "+message+"</p>";
+        
         var mailOptions = {
             from: 'help@newearthva.com',
-            to: 'newearthllc@gmail.com',
+            to: 'newearthllc@gmail.com, rsinha@therapyondemand.io',
             subject: 'NewEarth Redirect Mails | '+name,
             html: myStr
         };
-        this.transporter.sendMail(mailOptions, function(error, info){
+        // this.transporter.sendMail(mailOptions, function(error, info){
+        //     if (error) {
+        //         console.log(error);
+        //         //return UsersUtility.sendErrorMessage(res, DataModel.userResponse.emailError, "Server Error : "+error);
+        //         res.redirect("http://www.newearthva.com/contactus.html");
+        //     } else {
+        //         console.log('Email sent: ' + info.response);
+        //         //return UsersUtility.sendSuccess(res,[], "Successfully registered!! We have sent you a cofirmation mail!");
+        //         res.redirect("http://www.newearthva.com");
+        //     }
+        // });
+
+        EmailActivity.instance.sendEmail(mailOptions.to, mailOptions.subject, mailOptions.html, function(error, info){
             if (error) {
                 console.log(error);
                 //return UsersUtility.sendErrorMessage(res, DataModel.userResponse.emailError, "Server Error : "+error);
@@ -91,7 +105,7 @@ export class DevelopmentRoutings{
     }
     private testEmail(req:express.Request, res:express.Response){
         console.log(JSON.stringify(req.body));
-        EmailActivity.instance.sendEmail("rahul.sinha1908@gmail.com", "Test Email", "The Email Provider is working", function(error, info){
+        EmailActivity.instance.sendEmail("rahul.sinha1908@gmail.com, rsinha@therapyondemand.io", "Test Email", "The Email Provider is working", function(error, info){
             if (error) {
                 console.log(error);
                 return UsersUtility.sendErrorMessage(res, DataModel.userResponse.emailError, "Server Error : "+error);
