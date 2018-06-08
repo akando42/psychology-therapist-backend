@@ -142,7 +142,7 @@ export class HRAdminRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
             return undefined;
         }
-        if(session_token["type"]!=DataModel.userTypes.admin || parseInt(session_token["adminId"])==NaN){
+        if(!(session_token["type"]==DataModel.userTypes.admin || session_token["type"]==DataModel.userTypes.moderator) || parseInt(session_token["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
             return undefined;
         }
@@ -164,12 +164,13 @@ export class HRAdminRoutes{
 
         let type = req.params.type;
 
-        let table=DataModel.tables.admin;
+        //let table=DataModel.tables.admin;
+        let table:any;
         
-        if(type=="admin"){
-            
-        }else if(type=="hr"){
-
+        if(type==DataModel.userTypes.moderator){
+            table=DataModel.tables.admin;
+        }else if(type==DataModel.userTypes.hr){
+            table=DataModel.tables.hr;
         }else{
             return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The URL parameter is invalid");
         }
@@ -185,6 +186,7 @@ export class HRAdminRoutes{
         }).then(result=>{
             if(result){
                 //TODO Send the invitation Email to the user
+                this.sendInvitationWithCode(email, firstName, lastName, type);
             }else{
                 return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "We cannot insert the details in the database");
             }
@@ -193,6 +195,9 @@ export class HRAdminRoutes{
         }).catch(error=>{
             return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Server Error: "+error);
         })
+    }
+    private sendInvitationWithCode(email:string, firstName:string, lastName:string, type:string){
+        
     }
 
     private blockAccount(req:express.Request, res:express.Response){

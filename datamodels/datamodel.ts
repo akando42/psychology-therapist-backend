@@ -108,10 +108,10 @@ export class DataModel{
     }
 
     public static userTypes={
-        hr:"HR",
-        moderator:"Moderator",
-        admin:"Admin",
-        provider:"Provider"
+        hr:"hr",
+        moderator:"moderator",
+        admin:"admin",
+        provider:"provider"
     }
     public static accountStatus={
         waiting:0,

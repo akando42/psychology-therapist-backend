@@ -26,7 +26,7 @@ admin/forgot
                 message:"Successfully send the message email to info@therapyondemand.io"
             }
 
-admin/add/admin
+admin/add/moderator
     post
         summary:
             Gives the super admin access to the users
@@ -50,7 +50,7 @@ admin/add/hr
             }
 
 
-admin/block/admin
+admin/block/moderator
 admin/block/hr
     post
         summary
@@ -67,7 +67,7 @@ admin/block/hr
                 message:"The email has been successfully removed"
             }
 
-admin/unblock/admin
+admin/unblock/moderator
 admin/unblock/hr
     post
         summary

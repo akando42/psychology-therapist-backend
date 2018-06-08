@@ -8,34 +8,39 @@ import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
 
 var nodemailer = require('nodemailer');
-var appConfig=require('../config/app.json');
+
+var api_key = '759a41ec453b708bcb16e0769be3e864-b892f62e-d75c1e60';
+var domain = 'therapyondemand.xyz';
+var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 
 export class EmailActivity{
     private transporter;
     public static instance:EmailActivity;
 
     constructor(){
-        this.transporter = nodemailer.createTransport({
-        host: 'mail.dreamhost.com',
-        //port: 465,
-        secure: false,
-        // service: 'gmail',
-        auth: {
-            user: 'noreply@therapyondemand.xyz',
-            pass: 'R!jL5pSQ'
-        }
-        });
-
         EmailActivity.instance=this;
+        
     }
-
+    
     public sendEmail(email, subject, body, callback){
-        var mailOptions = {
-            from: 'noreply@therapyondemand.xyz',
+        // var mailOptions = {
+        //     from: 'rsinha@therapyondemand.io',
+        //     to: email,
+        //     subject: subject,
+        //     html: body
+        // };
+        // this.transporter.sendMail(mailOptions, callback);
+
+        var data = {
+            from: 'Therapy on Demand <postmaster@therapyondemand.xyz>',
             to: email,
             subject: subject,
             html: body
         };
-        this.transporter.sendMail(mailOptions, callback);
+        
+        mailgun.messages().send(data, callback);
+
+        
+        //sgMail.send(mailOptions, callback);
     }
 }
