@@ -46,22 +46,8 @@ export class DevelopmentRoutings{
     }
 
     private test1(req:express.Request, res:express.Response){
-        let myStr="<H2>Verify Your Email Address</H2><H5>Massage on Demand</H5></br><H4>Hello Rahul Sinha,</H4><p>Thanks for registering with us</p><p>Please Click <a href=''>here</a> to verify you email Address</p>";
-        var mailOptions = {
-            from: 'help@newearthva.com',
-            to: 'rahul.sinha1908@gmail.com',
-            subject: 'Verification Mail | Massage On Demand',
-            html: myStr
-        };
-        this.transporter.sendMail(mailOptions, function(error, info){
-            if (error) {
-                console.log(error);
-                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.emailError, "Server Error : "+error);
-            } else {
-                console.log('Email sent: ' + info.response);
-                return UsersUtility.sendSuccess(res,[], "Successfully registered!! We have sent you a cofirmation mail!");
-            }
-        });
+        console.log(JSON.stringify(req.query));
+        res.send(JSON.stringify(req.query))
     }
     private newEarthVer(req:express.Request, res:express.Response){
         console.log(JSON.stringify(req.body));

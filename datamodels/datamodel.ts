@@ -152,13 +152,15 @@ export class DataModel{
         profileError:575,
     }
 
-    public static providerResponse={
+    public static webResponses={
         success:200,
         account_token_error:513,
         session_token_error:514,
         originError:515,
         inputError:516,
         serverError:517,
+        accessError:518,
+        emailError:519,
 
         loginError:525,
         registerError:535,

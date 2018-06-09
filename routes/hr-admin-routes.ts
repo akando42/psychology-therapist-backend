@@ -7,11 +7,13 @@ import { RoutesHandler } from "../class/class.routeshandler";
 import { WebUtility } from "./web-utility-routes";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
+import { EmailActivity } from "./email-activity";
 
 
 export class HRAdminRoutes{
     private static database:MySqlDatabase;
     private server:ExpressServer;
+    private encodingKey="akjh#&*^%^*$#(hgsjfa86t*^%*$Q21^$GFHG&^#@RG387gt";
 
     constructor(server:ExpressServer, db:MySqlDatabase){
         HRAdminRoutes.database=db;
@@ -22,8 +24,16 @@ export class HRAdminRoutes{
             me.adminLogin(req, res);
         }, HTTPMethod.POST);
 
+        server.setRoute("/admin/decode/email", (req:express.Request, res:express.Response)=>{
+            me.decodeEmailVerification(req, res);
+        }, HTTPMethod.POST);
+
         server.setRoute("/admin/add/:type", (req:express.Request, res:express.Response)=>{
             me.addAccount(req, res);
+        }, HTTPMethod.POST);
+
+        server.setRoute("/moderator/register", (req:express.Request, res:express.Response)=>{
+            me.registerModerator(req, res);
         }, HTTPMethod.POST);
 
         server.setRoute("/admin/block/:type", (req:express.Request, res:express.Response)=>{
@@ -40,7 +50,7 @@ export class HRAdminRoutes{
         var parsedVal  = WebUtility.getParsedToken(req)
         console.log("parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");;
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");;
         }
 
         var email:string = String(req.body.email);
@@ -49,7 +59,7 @@ export class HRAdminRoutes{
         // console.log(email+" : "+password);
         if(!(WebUtility.validateStringFields(email, 6, 255)
             && WebUtility.validateStringFields(password, 8, 20))){
-                return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The input is invalid...");;
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input is invalid...");;
             }
         
         this.verifyUser(email, password, req, res, true);
@@ -75,11 +85,11 @@ export class HRAdminRoutes{
                 if(admin)
                     return this.verifyUser(email, pass, req, res, false);
                 else
-                    WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "We cannot find any Admin with that name");
+                    WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "We cannot find any Admin with that name");
             }else{
                 var out = result[0];
                 if(out[myTable.password]!=pass){
-                    WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, "The email ID and password doesnt match");
+                    WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "The email ID and password doesnt match");
                     return false;
                 }
                 var response = {
@@ -122,114 +132,213 @@ export class HRAdminRoutes{
                 }, "Admin Logged in!");
             }
         }, error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.loginError, error);
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, error);
             return false;
         }).catch(error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
             return false;
         })
     }
 
     private preProcessToken(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");
             return undefined;
         }
 
         let session_token  = WebUtility.getParsedToken(req, req.body.session_token, 30);
         console.log("parsed Val 2: "+JSON.stringify(session_token));
         if(!session_token){
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
             return undefined;
         }
         if(!(session_token["type"]==DataModel.userTypes.admin || session_token["type"]==DataModel.userTypes.moderator) || parseInt(session_token["adminId"])==NaN){
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dint valid access rights");
             return undefined;
         }
 
-        let id=session_token["adminId"];
-        return id
+        //let id=["adminId"];
+        return session_token;
     }
 
-    private autoGeneratePassword():string{
-        //This is the random Function
+    private decodeEmailVerification(req:express.Request, res:express.Response){
+        var parsedVal  = WebUtility.getParsedToken(req)
+        console.log("parsed Val : "+JSON.stringify(parsedVal));
+        if(!parsedVal){
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");;
+        }
 
-        //var random =Math.floor(Math.random() * (max-min)) + +min;
-        return undefined;
+        let code = req.body.code;
+        let email = req.body.email;
+        if(!code || !email){
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Input");
+        }
+        
+        let myString=CryptoFunctions.aes256Decrypt(code, CryptoFunctions.get256BitKey([email, this.encodingKey]));
+        let json:{
+            email:string,
+            firstName:string,
+            lastName:string,
+            type:string,
+            id:Number
+        }=JSON.parse(myString);
+
+        if(!json){
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Code you sent is Invalid");
+        }
+
+        let tokenKey:string = WebUtility.getTokenKey(req);
+        let date = Math.floor(new Date().getTime());
+        
+        let jsonToken={
+            ip:WebUtility.getIPAddress(req),
+            date:date,
+            origin:req.get("origin"),
+            adminId : json.id,
+            type:json.type+"_temp",
+            actualType:json.type
+        }
+        let register_token = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonToken), tokenKey);
+
+        let outputStr={
+            email:json.email,
+            firstName:json.firstName,
+            lastName:json.lastName,
+            type:json.type,
+            register_token:register_token
+        }
+        WebUtility.sendSuccess(res, req, outputStr, "Successfully Parsed the email Inputs");
     }
+
     private addAccount(req:express.Request, res:express.Response){
-        let adminId=this.preProcessToken(req, res);
+        const { adminId, type}=this.preProcessToken(req, res);
         if(!adminId)
             return;
 
-        let type = req.params.type;
+        let actionType = req.params.type;
 
         //let table=DataModel.tables.admin;
         let table:any;
         
-        if(type==DataModel.userTypes.moderator){
+        if(actionType==DataModel.userTypes.moderator){
+            if(type!=DataModel.userTypes.admin)
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
             table=DataModel.tables.admin;
-        }else if(type==DataModel.userTypes.hr){
+        }else if(actionType==DataModel.userTypes.hr){
             table=DataModel.tables.hr;
         }else{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The URL parameter is invalid");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
         }
 
         let firstName=req.body.firstName;
         let lastName=req.body.lastName;
         let email=req.body.email;
+        let callback=req.body.callback_url;
         
         HRAdminRoutes.database.insert(table.table, {
             [table.firstName]:firstName,
             [table.lastName]:lastName,
             [table.email]:email,
         }).then(result=>{
-            if(result){
-                //TODO Send the invitation Email to the user
-                this.sendInvitationWithCode(email, firstName, lastName, type);
-            }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "We cannot insert the details in the database");
-            }
+            //TODO Send the invitation Email to the user
+            this.sendInvitationWithCode(req, res, email, firstName, lastName, actionType, result, callback);
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Server Error: "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Server Error: "+error);
         })
     }
-    private sendInvitationWithCode(email:string, firstName:string, lastName:string, type:string){
+
+    private registerModerator(req:express.Request, res:express.Response){
+        if(!WebUtility.getParsedToken(req)){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");
+            return undefined;
+        }
+
+        let session_token  = WebUtility.getParsedToken(req, req.body.register_token, 30);
+        console.log("parsed Val 2: "+JSON.stringify(session_token));
+        if(!session_token){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
+            return undefined;
+        }
+        if(!(session_token["type"]==DataModel.userTypes.moderator+"_temp" || session_token["actualType"]==DataModel.userTypes.moderator) || parseInt(session_token["adminId"])==NaN){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dint valid access rights");
+            return undefined;
+        }
+
+        //let id=["adminId"];
+        const { adminId, type, actualType}=session_token;
+        if(actualType!=DataModel.userTypes.moderator){
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "Access Error!!");
+        }
+
+        let firstName=req.body.firstName;
+        let lastName=req.body.lastName;
+        let password=req.body.password;
+
+        let table = DataModel.tables.admin;
+        HRAdminRoutes.database.update(table.table, {
+            [table.firstName]:firstName,
+            [table.lastName]:lastName,
+            [table.password]:password,
+            [table.accountStatus]:DataModel.accountStatus.accepted,
+        }, {
+            [table.id]:adminId
+        }).then(result=>{
+            if(result){
+                return WebUtility.sendSuccess(res, req, [], "Successfully Registered");
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Could not update Table!!");
+            }
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);
+        })
+    }
+    private sendInvitationWithCode(req:express.Request, res:express.Response, email:string, firstName:string, lastName:string, type:string, id:number, callback:string){
+        let json={
+            email:email,
+            firstName:firstName,
+            lastName:lastName,
+            type:type,
+            id:id
+        }
+
+        let myActualString=JSON.stringify(json);
+
+        let myEncodedString=CryptoFunctions.aes256Encrypt(myActualString, CryptoFunctions.get256BitKey([email, this.encodingKey]));
+        let code = encodeURIComponent(myEncodedString);
+        let url = callback+"?code="+code+"&email="+encodeURIComponent(email);
+
+        let body="<H1>Welcome to Therapy On Demand</H1>\
+                <h3>Invitation to join Therapy On Demand ("+type+")</h3>\
+                <a href='"+url+"'>[Click this Link]</a>"
         
+        EmailActivity.instance.sendEmail(email, "Welcome to Therapy on Demand!", body, function(err, info){
+            if(err){
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.emailError, "The Verification Email cant be send");
+            }else{
+                return WebUtility.sendSuccess(res, req, [], "Successfully sent the invitation to the user");
+            }
+        })
     }
 
     private blockAccount(req:express.Request, res:express.Response){
-        let adminId=this.preProcessToken(req, res);
+        const { adminId, type}=this.preProcessToken(req, res);
         if(!adminId)
             return;
 
-        let type = req.params.type;
-        
-        if(type=="admin"){
-
-        }else if(type=="hr"){
-            
-        }else{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The URL parameter is invalid");
-        }
+        let actionType = req.params.type;
     }
 
     private unblockAccount(req:express.Request, res:express.Response){
-        let adminId=this.preProcessToken(req, res);
+        const { adminId, type}=this.preProcessToken(req, res);
         if(!adminId)
             return;
 
-        let type = req.params.type;
+        let actionType = req.params.type;
         
-        if(type=="admin"){
-            
-        }else if(type=="hr"){
-            
-        }else{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.inputError, "The URL parameter is invalid");
-        }
     }
 
 }

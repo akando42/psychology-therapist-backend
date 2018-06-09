@@ -26,6 +26,25 @@ admin/forgot
                 message:"Successfully send the message email to info@therapyondemand.io"
             }
 
+
+admin/decode/email
+    post
+        summary:
+            It is used to decode the code send with the redirect url
+        request:
+            account_token:<>
+            code:<Code in the URL>
+            email:<email of user>
+        response:
+            200
+            {
+                email:<The email Address>
+                firstName:<>
+                lastName:<>
+                type:<>
+                register_token:<Use this token to register the User in the Next API calls>
+            }
+
 admin/add/moderator
     post
         summary:
@@ -41,6 +60,7 @@ admin/add/hr
             email:<email-address>@therapyondemand.io
             firstName:<>
             lastName:<>
+            callback_url:<Absolute URL to which the api should redirect> // Note the url should not end with "/"
         Description:
             email : Email ID should end with @therapyondemand.io
         response
@@ -48,6 +68,17 @@ admin/add/hr
             {
                 message:"Email Successfully sent to the user".
             }
+
+moderator/register
+	post:
+		summary:
+			This request is directed from the user after register link is clicked
+		request:
+			account_token:<>
+			register_token:<One fetched from frontend URL>
+			firstName:
+			lastName:
+			password:
 
 
 admin/block/moderator

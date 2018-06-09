@@ -16,8 +16,8 @@ hr/register
 		request:
 			account_token:<>
 			register_token:<One fetched from frontend URL>
-			email:<This parameter should not change>
-			name:
+			firstName:
+			lastName:
 			password:
 
 /hr/login

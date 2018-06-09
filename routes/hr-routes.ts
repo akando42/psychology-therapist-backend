@@ -17,6 +17,10 @@ export class HRRoutes{
         HRRoutes.server=server;
         var me:HRRoutes=this;
 
+        server.setRoute("/hr/register", (req:express.Request, res:express.Response)=>{
+            me.registerHR(req, res);
+        }, HTTPMethod.POST);
+
         server.setRoute("/hr/get/:action", (req:express.Request, res:express.Response)=>{
             me.hrGetAction(req, res);
         }, HTTPMethod.POST);
@@ -25,20 +29,68 @@ export class HRRoutes{
         }, HTTPMethod.POST);
     }
 
+    private registerHR(req:express.Request, res:express.Response){
+        if(!WebUtility.getParsedToken(req)){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");
+            return undefined;
+        }
+
+        let session_token  = WebUtility.getParsedToken(req, req.body.register_token, 30);
+        console.log("parsed Val 2: "+JSON.stringify(session_token));
+        if(!session_token){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
+            return undefined;
+        }
+        if(!(session_token["type"]==DataModel.userTypes.hr+"_temp" || session_token["actualType"]==DataModel.userTypes.hr) || parseInt(session_token["adminId"])==NaN){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dint valid access rights");
+            return undefined;
+        }
+
+        //let id=["adminId"];
+        const { adminId, type, actualType}=session_token;
+        if(actualType!=DataModel.userTypes.hr){
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "Access Error!!");
+        }
+
+        let firstName=req.body.firstName;
+        let lastName=req.body.lastName;
+        let password=req.body.password;
+
+        let table = DataModel.tables.hr;
+        HRRoutes.database.update(table.table, {
+            [table.firstName]:firstName,
+            [table.lastName]:lastName,
+            [table.password]:password,
+            [table.accountStatus]:DataModel.accountStatus.accepted,
+        }, {
+            [table.id]:adminId
+        }).then(result=>{
+            if(result){
+                return WebUtility.sendSuccess(res, req, [], "Successfully Registered");
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Could not update Table!!");
+            }
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);
+        })
+    }
+
     private preProcessToken(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.account_token_error, "The account_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");
             return undefined;
         }
 
         let session_token  = WebUtility.getParsedToken(req, req.body.session_token, 30);
         console.log("parsed Val 2: "+JSON.stringify(session_token));
         if(!session_token){
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
             return undefined;
         }
         if(session_token["type"]!=DataModel.userTypes.hr || parseInt(session_token["adminId"])==NaN){
-            WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.session_token_error, "The session_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
             return undefined;
         }
 
@@ -64,7 +116,7 @@ export class HRRoutes{
         }else if(action==="rejected"){
             sql+=DataModel.accountStatus.phaseOneRejected+" AND "+providers.hrAcceptanceID+"="+hrId;
         }else{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "The routing you specified doesnot exists");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "The routing you specified doesnot exists");
         }
         HRRoutes.database.getQueryResults(sql, []).then(result=>{
             let data={};
@@ -102,14 +154,14 @@ export class HRRoutes{
 
                 return WebUtility.sendSuccess(res, req, data, "Successfully fetched the datas");
             }, error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
             }).catch(error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
             })
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
         })
     }
 
@@ -128,7 +180,7 @@ export class HRRoutes{
         }else if(action==="reject"){
             status=DataModel.accountStatus.phaseOneRejected;
         }else{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "The routing you specified doesnot exists");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "The routing you specified doesnot exists");
         }
         
         HRRoutes.database.update(providers.table,{
@@ -139,9 +191,9 @@ export class HRRoutes{
         }).then(result=>{
             return WebUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the applications");
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.hrError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.providerResponse.serverError, "Server Error : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
         })
     }
 

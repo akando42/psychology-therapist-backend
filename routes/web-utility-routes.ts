@@ -63,7 +63,7 @@ export class WebUtility{
         
     }
 
-    public static getParsedToken(req:express.Request, token?:string, aliveTimeInMinutes?:number):{ip:string, date:string, origin:string}{
+    public static getParsedToken(req:express.Request, token?:string, aliveTimeInMinutes?:number){
         if(token===undefined)
             token=req.body.account_token;
         try {
@@ -153,7 +153,7 @@ export class WebUtility{
         RoutesHandler.respond(res, req, [], true, description, code);
     }
     public static sendSuccess(res:express.Response, req:express.Request, data:any, description:string){
-        RoutesHandler.respond(res, req, data, false, description, DataModel.providerResponse.success);
+        RoutesHandler.respond(res, req, data, false, description, DataModel.webResponses.success);
     }
 
 
