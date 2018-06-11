@@ -167,6 +167,8 @@ export class DataModel{
 
         hrError:545,
         hrActionError:546,
+        adminError:547,
+        adminActionError:548,
 
         paymentError:555,
 

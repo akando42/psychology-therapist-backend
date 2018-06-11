@@ -330,6 +330,34 @@ export class HRAdminRoutes{
             return;
 
         let actionType = req.params.type;
+        let table:any=DataModel.tables.admin;
+        if(actionType==DataModel.userTypes.moderator){
+            if(type!=DataModel.userTypes.admin)
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
+            table=DataModel.tables.admin;
+        }else if(actionType==DataModel.userTypes.hr){
+            table=DataModel.tables.hr;
+        }else{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
+        }
+
+        
+        //TODO Do the implementation to change the account status to the one for the blocked account
+        HRAdminRoutes.database.update(table.table, {
+            [table.accountStatus]:DataModel.accountStatus.blocked
+        },{
+            [table.id]:adminId
+        }).then(result=>{
+            if(result){
+                return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Woops! Nothing changed in our system");
+            }
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
+        })
     }
 
     private unblockAccount(req:express.Request, res:express.Response){
@@ -338,6 +366,34 @@ export class HRAdminRoutes{
             return;
 
         let actionType = req.params.type;
+        let table:any=DataModel.tables.admin;
+        if(actionType==DataModel.userTypes.moderator){
+            if(type!=DataModel.userTypes.admin)
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
+            table=DataModel.tables.admin;
+        }else if(actionType==DataModel.userTypes.hr){
+            table=DataModel.tables.hr;
+        }else{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
+        }
+
+        
+        //TODO Do the implementation to change the account status to the one for the blocked account
+        HRAdminRoutes.database.update(table.table, {
+            [table.accountStatus]:DataModel.accountStatus.accepted
+        },{
+            [table.id]:adminId
+        }).then(result=>{
+            if(result){
+                return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Woops! Nothing changed in our system");
+            }
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
+        })
         
     }
 

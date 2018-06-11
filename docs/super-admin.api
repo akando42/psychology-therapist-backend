@@ -79,6 +79,11 @@ moderator/register
 			firstName:
 			lastName:
 			password:
+        response:
+            200:
+            {
+                message:"Successfully Registered"
+            }
 
 
 admin/block/moderator
