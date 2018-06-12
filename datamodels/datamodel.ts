@@ -104,7 +104,20 @@ export class DataModel{
             image:"HRImageLink",
             phone:"HRPhone",
             accountStatus:"HRAccountStatus"
-        }
+        },
+
+        tokenTracker:{
+            table:"TOKENTRACKER",
+            code:"TokenCode",
+            ip:"IPAddress",//Unique Key
+            tokenCreationTime:"TokenCreationDateTime",
+            totalTokenCreated:"TotalTokenCreatedInADay",
+            lastApiCallTime:"LastAPICallTime",
+            currentApiCallTime:"CurrentAPICallTime",
+            totalCallsInAMinute:"TotalAPICallInAMinute",
+            blockedStatus:"BlockedStatus",
+        },
+        
     }
 
     public static userTypes={
@@ -161,6 +174,7 @@ export class DataModel{
         serverError:517,
         accessError:518,
         emailError:519,
+        totalAPICallsExceeded:520,
 
         loginError:525,
         registerError:535,

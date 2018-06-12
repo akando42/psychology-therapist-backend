@@ -89,7 +89,9 @@ export class HRRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
             return undefined;
         }
-        if(session_token["type"]!=DataModel.userTypes.hr || parseInt(session_token["adminId"])==NaN){
+        if(!(session_token["type"]==DataModel.userTypes.hr || 
+                session_token["type"]==DataModel.userTypes.admin ||
+                session_token["type"]==DataModel.userTypes.moderator) || parseInt(session_token["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
             return undefined;
         }

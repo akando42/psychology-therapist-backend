@@ -302,7 +302,7 @@ export class MySqlDatabase
             });
         });
    }
-   public async insert(table:string,element:any,uppercase:boolean = true, uniqueFields:string[]=[],idColumn:string = "",conditionalReturnsForExistingValues:{fieldName:string,fieldValue:string,returnValue:number}[]=[]):Promise<number>
+   public async insert(table:string,element:any, shouldReplace:boolean=false ,uppercase:boolean = true, uniqueFields:string[]=[],idColumn:string = "",conditionalReturnsForExistingValues:{fieldName:string,fieldValue:string,returnValue:number}[]=[]):Promise<number>
    {
        return new Promise<number>((resolve,reject)=>
        {
@@ -321,8 +321,11 @@ export class MySqlDatabase
                     reject(err.code);    
                  });
                 let processedElement:{columns:string[],values:string[]}=this.processObject(element,connection,uppercase);    
-                
-                let query:string = "INSERT INTO "+(uppercase?table.toUpperCase():table)+"("+processedElement.columns.join(',')+") VALUES("+processedElement.values.join(',')+")";
+                let query:string;
+                if(!shouldReplace)
+                    query = "INSERT INTO "+(uppercase?table.toUpperCase():table)+"("+processedElement.columns.join(',')+") VALUES("+processedElement.values.join(',')+")";
+                else
+                    query = "REPLACE INTO "+(uppercase?table.toUpperCase():table)+"("+processedElement.columns.join(',')+") VALUES("+processedElement.values.join(',')+")";
                  console.log("Insert Query : "+query);
                 if(uniqueFields.length>0 && idColumn.length>0)
                 {

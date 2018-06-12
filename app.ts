@@ -15,6 +15,7 @@ import { ImageUtility } from "./routes/image-utility";
 import { HRAdminRoutes } from "./routes/hr-admin-routes";
 import { HRRoutes } from "./routes/hr-routes";
 import { EmailActivity } from "./routes/email-activity";
+import { SecurityFeatures } from "./routes/security-features";
 
 var path = require('path');
 
@@ -24,11 +25,19 @@ const server:ExpressServer = new ExpressServer(appConfig);
 const routesHandler:RoutesHandler = new RoutesHandler();
 const database:MySqlDatabase=new MySqlDatabase(dbConfig.server,dbConfig.user,dbConfig.password,dbConfig.database,dbConfig.port);
 
+export class MyDatabase{
+    public static database:MySqlDatabase;
+    constructor(){
+        MyDatabase.database=database;
+    }
+}
+new MyDatabase();
+server.server.use(SecurityFeatures.token_couter)
 
 /* Example routing */
 server.setRoute('/', (req:express.Request, res:express.Response)=>
 {
-    RoutesHandler.respond(res,req,{},false,'The server is working!');
+    RoutesHandler.respond(res,req,{},true,'We couldn\'t find that routing!!');
 },HTTPMethod.GET);
 server.server.use(express.static(path.join(__dirname, 'public')));
 

@@ -5,6 +5,7 @@ import {ExpressServer,HTTPMethod} from '../class/class.server';
 import { RoutesHandler } from "../class/class.routeshandler";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
+import { SecurityFeatures } from "./security-features";
 
 export class WebUtility{
     private database:MySqlDatabase;
@@ -111,10 +112,11 @@ export class WebUtility{
             origin:origin
         }
         console.log("2");
-        var cookieStr:string = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), key);
-        console.log("3 : "+cookieStr);
+        var encodedStr:string = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), key);
+        console.log("3 : "+encodedStr);
+        SecurityFeatures.addTokenToDatabase(jsonStr, encodedStr);
         //res.cookie("account_token", cookieStr);
-        return cookieStr;
+        return encodedStr;
     }
 
     public static getIPAddress(req:express.Request):string{
