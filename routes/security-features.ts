@@ -48,7 +48,7 @@ export class SecurityFeatures{
             }).catch(error=>{
                 console.log("Its here 2 : "+error);
                 next();
-            })            
+            })
         }else{
             console.log("Security : Couldn't find any account_token");
             next();
@@ -94,6 +94,7 @@ export class SecurityFeatures{
 
         let dateTime = new Date(account_token.date).toISOString().slice(0, 19).replace('T', ' ');
         let table = DataModel.tables.tokenTracker;
+
         MyDatabase.database.insert(table.table, {
             [table.code]:encodedToken,
             [table.ip]:account_token.ip,

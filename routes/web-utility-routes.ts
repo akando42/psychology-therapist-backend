@@ -6,6 +6,7 @@ import { RoutesHandler } from "../class/class.routeshandler";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { SecurityFeatures } from "./security-features";
+import { MyDatabase } from "../app";
 
 export class WebUtility{
     private database:MySqlDatabase;
@@ -37,31 +38,31 @@ export class WebUtility{
                 if(parsedVal){
                     //if(parsedVal.ip!=ip || !parsedVal.date || parsedVal.origin!=req.get("origin"))
                     if(!WebUtility.validateParsedToken(parsedVal, req))
-                        account_token=WebUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                        WebUtility.generateToken(ip, tokenKey, req.get("origin"), req, res).then(result=>{
+                            account_token=result;
+                            WebUtility.sendSuccess(res, req, {account_token:account_token}, "Successfully created the token")
+                        });
                 }else{
-                    account_token=WebUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                    WebUtility.generateToken(ip, tokenKey, req.get("origin"), req, res).then(result=>{
+                        account_token=result;
+                        WebUtility.sendSuccess(res, req, {account_token:account_token}, "Successfully created the token")
+                    });
                 }
             } catch (error) {
-                account_token=WebUtility.generateToken(ip, tokenKey, req.get("origin"), res);
+                WebUtility.generateToken(ip, tokenKey, req.get("origin"), req, res).then(result=>{
+                    account_token=result;
+                    WebUtility.sendSuccess(res, req, {account_token:account_token}, "Successfully created the token")
+                });
             }
             
         }else{
             console.log("01");
             //this.generateToken(ip, tokenKey, req.get("origin"), res);
-            try {
-                account_token=WebUtility.generateToken(ip, tokenKey, req.get("origin"), res);
-            } catch (error) {
-                console.log("Message : "+error);
-            }
-            console.log("03");
-        }
-        var response={
-            account_token:account_token
-        }
-        //res.status(200);
-        //res.end(JSON.stringify(response));
-        RoutesHandler.respond(res, req, response, false, "Successfully created the token", 200);
-        
+            WebUtility.generateToken(ip, tokenKey, req.get("origin"), req, res).then(result=>{
+                account_token=result;
+                WebUtility.sendSuccess(res, req, {account_token:account_token}, "Successfully created the token")
+            });
+        }        
     }
 
     public static getParsedToken(req:express.Request, token?:string, aliveTimeInMinutes?:number){
@@ -103,20 +104,59 @@ export class WebUtility{
             return false;
         }
     }
-    public static generateToken(ip:string, key:string, origin:string, res:express.Response):string{
-        console.log("1");
-        var date = Math.floor(new Date().getTime());
-        var jsonStr={
-            ip:ip,
-            date:date,
-            origin:origin
-        }
-        console.log("2");
-        var encodedStr:string = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), key);
-        console.log("3 : "+encodedStr);
-        SecurityFeatures.addTokenToDatabase(jsonStr, encodedStr);
-        //res.cookie("account_token", cookieStr);
-        return encodedStr;
+    public static async generateToken(ip:string, key:string, origin:string, req:express.Request, res:express.Response):Promise<string>{
+        return new Promise<number>((resolve,reject)=>{
+            console.log("1");
+            // let table = DataModel.tables.tokenTracker;
+            // let sql = "SELECT * \
+            //     FROM "+table.table+"\
+            //     WHERE "+table.ip+"='"+WebUtility.getIPAddress(req)+"'";
+            // console.log("SQL : "+sql);
+            // MyDatabase.database.getQueryResults(sql, []).then(result=>{
+            //     if(result.length>0){
+            //         let out=result[0]
+            //         //TODO Process different conditions and validate or invalidate the token
+            //         let curDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            //         let lastDateTime:string = ""+out[table.tokenCreationTime];
+            //         let lastMin = lastDateTime.substring(lastDateTime.indexOf(':')+1, lastDateTime.lastIndexOf(':'));
+            //         let curMin = curDateTime.substring(curDateTime.indexOf(':')+1, curDateTime.lastIndexOf(':'));
+                    
+            //         console.log("Minute Comparison : "+lastMin+" : "+curMin)
+            //         if(curMin==lastMin){
+            //             let totCalls:number=out[table.totalCallsInAMinute];
+            //             if(totCalls>30){
+            //                 WebUtility.sendErrorMessage(res, req, DataModel.webResponses.totalAPICallsExceeded, "Please wait for a while before again calling the apis");
+            //             }else{
+            //                 SecurityFeatures.updateTokenState(req, res,account_token, out, false, next);
+            //             }
+            //         }else{
+            //             SecurityFeatures.updateTokenState(req, res,account_token, out, true, next);
+            //         }
+            //     }else{
+            //         SecurityFeatures.addTokenToDatabase(account_token, req.body.account_token);
+            //         next();
+            //     }
+            // }, error=>{
+            //     console.log("Its here 1");
+                
+            //     next();
+            // }).catch(error=>{
+            //     console.log("Its here 2 : "+error);
+            //     next();
+            // })
+            var date = Math.floor(new Date().getTime());
+            var jsonStr={
+                ip:ip,
+                date:date,
+                origin:origin
+            }
+            console.log("2");
+            var encodedStr:string = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), key);
+            console.log("3 : "+encodedStr);
+            SecurityFeatures.addTokenToDatabase(jsonStr, encodedStr);
+            //res.cookie("account_token", cookieStr);
+            resolve(encodedStr);
+        });
     }
 
     public static getIPAddress(req:express.Request):string{
