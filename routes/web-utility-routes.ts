@@ -26,32 +26,32 @@ export class WebUtility{
     private createToken(req:express.Request, res:express.Response){
         console.log("My Cookies : "+JSON.stringify(req.cookies));
         var ip:string = WebUtility.getIPAddress(req);
-        console.log("My IP : "+ip+" - "+req.get("origin")+" : "+req.body.account_token);
+        console.log("My IP : "+ip+" - "+req.get("origin")+" : "+req.body.accountToken);
         var tokenKey = WebUtility.getTokenKey(req);
         console.log("0 : "+tokenKey+" - "+tokenKey.length);
-        let account_token="";
-        if(req.body.account_token){
+        let accountToken="";
+        if(req.body.accountToken){
             console.log("02");
             try {
-                var tokenVal:string = CryptoFunctions.aes256Decrypt(req.body.account_token, tokenKey);
+                var tokenVal:string = CryptoFunctions.aes256Decrypt(req.body.accountToken, tokenKey);
                 var parsedVal = JSON.parse(tokenVal);
                 if(parsedVal){
                     //if(parsedVal.ip!=ip || !parsedVal.date || parsedVal.origin!=req.get("origin"))
                     if(!WebUtility.validateParsedToken(parsedVal, req))
                         WebUtility.generateToken(ip, tokenKey, req.get("origin"), req, res).then(result=>{
-                            account_token=result;
-                            WebUtility.sendSuccess(res, req, {account_token:account_token}, "Successfully created the token")
+                            accountToken=result;
+                            WebUtility.sendSuccess(res, req, {accountToken:accountToken}, "Successfully created the token")
                         });
                 }else{
                     WebUtility.generateToken(ip, tokenKey, req.get("origin"), req, res).then(result=>{
-                        account_token=result;
-                        WebUtility.sendSuccess(res, req, {account_token:account_token}, "Successfully created the token")
+                        accountToken=result;
+                        WebUtility.sendSuccess(res, req, {accountToken:accountToken}, "Successfully created the token")
                     });
                 }
             } catch (error) {
                 WebUtility.generateToken(ip, tokenKey, req.get("origin"), req, res).then(result=>{
-                    account_token=result;
-                    WebUtility.sendSuccess(res, req, {account_token:account_token}, "Successfully created the token")
+                    accountToken=result;
+                    WebUtility.sendSuccess(res, req, {accountToken:accountToken}, "Successfully created the token")
                 });
             }
             
@@ -59,19 +59,19 @@ export class WebUtility{
             console.log("01");
             //this.generateToken(ip, tokenKey, req.get("origin"), res);
             WebUtility.generateToken(ip, tokenKey, req.get("origin"), req, res).then(result=>{
-                account_token=result;
-                WebUtility.sendSuccess(res, req, {account_token:account_token}, "Successfully created the token")
+                accountToken=result;
+                WebUtility.sendSuccess(res, req, {accountToken:accountToken}, "Successfully created the token")
             });
         }        
     }
 
     public static getParsedToken(req:express.Request, token?:string, aliveTimeInMinutes?:number){
         if(token===undefined)
-            token=req.body.account_token;
+            token=req.body.accountToken;
         try {
             var tokenVal:string = CryptoFunctions.aes256Decrypt(token, WebUtility.getTokenKey(req));
         } catch (error) {
-            //UtilityRoutes.sendErrorMessage(res, req, 403, "The account_token is not valid");
+            //UtilityRoutes.sendErrorMessage(res, req, 403, "The accountToken is not valid");
             return undefined;
         }
         var parsedVal = JSON.parse(tokenVal);
@@ -127,13 +127,13 @@ export class WebUtility{
             //             if(totCalls>30){
             //                 WebUtility.sendErrorMessage(res, req, DataModel.webResponses.totalAPICallsExceeded, "Please wait for a while before again calling the apis");
             //             }else{
-            //                 SecurityFeatures.updateTokenState(req, res,account_token, out, false, next);
+            //                 SecurityFeatures.updateTokenState(req, res,accountToken, out, false, next);
             //             }
             //         }else{
-            //             SecurityFeatures.updateTokenState(req, res,account_token, out, true, next);
+            //             SecurityFeatures.updateTokenState(req, res,accountToken, out, true, next);
             //         }
             //     }else{
-            //         SecurityFeatures.addTokenToDatabase(account_token, req.body.account_token);
+            //         SecurityFeatures.addTokenToDatabase(accountToken, req.body.accountToken);
             //         next();
             //     }
             // }, error=>{
@@ -154,7 +154,7 @@ export class WebUtility{
             var encodedStr:string = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), key);
             console.log("3 : "+encodedStr);
             SecurityFeatures.addTokenToDatabase(jsonStr, encodedStr);
-            //res.cookie("account_token", cookieStr);
+            //res.cookie("accountToken", cookieStr);
             resolve(encodedStr);
         });
     }

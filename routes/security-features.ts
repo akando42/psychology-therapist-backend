@@ -10,12 +10,12 @@ import { MyDatabase } from "../app";
 export class SecurityFeatures{
 
     public static token_couter(req:express.Request, res:express.Response, next){
-        let account_token = WebUtility.getParsedToken(req)
-        if(account_token){
+        let accountToken = WebUtility.getParsedToken(req)
+        if(accountToken){
             let table = DataModel.tables.tokenTracker;
             let sql = "SELECT * \
                 FROM "+table.table+"\
-                WHERE "+table.ip+"='"+account_token.ip+"'";
+                WHERE "+table.ip+"='"+accountToken.ip+"'";
             console.log("SQL : "+sql);
             MyDatabase.database.getQueryResults(sql, []).then(result=>{
                 if(result.length>0){
@@ -32,13 +32,13 @@ export class SecurityFeatures{
                         if(totCalls>30){
                             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.totalAPICallsExceeded, "Please wait for a while before again calling the apis");
                         }else{
-                            SecurityFeatures.updateTokenState(req, res,account_token, out, false, next);
+                            SecurityFeatures.updateTokenState(req, res,accountToken, out, false, next);
                         }
                     }else{
-                        SecurityFeatures.updateTokenState(req, res,account_token, out, true, next);
+                        SecurityFeatures.updateTokenState(req, res,accountToken, out, true, next);
                     }
                 }else{
-                    SecurityFeatures.addTokenToDatabase(account_token, req.body.account_token);
+                    SecurityFeatures.addTokenToDatabase(accountToken, req.body.accountToken);
                     next();
                 }
             }, error=>{
@@ -50,11 +50,11 @@ export class SecurityFeatures{
                 next();
             })
         }else{
-            console.log("Security : Couldn't find any account_token");
+            console.log("Security : Couldn't find any accountToken");
             next();
         }        
     }
-    private static updateTokenState(req:express.Request, res:express.Response, account_token:{
+    private static updateTokenState(req:express.Request, res:express.Response, accountToken:{
             ip:string,
             date:number,
             origin:string
@@ -77,7 +77,7 @@ export class SecurityFeatures{
             }
         }
         MyDatabase.database.update(table.table,updateJSON, {
-            [table.ip]:account_token["ip"]
+            [table.ip]:accountToken["ip"]
         }).then(result=>{
             next();
         }, error=>{
@@ -86,18 +86,18 @@ export class SecurityFeatures{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "Token Error : "+error);
         })
     }
-    public static addTokenToDatabase(account_token:{
+    public static addTokenToDatabase(accountToken:{
             ip:string,
             date:number,
             origin:string
         }, encodedToken){
 
-        let dateTime = new Date(account_token.date).toISOString().slice(0, 19).replace('T', ' ');
+        let dateTime = new Date(accountToken.date).toISOString().slice(0, 19).replace('T', ' ');
         let table = DataModel.tables.tokenTracker;
 
         MyDatabase.database.insert(table.table, {
             [table.code]:encodedToken,
-            [table.ip]:account_token.ip,
+            [table.ip]:accountToken.ip,
             [table.tokenCreationTime]:dateTime,
         }, true).then(result=>{
             //Do Nothing

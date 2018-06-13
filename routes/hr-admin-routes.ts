@@ -50,7 +50,7 @@ export class HRAdminRoutes{
         var parsedVal  = WebUtility.getParsedToken(req)
         console.log("parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");;
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");;
         }
 
         var email:string = String(req.body.email);
@@ -122,13 +122,13 @@ export class HRAdminRoutes{
                 }
 
                 var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
-                response["session_token"] = cookieStr;
+                response["sessionToken"] = cookieStr;
                 //res.end(JSON.stringify(response));
                 return WebUtility.sendSuccess(res, req, {
                     admin:true,
                     type:type,
                     message:"Logged in as an Admin",
-                    session_token:cookieStr
+                    sessionToken:cookieStr
                 }, "Admin Logged in!");
             }
         }, error=>{
@@ -142,30 +142,30 @@ export class HRAdminRoutes{
 
     private preProcessToken(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");
             return undefined;
         }
 
-        let session_token  = WebUtility.getParsedToken(req, req.body.session_token, 30);
-        console.log("parsed Val 2: "+JSON.stringify(session_token));
-        if(!session_token){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
+        let sessionToken  = WebUtility.getParsedToken(req, req.body.sessionToken, 30);
+        console.log("parsed Val 2: "+JSON.stringify(sessionToken));
+        if(!sessionToken){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
             return undefined;
         }
-        if(!(session_token["type"]==DataModel.userTypes.admin || session_token["type"]==DataModel.userTypes.moderator) || parseInt(session_token["adminId"])==NaN){
+        if(!(sessionToken["type"]==DataModel.userTypes.admin || sessionToken["type"]==DataModel.userTypes.moderator) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dint valid access rights");
             return undefined;
         }
 
         //let id=["adminId"];
-        return session_token;
+        return sessionToken;
     }
 
     private decodeEmailVerification(req:express.Request, res:express.Response){
         var parsedVal  = WebUtility.getParsedToken(req)
         console.log("parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");;
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");;
         }
 
         let code = req.body.code;
@@ -219,7 +219,7 @@ export class HRAdminRoutes{
 
         //let table=DataModel.tables.admin;
         let table:any;
-        
+        //let table=DataModel.tables.admin;
         if(actionType==DataModel.userTypes.moderator){
             if(type!=DataModel.userTypes.admin)
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
@@ -233,13 +233,16 @@ export class HRAdminRoutes{
         let firstName=req.body.firstName;
         let lastName=req.body.lastName;
         let email=req.body.email;
-        let callback=req.body.callback_url;
+        let callback=req.body.callbackUrl;
         
-        HRAdminRoutes.database.insert(table.table, {
+        let insertJson={
             [table.firstName]:firstName,
             [table.lastName]:lastName,
             [table.email]:email,
-        }).then(result=>{
+        };
+        if(actionType==DataModel.userTypes.hr)
+            insertJson[table.adminCreatedRefID]=adminId;
+        HRAdminRoutes.database.insert(table.table, insertJson).then(result=>{
             //TODO Send the invitation Email to the user
             this.sendInvitationWithCode(req, res, email, firstName, lastName, actionType, result, callback);
         }, error=>{
@@ -251,23 +254,23 @@ export class HRAdminRoutes{
 
     private registerModerator(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");
             return undefined;
         }
 
-        let session_token  = WebUtility.getParsedToken(req, req.body.register_token, 30);
-        console.log("parsed Val 2: "+JSON.stringify(session_token));
-        if(!session_token){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
+        let sessionToken  = WebUtility.getParsedToken(req, req.body.register_token, 30);
+        console.log("parsed Val 2: "+JSON.stringify(sessionToken));
+        if(!sessionToken){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
             return undefined;
         }
-        if(!(session_token["type"]==DataModel.userTypes.moderator+"_temp" || session_token["actualType"]==DataModel.userTypes.moderator) || parseInt(session_token["adminId"])==NaN){
+        if(!(sessionToken["type"]==DataModel.userTypes.moderator+"_temp" || sessionToken["actualType"]==DataModel.userTypes.moderator) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dint valid access rights");
             return undefined;
         }
 
         //let id=["adminId"];
-        const { adminId, type, actualType}=session_token;
+        const { adminId, type, actualType}=sessionToken;
         if(actualType!=DataModel.userTypes.moderator){
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "Access Error!!");
         }

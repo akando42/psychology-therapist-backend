@@ -59,10 +59,10 @@ export class ProviderRoutes{
         var parsedVal  = WebUtility.getParsedToken(req)
         console.log("Parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid.");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid.");
             return false;
         }
-        console.log("Signup with proper account_token");
+        console.log("Signup with proper accountToken");
         var firstname:string = req.body.firstName;
         var lastname:string = req.body.lastName;
         //TODO Need to discuss on qualifications
@@ -134,7 +134,7 @@ export class ProviderRoutes{
         var parsedVal  = WebUtility.getParsedToken(req)
         console.log("parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");;
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");;
         }
 
         var email:string = String(req.body.email);
@@ -193,12 +193,12 @@ export class ProviderRoutes{
                 // console.log("MySTR : "+JSON.stringify(jsonStr));
                 // console.log("MySTR 2 : "+out[providers.id]);
                 var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
-                response["session_token"] = cookieStr;
+                response["sessionToken"] = cookieStr;
                 //res.end(JSON.stringify(response));
                 return WebUtility.sendSuccess(res, req, {
                     admin:false,
                     message:"Its User Login",
-                    session_token:cookieStr
+                    sessionToken:cookieStr
                 }, "User Logged in");
             }
         }, error=>{
@@ -213,27 +213,27 @@ export class ProviderRoutes{
 
     private authorizeProviders(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account_token is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");
             return undefined;
         }
 
-        let session_token  = WebUtility.getParsedToken(req, req.body.session_token, 30);
-        console.log("parsed Val : "+JSON.stringify(session_token));
-        if(!session_token){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
+        let sessionToken  = WebUtility.getParsedToken(req, req.body.sessionToken, 30);
+        console.log("parsed Val : "+JSON.stringify(sessionToken));
+        if(!sessionToken){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
             return undefined;
         }
-        if(session_token["type"]!=DataModel.userTypes.provider){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session_token is not valid");
+        if(sessionToken["type"]!=DataModel.userTypes.provider){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
             return undefined;
         }
-        return session_token;
+        return sessionToken;
     }
     private getNotifications(req:express.Request, res:express.Response){
-        let session_token=this.authorizeProviders(req, res);
-        if(!session_token)
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
             return;
-        let providerId=session_token["providersId"];
+        let providerId=sessionToken["providersId"];
         
         let providers=DataModel.tables.providers;
         let providersNotif=DataModel.tables.providerNotifications;
@@ -267,10 +267,10 @@ export class ProviderRoutes{
         })
     }
     private setNotifications(req:express.Request, res:express.Response){
-        let session_token=this.authorizeProviders(req, res);
-        if(!session_token)
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
             return;
-        let providerId=session_token["providersId"];
+        let providerId=sessionToken["providersId"];
         let notifId=parseInt(req.body.notificationID);
         if(notifId==NaN){
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invaild inputs");
@@ -298,10 +298,10 @@ export class ProviderRoutes{
     }
 
     private uploadDocs(req:express.Request, res:express.Response){
-        let session_token=this.authorizeProviders(req, res);
-        if(!session_token)
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
             return;
-        let providerId=session_token["providersId"];
+        let providerId=sessionToken["providersId"];
         let docs=req.body.docs;
         if(docs==undefined){
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invaild inputs");
@@ -341,10 +341,10 @@ export class ProviderRoutes{
     }
 
     private getClients(req:express.Request, res:express.Response){
-        let session_token=this.authorizeProviders(req, res);
-        if(!session_token)
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
             return;
-        let providerId=session_token["providersId"];
+        let providerId=sessionToken["providersId"];
 
         let providers=DataModel.tables.providers;
         let users=DataModel.tables.users;
@@ -371,10 +371,10 @@ export class ProviderRoutes{
     }
 
     private getProfile(req:express.Request, res:express.Response){
-        let session_token=this.authorizeProviders(req, res);
-        if(!session_token)
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
             return;
-        let providerId=session_token["providersId"];
+        let providerId=sessionToken["providersId"];
 
         let providers=DataModel.tables.providers;
 
@@ -404,10 +404,10 @@ export class ProviderRoutes{
     }
 
     private setProfile(req:express.Request, res:express.Response){
-        let session_token=this.authorizeProviders(req, res);
-        if(!session_token)
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
             return;
-        let providerId=session_token["providersId"];
+        let providerId=sessionToken["providersId"];
         
         let providers=DataModel.tables.providers;
         let json={};
@@ -495,10 +495,10 @@ export class ProviderRoutes{
     }
 
     private getBookings(req:express.Request, res:express.Response){
-        let session_token=this.authorizeProviders(req, res);
-        if(!session_token)
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
             return;
-        let providerId=session_token["providersId"];
+        let providerId=sessionToken["providersId"];
         let time = req.params.time;
         let comparator="";
 
@@ -552,10 +552,10 @@ export class ProviderRoutes{
         })
     }
     private getPayments(req:express.Request, res:express.Response){
-        let session_token=this.authorizeProviders(req, res);
-        if(!session_token)
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
             return;
-        let providerId=session_token["providersId"];
+        let providerId=sessionToken["providersId"];
 
         let providers=DataModel.tables.providers;
         let payments=DataModel.tables.payments;

@@ -14,7 +14,7 @@ hr/register
 		summary:
 			This request is directed from the user after register link is clicked
 		request:
-			account_token:<>
+			accountToken:<>
 			register_token:<One fetched from frontend URL>
 			firstName:
 			lastName:
@@ -24,7 +24,7 @@ hr/register
     post:
         summary: validates a provider's credentials
         description: 
-            <encoded> session_token={
+            <encoded> sessionToken={
         		ip:WebUtility.getIPAddress(req),
                 date:date,
         		origin:req.get("origin"),
@@ -32,14 +32,14 @@ hr/register
         		type:"HR"
         	}
         requests:
-            - account_token : <use the account token>
+            - accountToken : <use the account token>
             - email:<>
             - password:<>
         responses:
             200
             {
                 data:{
-                  	session_token:"Use this token for all the other requests for HRs"
+                  	sessionToken:"Use this token for all the other requests for HRs"
 					admin:true
 					registered:<true|false>
                 }
@@ -54,8 +54,8 @@ hr/get/rejected
 		summary:
 			Gives the desired requests
 		request:
-			account_token:<>
-			session_token:<>
+			accountToken:<>
+			sessionToken:<>
 		response:
 		200:
 			{
@@ -89,8 +89,8 @@ hr/action/reject
 	post:
 		summary: To accept or reject the account
 		request:
-			account_token:<>
-			session_token:<>
+			accountToken:<>
+			sessionToken:<>
 			providerId:<ID of the Provider you recieved>
 		response:
 		200:

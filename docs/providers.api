@@ -11,7 +11,7 @@
         200:
         {
           data:{
-            account_token:<store this and send in all requests>
+            accountToken:<store this and send in all requests>
           }
           message: The token has been validated or set successfully.
         }
@@ -22,7 +22,7 @@
         produces:
             - application/json
         parameters:
-            - account_token
+            - accountToken
               use the access token
             - firstName
               description: First name of the provider
@@ -77,7 +77,7 @@
                     There is already a provider registered with the same email address.
             403
                 description:
-                    The account_token is not valid.
+                    The accountToken is not valid.
 /provider/login
     post:
         summary: validates a provider's credentials
@@ -93,7 +93,7 @@
         produces:
             - application/json
         parameters:
-            - account_token : <use the account token>
+            - accountToken : <use the account token>
             - email
               description: Email address of the provider
               type: string
@@ -109,7 +109,7 @@
               {
                 data:{
 										admin:<false>
-                  	session_token:"Use this token for all the other requests"
+                  	sessionToken:"Use this token for all the other requests"
                   <all profile details>
                 }
                 message:""
@@ -120,8 +120,8 @@ provider/get/notification
 	post
 		summary: Get all the notification for the user
 		request:
-			account_token:<>
-			session_token:<>
+			accountToken:<>
+			sessionToken:<>
 		response:
 		200:
 			{
@@ -144,8 +144,8 @@ provider/set/notification
 	post
 		summary: Set the notification to be read
 		request:
-			account_token:<>
-			session_token:<>
+			accountToken:<>
+			sessionToken:<>
 			notificationID:<>
 		response:
 		200:
@@ -158,8 +158,8 @@ provider/upload/docs
 	post
 		summary: Get all the profile details
 		request:
-			account_token:<>
-			session_token:<>
+			accountToken:<>
+			sessionToken:<>
 			docs:[
 				{
 					docTitle:<>
@@ -178,8 +178,8 @@ provider/get/clients
 	post
 		summary: Get all the clients
 		request:
-			account_token:<>
-			session_token:<>
+			accountToken:<>
+			sessionToken:<>
 		response:
 		200:
 			{
@@ -201,8 +201,8 @@ provider/get/profile
 	post
 		summary: Get all the profile details
 		request:
-			account_token:<>
-			session_token:<>
+			accountToken:<>
+			sessionToken:<>
 		response:
 		200:
 			{
@@ -224,8 +224,8 @@ provider/set/profile
 	post
 		summary: Get all the profile details. Only put the information you want to update
 		request:
-			account_token:<>
-			session_token:<>
+			accountToken:<>
+			sessionToken:<>
 			firstName:"FirstName",
 			lastName:"LastName",
 			email:"EmailID",
@@ -250,8 +250,8 @@ provider/get/bookings/past
 	post
 		summary: Get all the profile details
 		request:
-			account_token:<>
-			session_token:<>
+			accountToken:<>
+			sessionToken:<>
 		response:
 		200:
 			{
@@ -283,8 +283,8 @@ provider/get/payments
 	post
 		summary:<Get the summary of the payments>
 		request:
-			account_token:<>
-			session_token:<>
+			accountToken:<>
+			sessionToken:<>
 		response:
 		200:
 			{
