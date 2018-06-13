@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 06, 2018 at 04:51 PM
+-- Generation Time: Jun 13, 2018 at 10:15 AM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -47,7 +47,8 @@ CREATE TABLE `ADMINTABLE` (
 --
 
 INSERT INTO `ADMINTABLE` (`AdminID`, `AdminFirstName`, `AdminLastName`, `AdminEmailID`, `AdminPassword`, `AdminImageLink`, `AdminPhone`, `AdminOwnerStatus`, `AdminAccountStatus`) VALUES
-(1, 'Adam', 'Parsons', 'info@therapyondemand.io', 'Admin@12345', NULL, NULL, 1, 1);
+(1, 'Adam', 'Parsons', 'info@therapyondemand.io', 'Admin@12345', NULL, NULL, 1, 1),
+(3, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', NULL, NULL, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -114,7 +115,9 @@ CREATE TABLE `PROVIDERDOCS` (
 INSERT INTO `PROVIDERDOCS` (`ProviderDocID`, `ProviderID`, `ProviderDocTitle`, `ProviderDocContent`) VALUES
 (1, 6, 'Licence', '/docs/provider-1528283419853-6.png'),
 (2, 6, 'Proof of Age', '/docs/provider-1528283419855-6.png'),
-(3, 6, 'Proof of Something', '/docs/provider-1528283419857-6.png');
+(3, 6, 'Proof of Something', '/docs/provider-1528283419857-6.png'),
+(4, 10, 'Licence', '/docs/provider-1528687848763-10.jpeg'),
+(5, 10, 'Proof of Age', '/docs/provider-1528687848776-10.jpeg');
 
 -- --------------------------------------------------------
 
@@ -160,7 +163,8 @@ CREATE TABLE `PROVIDERS` (
 INSERT INTO `PROVIDERS` (`ProviderID`, `HRID`, `ProviderFirstName`, `ProviderLastName`, `ProviderEmailID`, `ProviderPassword`, `ProviderPhone`, `ProviderProfileImage`, `ProviderExperience`, `ProviderQualifications`, `ProviderLattitude`, `ProviderLongitude`, `ProviderResume`, `ProviderAccountStatus`) VALUES
 (6, 1, 'Rahul ', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', '9905264774', '/profile-images/provider-1528283488600-6.jpeg', '2-3 years', 'Graduate', 13.0328, 77.5626, '', 1),
 (8, NULL, 'Rahul', 'Sinha', 'rsinha@tod.io', 'Hello@12345', '9352780025', '/profile-images/provider-1528283621275-8.jpeg', 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283570006-9352780025.png', 11),
-(9, NULL, 'Rahul', 'Sinha', 'rsinha1@tod.io', 'Hello@12345', '9905264774', NULL, 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283778628-9905264774.png', 11);
+(9, NULL, 'Rahul', 'Sinha', 'rsinha1@tod.io', 'Hello@12345', '9905264774', NULL, 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283778628-9905264774.png', 11),
+(10, NULL, 'Rahul', 'Sinha', 'rsinha4@tod.io', 'Hello@12345', '8346092368', '/profile-images/provider-1528687965565-10.jpeg', 'less than 1 years', 'Graduate', 13.0275, 77.5569, '/resume/provider-1528687673829-8346092368.jpeg', 15);
 
 -- --------------------------------------------------------
 
@@ -188,6 +192,30 @@ CREATE TABLE `SESSIONS` (
 
 INSERT INTO `SESSIONS` (`SessionID`, `UserID`, `ProviderID`, `AddressID`, `MassageType`, `PreferredGender`, `MassageLength`, `SessionDateTime`, `Equipements`, `Pets`, `MedicalInformation`) VALUES
 (1, 1, 6, 1, 'Tissue Massage', 0, 60, '2018-05-29 00:00:00', 0, 'cat', 'I am good in health');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `TOKENTRACKER`
+--
+
+CREATE TABLE `TOKENTRACKER` (
+  `TokenCode` text NOT NULL,
+  `IPAddress` varchar(100) NOT NULL,
+  `TokenCreationDateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `TotalTokenCreatedInADay` int(11) NOT NULL DEFAULT '0',
+  `LastAPICallTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `CurrentAPICallTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `TotalAPICallInAMinute` int(11) NOT NULL DEFAULT '0',
+  `BlockedStatus` int(11) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `TOKENTRACKER`
+--
+
+INSERT INTO `TOKENTRACKER` (`TokenCode`, `IPAddress`, `TokenCreationDateTime`, `TotalTokenCreatedInADay`, `LastAPICallTime`, `CurrentAPICallTime`, `TotalAPICallInAMinute`, `BlockedStatus`) VALUES
+('99f553f719ed94fa67b8cacb1fca6618:68af67da585a657af26f089d820b7da3864069570329785a9f57917c0a2b1bd714800e12b7b9c1830ab3252ecc0124860bac7cf9e2f23476a25fc67ddbb2d37d', '::1', '2018-06-12 08:11:53', 0, '2018-06-12 14:50:07', '2018-06-12 14:50:07', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -295,6 +323,12 @@ ALTER TABLE `SESSIONS`
   ADD KEY `AddressID` (`AddressID`);
 
 --
+-- Indexes for table `TOKENTRACKER`
+--
+ALTER TABLE `TOKENTRACKER`
+  ADD PRIMARY KEY (`IPAddress`);
+
+--
 -- Indexes for table `USERADDRESS`
 --
 ALTER TABLE `USERADDRESS`
@@ -316,7 +350,7 @@ ALTER TABLE `USERS`
 -- AUTO_INCREMENT for table `ADMINTABLE`
 --
 ALTER TABLE `ADMINTABLE`
-  MODIFY `AdminID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `AdminID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT for table `HRTABLE`
 --
@@ -331,7 +365,7 @@ ALTER TABLE `PAYMENTS`
 -- AUTO_INCREMENT for table `PROVIDERDOCS`
 --
 ALTER TABLE `PROVIDERDOCS`
-  MODIFY `ProviderDocID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `ProviderDocID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `PROVIDERNOTIFICATION`
 --
@@ -341,7 +375,7 @@ ALTER TABLE `PROVIDERNOTIFICATION`
 -- AUTO_INCREMENT for table `PROVIDERS`
 --
 ALTER TABLE `PROVIDERS`
-  MODIFY `ProviderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `ProviderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `SESSIONS`
 --
