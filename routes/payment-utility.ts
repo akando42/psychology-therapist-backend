@@ -136,7 +136,7 @@ export class StripePayments{
     }
     private processChargeAPI(req:express.Request, res:express.Response){
         var token = req.body.stripeToken;
-        var amount = req.body.amount;
+        var amount = req.body.amount*100;
         let me=this;
         var charge = stripe.charges.create({
             amount : amount,

@@ -640,19 +640,20 @@ export class UserRoutes{
         
         console.log("Time : "+longDateTime+" : "+Date.now());
         if(!req.body.extras)
-            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "No Extras Attached");
 
         let extrasEquipe=req.body.extras.equipements==="true"?1:0;
         let extrasPets=req.body.extras.pets;
         let extrasInfo=req.body.extras.medicalInformation;
         
+        console.log(massageType+":"+(longDateTime<Date.now())+" : "+longDateTime+" : "+preferredGender+" : "+addressId+" : "+extrasPets);
         if(!UsersUtility.validateStringFields(massageType, 1, 50)
             || longDateTime==NaN
             || longDateTime<Date.now()
             || preferredGender==NaN
             || addressId==NaN
             || !UsersUtility.validateStringFields(extrasPets, 1, 20))
-            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input. Please Check the parameters");
         
         let dateTime = new Date(longDateTime).toISOString().slice(0, 19).replace('T', ' ');
         let sessions = DataModel.tables.sessions;
@@ -671,31 +672,24 @@ export class UserRoutes{
             [sessions.pets]:extrasPets,
             [sessions.medicalInformation]:extrasInfo,
         }).then(result=>{
-
-            //This is for debug..
-            myThis.database.insert(payments.table, {
-                [payments.amount]:12,
-                [payments.sessionID]:result,
-                [payments.transactionId]:"Somxx235yiasfb"
-            }).then(result2=>{
-                // let json={
-                //     sessionId:result
-                // };
-                req.body.sessionId=result;
-                this.addPayment(req, res);
-                //UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
-            }, error=>{
-                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
-            }).catch(error=>{
-                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Server Error");
-            })
-
-            
-            //TODO Uncomment the below code later
-            // let json={
-            //     sessionId:result
-            // };
-            // UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
+            req.body.sessionId=result;
+            this.addPayment(req, res);
+            // //This is for debug..
+            // myThis.database.insert(payments.table, {
+            //     [payments.amount]:12,
+            //     [payments.sessionID]:result,
+            //     [payments.transactionId]:"Somxx235yiasfb"
+            // }).then(result2=>{
+            //     // let json={
+            //     //     sessionId:result
+            //     // };
+                
+            //     //UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
+            // }, error=>{
+            //     return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
+            // }).catch(error=>{
+            //     return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Server Error");
+            // })
         }, error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
         }).catch(error=>{
