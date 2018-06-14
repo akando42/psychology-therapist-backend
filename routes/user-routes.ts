@@ -506,6 +506,7 @@ export class UserRoutes{
             [payments.sessionID]:sessionId,
         }).then(result=>{
             let json={
+                sessionId:sessionId,
                 paymentId:result
             };
             return UsersUtility.sendSuccess(res, json, "Successfully Added the Payment Details");
@@ -677,10 +678,12 @@ export class UserRoutes{
                 [payments.sessionID]:result,
                 [payments.transactionId]:"Somxx235yiasfb"
             }).then(result2=>{
-                let json={
-                    sessionId:result
-                };
-                UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
+                // let json={
+                //     sessionId:result
+                // };
+                req.body.sessionId=result;
+                this.addPayment(req, res);
+                //UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
             }, error=>{
                 return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
             }).catch(error=>{

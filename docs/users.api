@@ -254,7 +254,8 @@
 			200:
 			{
 				data: {	
-					paymentId:<Store this Id>
+					sessionId:<Store this session Id>
+					paymentId:<Store this Payment Id>
 				},
 				message:"Successfully Added payments"
 			}
@@ -266,6 +267,42 @@
 			{
 				message:<Any errors that comes while adding payments>
 			}
+
+
+payment/confirm
+	get
+		summary:
+			It sends a get request to the server for processing payments
+		request
+			mac:<>
+			code:<>
+			id:<>
+			paymentId:<>
+		response
+			A webview which does all the work
+
+payment/charge
+	post
+		summary:
+		request
+			mac:<>
+			code:<>
+			id:<>
+			amount:<>
+			paymentId:<>
+			stripeToken:<>
+
+payment/chargeapi
+	post
+		summary:
+		request
+			mac:<>
+			code:<>
+			id:<>
+			amount:<>
+			paymentId:<>
+			stripeToken:<>
+
 
 /user/payments/complete
 	post:
@@ -366,6 +403,7 @@
 			code:<Code Stored in the System Preferences>
 			mac:<Mac Address>
 			id:<id you get while logging in>
+			amount:<Amount for which you want to bill>
 			massageType:<>
 			preferredGender:<0-Male|1-Female|2-Any> //integer denoting male female or any
 			massageLength:<>
@@ -381,6 +419,7 @@
 			{
 				data:{
 					sessionId:<Store this session Id>
+					paymentId:<Store this Payment Id>
 				},
 				message:"Successfully Booked a session. Proceed to pay"
 			}

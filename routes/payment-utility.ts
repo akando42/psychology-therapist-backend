@@ -31,6 +31,10 @@ export class StripePayments{
         server.setRoute("/payment/charge", (req:express.Request, res:express.Response)=>{
             me.processCharge(req, res);
         }, HTTPMethod.POST);
+        
+        server.setRoute("/payment/chargeapi", (req:express.Request, res:express.Response)=>{
+            me.processChargeAPI(req, res);
+        }, HTTPMethod.POST);
     }
 
     private displayPayScreen(req:express.Request, res:express.Response){
@@ -130,6 +134,33 @@ export class StripePayments{
             }
         });
     }
+    private processChargeAPI(req:express.Request, res:express.Response){
+        var token = req.body.stripeToken;
+        var amount = req.body.amount;
+        let me=this;
+        var charge = stripe.charges.create({
+            amount : amount,
+            currency : "usd",
+            source : token
+        },function(err,charge){
+            if(err)
+                res.end("Payment Declined! "+err.type);
+            else{
+                
+                req.body.transactionId=charge.id
+                console.log("Success! "+JSON.stringify(req.body));
+                me.postCode(req.body, "/user/payments/complete", function(result){
+                    console.log(JSON.stringify(result));
+                    let body = JSON.parse(result);
+                    if(body.error==false){
+                        UsersUtility.sendSuccess(res, [],"Successfull");
+                    }else{
+                        UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "Payment Error");
+                    }
+                })
+            }
+        });
+    }
 
     private postCode(data, path, callback) {
         // Build the post string from an object
@@ -138,7 +169,7 @@ export class StripePayments{
         // An object of options to indicate where to post to
         var post_options = {
             url:appConfig.hostName,
-            port:3001,
+            port:appConfig.port,
             path: path,
             method: 'POST',
             headers: {
