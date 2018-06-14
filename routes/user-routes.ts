@@ -152,9 +152,9 @@ export class UserRoutes{
         let users = DataModel.tables.users;
         
         let debug=false;
-        if(req.body.debug){
-            debug=true;
-        }
+        // if(req.body.debug){
+        //     debug=true;
+        // }
 
         //TODO Change accepted to waiting
         this.database.insert(users.table,{
