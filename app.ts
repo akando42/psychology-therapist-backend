@@ -34,9 +34,6 @@ export class MyDatabase{
 }
 new MyDatabase();
 server.server.use(SecurityFeatures.token_couter)
-server.server.set('views', path.join(__dirname, 'views'));
-server.server.set('view engine', 'ejs');
-
 
 /* Example routing */
 server.setRoute('/', (req:express.Request, res:express.Response)=>
