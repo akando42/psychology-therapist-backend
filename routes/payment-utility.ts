@@ -137,7 +137,7 @@ export class StripePayments{
 
         // An object of options to indicate where to post to
         var post_options = {
-            url:"http://localhost",
+            url:appConfig.hostName,
             port:3001,
             path: path,
             method: 'POST',
