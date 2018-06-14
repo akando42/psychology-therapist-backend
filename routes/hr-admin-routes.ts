@@ -198,14 +198,14 @@ export class HRAdminRoutes{
             type:json.type+"_temp",
             actualType:json.type
         }
-        let register_token = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonToken), tokenKey);
+        let registerToken = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonToken), tokenKey);
 
         let outputStr={
             email:json.email,
             firstName:json.firstName,
             lastName:json.lastName,
             type:json.type,
-            register_token:register_token
+            registerToken:registerToken
         }
         WebUtility.sendSuccess(res, req, outputStr, "Successfully Parsed the email Inputs");
     }
@@ -258,7 +258,7 @@ export class HRAdminRoutes{
             return undefined;
         }
 
-        let sessionToken  = WebUtility.getParsedToken(req, req.body.register_token, 30);
+        let sessionToken  = WebUtility.getParsedToken(req, req.body.registerToken, 30);
         console.log("parsed Val 2: "+JSON.stringify(sessionToken));
         if(!sessionToken){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");

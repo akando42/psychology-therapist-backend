@@ -35,7 +35,7 @@ export class HRRoutes{
             return undefined;
         }
 
-        let sessionToken  = WebUtility.getParsedToken(req, req.body.register_token, 30);
+        let sessionToken  = WebUtility.getParsedToken(req, req.body.registerToken, 30);
         console.log("parsed Val 2: "+JSON.stringify(sessionToken));
         if(!sessionToken){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");

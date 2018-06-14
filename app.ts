@@ -16,6 +16,7 @@ import { HRAdminRoutes } from "./routes/hr-admin-routes";
 import { HRRoutes } from "./routes/hr-routes";
 import { EmailActivity } from "./routes/email-activity";
 import { SecurityFeatures } from "./routes/security-features";
+import { StripePayments } from "./routes/payment-utility";
 
 var path = require('path');
 
@@ -33,6 +34,9 @@ export class MyDatabase{
 }
 new MyDatabase();
 server.server.use(SecurityFeatures.token_couter)
+server.server.set('views', path.join(__dirname, 'views'));
+server.server.set('view engine', 'ejs');
+
 
 /* Example routing */
 server.setRoute('/', (req:express.Request, res:express.Response)=>
@@ -43,6 +47,7 @@ server.server.use(express.static(path.join(__dirname, 'public')));
 
 ImageUtility.setLocation(__dirname+"/public");
 
+let stripePayment = new StripePayments(server, database);
 let email = new EmailActivity();
 let dev = new DevelopmentRoutings(server, database);
 let webUtility = new WebUtility(server,database);

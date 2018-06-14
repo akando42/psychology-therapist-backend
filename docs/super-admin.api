@@ -42,7 +42,7 @@ admin/decode/email
                 firstName:<>
                 lastName:<>
                 type:<>
-                register_token:<Use this token to register the User in the Next API calls>
+                registerToken:<Use this token to register the User in the Next API calls>
             }
 
 admin/add/moderator
@@ -75,7 +75,7 @@ moderator/register
 			This request is directed from the user after register link is clicked
 		request:
 			accountToken:<>
-			register_token:<One fetched from frontend URL>
+			registerToken:<One fetched from frontend URL>
 			firstName:
 			lastName:
 			password:

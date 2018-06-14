@@ -5,7 +5,7 @@
 		request:
 			name:<Full Name of the User>
 			email:<Email ID of the HR>
-			register_token:<This token is supposed to be send along with the form data to register the HR>
+			registerToken:<This token is supposed to be send along with the form data to register the HR>
 		response:
 			It should be an HTML page with a form to register the HR
 
@@ -15,7 +15,7 @@ hr/register
 			This request is directed from the user after register link is clicked
 		request:
 			accountToken:<>
-			register_token:<One fetched from frontend URL>
+			registerToken:<One fetched from frontend URL>
 			firstName:
 			lastName:
 			password:
