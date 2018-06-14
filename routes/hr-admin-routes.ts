@@ -278,6 +278,9 @@ export class HRAdminRoutes{
         let firstName=req.body.firstName;
         let lastName=req.body.lastName;
         let password=req.body.password;
+        
+        if(!(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/)))
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should containg atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
 
         let table = DataModel.tables.admin;
         HRAdminRoutes.database.update(table.table, {

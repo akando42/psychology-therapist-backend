@@ -31,15 +31,32 @@
                 <div class="card text-center">
                 <div class="card-body">
                     <h5 class="card-title">Payment Confirmation</h5>
-                    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                    <br>
                     <table class="table">
                         <tbody>
                             <tr>
-                                <td>HeLLo</td>
-                                <td>Hello</td>
+                                <td><b>Provider Name</b></td>
+                                <td><%=providerName%></td>
+                            </tr>
+                            <tr>
+                                <td><b>Massage Type</b></td>
+                                <td><%=massageType%></td>
+                            </tr>
+                            <tr>
+                                <td><b>Massage Length</b></td>
+                                <td><%=massageLength%></td>
+                            </tr>
+                            <tr>
+                                <td><b>Booking Date</b></td>
+                                <td><%=massageDate%></td>
+                            </tr>
+                            <tr>
+                                <td><b>Transaction Amount</b></td>
+                                <td><%=amount/100%></td>
                             </tr>
                         </tbody>
                     </table>
+                    <br>
                     <form action='/payment/charge' method='post'>
                         <script
                             src="https://checkout.stripe.com/checkout.js"

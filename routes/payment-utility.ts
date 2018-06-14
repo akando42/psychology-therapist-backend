@@ -9,6 +9,12 @@ import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
 import { UsersUtility } from "./users-utility-routes";
 
+
+var querystring = require('querystring');
+var http = require('http');
+const appConfig=require('../config/app.json');
+var stripe = require('stripe')("sk_test_X2lXtPpWP8eZ14umWgBAXZwz");
+
 export class StripePayments{
 
     private database:MySqlDatabase;
@@ -28,10 +34,22 @@ export class StripePayments{
     }
 
     private displayPayScreen(req:express.Request, res:express.Response){
-        res.render("payment", {paymentId:12, code:"Helloo From the other side", mac:"My Mac Address", id:23, amount:30000});
-        let b=true;
-        if(b)
-            return;
+        // let json={
+        //     providerName:"Rahul Sinha",
+        //     massageType:"Deep Tissue",
+        //     massageLength:"90 mins",
+        //     massageDate:"2018/12/2 10:34:00",
+        //     paymentId:12,
+        //     code:"Hello from the other side",
+        //     mac:"My Mac ID",
+        //     id:12,
+        //     amount:30000
+        // };
+        // res.render("payment", json);
+        // let b=true;
+        // if(b)
+        //     return;
+
         if(!req.query.code || !req.query.mac)
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "Something went wrong")
 
@@ -64,13 +82,13 @@ export class StripePayments{
             if(result.length==1){
                 let out=result[0];
                 let json={
-                    providerName:out[providers.firstName]+" "+providers.lastName,
+                    providerName:out[providers.firstName]+" "+out[providers.lastName],
                     massageType:out[sessions.massageType],
                     massageLength:out[sessions.massageLength],
                     massageDate:out[sessions.dateTime],
                     paymentId:paymentId,
                     code:req.body.code,
-                    mac:req.body.code,
+                    mac:req.body.mac,
                     id:id,
                     amount:out[payments.amount]*100
                 };
@@ -86,7 +104,63 @@ export class StripePayments{
     }
 
     private processCharge(req:express.Request, res:express.Response){
-        
-        res.render("successPayment", {amount:5000});
+        var token = req.body.stripeToken;
+        var amount = req.body.amount;
+        let me=this;
+        var charge = stripe.charges.create({
+            amount : amount,
+            currency : "usd",
+            source : token
+        },function(err,charge){
+            if(err)
+                res.end("Payment Declined! "+err.type);
+            else{
+                
+                req.body.transactionId=charge.id
+                console.log("Success! "+JSON.stringify(req.body));
+                me.postCode(req.body, "/user/payments/complete", function(result){
+                    console.log(JSON.stringify(result));
+                    let body = JSON.parse(result);
+                    if(body.error==false){
+                        res.render("successPayment", {succes:true});
+                    }else{
+                        res.render("successPayment", {succes:false});
+                    }
+                })
+            }
+        });
+    }
+
+    private postCode(data, path, callback) {
+        // Build the post string from an object
+        var post_data = querystring.stringify(data);
+
+        // An object of options to indicate where to post to
+        var post_options = {
+            url:"http://localhost",
+            port:3001,
+            path: path,
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Length': Buffer.byteLength(post_data)
+            }
+        };
+
+        // Set up the request
+        var post_req = http.request(post_options, function(res) {
+            let body="";
+            res.setEncoding('utf8');
+            res.on('data', function (chunk) {
+                console.log('Response: ' + chunk);
+                body+=chunk;
+            });
+            res.on('end', function(err){
+                callback(body);
+            })
+        });
+        // post the data
+        post_req.write(post_data);
+        post_req.end();
     }
 }

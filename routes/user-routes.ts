@@ -531,7 +531,7 @@ export class UserRoutes{
         
         if(!req.body.transactionId)
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "The Transaction ID doesn't exists in the query");
-        let transactionId = req.body.sessionId;
+        let transactionId = req.body.transactionId;
 
         if(id === NaN || paymentId == NaN)
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Inputs");

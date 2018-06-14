@@ -30,8 +30,13 @@
             <div class="col-md-8 mx-auto">
                 <div class="card text-center">
                 <div class="card-body">
+                    <%if(succes){%>
                     <h5 class="card-title">Payment Success</h5>
                     <p class="card-text">Congratulations!! We have registered your booking</p>
+                    <%}else{%>
+                    <h5 class="card-title">Payment Failure</h5>
+                    <p class="card-text">Sorry we couldn't process your payment</p>
+                    <%}%>
                 </div>
                 </div>
             </div>
