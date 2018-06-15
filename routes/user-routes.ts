@@ -600,7 +600,8 @@ export class UserRoutes{
                     json["paymentId"]=out[payments.id];
                     json["transactionId"]=out[payments.transactionId];
                 }
-                if(parseInt(out[sessions.dateTime])<Date.now()){
+                let dateTime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                if(out[sessions.dateTime]<dateTime){
                     past.push(json);
                 }else if(out[payments.transactionId]==="NOTDONE"){
                     pending.push(json);

@@ -1,4 +1,17 @@
 Tasks to be Done -
-Implement the security features.
+ - Implement the security features.
+
+Users shouldn't be able to register if already registered
+
+Download the repository from Topflights
+Put in group and drive about the Vinay's code
+
+
+
 Introduce an Agent in the way who can esign the document
 Research on how we can get an esignature
+Research on how to integrate the CRM efficiently with gcloud
+
+User Security Check -
+Adding new address should automatically remove the old addresses
+Address you use is the one which is yours.
