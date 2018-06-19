@@ -66,12 +66,13 @@ export class HRRoutes{
             [table.password]:password,
             [table.accountStatus]:DataModel.accountStatus.accepted,
         }, {
-            [table.id]:adminId
+            [table.id]:adminId,
+            [table.accountStatus]:DataModel.accountStatus.waiting,
         }).then(result=>{
             if(result){
                 return WebUtility.sendSuccess(res, req, [], "Successfully Registered");
             }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Could not update Table!!");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "User might be already registered!!");
             }
         }, error=>{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);

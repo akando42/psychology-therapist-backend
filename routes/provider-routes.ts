@@ -70,6 +70,7 @@ export class ProviderRoutes{
         var experience:string = req.body.experience;        
         var email:string = req.body.email;
         var phone:string = ""+req.body.phone;
+        var gender:number = parseInt(req.body.gender);
         var resume:string = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.resume, phone, false);;
         var password:string = req.body.password;
         var lattitude = parseFloat(req.body.lattitude);
@@ -84,6 +85,7 @@ export class ProviderRoutes{
             &&WebUtility.validateStringFields(resume, 10, -1)
             &&WebUtility.validateStringFields(email, 6, 255)
             &&WebUtility.validateStringFields(phone, 6, 20)
+            && gender>=0 && gender<=2
             &&lattitude!=NaN
             &&longitude!=NaN
             &&WebUtility.validateStringFields(password, 8, 20))){
@@ -108,6 +110,7 @@ export class ProviderRoutes{
                 [providers.resume]:resume,
                 [providers.email]:email,
                 [providers.phone]:phone,
+                [providers.gender]:gender,
                 [providers.lattitude]:lattitude,
                 [providers.longitude]:longitude,
                 [providers.password]:password,

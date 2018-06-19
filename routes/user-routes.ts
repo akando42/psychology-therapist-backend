@@ -656,46 +656,79 @@ export class UserRoutes{
             || !UsersUtility.validateStringFields(extrasPets, 1, 20))
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Input. Please Check the parameters");
         
-        let dateTime = new Date(longDateTime).toISOString().slice(0, 19).replace('T', ' ');
-        let sessions = DataModel.tables.sessions;
-        let payments = DataModel.tables.payments;
-        let providerID=6;
-        let myThis=this;
-        this.database.insert(sessions.table,{
-            [sessions.providerID]:providerID,
-            [sessions.userID]:id,
-            [sessions.massageType]:massageType,
-            [sessions.preferredGender]:preferredGender,
-            [sessions.massageLength]:massageLength,
-            [sessions.dateTime]:dateTime,
-            [sessions.addressID]:addressId,
-            [sessions.equipements]:extrasEquipe,
-            [sessions.pets]:extrasPets,
-            [sessions.medicalInformation]:extrasInfo,
-        }).then(result=>{
-            req.body.sessionId=result;
-            this.addPayment(req, res);
-            // //This is for debug..
-            // myThis.database.insert(payments.table, {
-            //     [payments.amount]:12,
-            //     [payments.sessionID]:result,
-            //     [payments.transactionId]:"Somxx235yiasfb"
-            // }).then(result2=>{
-            //     // let json={
-            //     //     sessionId:result
-            //     // };
-                
-            //     //UsersUtility.sendSuccess(res, json, "Successfully Added the Session");
-            // }, error=>{
-            //     return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
-            // }).catch(error=>{
-            //     return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Server Error");
-            // })
+        let userAddress=DataModel.tables.userAddress;
+        let sqlAdd = "SELECT * \
+            FROM "+userAddress.table+" \
+            WHERE "+userAddress.id+" = "+addressId;
+        this.database.getQueryResults(sqlAdd, []).then(result=>{
+            if(result.length==1){
+                let out = result[0];
+                afterAddressIsFetched(out[userAddress.latitude], out[userAddress.longitude]);
+            }else{
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Something went wrong in fertching the address");
+            }
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Couldn't fetch the address : "+error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Server Error");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Couldn't fetch the address : "+error);
         })
 
+        function afterAddressIsFetched(lattitude:number, longitude:number){
+            let providers=DataModel.tables.providers;
+            let sql = "SELECT * \
+                FROM "+providers.table;
+            this.database.getQueryResults(sql, []).then(result=>{
+                let providerID=-1; // DONE this needs to be set accordingly
+                let travelDist=-1; // TODO Change this variable to a non negative value to put the threshold
+                for(var i in result){
+                    let out = result[i];
+                    let myId = out[providers.id];
+                    let templatt = out[providers.lattitude];
+                    let templongt = out[providers.longitude];
+                    let gender = parseInt(out[providers.gender]);
+                    
+
+                    if(preferredGender===gender){
+                        let dist = (lattitude-templatt)*(lattitude-templatt)+(longitude*templongt)*(longitude*templongt)
+                        if(travelDist==-1 || travelDist>dist){
+                            travelDist=dist;
+                            providerID=myId
+                        }
+                    }
+                }
+                
+                if(providerID==-1)
+                    return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Cannot find any provider near you");
+                let dateTime = new Date(longDateTime).toISOString().slice(0, 19).replace('T', ' ');
+                let sessions = DataModel.tables.sessions;
+                let payments = DataModel.tables.payments;
+                
+                let myThis=this;
+                this.database.insert(sessions.table,{
+                    [sessions.providerID]:providerID,
+                    [sessions.userID]:id,
+                    [sessions.massageType]:massageType,
+                    [sessions.preferredGender]:preferredGender,
+                    [sessions.massageLength]:massageLength,
+                    [sessions.dateTime]:dateTime,
+                    [sessions.addressID]:addressId,
+                    [sessions.equipements]:extrasEquipe,
+                    [sessions.pets]:extrasPets,
+                    [sessions.medicalInformation]:extrasInfo,
+                }).then(result=>{
+                    req.body.sessionId=result;
+                    this.addPayment(req, res);
+                }, error=>{
+                    return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Something went wrong!! "+error);
+                }).catch(error=>{
+                    return UsersUtility.sendErrorMessage(res, DataModel.userResponse.bookingError, "Server Error");
+                })
+
+            }, error=>{
+
+            }).catch(error=>{
+
+            })
+        }        
     }
 }

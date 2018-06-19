@@ -34,6 +34,9 @@
               type: string
               minlength: 2
               maxlength: 40
+						- gender
+							desctiption: Gender of the provider. 0-Male, 1-Female, 2-Others
+							type: integer
             - qualifications
               description: Highest Qualification Recieved
               type: string

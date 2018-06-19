@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 13, 2018 at 10:15 AM
+-- Generation Time: Jun 19, 2018 at 02:27 AM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -48,7 +48,8 @@ CREATE TABLE `ADMINTABLE` (
 
 INSERT INTO `ADMINTABLE` (`AdminID`, `AdminFirstName`, `AdminLastName`, `AdminEmailID`, `AdminPassword`, `AdminImageLink`, `AdminPhone`, `AdminOwnerStatus`, `AdminAccountStatus`) VALUES
 (1, 'Adam', 'Parsons', 'info@therapyondemand.io', 'Admin@12345', NULL, NULL, 1, 1),
-(3, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', NULL, NULL, 0, 1);
+(3, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', NULL, NULL, 0, 1),
+(4, 'Rahul', 'Sinha', 'rahul1@gmail.com', NULL, NULL, NULL, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -73,7 +74,9 @@ CREATE TABLE `HRTABLE` (
 --
 
 INSERT INTO `HRTABLE` (`HRID`, `AdminID`, `HRFirstName`, `HRLastName`, `HREmailID`, `HRPassword`, `HRImageLink`, `HRPhone`, `HRAccountStatus`) VALUES
-(1, 1, 'HR1', 'Title', 'hr@therapyondemand.io', 'Massage@12345', NULL, NULL, 1);
+(1, 1, 'HR1', 'Title', 'hr@therapyondemand.io', 'Massage@12345', NULL, NULL, 1),
+(4, 1, 'Rahul', 'Sinha', 'rahul1@gmail.com', NULL, NULL, NULL, 0),
+(6, 1, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', NULL, NULL, NULL, 0);
 
 -- --------------------------------------------------------
 
@@ -93,7 +96,7 @@ CREATE TABLE `PAYMENTS` (
 --
 
 INSERT INTO `PAYMENTS` (`PaymentID`, `SessionID`, `PaymentAmount`, `PaymentTransactionID`) VALUES
-(1, 1, 150, '&#9362bjkabh');
+(1, 1, 150, 'ch_1CcqkkJtmWtuNWuHNyLtBqXF');
 
 -- --------------------------------------------------------
 
@@ -147,6 +150,7 @@ CREATE TABLE `PROVIDERS` (
   `ProviderEmailID` varchar(150) NOT NULL,
   `ProviderPassword` varchar(50) NOT NULL,
   `ProviderPhone` varchar(15) DEFAULT NULL,
+  `ProviderGender` int(11) NOT NULL DEFAULT '0',
   `ProviderProfileImage` text,
   `ProviderExperience` varchar(50) NOT NULL,
   `ProviderQualifications` varchar(50) NOT NULL,
@@ -160,11 +164,11 @@ CREATE TABLE `PROVIDERS` (
 -- Dumping data for table `PROVIDERS`
 --
 
-INSERT INTO `PROVIDERS` (`ProviderID`, `HRID`, `ProviderFirstName`, `ProviderLastName`, `ProviderEmailID`, `ProviderPassword`, `ProviderPhone`, `ProviderProfileImage`, `ProviderExperience`, `ProviderQualifications`, `ProviderLattitude`, `ProviderLongitude`, `ProviderResume`, `ProviderAccountStatus`) VALUES
-(6, 1, 'Rahul ', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', '9905264774', '/profile-images/provider-1528283488600-6.jpeg', '2-3 years', 'Graduate', 13.0328, 77.5626, '', 1),
-(8, NULL, 'Rahul', 'Sinha', 'rsinha@tod.io', 'Hello@12345', '9352780025', '/profile-images/provider-1528283621275-8.jpeg', 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283570006-9352780025.png', 11),
-(9, NULL, 'Rahul', 'Sinha', 'rsinha1@tod.io', 'Hello@12345', '9905264774', NULL, 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283778628-9905264774.png', 11),
-(10, NULL, 'Rahul', 'Sinha', 'rsinha4@tod.io', 'Hello@12345', '8346092368', '/profile-images/provider-1528687965565-10.jpeg', 'less than 1 years', 'Graduate', 13.0275, 77.5569, '/resume/provider-1528687673829-8346092368.jpeg', 15);
+INSERT INTO `PROVIDERS` (`ProviderID`, `HRID`, `ProviderFirstName`, `ProviderLastName`, `ProviderEmailID`, `ProviderPassword`, `ProviderPhone`, `ProviderGender`, `ProviderProfileImage`, `ProviderExperience`, `ProviderQualifications`, `ProviderLattitude`, `ProviderLongitude`, `ProviderResume`, `ProviderAccountStatus`) VALUES
+(6, 1, 'Rahul ', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', '9905264774', 0, '/profile-images/provider-1528283488600-6.jpeg', '2-3 years', 'Graduate', 13.0328, 77.5626, '', 1),
+(8, NULL, 'Rahul', 'Sinha', 'rsinha@tod.io', 'Hello@12345', '9352780025', 0, '/profile-images/provider-1528283621275-8.jpeg', 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283570006-9352780025.png', 11),
+(9, NULL, 'Rahul', 'Sinha', 'rsinha1@tod.io', 'Hello@12345', '9905264774', 0, NULL, 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283778628-9905264774.png', 11),
+(10, NULL, 'Rahul', 'Sinha', 'rsinha4@tod.io', 'Hello@12345', '8346092368', 0, '/profile-images/provider-1528687965565-10.jpeg', 'less than 1 years', 'Graduate', 13.0275, 77.5569, '/resume/provider-1528687673829-8346092368.jpeg', 15);
 
 -- --------------------------------------------------------
 
@@ -215,7 +219,7 @@ CREATE TABLE `TOKENTRACKER` (
 --
 
 INSERT INTO `TOKENTRACKER` (`TokenCode`, `IPAddress`, `TokenCreationDateTime`, `TotalTokenCreatedInADay`, `LastAPICallTime`, `CurrentAPICallTime`, `TotalAPICallInAMinute`, `BlockedStatus`) VALUES
-('99f553f719ed94fa67b8cacb1fca6618:68af67da585a657af26f089d820b7da3864069570329785a9f57917c0a2b1bd714800e12b7b9c1830ab3252ecc0124860bac7cf9e2f23476a25fc67ddbb2d37d', '::1', '2018-06-12 08:11:53', 0, '2018-06-12 14:50:07', '2018-06-12 14:50:07', 0, 0);
+('99f553f719ed94fa67b8cacb1fca6618:68af67da585a657af26f089d820b7da3864069570329785a9f57917c0a2b1bd714800e12b7b9c1830ab3252ecc0124860bac7cf9e2f23476a25fc67ddbb2d37d', '::1', '2018-06-12 08:11:53', 0, '2018-06-13 05:01:19', '2018-06-13 05:01:19', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -350,12 +354,12 @@ ALTER TABLE `USERS`
 -- AUTO_INCREMENT for table `ADMINTABLE`
 --
 ALTER TABLE `ADMINTABLE`
-  MODIFY `AdminID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `AdminID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT for table `HRTABLE`
 --
 ALTER TABLE `HRTABLE`
-  MODIFY `HRID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `HRID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT for table `PAYMENTS`
 --

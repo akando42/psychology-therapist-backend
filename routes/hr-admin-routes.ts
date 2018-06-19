@@ -244,7 +244,7 @@ export class HRAdminRoutes{
             insertJson[table.adminCreatedRefID]=adminId;
         HRAdminRoutes.database.insert(table.table, insertJson).then(result=>{
             //TODO Send the invitation Email to the user
-            this.sendInvitationWithCode(req, res, email, firstName, lastName, actionType, result, callback);
+            this.sendInvitationWithCode(req, res, table, email, firstName, lastName, actionType, result, callback);
         }, error=>{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
         }).catch(error=>{
@@ -289,12 +289,13 @@ export class HRAdminRoutes{
             [table.password]:password,
             [table.accountStatus]:DataModel.accountStatus.accepted,
         }, {
-            [table.id]:adminId
+            [table.id]:adminId,
+            [table.accountStatus]:DataModel.accountStatus.waiting,
         }).then(result=>{
             if(result){
                 return WebUtility.sendSuccess(res, req, [], "Successfully Registered");
             }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Could not update Table!!");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "The use might be already registered!!");
             }
         }, error=>{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);
@@ -302,7 +303,7 @@ export class HRAdminRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);
         })
     }
-    private sendInvitationWithCode(req:express.Request, res:express.Response, email:string, firstName:string, lastName:string, type:string, id:number, callback:string){
+    private sendInvitationWithCode(req:express.Request, res:express.Response, table:any, email:string, firstName:string, lastName:string, type:string, id:number, callback:string){
         let json={
             email:email,
             firstName:firstName,
@@ -323,6 +324,9 @@ export class HRAdminRoutes{
         
         EmailActivity.instance.sendEmail(email, "Welcome to Therapy on Demand!", body, function(err, info){
             if(err){
+                HRAdminRoutes.database.delete(table.table, {
+                    [table.email]:email
+                }).then(result=>{},error=>{})
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.emailError, "The Verification Email cant be send");
             }else{
                 return WebUtility.sendSuccess(res, req, [], "Successfully sent the invitation to the user");

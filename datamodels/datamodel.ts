@@ -22,6 +22,7 @@ export class DataModel{
             email:"ProviderEmailID",
             password:"ProviderPassword",
             phone:"ProviderPhone",
+            gender:"ProviderGender",
             image:"ProviderProfileImage",
             experience:"ProviderExperience",
             qualifications:"ProviderQualifications",
