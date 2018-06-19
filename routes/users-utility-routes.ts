@@ -48,6 +48,42 @@ export class UsersUtility {
         //return RoutesHandler.respond(res, req, output, false, "Successful fetching token", DataModel.responseStatus.success);
         return UsersUtility.sendSuccess(res, output, "Successful fetching token");
     }
+    public static createEncryptedID(req:express.Request, id:string):string{
+        if(!req.body.code)
+            return undefined;
+        
+        let token = UsersUtility.getCodedTokenKey(req);
+        var date = Math.floor(new Date().getTime());
+        let json={
+            id:id,
+            date:date
+        }
+
+        let encrypted = CryptoFunctions.aes256Encrypt(JSON.stringify(json), token);
+
+        return encrypted;
+    }
+    public static decryptId(req:express.Request):number{
+        if(!req.body.code || !req.body.id)
+            return undefined;
+        let myCode=req.body.id;
+        try {
+            var tokenVal:string = CryptoFunctions.aes256Decrypt(myCode, UsersUtility.getCodedTokenKey(req));
+        } catch (error) {
+            return undefined;
+        }
+        var parsedVal = JSON.parse(tokenVal);
+        if(parsedVal){
+            console.log("Parsed Val : "+JSON.stringify(parsedVal));
+            if(!parsedVal.id)
+                return undefined;
+            if(parseInt(parsedVal.id)===NaN)
+                return undefined;
+            return parseInt(parsedVal.id);
+        }else{
+            return undefined;
+        }
+    }
     public static getParsedToken(req:express.Request, aliveTime?:number):{mac:string, origin:string, date:string}{
         if(!req.body.code || !req.body.mac)
             return undefined;
@@ -108,6 +144,11 @@ export class UsersUtility {
     public static getTokenKey(req:express.Request):string{
         let mac = req.body.mac;
         var tokenKey = CryptoFunctions.get256BitKey([mac, UsersUtility.tokenRandText]);
+        return tokenKey;
+    }
+    public static getCodedTokenKey(req:express.Request):string{
+        let code = req.body.code;
+        var tokenKey = CryptoFunctions.get256BitKey([code, UsersUtility.tokenRandText]);
         return tokenKey;
     }
 
