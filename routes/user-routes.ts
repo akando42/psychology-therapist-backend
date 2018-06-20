@@ -735,10 +735,13 @@ export class UserRoutes{
         function afterAddressIsFetched(lattitude:number, longitude:number){
             let providers=DataModel.tables.providers;
             let sql = "SELECT * \
-                FROM "+providers.table;
+                FROM "+providers.table+" \
+                WHERE "+providers.accountStatus+"="+DataModel.accountStatus.accepted;
             MyDatabase.database.getQueryResults(sql, []).then(result=>{
                 let providerID=-1; // DONE this needs to be set accordingly
                 let travelDist=-1; // TODO Change this variable to a non negative value to put the threshold
+                console.log("Total providers on system : "+result.length);
+                
                 for(var i in result){
                     let out = result[i];
                     let myId = out[providers.id];
@@ -747,8 +750,9 @@ export class UserRoutes{
                     let gender = parseInt(out[providers.gender]);
                     
 
-                    if(preferredGender===gender){
-                        let dist = (lattitude-templatt)*(lattitude-templatt)+(longitude*templongt)*(longitude*templongt)
+                    if(preferredGender===gender || preferredGender==2){
+                        let dist = (lattitude-templatt)*(lattitude-templatt)+(longitude-templongt)*(longitude-templongt)
+                        console.log("Distance of provider with id "+myId+": "+dist);
                         if(travelDist==-1 || travelDist>dist){
                             travelDist=dist;
                             providerID=myId
