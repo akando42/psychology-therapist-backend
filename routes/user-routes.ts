@@ -719,14 +719,16 @@ export class UserRoutes{
         this.database.getQueryResults(sqlAdd, []).then(result=>{
             if(result.length==1){
                 let out = result[0];
+                console.log("Address : "+out[userAddress.latitude]+" : "+out[userAddress.longitude]);
+                
                 afterAddressIsFetched(out[userAddress.latitude], out[userAddress.longitude]);
             }else{
-                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Something went wrong in fertching the address");
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Something went wrong in fetching the address");
             }
         }, error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Couldn't fetch the address : "+error);
         }).catch(error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Couldn't fetch the address : "+error);
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.addressError, "Server Error-Address : "+error);
         })
         let myThis=this;
         function afterAddressIsFetched(lattitude:number, longitude:number){
