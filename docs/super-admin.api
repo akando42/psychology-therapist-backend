@@ -86,6 +86,22 @@ moderator/register
             }
 
 
+admin/reset/password
+moderator/reset/password
+hr/reset/password
+provider/reset/password
+    post:
+        summary:
+            To send a reset password link
+        request:
+            accountToken:<>
+            email:<>
+        response:
+            200
+            {
+                message:"We have successfully sent the reset link on our email address"
+            }
+
 admin/block/moderator
 admin/block/hr
     post

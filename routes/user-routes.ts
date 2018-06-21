@@ -339,9 +339,9 @@ export class UserRoutes{
         let users=DataModel.tables.users;
         let sql ="SELECT "+users.firstName+" \
             FROM "+users.table+" \
-            WHERE "+users.email+"="+email;
+            WHERE "+users.email+"=?";
 
-        this.database.getQueryResults(sql, []).then(result=>{
+        this.database.getQueryResults(sql, [email]).then(result=>{
             if(result.length==1)
                 proceedAfterVerifyingUser();
             else
@@ -352,7 +352,7 @@ export class UserRoutes{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.passwordResetError, "Something went wrong : "+error);
         })
         function proceedAfterVerifyingUser(){
-            let redirectURL=MyApp.appConfig+"/user/reset/password?"
+            let redirectURL=MyApp.appConfig.frontEndUrl+"/user/set/password?"
             let json={
                 email:email,
                 date:Date.now()
