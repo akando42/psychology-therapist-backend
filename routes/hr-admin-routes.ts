@@ -8,6 +8,7 @@ import { WebUtility } from "./web-utility-routes";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { EmailActivity } from "./email-activity";
+import { UserRoutes } from "./user-routes";
 
 
 export class HRAdminRoutes{
@@ -42,6 +43,13 @@ export class HRAdminRoutes{
 
         server.setRoute("/admin/unblock/:type", (req:express.Request, res:express.Response)=>{
             me.unblockAccount(req, res);
+        }, HTTPMethod.POST);
+
+
+
+        //--------User Functions
+        server.setRoute("/user/set/password", (req:express.Request, res:express.Response)=>{
+            me.setNewUserPassword(req, res);
         }, HTTPMethod.POST);
     }
 
@@ -406,5 +414,46 @@ export class HRAdminRoutes{
         })
         
     }
+
+    private setNewUserPassword(req:express.Request, res:express.Response){
+        if(!WebUtility.getParsedToken(req)){
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The token is invalid")
+        }
+
+        if(!req.body.email || !req.body.resetCode || !req.body.password)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The iput doesnt contains email ID");
+        
+        let email=req.body.email;
+        let resetCode=req.body.resetCode;
+        let password=req.body.password;
+
+        let decryptedStr = CryptoFunctions.aes256Decrypt(resetCode, CryptoFunctions.get256BitKey([email, UserRoutes.randomPatternToVerify]))
+        let json:{
+                email:string,
+                date:number
+            } = JSON.parse(decryptedStr);
+        if(!json)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The the resetCode sent is invalid");
+
+        //TODO Write the segment to implement if a given reset token has been already used
+
+        let users=DataModel.tables.users;
+        HRAdminRoutes.database.update(users.table, {
+            [users.password]:password
+        }, {
+            [users.email]:email
+        }).then(result=>{
+            if(result){
+                return WebUtility.sendSuccess(res, req, [], "Your password has been reset!!");
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The email ID is not registered with us");
+            }
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Something went wrong!! "+error);
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Something went wrong!! "+error);
+        })
+    }
+
 
 }

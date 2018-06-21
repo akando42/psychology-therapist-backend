@@ -120,6 +120,31 @@
 				message:<Any errors that comes while updating your profile>
 			}
 
+/user/reset/password
+	post:
+		summary:
+			This will send a rest link to the registered email ID
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			email:<Registered Email ID>
+		response:
+			200:
+				{
+					message:"We have sent a reset link to your email address"
+				}
+
+/user/set/password
+	post:
+		summary:
+			This will finally set a new password of the user
+		request:
+			accountToken:<>
+			resetCode:<The reset code send in the GET request>
+			email:<Registered Email ID>
+			password:<The new password>
+
+
 /user/profile/get
 	post:
 		summary:

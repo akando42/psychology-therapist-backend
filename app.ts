@@ -32,6 +32,18 @@ export class MyDatabase{
         MyDatabase.database=database;
     }
 }
+export class MyApp{
+    public static appConfig:{"urls":string[],
+    "port":number,
+    "baseURL":string,
+    "hostName":string,
+    "frontEndUrl":string,
+    "git_pass":string};
+    constructor(){
+        MyApp.appConfig=appConfig;
+    }
+}
+
 new MyDatabase();
 server.server.use(SecurityFeatures.token_couter)
 

@@ -8,6 +8,7 @@ import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
 import { EmailActivity } from "./email-activity";
 import { MyDatabase } from "../app";
+import { MyApp } from "../app";
 
 var nodemailer = require('nodemailer');
 var appConfig=require('../config/app.json');
@@ -16,7 +17,7 @@ export class UserRoutes{
     private database:MySqlDatabase;
     private server:ExpressServer;
 
-    private randomPatternToVerify="!47218fah8y5&^%^$76T21358GUfutT6%$&68327Q5";
+    public static randomPatternToVerify="!47218fah8y5&^%^$76T21358GUfutT6%$&68327Q5";
     
 
     constructor(server:ExpressServer, db:MySqlDatabase){
@@ -36,6 +37,9 @@ export class UserRoutes{
 
         server.setRoute("/user/profile/update", (req:express.Request, res:express.Response)=>{
             me.updateProfile(req, res);
+        }, HTTPMethod.POST);
+        server.setRoute("/user/reset/password", (req:express.Request, res:express.Response)=>{
+            me.resetPassword(req, res);
         }, HTTPMethod.POST);
         server.setRoute("/user/profile/get", (req:express.Request, res:express.Response)=>{
             me.getProfile(req, res);
@@ -180,9 +184,9 @@ export class UserRoutes{
         
     }
     private sendEmailConfirmation(email:string, fname:String, lname:String, res:express.Response){
-        let link=appConfig.baseURL+"user/verify?key=";
+        let link=appConfig.baseURL+"/user/verify?key=";
 
-        let encKey = CryptoFunctions.get256BitKey(["To", "Verify", "Email", this.randomPatternToVerify])
+        let encKey = CryptoFunctions.get256BitKey(["To", "Verify", "Email", UserRoutes.randomPatternToVerify])
         //console.log("Token : "+token);
         let json={
             email:email,
@@ -207,7 +211,7 @@ export class UserRoutes{
     }
     private verifyEmail(req:express.Request, res:express.Response){
         console.log("Reached here");
-        let encKey = CryptoFunctions.get256BitKey(["To", "Verify", "Email", this.randomPatternToVerify])
+        let encKey = CryptoFunctions.get256BitKey(["To", "Verify", "Email", UserRoutes.randomPatternToVerify])
         console.log("Encryption Key : "+encKey);
         let keyVal=req.query.key;
 
@@ -230,7 +234,9 @@ export class UserRoutes{
             [users.lastName]:json.lname
         }).then(result=>{
             if(result){
-                return UsersUtility.sendSuccess(res, [], "Congratulations!! You email ID is verified. Please go to the login screen");
+                //return UsersUtility.sendSuccess(res, [], "Congratulations!! You email ID is verified. Please go to the login screen");
+                let url=MyApp.appConfig.frontEndUrl+"/user/success/verifiaction";
+                res.redirect(url)
             }else{
                 return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "The email Id in the token doesnt exists");
             }
@@ -318,6 +324,52 @@ export class UserRoutes{
         }).catch(error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.profileError, "Server Error");
         })
+    }
+
+    private resetPassword(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
+        }
+
+        if(!req.body.email)
+            return UsersUtility.sendErrorMessage(res,DataModel.userResponse.inputError, "The iput doesnt contains email ID");
+
+        let email=req.body.email;
+        //TODO Check if the email ID exists
+        let users=DataModel.tables.users;
+        let sql ="SELECT "+users.firstName+" \
+            FROM "+users.table+" \
+            WHERE "+users.email+"="+email;
+
+        this.database.getQueryResults(sql, []).then(result=>{
+            if(result.length==1)
+                proceedAfterVerifyingUser();
+            else
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.passwordResetError, "The User with that email ID doesn't Esists");
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.passwordResetError, "Something went wrong : "+error);
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.passwordResetError, "Something went wrong : "+error);
+        })
+        function proceedAfterVerifyingUser(){
+            let redirectURL=MyApp.appConfig+"/user/reset/password?"
+            let json={
+                email:email,
+                date:Date.now()
+            }
+            let encryptedStr = CryptoFunctions.aes256Encrypt(JSON.stringify(json), CryptoFunctions.get256BitKey([email, UserRoutes.randomPatternToVerify]))
+            redirectURL+="resetCode="+encodeURIComponent(encryptedStr)+"&email="+encodeURIComponent(email);
+            let body="<h3>Reset your password</h3>\
+                <p>Hi we have recieved your password reset request</p>\
+                <p>Please click on the <a href="+redirectURL+">link</a> to reset your password</p>"
+            EmailActivity.instance.sendEmail(email, "Reset Pasword requested", body, function(error, info){
+                if(!error){
+                    return UsersUtility.sendSuccess(res, [], "Successfully sent the reset Link");
+                }else{
+                    return UsersUtility.sendErrorMessage(res, DataModel.userResponse.emailError, "Couldn't send the email : "+error);
+                }
+            });
+        }
     }
 
     private getProfile(req:express.Request, res:express.Response){

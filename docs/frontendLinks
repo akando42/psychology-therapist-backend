@@ -1,0 +1,5 @@
+<base-url>/user/success/verification
+    This URL should be showing that the User is successfully verified and should have a redirect link to redirect tot he app
+
+<base-url>/user/reset/password
+    This URL should be having the module to reset the password

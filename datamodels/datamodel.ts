@@ -164,6 +164,8 @@ export class DataModel{
         bookingError:565,
 
         profileError:575,
+
+        passwordResetError:585,
     }
 
     public static webResponses={
@@ -190,6 +192,8 @@ export class DataModel{
         bookingError:565,
 
         profileError:575,
+
+        passwordResetError:585,
     }
 
     public static imageTypes={
