@@ -31,25 +31,25 @@ export class HRRoutes{
 
     private registerHR(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account token is not valid");
             return undefined;
         }
 
         let sessionToken  = WebUtility.getParsedToken(req, req.body.registerToken, 30);
         console.log("parsed Val 2: "+JSON.stringify(sessionToken));
         if(!sessionToken){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
         if(!(sessionToken["type"]==DataModel.userTypes.hr+"_temp" || sessionToken["actualType"]==DataModel.userTypes.hr) || parseInt(sessionToken["adminId"])==NaN){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dint valid access rights");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
         }
 
         //let id=["adminId"];
         const { adminId, type, actualType}=sessionToken;
         if(actualType!=DataModel.userTypes.hr){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "Access Error!!");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights.");
         }
 
         let firstName=req.body.firstName;
@@ -57,7 +57,7 @@ export class HRRoutes{
         let password=req.body.password;
 
         if(!(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/)))
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should containg atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should contain atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
 
         let table = DataModel.tables.hr;
         HRRoutes.database.update(table.table, {
@@ -75,28 +75,28 @@ export class HRRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "User might be already registered!!");
             }
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Oops! Something went wrong.");
         })
     }
 
     private preProcessToken(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account token is not valid");
             return undefined;
         }
 
         let sessionToken  = WebUtility.getParsedToken(req, req.body.sessionToken, 30);
         console.log("parsed Val 2: "+JSON.stringify(sessionToken));
         if(!sessionToken){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
         if(!(sessionToken["type"]==DataModel.userTypes.hr || 
                 sessionToken["type"]==DataModel.userTypes.admin ||
                 sessionToken["type"]==DataModel.userTypes.moderator) || parseInt(sessionToken["adminId"])==NaN){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
 
@@ -160,14 +160,14 @@ export class HRRoutes{
 
                 return WebUtility.sendSuccess(res, req, data, "Successfully fetched the datas");
             }, error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong.");
             }).catch(error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
             })
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
         })
     }
 
@@ -197,9 +197,9 @@ export class HRRoutes{
         }).then(result=>{
             return WebUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the applications");
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
         })
     }
 

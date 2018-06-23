@@ -59,7 +59,7 @@ export class ProviderRoutes{
         var parsedVal  = WebUtility.getParsedToken(req)
         console.log("Parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid.");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account token is not valid.");
             return false;
         }
         console.log("Signup with proper accountToken");
@@ -89,7 +89,7 @@ export class ProviderRoutes{
             &&lattitude!=NaN
             &&longitude!=NaN
             &&WebUtility.validateStringFields(password, 8, 20))){
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input is invalid...");;
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Please check the inputs to the form");;
             }
         
         // /[0-9]+/.
@@ -97,7 +97,7 @@ export class ProviderRoutes{
         if(!phone.match(/^[0-9]+$/))
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Phone number is not valid");
         else if(!(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/)))
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should containg atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should contain atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
         else if(!email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, the parameters were not valid.");;
         }else{
@@ -125,7 +125,7 @@ export class ProviderRoutes{
                 WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "There is already a provider registered with the same email address.\n"+error);
                 return;
             }).catch(error=>{
-                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error");
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong.");
                 return;
             })
         }
@@ -137,7 +137,7 @@ export class ProviderRoutes{
         var parsedVal  = WebUtility.getParsedToken(req)
         console.log("parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");;
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account token is not valid");;
         }
 
         var email:string = String(req.body.email);
@@ -146,7 +146,7 @@ export class ProviderRoutes{
         // console.log(email+" : "+password);
         if(!(WebUtility.validateStringFields(email, 6, 255)
             && WebUtility.validateStringFields(password, 8, 20))){
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input is invalid...");;
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Please check the input.");;
             }
             
         console.log("My Email : "+email);
@@ -205,10 +205,10 @@ export class ProviderRoutes{
                 }, "User Logged in");
             }
         }, error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, error);
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "Oops! Something went wrong.");
             return false;
         }).catch(error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
             return false;
         })
     }
@@ -216,18 +216,18 @@ export class ProviderRoutes{
 
     private authorizeProviders(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account token is not valid");
             return undefined;
         }
 
         let sessionToken  = WebUtility.getParsedToken(req, req.body.sessionToken, 30);
         console.log("parsed Val : "+JSON.stringify(sessionToken));
         if(!sessionToken){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
         if(sessionToken["type"]!=DataModel.userTypes.provider){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
         return sessionToken;
@@ -264,9 +264,9 @@ export class ProviderRoutes{
             data["unreadCount"]=unread;
             return WebUtility.sendSuccess(res, req, data, "Successfully got all the notifications");
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
         })
     }
     private setNotifications(req:express.Request, res:express.Response){
@@ -276,7 +276,7 @@ export class ProviderRoutes{
         let providerId=sessionToken["providersId"];
         let notifId=parseInt(req.body.notificationID);
         if(notifId==NaN){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invaild inputs");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Please check your inputs");
         }
         
         let providers=DataModel.tables.providers;
@@ -291,11 +291,11 @@ export class ProviderRoutes{
             if(result){
                 return WebUtility.sendSuccess(res, req, [], "Successfully set the notification as read");
             }
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrActionError, "Something went wrong");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrActionError, "Oops! Something went wrong.");
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on srver.");
         })
 
     }
@@ -336,9 +336,9 @@ export class ProviderRoutes{
         this.database.transaction(queries).then(result=>{
                 return WebUtility.sendSuccess(res, req, [], "Successfully uploaded all the docs");
             }, error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrActionError, "Something went wrong : "+error);
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrActionError, "Oops! Something went wrong.");
             }).catch(error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
             })
         
     }
@@ -367,9 +367,9 @@ export class ProviderRoutes{
             }
             return WebUtility.sendSuccess(res, req, data, "Successfully fetched all the clients");
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrActionError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrActionError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
         })
     }
 
@@ -400,9 +400,9 @@ export class ProviderRoutes{
             };
             return WebUtility.sendSuccess(res, req, data, "Successfully fetched all the informations");
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrActionError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrActionError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
         })
     }
 
@@ -420,7 +420,7 @@ export class ProviderRoutes{
             if(!WebUtility.validateStringFields(passwords.oldPassword, 8, 50)
                 || !WebUtility.validateStringFields(passwords.newPassword, 8, 50)
                 || !(passwords.newPassword.match(/[A-Z]/) && passwords.newPassword.match(/[a-z]/) && passwords.newPassword.match(/[0-9]/) && passwords.newPassword.match(/[^A-Za-z0-9]/))) 
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Password should follow the rules");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Password should conatain atleast 1 caps, 1 small letter, 1 number and 1 alphanumeric ");
 
             json[providers.password]=passwords.newPassword;
             this.database.update(providers.table, json, {
@@ -433,9 +433,9 @@ export class ProviderRoutes{
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Cannot find profile with that ID and password");
                 }
             }, error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Something went wrong!! "+error);
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
             }).catch(error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Server Error");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
             })
 
             return;
@@ -443,42 +443,42 @@ export class ProviderRoutes{
 
         if(req.body.firstName){
             if(!WebUtility.validateStringFields(req.body.firstName, 1, 50)) 
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Input");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid First name");
             json[providers.firstName]=req.body.firstName
         }
         if(req.body.lastName){
             if(!WebUtility.validateStringFields(req.body.lastName, 1, 50)) 
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Input");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Last name");
             json[providers.lastName]=req.body.lastName
         }
         if(req.body.experience){
             if(!WebUtility.validateStringFields(req.body.experience, 3, -1)) 
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Input");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid experience");
             json[providers.experience]=req.body.experience
         }
         if(req.body.qualifications){
             if(!WebUtility.validateStringFields(req.body.qualifications, 2, -1)) 
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Input");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Qualifications");
             json[providers.qualifications]=req.body.qualifications
         }
         if(req.body.phone){
             if(!WebUtility.validateStringFields(req.body.phone, 1, 10)
                 || !req.body.phone.match(/^[0-9]+$/)) 
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Input");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid phone number");
             json[providers.phone]=req.body.phone
         }
         if(req.body.image){
             //this.decodeBase64Image(req.body.image)
             let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, providerId, false);
             if(!imageLoc)
-               return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image you sent is not base64");
+               return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image format is invalid");
             json[providers.image]=imageLoc
         }
         if(req.body.resume){
             //this.decodeBase64Image(req.body.image)
             let imageLoc = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.docs, providerId, false);
             if(!imageLoc)
-               return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image you sent is not base64");
+               return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image format is invalid");
             json[providers.resume]=imageLoc
         }
 
@@ -491,9 +491,9 @@ export class ProviderRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Cannot find profile with that ID");
             }
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Something went wrong!! "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Server Error");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
         })
     }
 
@@ -549,9 +549,9 @@ export class ProviderRoutes{
             }
             return WebUtility.sendSuccess(res, req, data, "Successfully fetched all the session details");
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
         })
     }
     private getPayments(req:express.Request, res:express.Response){
@@ -585,9 +585,9 @@ export class ProviderRoutes{
             }
             return WebUtility.sendSuccess(res, req, data, "Successfully fetched all transaction details");
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
         })
     }
 }

@@ -66,7 +66,7 @@ export class HRAdminRoutes{
         var parsedVal  = WebUtility.getParsedToken(req)
         console.log("parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");;
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account token is invalid.");;
         }
 
         var email:string = String(req.body.email);
@@ -75,7 +75,7 @@ export class HRAdminRoutes{
         // console.log(email+" : "+password);
         if(!(WebUtility.validateStringFields(email, 6, 255)
             && WebUtility.validateStringFields(password, 8, 20))){
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input is invalid...");;
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Make sure that the input fields are valid");
             }
         
         this.verifyUser(email, password, req, res, true);
@@ -148,28 +148,30 @@ export class HRAdminRoutes{
                 }, "Admin Logged in!");
             }
         }, error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, error);
+            console.log(error);
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "Oops! Something went wrong.");
             return false;
         }).catch(error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Server Error : "+error);
+            console.log(error);
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on our server.");
             return false;
         })
     }
 
     private preProcessToken(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accoun token is not valid.");
             return undefined;
         }
 
         let sessionToken  = WebUtility.getParsedToken(req, req.body.sessionToken, 30);
         console.log("parsed Val 2: "+JSON.stringify(sessionToken));
         if(!sessionToken){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again.");
             return undefined;
         }
         if(!(sessionToken["type"]==DataModel.userTypes.admin || sessionToken["type"]==DataModel.userTypes.moderator) || parseInt(sessionToken["adminId"])==NaN){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dint valid access rights");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
         }
 
@@ -181,13 +183,13 @@ export class HRAdminRoutes{
         var parsedVal  = WebUtility.getParsedToken(req)
         console.log("parsed Val : "+JSON.stringify(parsedVal));
         if(!parsedVal){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");;
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account token is not valid");;
         }
 
         let code = req.body.code;
         let email = req.body.email;
         if(!code || !email){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Input");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Please check the inputs");
         }
         
         let myString=CryptoFunctions.aes256Decrypt(code, CryptoFunctions.get256BitKey([email, this.encodingKey]));
@@ -200,7 +202,7 @@ export class HRAdminRoutes{
         }=JSON.parse(myString);
 
         if(!json){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Code you sent is Invalid");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Opps! Something went wrong. Please check email verification code");
         }
 
         let tokenKey:string = WebUtility.getTokenKey(req);
@@ -238,7 +240,7 @@ export class HRAdminRoutes{
         //let table=DataModel.tables.admin;
         if(actionType==DataModel.userTypes.moderator){
             if(type!=DataModel.userTypes.admin)
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access permissions");
             table=DataModel.tables.admin;
         }else if(actionType==DataModel.userTypes.hr){
             table=DataModel.tables.hr;
@@ -262,33 +264,33 @@ export class HRAdminRoutes{
             //TODO Send the invitation Email to the user
             this.sendInvitationWithCode(req, res, table, email, firstName, lastName, actionType, result, callback);
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Server Error: "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong on our server.");
         })
     }
 
     private registerModerator(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accountToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account token is not valid.");
             return undefined;
         }
 
         let sessionToken  = WebUtility.getParsedToken(req, req.body.registerToken, 30);
         console.log("parsed Val 2: "+JSON.stringify(sessionToken));
         if(!sessionToken){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The sessionToken is not valid");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please Login again");
             return undefined;
         }
         if(!(sessionToken["type"]==DataModel.userTypes.moderator+"_temp" || sessionToken["actualType"]==DataModel.userTypes.moderator) || parseInt(sessionToken["adminId"])==NaN){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dint valid access rights");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access permissions");
             return undefined;
         }
 
         //let id=["adminId"];
         const { adminId, type, actualType}=sessionToken;
         if(actualType!=DataModel.userTypes.moderator){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "Access Error!!");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access permissions");
         }
 
         let firstName=req.body.firstName;
@@ -296,7 +298,7 @@ export class HRAdminRoutes{
         let password=req.body.password;
         
         if(!(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/)))
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should containg atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should contain atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
 
         let table = DataModel.tables.admin;
         HRAdminRoutes.database.update(table.table, {
@@ -314,9 +316,9 @@ export class HRAdminRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "The use might be already registered!!");
             }
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Oops! Something went wrong on our server.");
         })
     }
     private sendInvitationWithCode(req:express.Request, res:express.Response, table:any, email:string, firstName:string, lastName:string, type:string, id:number, callback:string){
@@ -343,7 +345,7 @@ export class HRAdminRoutes{
                 HRAdminRoutes.database.delete(table.table, {
                     [table.email]:email
                 }).then(result=>{},error=>{})
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.emailError, "The Verification Email cant be send");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.emailError, "The Verification Email cant be sent");
             }else{
                 return WebUtility.sendSuccess(res, req, [], "Successfully sent the invitation to the user");
             }
@@ -380,9 +382,9 @@ export class HRAdminRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Woops! Nothing changed in our system");
             }
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong on our server.");
         })
     }
 
@@ -429,7 +431,7 @@ export class HRAdminRoutes{
         }
 
         if(!req.body.email || !req.body.resetCode || !req.body.password)
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The iput doesnt contains email ID");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID");
         
         let email=req.body.email;
         let resetCode=req.body.resetCode;
@@ -441,7 +443,7 @@ export class HRAdminRoutes{
                 date:number
             } = JSON.parse(decryptedStr);
         if(!json)
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The the resetCode sent is invalid");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The reset code sent is invalid");
 
         //TODO Write the segment to implement if a given reset token has been already used
 
@@ -457,9 +459,9 @@ export class HRAdminRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The email ID is not registered with us");
             }
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Something went wrong!! "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Something went wrong!! "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
         })
     }
 
@@ -468,7 +470,7 @@ export class HRAdminRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The token is invalid")
         }
         if(!req.body.email || !req.params.type)
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The iput doesnt contains email ID or the type os User");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID or the type os User");
 
         let email=req.body.email;
         let type=req.params.type;
@@ -497,9 +499,9 @@ export class HRAdminRoutes{
             else
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The User with that email ID doesn't Esists");
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Something went wrong : "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
         })
         function proceedAfterVerifyingUser(){
             let redirectURL=MyApp.appConfig.frontEndUrl+"/"+type+"/set/password?"
@@ -516,7 +518,7 @@ export class HRAdminRoutes{
                 if(!error){
                     return WebUtility.sendSuccess(res, req, [], "Successfully sent the reset Link");
                 }else{
-                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.emailError, "Couldn't send the email : "+error);
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.emailError, "Couldn't send the email.");
                 }
             });
         }
@@ -528,7 +530,7 @@ export class HRAdminRoutes{
         }
 
         if(!req.body.email || !req.body.resetCode || !req.body.password || !req.params.type)
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The iput doesnt contains email ID");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID");
         
         let type=req.params.type;
         let email=req.body.email;
@@ -541,7 +543,7 @@ export class HRAdminRoutes{
                 date:number
             } = JSON.parse(decryptedStr);
         if(!json)
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The the resetCode sent is invalid");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The the reset code sent is invalid");
 
         //TODO Write the segment to implement if a given reset token has been already used
 
@@ -569,9 +571,9 @@ export class HRAdminRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The email ID is not registered with us");
             }
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Something went wrong!! "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Something went wrong!! "+error);
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
         })
     }
 
