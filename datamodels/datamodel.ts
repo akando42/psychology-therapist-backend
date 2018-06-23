@@ -118,6 +118,11 @@ export class DataModel{
             totalCallsInAMinute:"TotalAPICallInAMinute",
             blockedStatus:"BlockedStatus",
         },
+
+        usedTokensOrKeys:{
+            table:"USEDTOKENKEYS",
+            token:"TokenKeyCode"
+        }
         
     }
 

@@ -445,24 +445,27 @@ export class HRAdminRoutes{
         if(!json)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The reset code sent is invalid");
 
-        //TODO Write the segment to implement if a given reset token has been already used
+        //DONE Write the segment to implement if a given reset token has been already used
+        this.checkIfTokenKeyUsed(req, res, resetCode, callback)
 
-        let users=DataModel.tables.users;
-        HRAdminRoutes.database.update(users.table, {
-            [users.password]:password
-        }, {
-            [users.email]:email
-        }).then(result=>{
-            if(result){
-                return WebUtility.sendSuccess(res, req, [], "Your password has been reset!!");
-            }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The email ID is not registered with us");
-            }
-        }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
-        }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
-        })
+        function callback(){
+            let users=DataModel.tables.users;
+            HRAdminRoutes.database.update(users.table, {
+                [users.password]:password
+            }, {
+                [users.email]:email
+            }).then(result=>{
+                if(result){
+                    return WebUtility.sendSuccess(res, req, [], "Your password has been reset!!");
+                }else{
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The email ID is not registered with us");
+                }
+            }, error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
+            })
+        }
     }
 
     private resetWebPassword(req:express.Request, res:express.Response){
@@ -545,36 +548,62 @@ export class HRAdminRoutes{
         if(!json)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The the reset code sent is invalid");
 
-        //TODO Write the segment to implement if a given reset token has been already used
+        //DONE Write the segment to implement if a given reset token has been already used
+        this.checkIfTokenKeyUsed(req, res, resetCode, callback);
 
         // let users=DataModel.tables.users;
-        let users:any=DataModel.tables.admin;
-        if(type==DataModel.userTypes.admin){
-            users=DataModel.tables.admin;
-        }else if(type==DataModel.userTypes.hr){
-            users=DataModel.tables.hr;
-        }else if(type==DataModel.userTypes.moderator){
-            users=DataModel.tables.admin;
-        }else if(type==DataModel.userTypes.provider){
-            users=DataModel.tables.providers;
-        }else{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Type specified was invalid")
-        }
-        HRAdminRoutes.database.update(users.table, {
-            [users.password]:password
-        }, {
-            [users.email]:email
-        }).then(result=>{
-            if(result){
-                return WebUtility.sendSuccess(res, req, [], "Your password has been reset!!");
+        function callback(){
+            let users:any=DataModel.tables.admin;
+            if(type==DataModel.userTypes.admin){
+                users=DataModel.tables.admin;
+            }else if(type==DataModel.userTypes.hr){
+                users=DataModel.tables.hr;
+            }else if(type==DataModel.userTypes.moderator){
+                users=DataModel.tables.admin;
+            }else if(type==DataModel.userTypes.provider){
+                users=DataModel.tables.providers;
             }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The email ID is not registered with us");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Type specified was invalid")
             }
-        }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
-        }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
-        })
+            HRAdminRoutes.database.update(users.table, {
+                [users.password]:password
+            }, {
+                [users.email]:email
+            }).then(result=>{
+                if(result){
+                    return WebUtility.sendSuccess(res, req, [], "Your password has been reset!!");
+                }else{
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The email ID is not registered with us");
+                }
+            }, error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
+            })
+        }
     }
 
+    private checkIfTokenKeyUsed(req:express.Request, res:express.Response, token:string, callback:()=>void){
+
+        let usedToken=DataModel.tables.usedTokensOrKeys;
+        let sql = "SELECT * FROM "+usedToken.table+" WHERE "+usedToken.token+"=?";
+        HRAdminRoutes.database.getQueryResults(sql, [token]).then(result=>{
+            if(result.length==1){
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The reset code has been already used.");
+            }
+            HRAdminRoutes.database.insert(usedToken.table, {
+                [usedToken.token]:token
+            }).then(result=>{
+                callback();
+            }, error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Somethingwent wrong");
+            }).catch(error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Somethingwent wrong on server");
+            });
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Somethingwent wrong");
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Somethingwent wrong on server");
+        })
+    }
 }
