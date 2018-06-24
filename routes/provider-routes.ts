@@ -9,6 +9,11 @@ import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
 import { UserRoutes } from "./user-routes";
 import { MyDatabase } from "../app";
+import { MyApp } from "../app";
+import { EmailActivity } from "./email-activity";
+
+
+const url = require('url');
 
 export class ProviderRoutes{
 
@@ -80,9 +85,12 @@ export class ProviderRoutes{
             sessionStat = DataModel.sessionStatus.accepted
         }else if(action=="reject"){
             sessionStat = DataModel.sessionStatus.rejected
+            this.findNewProviderForSession(sessionId);
         }else{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL action end-point is invalid");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL action end-point is invalid");
         }
+
+        this.sendConfirmationMailForSession(sessionId, action);
 
         let sessions = DataModel.tables.sessions;
         MyDatabase.database.update(sessions.table, {
@@ -91,14 +99,14 @@ export class ProviderRoutes{
             [sessions.id]:sessionId
         }).then(result=>{
             if(result){
-                WebUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the session");
+                return WebUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the session");
             }else{
-                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! We cant find your session in our database.");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! We cant find your session in our database.");
             }
         },error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong");
         }).catch(error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong on our server");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong on our server");
         })
     }
 
@@ -124,9 +132,11 @@ export class ProviderRoutes{
             sessionStat = DataModel.sessionStatus.accepted
         }else if(action=="reject"){
             sessionStat = DataModel.sessionStatus.rejected
+            this.findNewProviderForSession(sessionId);
         }else{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL action end-point is invalid");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL action end-point is invalid");
         }
+        this.sendConfirmationMailForSession(sessionId, action);
 
         let sessions = DataModel.tables.sessions;
         MyDatabase.database.update(sessions.table, {
@@ -135,15 +145,60 @@ export class ProviderRoutes{
             [sessions.id]:sessionId
         }).then(result=>{
             if(result){
-                WebUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the session");
+                if(action=="accept")
+                    return res.redirect(url.format({
+                        pathname:MyApp.appConfig.frontEndUrl+"/provider/accept/session",
+                        query:req.query
+                    }));
+                else
+                    return res.redirect(url.format({
+                        pathname:MyApp.appConfig.frontEndUrl+"/provider/reject/session",
+                        query:req.query
+                    }));
             }else{
-                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! We cant find your session in our database.");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! We cant find your session in our database.");
             }
         },error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong");
         }).catch(error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong on our server");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong on our server");
         })
+    }
+
+    private sendConfirmationMailForSession(sessionId:number, action:string){
+
+        let sessions = DataModel.tables.sessions;
+        let users = DataModel.tables.users;
+
+        let sql="SELECT * \
+            FROM "+sessions.table+" natural join "+users.table+" \
+            WHERE "+sessions.id+"=?";
+
+        MyDatabase.database.getQueryResults(sql, [sessionId]).then(result=>{
+            if(result.length>0){
+                let out=result[0];
+                let email=out[users.email];
+                let name=out[users.firstName];
+
+                let body="<h3>Hi "+name+",</h3>";
+                if(action=="accept"){
+                    body+="<p>Congratulation! The provider has accepted your massage request. Please be prepared at the the specified session time</p>"
+                }else{
+                    body+="<p>We are really sorry but the provider rejected your massage request. We are working on finding a different provider for you. We will inform you as we allot a new provider to you.</p>\
+                        <p>Thank you</p>"
+                }
+                EmailActivity.instance.sendEmail(email, "Session Booking Update | Therapy on Demand", body, function(err, info){
+                    if(err)
+                        console.log(err);
+                    //TODO Do nothing
+                })
+            }
+            //EmailActivity.instance.sendEmail()
+        }, error=>{})
+    }
+
+    private findNewProviderForSession(sessionId:number){
+        //TODO find new provider for booking the session next closest to the system recieves the request
     }
     
     private signUp(req:express.Request, res:express.Response){
