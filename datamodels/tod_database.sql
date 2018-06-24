@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 23, 2018 at 06:56 PM
+-- Generation Time: Jun 24, 2018 at 05:59 PM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -173,6 +173,21 @@ INSERT INTO `PROVIDERS` (`ProviderID`, `HRID`, `ProviderFirstName`, `ProviderLas
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `SESSIONFEEDBACK`
+--
+
+CREATE TABLE `SESSIONFEEDBACK` (
+  `SessionFeedbackID` int(11) NOT NULL,
+  `SessionID` int(11) NOT NULL,
+  `ProviderSessionRating` int(11) NOT NULL,
+  `ProviderSessionComment` varchar(500) NOT NULL,
+  `UserSessionRating` int(11) NOT NULL,
+  `UserSessionComment` varchar(500) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `SESSIONS`
 --
 
@@ -187,15 +202,16 @@ CREATE TABLE `SESSIONS` (
   `SessionDateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `Equipements` tinyint(1) NOT NULL DEFAULT '0',
   `Pets` varchar(20) NOT NULL,
-  `MedicalInformation` text
+  `MedicalInformation` text,
+  `SessionStatus` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `SESSIONS`
 --
 
-INSERT INTO `SESSIONS` (`SessionID`, `UserID`, `ProviderID`, `AddressID`, `MassageType`, `PreferredGender`, `MassageLength`, `SessionDateTime`, `Equipements`, `Pets`, `MedicalInformation`) VALUES
-(1, 1, 6, 1, 'Tissue Massage', 0, 60, '2018-05-29 00:00:00', 0, 'cat', 'I am good in health');
+INSERT INTO `SESSIONS` (`SessionID`, `UserID`, `ProviderID`, `AddressID`, `MassageType`, `PreferredGender`, `MassageLength`, `SessionDateTime`, `Equipements`, `Pets`, `MedicalInformation`, `SessionStatus`) VALUES
+(1, 1, 6, 1, 'Tissue Massage', 0, 60, '2018-05-29 00:00:00', 0, 'cat', 'I am good in health', 0);
 
 -- --------------------------------------------------------
 
@@ -336,6 +352,13 @@ ALTER TABLE `PROVIDERS`
   ADD KEY `ProviderHRConstraint` (`HRID`);
 
 --
+-- Indexes for table `SESSIONFEEDBACK`
+--
+ALTER TABLE `SESSIONFEEDBACK`
+  ADD PRIMARY KEY (`SessionFeedbackID`),
+  ADD KEY `session_constraint` (`SessionID`);
+
+--
 -- Indexes for table `SESSIONS`
 --
 ALTER TABLE `SESSIONS`
@@ -399,6 +422,11 @@ ALTER TABLE `PROVIDERNOTIFICATION`
 ALTER TABLE `PROVIDERS`
   MODIFY `ProviderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
+-- AUTO_INCREMENT for table `SESSIONFEEDBACK`
+--
+ALTER TABLE `SESSIONFEEDBACK`
+  MODIFY `SessionFeedbackID` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `SESSIONS`
 --
 ALTER TABLE `SESSIONS`
@@ -446,6 +474,12 @@ ALTER TABLE `PROVIDERNOTIFICATION`
 --
 ALTER TABLE `PROVIDERS`
   ADD CONSTRAINT `ProviderHRConstraint` FOREIGN KEY (`HRID`) REFERENCES `HRTABLE` (`HRID`);
+
+--
+-- Constraints for table `SESSIONFEEDBACK`
+--
+ALTER TABLE `SESSIONFEEDBACK`
+  ADD CONSTRAINT `session_constraint` FOREIGN KEY (`SessionID`) REFERENCES `SESSIONS` (`SessionID`);
 
 --
 -- Constraints for table `SESSIONS`

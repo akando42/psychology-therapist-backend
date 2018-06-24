@@ -7,14 +7,14 @@ import { RoutesHandler } from "../class/class.routeshandler";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
+import { UserRoutes } from "./user-routes";
+import { MyDatabase } from "../app";
 
 export class ProviderRoutes{
 
-    private database:MySqlDatabase;
     private server:ExpressServer;
 
     constructor(server:ExpressServer, db:MySqlDatabase){
-        this.database=db;
         this.server=server;
         var me:ProviderRoutes=this;
         server.setRoute("/provider/signup", (req:express.Request, res:express.Response)=>{
@@ -53,8 +53,99 @@ export class ProviderRoutes{
         server.setRoute("/provider/get/payments", (req:express.Request, res:express.Response)=>{
             me.getPayments(req, res);
         }, HTTPMethod.POST);
+
+
+        server.setRoute("/provider/session/:action", (req:express.Request, res:express.Response)=>{
+            me.performActionOnSessionPost(req, res);
+        }, HTTPMethod.POST);
+        server.setRoute("/provider/session/:action", (req:express.Request, res:express.Response)=>{
+            me.performActionOnSessionGet(req, res);
+        }, HTTPMethod.GET);
     }
 
+    private performActionOnSessionPost(req:express.Request, res:express.Response){
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
+            return;
+        let providerId=sessionToken["providersId"];
+
+        let sessionId=parseInt(req.body.sessionId);
+        if(!sessionId || sessionId==NaN)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cant parse the session ID in the request");
+        
+        let action = req.params.action;
+
+        let sessionStat=0;
+        if(action=="accept"){
+            sessionStat = DataModel.sessionStatus.accepted
+        }else if(action=="reject"){
+            sessionStat = DataModel.sessionStatus.rejected
+        }else{
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL action end-point is invalid");
+        }
+
+        let sessions = DataModel.tables.sessions;
+        MyDatabase.database.update(sessions.table, {
+            [sessions.sessionStatus]:sessionStat
+        },{
+            [sessions.id]:sessionId
+        }).then(result=>{
+            if(result){
+                WebUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the session");
+            }else{
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! We cant find your session in our database.");
+            }
+        },error=>{
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong");
+        }).catch(error=>{
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong on our server");
+        })
+    }
+
+    private performActionOnSessionGet(req:express.Request, res:express.Response){
+        
+        if(!req.query.sessionCode || !req.query.email)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Input Invalid");
+
+        let decryptedSession = CryptoFunctions.aes256Encrypt(req.query.sessionCode, CryptoFunctions.get256BitKey([req.query.email, UserRoutes.randomPatternToVerify]))
+
+        let sessionCode = JSON.parse(decryptedSession);
+
+        if(!sessionCode)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The session code cant be parsed")
+
+        let action = req.params.action;
+        let sessionId = parseInt(sessionCode.sessionId);
+        if(!sessionId || sessionId==NaN)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The session code is invalid")
+
+        let sessionStat=0;
+        if(action=="accept"){
+            sessionStat = DataModel.sessionStatus.accepted
+        }else if(action=="reject"){
+            sessionStat = DataModel.sessionStatus.rejected
+        }else{
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL action end-point is invalid");
+        }
+
+        let sessions = DataModel.tables.sessions;
+        MyDatabase.database.update(sessions.table, {
+            [sessions.sessionStatus]:sessionStat
+        },{
+            [sessions.id]:sessionId
+        }).then(result=>{
+            if(result){
+                WebUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the session");
+            }else{
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! We cant find your session in our database.");
+            }
+        },error=>{
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong");
+        }).catch(error=>{
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.bookingError, "Oops! Something went wrong on our server");
+        })
+    }
+    
     private signUp(req:express.Request, res:express.Response){
         var parsedVal  = WebUtility.getParsedToken(req)
         console.log("Parsed Val : "+JSON.stringify(parsedVal));
@@ -102,7 +193,7 @@ export class ProviderRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, the parameters were not valid.");;
         }else{
             var providers = DataModel.tables.providers;
-            this.database.insert(providers.table, {
+            MyDatabase.database.insert(providers.table, {
                 [providers.firstName]:firstname,
                 [providers.lastName]:lastname,
                 [providers.experience]:experience,
@@ -166,7 +257,7 @@ export class ProviderRoutes{
                     ["="],
                     []);
         console.log("My SQL : "+sql);
-        this.database.getQueryResults(sql, [email]).then(result=>{
+        MyDatabase.database.getQueryResults(sql, [email]).then(result=>{
             console.log(JSON.stringify(result));
             if(result.length==0){
                 WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "We cannot find any User registered with that email ID");
@@ -232,6 +323,7 @@ export class ProviderRoutes{
         }
         return sessionToken;
     }
+
     private getNotifications(req:express.Request, res:express.Response){
         let sessionToken=this.authorizeProviders(req, res);
         if(!sessionToken)
@@ -246,7 +338,7 @@ export class ProviderRoutes{
                 WHERE "+providersNotif.providerID+"="+providerId+" \
                 ORDER BY "+providersNotif.isRead+", "+providersNotif.dateTime+"";
 
-        this.database.getQueryResults(sql,[]).then(result=>{
+        MyDatabase.database.getQueryResults(sql,[]).then(result=>{
             let data={};
             let unread=0;
             for(var i in result){
@@ -282,7 +374,7 @@ export class ProviderRoutes{
         let providers=DataModel.tables.providers;
         let providersNotif=DataModel.tables.providerNotifications;
 
-        this.database.update(providersNotif.table,{
+        MyDatabase.database.update(providersNotif.table,{
             [providersNotif.isRead]:1
         }, {
             [providersNotif.providerID]:providerId,
@@ -333,7 +425,7 @@ export class ProviderRoutes{
         queries.push(query);
         console.log(JSON.stringify(queries));
         
-        this.database.transaction(queries).then(result=>{
+        MyDatabase.database.transaction(queries).then(result=>{
                 return WebUtility.sendSuccess(res, req, [], "Successfully uploaded all the docs");
             }, error=>{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrActionError, "Oops! Something went wrong.");
@@ -359,7 +451,7 @@ export class ProviderRoutes{
             GROUP BY "+users.id+" ";
         console.log(sql);
         
-        this.database.getQueryResults(sql, []).then(result=>{
+        MyDatabase.database.getQueryResults(sql, []).then(result=>{
             let data={};
             for(var i in result){
                 let out=result[i];
@@ -385,7 +477,7 @@ export class ProviderRoutes{
                 FROM "+providers.table+" \
                 WHERE "+providers.id+"="+providerId;
         console.log(sql);
-        this.database.getQueryResults(sql, []).then(result=>{
+        MyDatabase.database.getQueryResults(sql, []).then(result=>{
             let out=result[0];
             let data={
                 firstName:out[providers.firstName],
@@ -423,7 +515,7 @@ export class ProviderRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Password should conatain atleast 1 caps, 1 small letter, 1 number and 1 alphanumeric ");
 
             json[providers.password]=passwords.newPassword;
-            this.database.update(providers.table, json, {
+            MyDatabase.database.update(providers.table, json, {
                 [providers.id]:providerId,
                 [providers.password]:passwords.oldPassword
             }).then(result=>{
@@ -482,7 +574,7 @@ export class ProviderRoutes{
             json[providers.resume]=imageLoc
         }
 
-        this.database.update(providers.table, json, {
+        MyDatabase.database.update(providers.table, json, {
             [providers.id]:providerId
         }).then(result=>{
             if(result){
@@ -522,7 +614,7 @@ export class ProviderRoutes{
                 FROM "+sessions.table+" natural join "+users.table+" natural join "+userAddress.table+" \
                 WHERE "+sessions.providerID+"="+providerId+" \
                 AND "+sessions.dateTime+comparator+"now()";
-        this.database.getQueryResults(sql, []).then(result=>{
+        MyDatabase.database.getQueryResults(sql, []).then(result=>{
             let data={};
             for(var i in result){
                 let out=result[i];
@@ -570,7 +662,7 @@ export class ProviderRoutes{
                 WHERE "+sessions.providerID+"="+providerId+" \
                 ORDER BY "+sessions.dateTime+" DESC";
         
-        this.database.getQueryResults(sql, []).then(result=>{
+        MyDatabase.database.getQueryResults(sql, []).then(result=>{
             let data={};
             for(var i in result){
                 let out = result[i];

@@ -12,9 +12,10 @@ import { MyApp } from "../app";
 
 var nodemailer = require('nodemailer');
 var appConfig=require('../config/app.json');
+const url = require('url');    
+
 
 export class UserRoutes{
-    private database:MySqlDatabase;
     private server:ExpressServer;
 
     public static randomPatternToVerify="!47218fah8y5&^%^$76T21358GUfutT6%$&68327Q5";
@@ -22,7 +23,6 @@ export class UserRoutes{
 
     constructor(server:ExpressServer, db:MySqlDatabase){
         this.server=server;
-        this.database=db;  
         var me=this;
 
         server.setRoute("/user/login", (req:express.Request, res:express.Response)=>{
@@ -341,7 +341,7 @@ export class UserRoutes{
             FROM "+users.table+" \
             WHERE "+users.email+"=?";
 
-        this.database.getQueryResults(sql, [email]).then(result=>{
+        MyDatabase.database.getQueryResults(sql, [email]).then(result=>{
             if(result.length==1)
                 proceedAfterVerifyingUser();
             else
@@ -622,6 +622,26 @@ export class UserRoutes{
                     let massageLength = out[sessions.massageLength];
                     let massageType = out[sessions.massageType];
 
+                    let sessionCode={
+                        sessionId:out[sessions.id],
+                        providerEmail:out[providers.email],
+                    }
+                    let encryptedSession = CryptoFunctions.aes256Encrypt(JSON.stringify(sessionCode), CryptoFunctions.get256BitKey([email, UserRoutes.randomPatternToVerify]))
+                    
+                    let confirmLink=url.format({
+                        pathname:MyApp.appConfig.baseURL+"/provider/session/accept",
+                        query:{
+                            sessionCode:encryptedSession,
+                            email:email
+                        }
+                    })
+                    let rejectLink=url.format({
+                        pathname:MyApp.appConfig.baseURL+"/provider/session/reject",
+                        query:{
+                            sessionCode:encryptedSession,
+                            email:email
+                        }
+                    })
                     let body = "<h5>Hi "+pFirstName+",</h5><p>You have been booked for "+massageDate+"</p>\
                         <table>\
                         <tody>\
@@ -647,7 +667,10 @@ export class UserRoutes{
                         </tr>\
                         </tbody>\
                         </table>\
+                        <div><a href='"+confirmLink+"'><input type='submit' value='Confirm'></a></div>\
+                        <div><a href='"+rejectLink+"'><input type='submit' value='Decline'></a></div>\
                         <p><b>Please open your account to view more details and the contact info of the client</b></p>"
+                    
                     EmailActivity.instance.sendEmail(email, "You got a booking | Therapy On Demand", body, function(error, msg){
                         if(!error)
                             return UsersUtility.sendSuccess(res, [], "Successfully Completed the payment");

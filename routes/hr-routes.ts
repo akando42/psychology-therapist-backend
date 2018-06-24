@@ -7,13 +7,12 @@ import { RoutesHandler } from "../class/class.routeshandler";
 import { WebUtility } from "./web-utility-routes";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
+import { MyDatabase } from "../app";
 
 export class HRRoutes{
-    private static database:MySqlDatabase;
     private static server:ExpressServer;
 
     constructor(server:ExpressServer, db:MySqlDatabase){
-        HRRoutes.database=db;
         HRRoutes.server=server;
         var me:HRRoutes=this;
 
@@ -60,7 +59,7 @@ export class HRRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should contain atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
 
         let table = DataModel.tables.hr;
-        HRRoutes.database.update(table.table, {
+        MyDatabase.database.update(table.table, {
             [table.firstName]:firstName,
             [table.lastName]:lastName,
             [table.password]:password,
@@ -95,7 +94,7 @@ export class HRRoutes{
         }
         if(!(sessionToken["type"]==DataModel.userTypes.hr || 
                 sessionToken["type"]==DataModel.userTypes.admin ||
-                sessionToken["type"]==DataModel.userTypes.moderator) || parseInt(sessionToken["adminId"])==NaN){
+                sessionToken["type"]==DataModel.userTypes.sales) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
@@ -124,7 +123,7 @@ export class HRRoutes{
         }else{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "The routing you specified doesnot exists");
         }
-        HRRoutes.database.getQueryResults(sql, []).then(result=>{
+        MyDatabase.database.getQueryResults(sql, []).then(result=>{
             let data={};
             let ids=[-1];
             for(var i in result){
@@ -148,7 +147,7 @@ export class HRRoutes{
             let sql="SELECT * FROM "+providersDocs.table+" WHERE "+providersDocs.providerID+" IN ("+ids.join(",")+")";
             console.log(sql);
             
-            HRRoutes.database.getQueryResults(sql, []).then(result=>{
+            MyDatabase.database.getQueryResults(sql, []).then(result=>{
                 for(var i in result){
                     let out=result[i];
                     data[out[providersDocs.providerID]].docs.push({
@@ -189,7 +188,7 @@ export class HRRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "The routing you specified doesnot exists");
         }
         
-        HRRoutes.database.update(providers.table,{
+        MyDatabase.database.update(providers.table,{
             [providers.accountStatus]:status,
             [providers.hrAcceptanceID]:hrId
         }, {

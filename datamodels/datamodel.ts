@@ -70,9 +70,18 @@ export class DataModel{
             dateTime:"SessionDateTime",
             equipements:"Equipements",
             pets:"Pets",
-            medicalInformation:"MedicalInformation"
+            medicalInformation:"MedicalInformation",
+            sessionStatus:"SessionStatus",
         },
-
+        feedbackSession:{
+            table:"SESSIONFEEDBACK",
+            id:"SessionFeedbackID",
+            sessionId:"SessionID",
+            providersRating:"ProviderSessionRating",
+            providerComment:"ProviderSessionComment",
+            userRating:"UserSessionRating",
+            userComment:"UserSessionComment"
+        },
         payments:{
             table:"PAYMENTS",
             id:"PaymentID",
@@ -126,12 +135,24 @@ export class DataModel{
         
     }
 
+    public static sessionStatus={
+        waiting:0,
+        accepted:1,
+        rejected:2,
+        checkedIn:3,
+        checkedOut:4,
+        dintShowUp:5,
+        cancelledByUser:6,
+        cancelledByProvider:7
+    }
+
     public static userTypes={
         hr:"hr",
-        moderator:"moderator",
+        sales:"sales",
         admin:"admin",
         provider:"provider"
     }
+
     public static accountStatus={
         waiting:0,
         accepted:1,

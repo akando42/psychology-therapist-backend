@@ -1,5 +1,11 @@
 <base-url>/user/success/verification
     This URL should be showing that the User is successfully verified and should have a redirect link to redirect tot he app
 
+<base-url>/provider/accept/session
+    This URL should be showing that the Provider have successfully accepted the session
+
+<base-url>/provider/reject/session
+    This URL should be showing that the Provider have removed the session
+
 <base-url>/user/reset/password
     This URL should be having the module to reset the password

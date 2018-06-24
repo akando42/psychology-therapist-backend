@@ -1,0 +1,15 @@
+sales/register
+	post:
+		summary:
+			This request is directed from the user after register link is clicked
+		request:
+			accountToken:<>
+			registerToken:<One fetched from frontend URL>
+			firstName:
+			lastName:
+			password:
+        response:
+            200:
+            {
+                message:"Successfully Registered"
+            }

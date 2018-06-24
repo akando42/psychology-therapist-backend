@@ -45,7 +45,7 @@ admin/decode/email
                 registerToken:<Use this token to register the User in the Next API calls>
             }
 
-admin/add/moderator
+admin/add/sales
     post
         summary:
             Gives the super admin access to the users
@@ -69,25 +69,8 @@ admin/add/hr
                 message:"Email Successfully sent to the user".
             }
 
-moderator/register
-	post:
-		summary:
-			This request is directed from the user after register link is clicked
-		request:
-			accountToken:<>
-			registerToken:<One fetched from frontend URL>
-			firstName:
-			lastName:
-			password:
-        response:
-            200:
-            {
-                message:"Successfully Registered"
-            }
-
-
 admin/reset/password
-moderator/reset/password
+sales/reset/password
 hr/reset/password
 provider/reset/password
     post:
@@ -102,7 +85,7 @@ provider/reset/password
                 message:"We have successfully sent the reset link on our email address"
             }
 
-admin/block/moderator
+admin/block/sales
 admin/block/hr
     post
         summary
@@ -119,7 +102,7 @@ admin/block/hr
                 message:"The email has been successfully removed"
             }
 
-admin/unblock/moderator
+admin/unblock/sales
 admin/unblock/hr
     post
         summary

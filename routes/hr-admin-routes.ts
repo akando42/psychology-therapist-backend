@@ -10,15 +10,14 @@ import { SQLUtility } from "./sql-utility";
 import { EmailActivity } from "./email-activity";
 import { UserRoutes } from "./user-routes";
 import { MyApp } from "../app";
+import { MyDatabase } from "../app";
 
 
 export class HRAdminRoutes{
-    private static database:MySqlDatabase;
     private server:ExpressServer;
     private encodingKey="akjh#&*^%^*$#(hgsjfa86t*^%*$Q21^$GFHG&^#@RG387gt";
 
     constructor(server:ExpressServer, db:MySqlDatabase){
-        HRAdminRoutes.database=db;
         this.server=server;
         var me:HRAdminRoutes=this;
         
@@ -32,10 +31,6 @@ export class HRAdminRoutes{
 
         server.setRoute("/admin/add/:type", (req:express.Request, res:express.Response)=>{
             me.addAccount(req, res);
-        }, HTTPMethod.POST);
-
-        server.setRoute("/moderator/register", (req:express.Request, res:express.Response)=>{
-            me.registerModerator(req, res);
         }, HTTPMethod.POST);
 
         server.setRoute("/admin/block/:type", (req:express.Request, res:express.Response)=>{
@@ -95,7 +90,7 @@ export class HRAdminRoutes{
                     ["="],
                     []);
         console.log("My SQL : "+sql);
-        HRAdminRoutes.database.getQueryResults(sql, [email]).then(result=>{
+        MyDatabase.database.getQueryResults(sql, [email]).then(result=>{
             console.log(JSON.stringify(result));
             if(result.length==0){
                 if(admin)
@@ -121,7 +116,7 @@ export class HRAdminRoutes{
                     if(out[DataModel.tables.admin.owner]==1){
                         type=DataModel.userTypes.admin;
                     }else{
-                        type=DataModel.userTypes.moderator;
+                        type=DataModel.userTypes.sales;
                     }
                     
                 }else{
@@ -170,7 +165,7 @@ export class HRAdminRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again.");
             return undefined;
         }
-        if(!(sessionToken["type"]==DataModel.userTypes.admin || sessionToken["type"]==DataModel.userTypes.moderator) || parseInt(sessionToken["adminId"])==NaN){
+        if(!(sessionToken["type"]==DataModel.userTypes.admin || sessionToken["type"]==DataModel.userTypes.sales) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
         }
@@ -238,7 +233,7 @@ export class HRAdminRoutes{
         //let table=DataModel.tables.admin;
         let table:any;
         //let table=DataModel.tables.admin;
-        if(actionType==DataModel.userTypes.moderator){
+        if(actionType==DataModel.userTypes.sales){
             if(type!=DataModel.userTypes.admin)
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access permissions");
             table=DataModel.tables.admin;
@@ -260,7 +255,7 @@ export class HRAdminRoutes{
         };
         if(actionType==DataModel.userTypes.hr)
             insertJson[table.adminCreatedRefID]=adminId;
-        HRAdminRoutes.database.insert(table.table, insertJson).then(result=>{
+        MyDatabase.database.insert(table.table, insertJson).then(result=>{
             //TODO Send the invitation Email to the user
             this.sendInvitationWithCode(req, res, table, email, firstName, lastName, actionType, result, callback);
         }, error=>{
@@ -270,57 +265,6 @@ export class HRAdminRoutes{
         })
     }
 
-    private registerModerator(req:express.Request, res:express.Response){
-        if(!WebUtility.getParsedToken(req)){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account token is not valid.");
-            return undefined;
-        }
-
-        let sessionToken  = WebUtility.getParsedToken(req, req.body.registerToken, 30);
-        console.log("parsed Val 2: "+JSON.stringify(sessionToken));
-        if(!sessionToken){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please Login again");
-            return undefined;
-        }
-        if(!(sessionToken["type"]==DataModel.userTypes.moderator+"_temp" || sessionToken["actualType"]==DataModel.userTypes.moderator) || parseInt(sessionToken["adminId"])==NaN){
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access permissions");
-            return undefined;
-        }
-
-        //let id=["adminId"];
-        const { adminId, type, actualType}=sessionToken;
-        if(actualType!=DataModel.userTypes.moderator){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access permissions");
-        }
-
-        let firstName=req.body.firstName;
-        let lastName=req.body.lastName;
-        let password=req.body.password;
-        
-        if(!(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/)))
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should contain atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
-
-        let table = DataModel.tables.admin;
-        HRAdminRoutes.database.update(table.table, {
-            [table.firstName]:firstName,
-            [table.lastName]:lastName,
-            [table.password]:password,
-            [table.accountStatus]:DataModel.accountStatus.accepted,
-        }, {
-            [table.id]:adminId,
-            [table.accountStatus]:DataModel.accountStatus.waiting,
-        }).then(result=>{
-            if(result){
-                return WebUtility.sendSuccess(res, req, [], "Successfully Registered");
-            }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "The use might be already registered!!");
-            }
-        }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Oops! Something went wrong.");
-        }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "Oops! Something went wrong on our server.");
-        })
-    }
     private sendInvitationWithCode(req:express.Request, res:express.Response, table:any, email:string, firstName:string, lastName:string, type:string, id:number, callback:string){
         let json={
             email:email,
@@ -342,7 +286,7 @@ export class HRAdminRoutes{
         
         EmailActivity.instance.sendEmail(email, "Welcome to Therapy on Demand!", body, function(err, info){
             if(err){
-                HRAdminRoutes.database.delete(table.table, {
+                MyDatabase.database.delete(table.table, {
                     [table.email]:email
                 }).then(result=>{},error=>{})
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.emailError, "The Verification Email cant be sent");
@@ -359,7 +303,7 @@ export class HRAdminRoutes{
 
         let actionType = req.params.type;
         let table:any=DataModel.tables.admin;
-        if(actionType==DataModel.userTypes.moderator){
+        if(actionType==DataModel.userTypes.sales){
             if(type!=DataModel.userTypes.admin)
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
             table=DataModel.tables.admin;
@@ -371,7 +315,7 @@ export class HRAdminRoutes{
 
         
         //TODO Do the implementation to change the account status to the one for the blocked account
-        HRAdminRoutes.database.update(table.table, {
+        MyDatabase.database.update(table.table, {
             [table.accountStatus]:DataModel.accountStatus.blocked
         },{
             [table.id]:adminId
@@ -395,7 +339,7 @@ export class HRAdminRoutes{
 
         let actionType = req.params.type;
         let table:any=DataModel.tables.admin;
-        if(actionType==DataModel.userTypes.moderator){
+        if(actionType==DataModel.userTypes.sales){
             if(type!=DataModel.userTypes.admin)
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
             table=DataModel.tables.admin;
@@ -407,7 +351,7 @@ export class HRAdminRoutes{
 
         
         //TODO Do the implementation to change the account status to the one for the blocked account
-        HRAdminRoutes.database.update(table.table, {
+        MyDatabase.database.update(table.table, {
             [table.accountStatus]:DataModel.accountStatus.accepted
         },{
             [table.id]:adminId
@@ -450,7 +394,7 @@ export class HRAdminRoutes{
 
         function callback(){
             let users=DataModel.tables.users;
-            HRAdminRoutes.database.update(users.table, {
+            MyDatabase.database.update(users.table, {
                 [users.password]:password
             }, {
                 [users.email]:email
@@ -484,7 +428,7 @@ export class HRAdminRoutes{
             users=DataModel.tables.admin;
         }else if(type==DataModel.userTypes.hr){
             users=DataModel.tables.hr;
-        }else if(type==DataModel.userTypes.moderator){
+        }else if(type==DataModel.userTypes.sales){
             users=DataModel.tables.admin;
         }else if(type==DataModel.userTypes.provider){
             users=DataModel.tables.providers;
@@ -496,7 +440,7 @@ export class HRAdminRoutes{
             FROM "+users.table+" \
             WHERE "+users.email+"=?";
 
-        HRAdminRoutes.database.getQueryResults(sql, [email]).then(result=>{
+        MyDatabase.database.getQueryResults(sql, [email]).then(result=>{
             if(result.length==1)
                 proceedAfterVerifyingUser();
             else
@@ -558,14 +502,14 @@ export class HRAdminRoutes{
                 users=DataModel.tables.admin;
             }else if(type==DataModel.userTypes.hr){
                 users=DataModel.tables.hr;
-            }else if(type==DataModel.userTypes.moderator){
+            }else if(type==DataModel.userTypes.sales){
                 users=DataModel.tables.admin;
             }else if(type==DataModel.userTypes.provider){
                 users=DataModel.tables.providers;
             }else{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Type specified was invalid")
             }
-            HRAdminRoutes.database.update(users.table, {
+            MyDatabase.database.update(users.table, {
                 [users.password]:password
             }, {
                 [users.email]:email
@@ -587,11 +531,11 @@ export class HRAdminRoutes{
 
         let usedToken=DataModel.tables.usedTokensOrKeys;
         let sql = "SELECT * FROM "+usedToken.table+" WHERE "+usedToken.token+"=?";
-        HRAdminRoutes.database.getQueryResults(sql, [token]).then(result=>{
+        MyDatabase.database.getQueryResults(sql, [token]).then(result=>{
             if(result.length==1){
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The reset code has been already used.");
             }
-            HRAdminRoutes.database.insert(usedToken.table, {
+            MyDatabase.database.insert(usedToken.table, {
                 [usedToken.token]:token
             }).then(result=>{
                 callback();

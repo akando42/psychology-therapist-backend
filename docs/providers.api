@@ -301,3 +301,33 @@ provider/get/payments
 					},..
 				}
 			}
+
+provider/session/accept
+provider/session/reject
+	get:
+		summary:
+			Accept/reject the session from the email.
+			Send the status mail to the user
+		request:
+			sessionCode:<The code to defien the session and step to accept it>
+			email:<Email ID of the provider>
+		response:
+			200:
+				accept request - redirect to the <front-end>/provider/accept/session
+				reject request - redirect to the <front-end>/provider/accept/session
+
+provider/session/accept
+provider/session/reject
+	post:
+		summary:
+			Accept/reject the session after opening the profile.
+			Send the status mail to the user
+		request:
+			accountToken:<>
+			sessionToken:<>
+			sessionId:<The ID of the session the provider want to reject>
+		response:
+			200:
+			{
+				message:"Successfully accepted/reject the session"
+			}
