@@ -730,6 +730,7 @@ export class UserRoutes{
                     pets:out[sessions.pets],
                     equipements:out[sessions.equipements],
                     medicalInformation:out[sessions.medicalInformation],
+                    sessionStatus:out[sessions.sessionStatus]
                 };
                 if(!isSession){
                     json["paymentId"]=out[payments.id];
