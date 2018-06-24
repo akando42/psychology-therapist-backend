@@ -5,4 +5,4 @@
     "hostName":"http://devapi.therapyondemand.io",
     "frontEndUrl":"http://dev.therapyondemand.io",
     "git_pass":"TOD12345"
-}//URL shouldnt be followed by /
+}

@@ -115,7 +115,7 @@ export class ProviderRoutes{
         if(!req.query.sessionCode || !req.query.email)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Input Invalid");
 
-        let decryptedSession = CryptoFunctions.aes256Encrypt(req.query.sessionCode, CryptoFunctions.get256BitKey([req.query.email, UserRoutes.randomPatternToVerify]))
+        let decryptedSession = CryptoFunctions.aes256Decrypt(req.query.sessionCode, CryptoFunctions.get256BitKey([req.query.email, UserRoutes.randomPatternToVerify]))
 
         let sessionCode = JSON.parse(decryptedSession);
 
@@ -123,6 +123,8 @@ export class ProviderRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The session code cant be parsed")
 
         let action = req.params.action;
+        console.log("SeesionCode : "+JSON.stringify(sessionCode));
+        
         let sessionId = parseInt(sessionCode.sessionId);
         if(!sessionId || sessionId==NaN)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The session code is invalid")

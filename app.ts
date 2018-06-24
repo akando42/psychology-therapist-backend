@@ -44,6 +44,7 @@ export class MyApp{
     }
 }
 
+new MyApp();
 new MyDatabase();
 server.server.use(SecurityFeatures.token_couter)
 

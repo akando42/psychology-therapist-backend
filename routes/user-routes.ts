@@ -606,7 +606,7 @@ export class UserRoutes{
             let userAddress=DataModel.tables.userAddress;
             let sessions=DataModel.tables.sessions;
 
-            let sql = "SELECT "+providers.email+", "+providers.firstName+", "+users.firstName+", "+users.lastName+", "+sessions.dateTime+", "+sessions.massageType+", "+sessions.massageLength+" \
+            let sql = "SELECT "+providers.email+", "+providers.firstName+", "+users.firstName+", "+users.lastName+", "+sessions.dateTime+", "+sessions.massageType+", "+sessions.massageLength+", "+sessions.id+" \
                 FROM "+payments.table+" natural join "+sessions.table+" natural join "+providers.table+" natural join "+users.table+" natural join "+userAddress.table+"\
                 WHERE "+payments.id+"="+paymentId;
             console.log("My Query : "+sql);
@@ -627,6 +627,7 @@ export class UserRoutes{
                         providerEmail:out[providers.email],
                     }
                     let encryptedSession = CryptoFunctions.aes256Encrypt(JSON.stringify(sessionCode), CryptoFunctions.get256BitKey([email, UserRoutes.randomPatternToVerify]))
+                    // console.log("App config : "+JSON.stringify(MyApp.appConfig));
                     
                     let confirmLink=url.format({
                         pathname:MyApp.appConfig.baseURL+"/provider/session/accept",
