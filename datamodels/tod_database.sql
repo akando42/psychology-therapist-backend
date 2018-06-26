@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 26, 2018 at 11:24 AM
+-- Generation Time: Jun 27, 2018 at 03:19 AM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -180,11 +180,18 @@ INSERT INTO `PROVIDERS` (`ProviderID`, `HRID`, `ProviderFirstName`, `ProviderLas
 CREATE TABLE `SESSIONFEEDBACK` (
   `SessionFeedbackID` int(11) NOT NULL,
   `SessionID` int(11) NOT NULL,
-  `ProviderSessionRating` int(11) NOT NULL,
-  `ProviderSessionComment` varchar(500) NOT NULL,
-  `UserSessionRating` int(11) NOT NULL,
-  `UserSessionComment` varchar(500) NOT NULL
+  `ProviderSessionRating` int(11) DEFAULT NULL,
+  `ProviderSessionComment` varchar(500) DEFAULT NULL,
+  `UserSessionRating` int(11) DEFAULT NULL,
+  `UserSessionComment` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `SESSIONFEEDBACK`
+--
+
+INSERT INTO `SESSIONFEEDBACK` (`SessionFeedbackID`, `SessionID`, `ProviderSessionRating`, `ProviderSessionComment`, `UserSessionRating`, `UserSessionComment`) VALUES
+(11, 2, 5, 'Hello', 5, 'ckie');
 
 -- --------------------------------------------------------
 
@@ -238,7 +245,7 @@ CREATE TABLE `TOKENTRACKER` (
 --
 
 INSERT INTO `TOKENTRACKER` (`TokenCode`, `IPAddress`, `TokenCreationDateTime`, `TotalTokenCreatedInADay`, `LastAPICallTime`, `CurrentAPICallTime`, `TotalAPICallInAMinute`, `BlockedStatus`) VALUES
-('99f553f719ed94fa67b8cacb1fca6618:68af67da585a657af26f089d820b7da3864069570329785a9f57917c0a2b1bd714800e12b7b9c1830ab3252ecc0124860bac7cf9e2f23476a25fc67ddbb2d37d', '::1', '2018-06-12 08:11:53', 0, '2018-06-26 04:18:54', '2018-06-26 04:18:54', 0, 0),
+('1d6608a9c4f8ef1f77065db165735b78:4e5c7d10b33dc95201543eae1b8d521678f9c9937432a8f122235f2378da64810d4d5970dc3d66e8ed619af03b08005410f42b02cd22d5037c1cf4cf15cf2cf8', '::1', '2018-06-26 21:33:44', 0, '2018-06-26 21:37:53', '2018-06-26 21:37:53', 0, 0),
 ('8a40758a6f99da51a1ff506b512d5905:42ebd8fb68a57723ed6fc2fd2a8275b059c97c1fe975a187cd908806af8adb8d48b4f2f3d142f95703ad1a3da2db66f2bf0fbd125d58e64af71b55c5520d7e4e6862e4fdd3d6f7432dbcf2356d78b4b0', '::ffff:127.0.0.1', '2018-06-19 20:44:54', 0, '2018-06-20 02:14:54', '2018-06-20 02:14:54', 0, 0);
 
 -- --------------------------------------------------------
@@ -428,7 +435,7 @@ ALTER TABLE `PROVIDERS`
 -- AUTO_INCREMENT for table `SESSIONFEEDBACK`
 --
 ALTER TABLE `SESSIONFEEDBACK`
-  MODIFY `SessionFeedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `SessionFeedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 --
 -- AUTO_INCREMENT for table `SESSIONS`
 --
