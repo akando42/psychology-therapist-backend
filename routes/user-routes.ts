@@ -102,29 +102,35 @@ export class UserRoutes{
 
         let star=parseInt(req.body.star);
         let comment=req.body.comment;
-
+        
         if(!star || !comment || star==NaN || star>5 || star<0)
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid inputs");
 
         let feedback = DataModel.tables.feedbackSession;
-
-        let queries:{query:string,values:any[],result_id:string}[];
-        queries.push({
+        
+        //let queriesNew:{query:string,values:any[],result_id:string}[];
+        let q1={
             query:"INSERT INTO "+feedback.table+" ("+feedback.sessionId+", "+feedback.userRating+", "+feedback.userComment+") \
                 VALUES (?, ?, ?) \
                 ON DUPLICATE KEY UPDATE "+feedback.userRating+"=?, "+feedback.userComment+"=?",
             values:[sessionId, star, comment, star, comment],
             result_id:""
-        })
-        queries.push({
+        };
+        let q2={
             query:"UPDATE "+sessions.table+" \
                 SET "+sessions.sessionStatus+"=? \
                 WHERE "+sessions.sessionStatus+"="+DataModel.sessionStatus.checkedOut+" \
                 AND "+sessions.id+"="+sessionId,
             values:[DataModel.sessionStatus.feedbackGiven],
             result_id:""
-        })
-        MyDatabase.database.transaction(queries).then(result=>{
+        };
+        console.log("reached here");
+        
+        let queriesNew = [q1, q2]
+        
+        // queries.push();
+        // queries.push()
+        MyDatabase.database.transaction(queriesNew).then(result=>{
             return UsersUtility.sendSuccess(res, [], "You have successfully checked out and given feedback");
         }, error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong.");

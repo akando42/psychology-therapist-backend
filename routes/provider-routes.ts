@@ -60,14 +60,6 @@ export class ProviderRoutes{
         }, HTTPMethod.POST);
 
 
-        server.setRoute("/provider/session/:action", (req:express.Request, res:express.Response)=>{
-            me.performActionOnSessionPost(req, res);
-        }, HTTPMethod.POST);
-        server.setRoute("/provider/session/:action", (req:express.Request, res:express.Response)=>{
-            me.performActionOnSessionGet(req, res);
-        }, HTTPMethod.GET);
-
-
         server.setRoute("/provider/session/checkin", (req:express.Request, res:express.Response)=>{
             me.checkInAfterLogin(req, res);
         }, HTTPMethod.POST);
@@ -75,6 +67,13 @@ export class ProviderRoutes{
         server.setRoute("/provider/session/checkout", (req:express.Request, res:express.Response)=>{
             me.checkOutAfterLogin(req, res);
         }, HTTPMethod.POST);
+
+        server.setRoute("/provider/session/:action", (req:express.Request, res:express.Response)=>{
+            me.performActionOnSessionPost(req, res);
+        }, HTTPMethod.POST);
+        server.setRoute("/provider/session/:action", (req:express.Request, res:express.Response)=>{
+            me.performActionOnSessionGet(req, res);
+        }, HTTPMethod.GET);
     }
 
     private checkInAfterLogin(req:express.Request, res:express.Response){
@@ -151,22 +150,22 @@ export class ProviderRoutes{
         let feedback = DataModel.tables.feedbackSession;
         let sessions = DataModel.tables.sessions;
 
-        let queries:{query:string,values:any[],result_id:string}[];
-        queries.push({
+        let q1={
             query:"INSERT INTO "+feedback.table+" ("+feedback.sessionId+", "+feedback.providersRating+", "+feedback.providerComment+") \
                 VALUES (?, ?, ?) \
                 ON DUPLICATE KEY UPDATE "+feedback.providersRating+"=?, "+feedback.providerComment+"=?",
             values:[sessionId, star, comment, star, comment],
             result_id:""
-        })
-        queries.push({
+        };
+        let q2={
             query:"UPDATE "+sessions.table+" \
                 SET "+sessions.sessionStatus+"=?  \
                 WHERE "+sessions.sessionStatus+"="+DataModel.sessionStatus.checkedIn+" \
                 AND "+sessions.id+"="+sessionId,
             values:[DataModel.sessionStatus.checkedOut],
             result_id:""
-        })
+        };
+        let queries=[q1, q2];
         MyDatabase.database.transaction(queries).then(result=>{
             return WebUtility.sendSuccess(res, req, [], "You have successfully checked out and given feedback");
         }, error=>{
@@ -372,11 +371,12 @@ export class ProviderRoutes{
                 [providers.password]:password,
                 [providers.accountStatus]:DataModel.accountStatus.phaseOne,
             }).then(result=>{
-                var response={
-                    status:200,
-                    description:"The provider has been registered successfuly and verification email has been sent."
-                };
-                RoutesHandler.respond(res, req, response, false, response["description"], response["status"]);
+                // var response={
+                //     status:200,
+                //     description:"The provider has been registered successfuly and verification email has been sent."
+                // };
+                // RoutesHandler.respond(res, req, response, false, response["description"], response["status"]);
+                return WebUtility.sendSuccess(res, req, [], "The provider has been registered successfuly and verification email has been sent.");
             }, error => {
                 WebUtility.sendErrorMessage(res, req, DataModel.webResponses.registerError, "There is already a provider registered with the same email address.\n"+error);
                 return;

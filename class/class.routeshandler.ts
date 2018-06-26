@@ -9,7 +9,7 @@ export class RoutesHandler
     /* @param: error - True if the response is an error, false otherwise        */
     /* @param: message - Message to send with the response                      */
     
-    public static async respond(res:express.Response,req:express.Request,values:any,error:boolean = false,message:string = "", code:number=200)
+    public static async respond(res:express.Response,req:express.Request,values:any,error:boolean = false,message:string = "", code:number=500)
     {
         if(req!=undefined){
             if(req.get('origin'))
