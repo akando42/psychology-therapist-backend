@@ -133,7 +133,7 @@ export class UserRoutes{
         MyDatabase.database.transaction(queriesNew).then(result=>{
             return UsersUtility.sendSuccess(res, [], "You have successfully checked out and given feedback");
         }, error=>{
-            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong.");
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong. "+error);
         }).catch(error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong on our server.");
         })
