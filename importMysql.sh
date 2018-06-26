@@ -1,0 +1,1 @@
+mysql -h 104.197.98.35 -u root -p < datamodels/tod_database.sql

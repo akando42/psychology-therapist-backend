@@ -1,7 +1,9 @@
 {
-    "server":"localhost",
+    "server":"104.197.98.35",
+    "localServer":"localhost",
     "user":"root",
-    "password":"mysql12345",
+    "password":"sF082mifJ3l6Nu0E",
+    "localPass":"mysql12345",
     "database":"tod_database",
     "port":3306
 }
