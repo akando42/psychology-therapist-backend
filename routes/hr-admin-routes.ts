@@ -42,18 +42,18 @@ export class HRAdminRoutes{
         }, HTTPMethod.POST);
 
 
+        //--------User Functions
+        server.setRoute("/user/set/password", (req:express.Request, res:express.Response)=>{
+            me.setNewUserPassword(req, res);
+        }, HTTPMethod.POST);
+
         //-------Password reset functions
         server.setRoute("/:type/reset/password", (req:express.Request, res:express.Response)=>{
             me.resetWebPassword(req, res);
         }, HTTPMethod.POST);
         server.setRoute("/:type/set/password", (req:express.Request, res:express.Response)=>{
             me.setNewWebPassword(req, res);
-        }, HTTPMethod.POST);
-
-        //--------User Functions
-        server.setRoute("/user/set/password", (req:express.Request, res:express.Response)=>{
-            me.setNewUserPassword(req, res);
-        }, HTTPMethod.POST);
+        }, HTTPMethod.POST);        
     }
 
     private adminLogin(req:express.Request, res:express.Response){
@@ -484,6 +484,9 @@ export class HRAdminRoutes{
         let resetCode=req.body.resetCode;
         let password=req.body.password;
 
+        if(!(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/)))
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The password should contain 1 Caps, 1 Small, 1 number and 1 symbol");
+
         let decryptedStr = CryptoFunctions.aes256Decrypt(resetCode, CryptoFunctions.get256BitKey([email, UserRoutes.randomPatternToVerify]))
         let json:{
                 email:string,
@@ -515,7 +518,7 @@ export class HRAdminRoutes{
                 [users.email]:email
             }).then(result=>{
                 if(result){
-                    return WebUtility.sendSuccess(res, req, [], "Your password has been reset!!");
+                    return WebUtility.sendSuccess(res, req, [], "Your password has been successfully reset!!");
                 }else{
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The email ID is not registered with us");
                 }

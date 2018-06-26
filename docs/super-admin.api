@@ -85,6 +85,27 @@ provider/reset/password
                 message:"We have successfully sent the reset link on our email address"
             }
 
+
+admin/set/password
+sales/set/password
+hr/set/password
+provider/set/password
+user/set/password
+    post:
+        summary:
+            To final do the reset of password
+        request:
+            accountToken:<>
+            email:<>
+            resetCode:<>
+            password:<The new password>
+        response:
+            200
+            {
+                message:"Your password has been successfully reset!!"
+            }
+
+
 admin/block/sales
 admin/block/hr
     post
