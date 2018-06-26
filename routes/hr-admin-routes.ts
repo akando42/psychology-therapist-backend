@@ -495,6 +495,12 @@ export class HRAdminRoutes{
         if(!json)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The the reset code sent is invalid");
 
+        //Check the validity of link by checking the date
+        let timeInMs = Date.now()-json.date;
+        if(timeInMs<0 || timeInMs>24*60*60*60){
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The reset link has exprired");
+        }
+
         //DONE Write the segment to implement if a given reset token has been already used
         this.checkIfTokenKeyUsed(req, res, resetCode, callback);
 

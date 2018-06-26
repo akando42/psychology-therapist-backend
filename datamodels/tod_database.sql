@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 24, 2018 at 05:59 PM
+-- Generation Time: Jun 26, 2018 at 11:24 AM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -96,7 +96,8 @@ CREATE TABLE `PAYMENTS` (
 --
 
 INSERT INTO `PAYMENTS` (`PaymentID`, `SessionID`, `PaymentAmount`, `PaymentTransactionID`) VALUES
-(1, 1, 150, 'tok_1CctDhJtmWtuNWuH7IV0e5nH');
+(1, 1, 150, 'tok_1CctDhJtmWtuNWuH7IV0e5nH'),
+(2, 2, 10, 'ch_haskdjgoi');
 
 -- --------------------------------------------------------
 
@@ -203,15 +204,17 @@ CREATE TABLE `SESSIONS` (
   `Equipements` tinyint(1) NOT NULL DEFAULT '0',
   `Pets` varchar(20) NOT NULL,
   `MedicalInformation` text,
-  `SessionStatus` int(11) NOT NULL DEFAULT '0'
+  `SessionStatus` int(11) NOT NULL DEFAULT '0',
+  `SessionOTP` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `SESSIONS`
 --
 
-INSERT INTO `SESSIONS` (`SessionID`, `UserID`, `ProviderID`, `AddressID`, `MassageType`, `PreferredGender`, `MassageLength`, `SessionDateTime`, `Equipements`, `Pets`, `MedicalInformation`, `SessionStatus`) VALUES
-(1, 1, 6, 1, 'Tissue Massage', 0, 60, '2018-05-29 00:00:00', 0, 'cat', 'I am good in health', 0);
+INSERT INTO `SESSIONS` (`SessionID`, `UserID`, `ProviderID`, `AddressID`, `MassageType`, `PreferredGender`, `MassageLength`, `SessionDateTime`, `Equipements`, `Pets`, `MedicalInformation`, `SessionStatus`, `SessionOTP`) VALUES
+(1, 1, 6, 1, 'Tissue Massage', 0, 60, '2018-05-29 00:00:00', 0, 'cat', 'I am good in health', 0, ''),
+(2, 1, 6, 1, 'Deep Tissue', 2, 60, '2019-05-27 15:50:00', 0, 'cat', 'nothing much', 1, '');
 
 -- --------------------------------------------------------
 
@@ -235,7 +238,7 @@ CREATE TABLE `TOKENTRACKER` (
 --
 
 INSERT INTO `TOKENTRACKER` (`TokenCode`, `IPAddress`, `TokenCreationDateTime`, `TotalTokenCreatedInADay`, `LastAPICallTime`, `CurrentAPICallTime`, `TotalAPICallInAMinute`, `BlockedStatus`) VALUES
-('99f553f719ed94fa67b8cacb1fca6618:68af67da585a657af26f089d820b7da3864069570329785a9f57917c0a2b1bd714800e12b7b9c1830ab3252ecc0124860bac7cf9e2f23476a25fc67ddbb2d37d', '::1', '2018-06-12 08:11:53', 0, '2018-06-13 05:01:19', '2018-06-13 05:01:19', 0, 0),
+('99f553f719ed94fa67b8cacb1fca6618:68af67da585a657af26f089d820b7da3864069570329785a9f57917c0a2b1bd714800e12b7b9c1830ab3252ecc0124860bac7cf9e2f23476a25fc67ddbb2d37d', '::1', '2018-06-12 08:11:53', 0, '2018-06-26 04:18:54', '2018-06-26 04:18:54', 0, 0),
 ('8a40758a6f99da51a1ff506b512d5905:42ebd8fb68a57723ed6fc2fd2a8275b059c97c1fe975a187cd908806af8adb8d48b4f2f3d142f95703ad1a3da2db66f2bf0fbd125d58e64af71b55c5520d7e4e6862e4fdd3d6f7432dbcf2356d78b4b0', '::ffff:127.0.0.1', '2018-06-19 20:44:54', 0, '2018-06-20 02:14:54', '2018-06-20 02:14:54', 0, 0);
 
 -- --------------------------------------------------------
@@ -301,7 +304,7 @@ CREATE TABLE `USERS` (
 --
 
 INSERT INTO `USERS` (`UserID`, `UserFirstName`, `UserLastName`, `UserEmailID`, `UserPassword`, `UserPhone`, `UserProfileImage`, `UserGender`, `UserAccountStatus`) VALUES
-(1, 'Rahul', 'Sinha', 'rahul12345@gmail.com', 'Hello@12345', '9905264775', '', 'Male', 1);
+(1, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', '9905264775', '', 'Male', 1);
 
 --
 -- Indexes for dumped tables
@@ -356,7 +359,7 @@ ALTER TABLE `PROVIDERS`
 --
 ALTER TABLE `SESSIONFEEDBACK`
   ADD PRIMARY KEY (`SessionFeedbackID`),
-  ADD KEY `session_constraint` (`SessionID`);
+  ADD UNIQUE KEY `session_unique_constraint` (`SessionID`);
 
 --
 -- Indexes for table `SESSIONS`
@@ -405,7 +408,7 @@ ALTER TABLE `HRTABLE`
 -- AUTO_INCREMENT for table `PAYMENTS`
 --
 ALTER TABLE `PAYMENTS`
-  MODIFY `PaymentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `PaymentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `PROVIDERDOCS`
 --
@@ -425,12 +428,12 @@ ALTER TABLE `PROVIDERS`
 -- AUTO_INCREMENT for table `SESSIONFEEDBACK`
 --
 ALTER TABLE `SESSIONFEEDBACK`
-  MODIFY `SessionFeedbackID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `SessionFeedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `SESSIONS`
 --
 ALTER TABLE `SESSIONS`
-  MODIFY `SessionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `SessionID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT for table `USERADDRESS`
 --

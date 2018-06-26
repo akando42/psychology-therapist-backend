@@ -66,6 +66,112 @@ export class ProviderRoutes{
         server.setRoute("/provider/session/:action", (req:express.Request, res:express.Response)=>{
             me.performActionOnSessionGet(req, res);
         }, HTTPMethod.GET);
+
+
+        server.setRoute("/provider/session/checkin", (req:express.Request, res:express.Response)=>{
+            me.checkInAfterLogin(req, res);
+        }, HTTPMethod.POST);
+
+        server.setRoute("/provider/session/checkout", (req:express.Request, res:express.Response)=>{
+            me.checkOutAfterLogin(req, res);
+        }, HTTPMethod.POST);
+    }
+
+    private checkInAfterLogin(req:express.Request, res:express.Response){
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
+            return;
+        let providerId=sessionToken["providersId"];
+
+        let sessionId=parseInt(req.body.sessionId);
+        if(!sessionId || sessionId==NaN)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cant parse the session ID in the request");
+
+        let otp=req.body.otp;
+
+        if(!otp && otp.length!=4)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The OTP is invalid. OTP needs to be of length 4");
+
+        let sessions = DataModel.tables.sessions;
+
+        let sql = "SELECT "+sessions.sessionOTP+" \
+            FROM "+sessions.table+" \
+            WHERE "+sessions.id+"=?";
+        MyDatabase.database.getQueryResults(sql, [sessionId]).then(result=>{
+            if(result.length==1){
+                let out = result[0];
+                let clientOtp=out[sessions.sessionOTP];
+                if(!clientOtp || clientOtp.length==0 || clientOtp==""){
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.checkInError, "The Client has not checed in yet!")
+                }
+                if(clientOtp==otp){
+                    MyDatabase.database.update(sessions.table, {
+                        [sessions.sessionStatus]:DataModel.sessionStatus.checkedIn
+                    },{
+                        [sessions.id]:sessionId
+                    }).then(result=>{
+                        if(result)
+                            return WebUtility.sendSuccess(res, req, [], "You are successfully check in");
+                        else
+                            return WebUtility.sendErrorMessage(res, req,DataModel.webResponses.checkInError, "Oops! We cant change your session status");
+                    }, error=>{
+                        return WebUtility.sendErrorMessage(res, req,DataModel.webResponses.checkInError, "Oops! We cant change your session status");
+                    }).catch(error=>{
+                        return WebUtility.sendErrorMessage(res, req,DataModel.webResponses.checkInError, "Oops! Something went wrong on the server");
+                    })
+                    
+                }else{
+                    return WebUtility.sendErrorMessage(res, req,DataModel.webResponses.checkInError, "Please verify your OTP!");
+                }
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.checkInError, "Sorry!")
+            }
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req,DataModel.webResponses.checkInError, "Oops! Soemthing went wrong");
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req,DataModel.webResponses.checkInError, "Oops! Somwthing went wrong on our server");
+        })
+    }
+    private checkOutAfterLogin(req:express.Request, res:express.Response){
+        let sessionToken=this.authorizeProviders(req, res);
+        if(!sessionToken)
+            return;
+        let providerId=sessionToken["providersId"];
+
+        let sessionId=parseInt(req.body.sessionId);
+        if(!sessionId || sessionId==NaN)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cant parse the session ID in the request");
+
+        let star=parseInt(req.body.star);
+        let comment=req.body.comment;
+
+        if(!star || !comment || star==NaN || star>5 || star<0)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid inputs");
+
+        let feedback = DataModel.tables.feedbackSession;
+        let sessions = DataModel.tables.sessions;
+
+        let queries:{query:string,values:any[],result_id:string}[];
+        queries.push({
+            query:"INSERT INTO "+feedback.table+" ("+feedback.sessionId+", "+feedback.providersRating+", "+feedback.providerComment+") \
+                VALUES (?, ?, ?) \
+                ON DUPLICATE KEY UPDATE "+feedback.providersRating+"=?, "+feedback.providerComment+"=?",
+            values:[sessionId, star, comment, star, comment],
+            result_id:""
+        })
+        queries.push({
+            query:"UPDATE "+sessions.table+" \
+                SET "+sessions.sessionStatus+"=?",
+            values:[DataModel.sessionStatus.checkedOut],
+            result_id:""
+        })
+        MyDatabase.database.transaction(queries).then(result=>{
+            return WebUtility.sendSuccess(res, req, [], "You have successfully checked out and given feedback");
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.checkInError, "Oops! Something went wrong.");
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.checkInError, "Oops! Something went wrong on our server.");
+        })
     }
 
     private performActionOnSessionPost(req:express.Request, res:express.Response){

@@ -227,7 +227,7 @@ export class MySqlDatabase
             });
         });
    }
-   public async transaction(queries:{query:string,values:string[],result_id:string}[]):Promise<number>
+   public async transaction(queries:{query:string,values:any[],result_id:string}[]):Promise<number>
    {
         return new Promise<number>((resolve,reject)=>
         {

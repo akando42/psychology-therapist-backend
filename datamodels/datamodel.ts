@@ -72,6 +72,7 @@ export class DataModel{
             pets:"Pets",
             medicalInformation:"MedicalInformation",
             sessionStatus:"SessionStatus",
+            sessionOTP:"SessionOTP",
         },
         feedbackSession:{
             table:"SESSIONFEEDBACK",
@@ -188,6 +189,7 @@ export class DataModel{
         paymentError:555,
 
         bookingError:565,
+        checkInError:570,
 
         profileError:575,
 
@@ -216,6 +218,7 @@ export class DataModel{
         paymentError:555,
 
         bookingError:565,
+        checkInError:570,
 
         profileError:575,
 

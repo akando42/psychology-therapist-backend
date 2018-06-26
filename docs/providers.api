@@ -331,3 +331,35 @@ provider/session/reject
 			{
 				message:"Successfully accepted/reject the session"
 			}
+
+
+provider/session/checkin
+	post:
+		summary:
+			Enter the OTP and enter the session
+		request:
+			accountToken:<>
+			sessionToken:<>
+			sessionId:<The ID of the session>
+			otp:<OTP provided by the User of length 4>
+		response:
+			200:
+			{
+				message:"Successfully checked in"
+			}
+
+provider/session/checkout
+	post:
+		summary:
+			Give a star a feedback and then check-out
+		request:
+			accountToken:<>
+			sessionToken:<>
+			sessionId:<The ID of the session>
+			star:<A Rating from 0-5>
+			comment:<Any comment for the provider>
+		response:
+			200:
+			{
+				message:"Successfully checked out"
+			}
