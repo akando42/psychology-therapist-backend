@@ -518,3 +518,39 @@ payment/chargeapi
 			{
 				message:<Any errors that comes while getting address>
 			}
+
+
+user/session/otp
+	post:
+		summary:
+			Generates an OTP for a session
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+			sessionId:<Session Id of the session you want the OTP>
+		response:
+			200:
+			{
+				data:{
+					otp:<OTP that needs to be displayed on screen>
+				}
+				message:"Successfully created the OTP"
+			}
+
+user/session/checkout
+	post:
+		summary:
+			Give a star a feedback and then check-out
+		request:
+			code:<Code Stored in the System Preferences>
+			mac:<Mac Address>
+			id:<id you get while logging in>
+			sessionId:<The ID of the session>
+			star:<A Rating from 0-5>
+			comment:<Any comment for the provider>
+		response:
+			200:
+			{
+				message:"Successfully checked out"
+			}

@@ -144,7 +144,8 @@ export class DataModel{
         checkedOut:4,
         dintShowUp:5,
         cancelledByUser:6,
-        cancelledByProvider:7
+        cancelledByProvider:7,
+        feedbackGiven:8
     }
 
     public static userTypes={

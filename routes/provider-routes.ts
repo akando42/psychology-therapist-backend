@@ -161,7 +161,9 @@ export class ProviderRoutes{
         })
         queries.push({
             query:"UPDATE "+sessions.table+" \
-                SET "+sessions.sessionStatus+"=?",
+                SET "+sessions.sessionStatus+"=?  \
+                WHERE "+sessions.sessionStatus+"="+DataModel.sessionStatus.checkedIn+" \
+                AND "+sessions.id+"="+sessionId,
             values:[DataModel.sessionStatus.checkedOut],
             result_id:""
         })

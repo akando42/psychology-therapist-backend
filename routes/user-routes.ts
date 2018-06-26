@@ -75,6 +75,121 @@ export class UserRoutes{
             me.getPaymentsOrSessions(req, res, true);
         }, HTTPMethod.POST);
 
+        server.setRoute("/user/session/otp", (req:express.Request, res:express.Response)=>{
+            me.getOtp(req, res);
+        }, HTTPMethod.POST);
+
+        server.setRoute("/user/session/checkout", (req:express.Request, res:express.Response)=>{
+            me.userCheckOut(req, res);
+        }, HTTPMethod.POST);
+
+    }
+
+    private userCheckOut(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
+        }
+
+        let id = UsersUtility.decryptId(req);
+        if(!id)
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "Invalid ID");
+
+        let sessionId=parseInt(req.body.sessionId);
+        if(!sessionId || sessionId==NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Theres an error in request you have sent");
+        
+        let sessions=DataModel.tables.sessions;
+
+        let star=parseInt(req.body.star);
+        let comment=req.body.comment;
+
+        if(!star || !comment || star==NaN || star>5 || star<0)
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid inputs");
+
+        let feedback = DataModel.tables.feedbackSession;
+
+        let queries:{query:string,values:any[],result_id:string}[];
+        queries.push({
+            query:"INSERT INTO "+feedback.table+" ("+feedback.sessionId+", "+feedback.userRating+", "+feedback.userComment+") \
+                VALUES (?, ?, ?) \
+                ON DUPLICATE KEY UPDATE "+feedback.userRating+"=?, "+feedback.userComment+"=?",
+            values:[sessionId, star, comment, star, comment],
+            result_id:""
+        })
+        queries.push({
+            query:"UPDATE "+sessions.table+" \
+                SET "+sessions.sessionStatus+"=? \
+                WHERE "+sessions.sessionStatus+"="+DataModel.sessionStatus.checkedOut+" \
+                AND "+sessions.id+"="+sessionId,
+            values:[DataModel.sessionStatus.feedbackGiven],
+            result_id:""
+        })
+        MyDatabase.database.transaction(queries).then(result=>{
+            return UsersUtility.sendSuccess(res, [], "You have successfully checked out and given feedback");
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong.");
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong on our server.");
+        })
+    }
+
+    private getOtp(req:express.Request, res:express.Response){
+        if(!UsersUtility.getParsedToken(req)){
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.tokenError, "The token is invalid")
+        }
+
+        let id = UsersUtility.decryptId(req);
+        if(!id)
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.idError, "Invalid ID");
+
+        let sessionId=parseInt(req.body.sessionId);
+
+        if(!sessionId || sessionId==NaN)
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Theres an error in request you have sent");
+        
+        let sessions=DataModel.tables.sessions;
+
+        let sql="SELECT * \
+            FROM "+sessions.table+" \
+            WHERE "+sessions.id+"=?";
+        MyDatabase.database.getQueryResults(sql, [sessionId]).then(result=>{
+            if(result.length==1){
+                let out=result[0];
+                if(!out[sessions.sessionOTP] || out[sessions.sessionOTP].length==0){
+                    return generateOtp();
+                }
+                return UsersUtility.sendSuccess(res, {
+                    otp:out[sessions.sessionOTP]
+                }, "Successfully created the OTP");
+            }else{
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "We can't find session with that ID");
+            }
+        }, error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong.");
+        }).catch(error=>{
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong on our server.");
+        })
+
+        function generateOtp(){
+            let otp = ""+Math.floor(1000+Math.random()*8999);
+            MyDatabase.database.update(sessions.table, {
+                [sessions.sessionOTP]:otp
+            }, {
+                [sessions.id]:sessionId
+            }).then(result=>{
+                if(result){
+                    return UsersUtility.sendSuccess(res, {
+                        otp:otp
+                    }, "Successfully created the OTP");
+                }else{
+                    return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "We can't find session with that ID");
+                }
+            }, error=>{
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong on our server.");
+            })
+        }
     }
 
     private loginUser(req:express.Request, res:express.Response){
