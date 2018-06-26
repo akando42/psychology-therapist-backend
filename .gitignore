@@ -8,6 +8,7 @@ nohup.out
 /public/docs
 /public/profile-images
 /public/resume
+/localFile
 
 # Runtime data
 pids

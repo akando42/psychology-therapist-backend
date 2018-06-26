@@ -19,12 +19,27 @@ import { SecurityFeatures } from "./routes/security-features";
 import { StripePayments } from "./routes/payment-utility";
 
 var path = require('path');
+var fs = require('fs');
 
 const appConfig=require('./config/app.json');
 const dbConfig=require('./config/db.json');
 const server:ExpressServer = new ExpressServer(appConfig);
 const routesHandler:RoutesHandler = new RoutesHandler();
-const database:MySqlDatabase=new MySqlDatabase(dbConfig.server,dbConfig.user,dbConfig.password,dbConfig.database,dbConfig.port);
+
+let isOnServer:boolean=false;
+if (fs.existsSync("localFile")) {
+    // Do something
+    console.log("Its on localhost");
+    isOnServer=false
+}else{
+    console.log("Its on Server");
+    isOnServer=true
+}
+//const database:MySqlDatabase=new MySqlDatabase(dbConfig.server,dbConfig.user,dbConfig.password,dbConfig.database,dbConfig.port);
+if(isOnServer)
+    var database:MySqlDatabase=new MySqlDatabase(dbConfig.server,dbConfig.user,dbConfig.password,dbConfig.database,dbConfig.port);
+else
+    var database:MySqlDatabase=new MySqlDatabase(dbConfig.localServer,dbConfig.user,dbConfig.localPass,dbConfig.database,dbConfig.port);
 
 export class MyDatabase{
     public static database:MySqlDatabase;
