@@ -5,7 +5,7 @@ import {ExpressServer,HTTPMethod} from '../class/class.server';
 import { RoutesHandler } from "../class/class.routeshandler";
 import { DataModel } from "../datamodels/datamodel";
 import { WebUtility } from "./web-utility-routes";
-import { MyDatabase } from "../app";
+import { MyApp } from "../app";
 
 export class SecurityFeatures{
 
@@ -17,7 +17,7 @@ export class SecurityFeatures{
                 FROM "+table.table+"\
                 WHERE "+table.ip+"='"+accountToken.ip+"'";
             console.log("SQL : "+sql);
-            MyDatabase.database.getQueryResults(sql, []).then(result=>{
+            MyApp.database.getQueryResults(sql, []).then(result=>{
                 if(result.length>0){
                     let out=result[0]
                     //TODO Process different conditions and validate or invalidate the token
@@ -76,7 +76,7 @@ export class SecurityFeatures{
                 [table.currentApiCallTime]: dateTime
             }
         }
-        MyDatabase.database.update(table.table,updateJSON, {
+        MyApp.database.update(table.table,updateJSON, {
             [table.ip]:accountToken["ip"]
         }).then(result=>{
             next();
@@ -95,7 +95,7 @@ export class SecurityFeatures{
         let dateTime = new Date(accountToken.date).toISOString().slice(0, 19).replace('T', ' ');
         let table = DataModel.tables.tokenTracker;
 
-        MyDatabase.database.insert(table.table, {
+        MyApp.database.insert(table.table, {
             [table.code]:encodedToken,
             [table.ip]:accountToken.ip,
             [table.tokenCreationTime]:dateTime,

@@ -7,7 +7,7 @@ import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
 import { EmailActivity } from "./email-activity";
-import { MyDatabase } from "../app";
+import { MyApp } from "../app";
 import { MyApp } from "../app";
 
 var nodemailer = require('nodemailer');
@@ -130,7 +130,7 @@ export class UserRoutes{
         
         // queries.push();
         // queries.push()
-        MyDatabase.database.transaction(queriesNew).then(result=>{
+        MyApp.database.transaction(queriesNew).then(result=>{
             return UsersUtility.sendSuccess(res, [], "You have successfully checked out and given feedback");
         }, error=>{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.checkInError, "Oops! Something went wrong. "+error);
@@ -158,7 +158,7 @@ export class UserRoutes{
         let sql="SELECT * \
             FROM "+sessions.table+" \
             WHERE "+sessions.id+"=?";
-        MyDatabase.database.getQueryResults(sql, [sessionId]).then(result=>{
+        MyApp.database.getQueryResults(sql, [sessionId]).then(result=>{
             if(result.length==1){
                 let out=result[0];
                 if(!out[sessions.sessionOTP] || out[sessions.sessionOTP].length==0){
@@ -178,7 +178,7 @@ export class UserRoutes{
 
         function generateOtp(){
             let otp = ""+Math.floor(1000+Math.random()*8999);
-            MyDatabase.database.update(sessions.table, {
+            MyApp.database.update(sessions.table, {
                 [sessions.sessionOTP]:otp
             }, {
                 [sessions.id]:sessionId
@@ -220,7 +220,7 @@ export class UserRoutes{
                 [users.email],
                 ["="],
                 []);
-        MyDatabase.database.getQueryResults(sql, [email]).then(result=>{
+        MyApp.database.getQueryResults(sql, [email]).then(result=>{
             if(result.length==0){
                 return UsersUtility.sendErrorMessage(res, DataModel.userResponse.loginError, "Email ID is not registered");
             }
@@ -285,7 +285,7 @@ export class UserRoutes{
         // }
 
         //TODO Change accepted to waiting
-        MyDatabase.database.insert(users.table,{
+        MyApp.database.insert(users.table,{
             [users.firstName]:fname,
             [users.lastName]:lname,
             [users.email]:email,
@@ -347,7 +347,7 @@ export class UserRoutes{
         
 
         var users=DataModel.tables.users;
-        MyDatabase.database.update(users.table, {
+        MyApp.database.update(users.table, {
             [users.accountStatus]:DataModel.accountStatus.accepted
         }, {
             [users.email]:json.email,
@@ -389,7 +389,7 @@ export class UserRoutes{
                 return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "The Password should follow the rules");
 
             json[users.password]=passwords.newPassword;
-            MyDatabase.database.update(users.table, json, {
+            MyApp.database.update(users.table, json, {
                 [users.id]:id,
                 [users.password]:passwords.oldPassword
             }).then(result=>{
@@ -432,7 +432,7 @@ export class UserRoutes{
             json[users.image]=imageLoc
         }
         console.log(JSON.stringify(json));
-        MyDatabase.database.update(users.table, json, {
+        MyApp.database.update(users.table, json, {
             [users.id]:id
         }).then(result=>{
             if(result){
@@ -462,7 +462,7 @@ export class UserRoutes{
             FROM "+users.table+" \
             WHERE "+users.email+"=?";
 
-        MyDatabase.database.getQueryResults(sql, [email]).then(result=>{
+        MyApp.database.getQueryResults(sql, [email]).then(result=>{
             if(result.length==1)
                 proceedAfterVerifyingUser();
             else
@@ -510,7 +510,7 @@ export class UserRoutes{
             ,["="]
             ,[]);
         
-        MyDatabase.database.getQueryResults(sql, [id]).then(result=>{
+        MyApp.database.getQueryResults(sql, [id]).then(result=>{
             if(result.length>0){
                 let out=result[0];
                 let json={
@@ -555,7 +555,7 @@ export class UserRoutes{
         
         let addressTab = DataModel.tables.userAddress;
 
-        MyDatabase.database.insert(addressTab.table,{
+        MyApp.database.insert(addressTab.table,{
             [addressTab.userID]:id,
             [addressTab.name]:name,
             [addressTab.latitude]:lattitude,
@@ -591,7 +591,7 @@ export class UserRoutes{
             ,["="]
             ,[]);
         console.log(sql);
-        MyDatabase.database.getQueryResults(sql, [id]).then(result=>{
+        MyApp.database.getQueryResults(sql, [id]).then(result=>{
             let data=[];
             for(var i in result){
                 let out = result[i];
@@ -629,7 +629,7 @@ export class UserRoutes{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Address ID");
 
         let userAddress=DataModel.tables.userAddress;
-        MyDatabase.database.delete(userAddress.table, {
+        MyApp.database.delete(userAddress.table, {
             [userAddress.userID]:id,
             [userAddress.id]:addressId
         }).then(result=>{
@@ -667,7 +667,7 @@ export class UserRoutes{
 
         let payments=DataModel.tables.payments;
 
-        MyDatabase.database.insert(payments.table,{
+        MyApp.database.insert(payments.table,{
             [payments.amount]:amount,
             [payments.sessionID]:sessionId,
         }).then(result=>{
@@ -704,7 +704,7 @@ export class UserRoutes{
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "Invalid Inputs");
 
         let payments = DataModel.tables.payments;
-        MyDatabase.database.update(payments.table,{
+        MyApp.database.update(payments.table,{
             [payments.transactionId]:transactionId
         }, {
             [payments.id]:paymentId
@@ -731,7 +731,7 @@ export class UserRoutes{
                 FROM "+payments.table+" natural join "+sessions.table+" natural join "+providers.table+" natural join "+users.table+" natural join "+userAddress.table+"\
                 WHERE "+payments.id+"="+paymentId;
             console.log("My Query : "+sql);
-            MyDatabase.database.getQueryResults(sql, []).then(result=>{
+            MyApp.database.getQueryResults(sql, []).then(result=>{
                 if(result.length==1){
                     let out=result[0];
 
@@ -828,7 +828,7 @@ export class UserRoutes{
             FROM "+payments.table+" natural join "+sessions.table+" natural join "+providers.table+" \
             WHERE "+sessions.userID+"="+id;
         console.log(sql);
-        MyDatabase.database.getQueryResults(sql, [id]).then(result=>{
+        MyApp.database.getQueryResults(sql, [id]).then(result=>{
             let pending=[];
             let present=[];
             let past=[];
@@ -915,7 +915,7 @@ export class UserRoutes{
         let sqlAdd = "SELECT * \
             FROM "+userAddress.table+" \
             WHERE "+userAddress.id+" = "+addressId;
-        MyDatabase.database.getQueryResults(sqlAdd, []).then(result=>{
+        MyApp.database.getQueryResults(sqlAdd, []).then(result=>{
             if(result.length==1){
                 let out = result[0];
                 console.log("Address : "+out[userAddress.latitude]+" : "+out[userAddress.longitude]);
@@ -935,7 +935,7 @@ export class UserRoutes{
             let sql = "SELECT * \
                 FROM "+providers.table+" \
                 WHERE "+providers.accountStatus+"="+DataModel.accountStatus.accepted;
-            MyDatabase.database.getQueryResults(sql, []).then(result=>{
+            MyApp.database.getQueryResults(sql, []).then(result=>{
                 let providerID=-1; // DONE this needs to be set accordingly
                 let travelDist=-1; // TODO Change this variable to a non negative value to put the threshold
                 console.log("Total providers on system : "+result.length);
@@ -964,7 +964,7 @@ export class UserRoutes{
                 let sessions = DataModel.tables.sessions;
                 let payments = DataModel.tables.payments;
                 
-                MyDatabase.database.insert(sessions.table,{
+                MyApp.database.insert(sessions.table,{
                     [sessions.providerID]:providerID,
                     [sessions.userID]:id,
                     [sessions.massageType]:massageType,

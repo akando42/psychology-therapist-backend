@@ -10,7 +10,7 @@ import { SQLUtility } from "./sql-utility";
 import { EmailActivity } from "./email-activity";
 import { UserRoutes } from "./user-routes";
 import { MyApp } from "../app";
-import { MyDatabase } from "../app";
+import { MyApp } from "../app";
 
 
 export class SaleRoutes{
@@ -58,7 +58,7 @@ export class SaleRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should contain atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
 
         let table = DataModel.tables.admin;
-        MyDatabase.database.update(table.table, {
+        MyApp.database.update(table.table, {
             [table.firstName]:firstName,
             [table.lastName]:lastName,
             [table.password]:password,

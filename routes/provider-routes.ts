@@ -8,7 +8,7 @@ import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
 import { UserRoutes } from "./user-routes";
-import { MyDatabase } from "../app";
+import { MyApp } from "../app";
 import { MyApp } from "../app";
 import { EmailActivity } from "./email-activity";
 
@@ -96,7 +96,7 @@ export class ProviderRoutes{
         let sql = "SELECT "+sessions.sessionOTP+" \
             FROM "+sessions.table+" \
             WHERE "+sessions.id+"=?";
-        MyDatabase.database.getQueryResults(sql, [sessionId]).then(result=>{
+        MyApp.database.getQueryResults(sql, [sessionId]).then(result=>{
             if(result.length==1){
                 let out = result[0];
                 let clientOtp=out[sessions.sessionOTP];
@@ -104,7 +104,7 @@ export class ProviderRoutes{
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.checkInError, "The Client has not checed in yet!")
                 }
                 if(clientOtp==otp){
-                    MyDatabase.database.update(sessions.table, {
+                    MyApp.database.update(sessions.table, {
                         [sessions.sessionStatus]:DataModel.sessionStatus.checkedIn
                     },{
                         [sessions.id]:sessionId
@@ -166,7 +166,7 @@ export class ProviderRoutes{
             result_id:""
         };
         let queries=[q1, q2];
-        MyDatabase.database.transaction(queries).then(result=>{
+        MyApp.database.transaction(queries).then(result=>{
             return WebUtility.sendSuccess(res, req, [], "You have successfully checked out and given feedback");
         }, error=>{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.checkInError, "Oops! Something went wrong.");
@@ -200,7 +200,7 @@ export class ProviderRoutes{
         this.sendConfirmationMailForSession(sessionId, action);
 
         let sessions = DataModel.tables.sessions;
-        MyDatabase.database.update(sessions.table, {
+        MyApp.database.update(sessions.table, {
             [sessions.sessionStatus]:sessionStat
         },{
             [sessions.id]:sessionId
@@ -248,7 +248,7 @@ export class ProviderRoutes{
         this.sendConfirmationMailForSession(sessionId, action);
 
         let sessions = DataModel.tables.sessions;
-        MyDatabase.database.update(sessions.table, {
+        MyApp.database.update(sessions.table, {
             [sessions.sessionStatus]:sessionStat
         },{
             [sessions.id]:sessionId
@@ -283,7 +283,7 @@ export class ProviderRoutes{
             FROM "+sessions.table+" natural join "+users.table+" \
             WHERE "+sessions.id+"=?";
 
-        MyDatabase.database.getQueryResults(sql, [sessionId]).then(result=>{
+        MyApp.database.getQueryResults(sql, [sessionId]).then(result=>{
             if(result.length>0){
                 let out=result[0];
                 let email=out[users.email];
@@ -357,7 +357,7 @@ export class ProviderRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, the parameters were not valid.");;
         }else{
             var providers = DataModel.tables.providers;
-            MyDatabase.database.insert(providers.table, {
+            MyApp.database.insert(providers.table, {
                 [providers.firstName]:firstname,
                 [providers.lastName]:lastname,
                 [providers.experience]:experience,
@@ -422,7 +422,7 @@ export class ProviderRoutes{
                     ["="],
                     []);
         console.log("My SQL : "+sql);
-        MyDatabase.database.getQueryResults(sql, [email]).then(result=>{
+        MyApp.database.getQueryResults(sql, [email]).then(result=>{
             console.log(JSON.stringify(result));
             if(result.length==0){
                 WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "We cannot find any User registered with that email ID");
@@ -503,7 +503,7 @@ export class ProviderRoutes{
                 WHERE "+providersNotif.providerID+"="+providerId+" \
                 ORDER BY "+providersNotif.isRead+", "+providersNotif.dateTime+"";
 
-        MyDatabase.database.getQueryResults(sql,[]).then(result=>{
+        MyApp.database.getQueryResults(sql,[]).then(result=>{
             let data={};
             let unread=0;
             for(var i in result){
@@ -539,7 +539,7 @@ export class ProviderRoutes{
         let providers=DataModel.tables.providers;
         let providersNotif=DataModel.tables.providerNotifications;
 
-        MyDatabase.database.update(providersNotif.table,{
+        MyApp.database.update(providersNotif.table,{
             [providersNotif.isRead]:1
         }, {
             [providersNotif.providerID]:providerId,
@@ -590,7 +590,7 @@ export class ProviderRoutes{
         queries.push(query);
         console.log(JSON.stringify(queries));
         
-        MyDatabase.database.transaction(queries).then(result=>{
+        MyApp.database.transaction(queries).then(result=>{
                 return WebUtility.sendSuccess(res, req, [], "Successfully uploaded all the docs");
             }, error=>{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrActionError, "Oops! Something went wrong.");
@@ -616,7 +616,7 @@ export class ProviderRoutes{
             GROUP BY "+users.id+" ";
         console.log(sql);
         
-        MyDatabase.database.getQueryResults(sql, []).then(result=>{
+        MyApp.database.getQueryResults(sql, []).then(result=>{
             let data={};
             for(var i in result){
                 let out=result[i];
@@ -642,7 +642,7 @@ export class ProviderRoutes{
                 FROM "+providers.table+" \
                 WHERE "+providers.id+"="+providerId;
         console.log(sql);
-        MyDatabase.database.getQueryResults(sql, []).then(result=>{
+        MyApp.database.getQueryResults(sql, []).then(result=>{
             let out=result[0];
             let data={
                 firstName:out[providers.firstName],
@@ -680,7 +680,7 @@ export class ProviderRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Password should conatain atleast 1 caps, 1 small letter, 1 number and 1 alphanumeric ");
 
             json[providers.password]=passwords.newPassword;
-            MyDatabase.database.update(providers.table, json, {
+            MyApp.database.update(providers.table, json, {
                 [providers.id]:providerId,
                 [providers.password]:passwords.oldPassword
             }).then(result=>{
@@ -739,7 +739,7 @@ export class ProviderRoutes{
             json[providers.resume]=imageLoc
         }
 
-        MyDatabase.database.update(providers.table, json, {
+        MyApp.database.update(providers.table, json, {
             [providers.id]:providerId
         }).then(result=>{
             if(result){
@@ -779,7 +779,7 @@ export class ProviderRoutes{
                 FROM "+sessions.table+" natural join "+users.table+" natural join "+userAddress.table+" \
                 WHERE "+sessions.providerID+"="+providerId+" \
                 AND "+sessions.dateTime+comparator+"now()";
-        MyDatabase.database.getQueryResults(sql, []).then(result=>{
+        MyApp.database.getQueryResults(sql, []).then(result=>{
             let data={};
             for(var i in result){
                 let out=result[i];
@@ -827,7 +827,7 @@ export class ProviderRoutes{
                 WHERE "+sessions.providerID+"="+providerId+" \
                 ORDER BY "+sessions.dateTime+" DESC";
         
-        MyDatabase.database.getQueryResults(sql, []).then(result=>{
+        MyApp.database.getQueryResults(sql, []).then(result=>{
             let data={};
             for(var i in result){
                 let out = result[i];

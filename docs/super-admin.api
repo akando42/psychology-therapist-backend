@@ -69,10 +69,7 @@ admin/add/hr
                 message:"Email Successfully sent to the user".
             }
 
-admin/reset/password
-sales/reset/password
-hr/reset/password
-provider/reset/password
+reset/password
     post:
         summary:
             To send a reset password link
@@ -86,11 +83,7 @@ provider/reset/password
             }
 
 
-admin/set/password
-sales/set/password
-hr/set/password
-provider/set/password
-user/set/password
+/set/password
     post:
         summary:
             To final do the reset of password
@@ -106,8 +99,7 @@ user/set/password
             }
 
 
-admin/block/sales
-admin/block/hr
+admin/block
     post
         summary
             Removes the already existing HRs from the system
@@ -123,8 +115,7 @@ admin/block/hr
                 message:"The email has been successfully removed"
             }
 
-admin/unblock/sales
-admin/unblock/hr
+admin/unblock
     post
         summary
             Unblocks the already blocked HRs/Admin

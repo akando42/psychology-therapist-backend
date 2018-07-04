@@ -6,7 +6,7 @@ import { RoutesHandler } from "../class/class.routeshandler";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { SecurityFeatures } from "./security-features";
-import { MyDatabase } from "../app";
+import { MyApp } from "../app";
 
 export class WebUtility{
     private database:MySqlDatabase;
@@ -105,7 +105,7 @@ export class WebUtility{
         }
     }
     public static async generateToken(ip:string, key:string, origin:string, req:express.Request, res:express.Response):Promise<string>{
-        return new Promise<number>((resolve,reject)=>{
+        return new Promise<string>((resolve,reject)=>{
             console.log("1");
             // let table = DataModel.tables.tokenTracker;
             // let sql = "SELECT * \
@@ -158,6 +158,68 @@ export class WebUtility{
             resolve(encodedStr);
         });
     }
+    public static async getTypeOfEmail(email:string):Promise<string>{
+        return new Promise<string>((resolve,reject)=>{
+            //0:admin 1:sales 2:hr 3:provider 4:user 5:exit
+            iterate(0);
+
+            function iterate(index:number){
+                let table:any = DataModel.tables.admin;
+                let sql = "SELECT "+table.id+" \
+                        FROM "+table.table+" \
+                        WHERE "+table.email+"=? AND "+table.owner+"=1";
+                if(index==1){
+                    //Sales
+                    table=DataModel.tables.admin;
+                    sql = "SELECT "+table.id+" \
+                        FROM "+table.table+" \
+                        WHERE "+table.email+"=? AND "+table.owner+"=0";
+                }else if(index==2){
+                    //HR
+                    table=DataModel.tables.hr;
+                    sql = "SELECT "+table.id+" \
+                        FROM "+table.table+" \
+                        WHERE "+table.email+"=?";
+                }else if(index==3){
+                    //Providers
+                    table=DataModel.tables.providers;
+                    sql = "SELECT "+table.id+" \
+                        FROM "+table.table+" \
+                        WHERE "+table.email+"=?";
+                }else if(index==4){
+                    //Users
+                    table=DataModel.tables.users;
+                    sql = "SELECT "+table.id+" \
+                        FROM "+table.table+" \
+                        WHERE "+table.email+"=?";
+                }else{
+                    reject("Cannot find the User")
+                }
+
+                MyApp.database.getQueryResults(sql, [email]).then(result=>{
+                    if(result.length==1){
+                        if(index==0)
+                            resolve(DataModel.userTypes.admin);
+                        else if(index==1)
+                            resolve(DataModel.userTypes.sales);
+                        else if(index==2)
+                            resolve(DataModel.userTypes.hr);
+                        else if(index==3)
+                            resolve(DataModel.userTypes.provider);
+                        else if(index==5)
+                            resolve(DataModel.userTypes.user);
+                    }else{
+                        iterate(index+1);
+                    }
+                },error=>{
+                    iterate(index+1);
+                }).catch(error=>{
+                    iterate(index+1);
+                })
+            }
+        });
+    }
+
 
     public static getIPAddress(req:express.Request):string{
         var ip:string = req.connection.remoteAddress || 

@@ -152,7 +152,8 @@ export class DataModel{
         hr:"hr",
         sales:"sales",
         admin:"admin",
-        provider:"provider"
+        provider:"provider",
+        user:"user"
     }
 
     public static accountStatus={

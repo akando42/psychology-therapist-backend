@@ -41,13 +41,8 @@ if(isOnServer)
 else
     var database:MySqlDatabase=new MySqlDatabase(dbConfig.localServer,dbConfig.user,dbConfig.localPass,dbConfig.database,dbConfig.port);
 
-export class MyDatabase{
-    public static database:MySqlDatabase;
-    constructor(){
-        MyDatabase.database=database;
-    }
-}
 export class MyApp{
+    public static database:MySqlDatabase;
     public static appConfig:{"urls":string[],
     "port":number,
     "baseURL":string,
@@ -56,11 +51,12 @@ export class MyApp{
     "git_pass":string};
     constructor(){
         MyApp.appConfig=appConfig;
+        MyApp.database=database;
     }
 }
 
 new MyApp();
-new MyDatabase();
+new MyApp();
 server.server.use(SecurityFeatures.token_couter)
 
 /* Example routing */

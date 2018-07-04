@@ -7,7 +7,7 @@ import { RoutesHandler } from "../class/class.routeshandler";
 import { WebUtility } from "./web-utility-routes";
 import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
-import { MyDatabase } from "../app";
+import { MyApp } from "../app";
 
 export class HRRoutes{
     private static server:ExpressServer;
@@ -59,7 +59,7 @@ export class HRRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid input, Password should contain atleast 1 caps, 1 small letter, 1 numeric and 1 symbol");
 
         let table = DataModel.tables.hr;
-        MyDatabase.database.update(table.table, {
+        MyApp.database.update(table.table, {
             [table.firstName]:firstName,
             [table.lastName]:lastName,
             [table.password]:password,
@@ -123,7 +123,7 @@ export class HRRoutes{
         }else{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "The routing you specified doesnot exists");
         }
-        MyDatabase.database.getQueryResults(sql, []).then(result=>{
+        MyApp.database.getQueryResults(sql, []).then(result=>{
             let data={};
             let ids=[-1];
             for(var i in result){
@@ -147,7 +147,7 @@ export class HRRoutes{
             let sql="SELECT * FROM "+providersDocs.table+" WHERE "+providersDocs.providerID+" IN ("+ids.join(",")+")";
             console.log(sql);
             
-            MyDatabase.database.getQueryResults(sql, []).then(result=>{
+            MyApp.database.getQueryResults(sql, []).then(result=>{
                 for(var i in result){
                     let out=result[i];
                     data[out[providersDocs.providerID]].docs.push({
@@ -188,7 +188,7 @@ export class HRRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "The routing you specified doesnot exists");
         }
         
-        MyDatabase.database.update(providers.table,{
+        MyApp.database.update(providers.table,{
             [providers.accountStatus]:status,
             [providers.hrAcceptanceID]:hrId
         }, {

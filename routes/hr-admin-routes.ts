@@ -10,7 +10,7 @@ import { SQLUtility } from "./sql-utility";
 import { EmailActivity } from "./email-activity";
 import { UserRoutes } from "./user-routes";
 import { MyApp } from "../app";
-import { MyDatabase } from "../app";
+import { MyApp } from "../app";
 
 
 export class HRAdminRoutes{
@@ -33,27 +33,22 @@ export class HRAdminRoutes{
             me.addAccount(req, res);
         }, HTTPMethod.POST);
 
-        server.setRoute("/admin/block/:type", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/admin/block", (req:express.Request, res:express.Response)=>{
             me.blockAccount(req, res);
         }, HTTPMethod.POST);
 
-        server.setRoute("/admin/unblock/:type", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/admin/unblock", (req:express.Request, res:express.Response)=>{
             me.unblockAccount(req, res);
         }, HTTPMethod.POST);
 
-
-        //--------User Functions
-        server.setRoute("/user/set/password", (req:express.Request, res:express.Response)=>{
-            me.setNewUserPassword(req, res);
-        }, HTTPMethod.POST);
-
+        
         //-------Password reset functions
-        server.setRoute("/:type/reset/password", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/reset/password", (req:express.Request, res:express.Response)=>{
             me.resetWebPassword(req, res);
         }, HTTPMethod.POST);
-        server.setRoute("/:type/set/password", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/set/password", (req:express.Request, res:express.Response)=>{
             me.setNewWebPassword(req, res);
-        }, HTTPMethod.POST);        
+        }, HTTPMethod.POST);
     }
 
     private adminLogin(req:express.Request, res:express.Response){
@@ -90,7 +85,7 @@ export class HRAdminRoutes{
                     ["="],
                     []);
         console.log("My SQL : "+sql);
-        MyDatabase.database.getQueryResults(sql, [email]).then(result=>{
+        MyApp.database.getQueryResults(sql, [email]).then(result=>{
             console.log(JSON.stringify(result));
             if(result.length==0){
                 if(admin)
@@ -255,7 +250,7 @@ export class HRAdminRoutes{
         };
         if(actionType==DataModel.userTypes.hr)
             insertJson[table.adminCreatedRefID]=adminId;
-        MyDatabase.database.insert(table.table, insertJson).then(result=>{
+        MyApp.database.insert(table.table, insertJson).then(result=>{
             //TODO Send the invitation Email to the user
             this.sendInvitationWithCode(req, res, table, email, firstName, lastName, actionType, result, callback);
         }, error=>{
@@ -286,7 +281,7 @@ export class HRAdminRoutes{
         
         EmailActivity.instance.sendEmail(email, "Welcome to Therapy on Demand!", body, function(err, info){
             if(err){
-                MyDatabase.database.delete(table.table, {
+                MyApp.database.delete(table.table, {
                     [table.email]:email
                 }).then(result=>{},error=>{})
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.emailError, "The Verification Email cant be sent");
@@ -301,35 +296,45 @@ export class HRAdminRoutes{
         if(!adminId)
             return;
 
-        let actionType = req.params.type;
-        let table:any=DataModel.tables.admin;
-        if(actionType==DataModel.userTypes.sales){
-            if(type!=DataModel.userTypes.admin)
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
-            table=DataModel.tables.admin;
-        }else if(actionType==DataModel.userTypes.hr){
-            table=DataModel.tables.hr;
-        }else{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
-        }
-
-        
-        //TODO Do the implementation to change the account status to the one for the blocked account
-        MyDatabase.database.update(table.table, {
-            [table.accountStatus]:DataModel.accountStatus.blocked
-        },{
-            [table.id]:adminId
-        }).then(result=>{
-            if(result){
-                return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
-            }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Woops! Nothing changed in our system");
-            }
+        let email = req.body.email;
+        WebUtility.getTypeOfEmail(email).then(result=>{
+            afterCheckingType(result);
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong.");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cannot find that email ID");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong on our server.");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong.");
         })
+
+        function afterCheckingType(actionType:string){
+            let table:any=DataModel.tables.admin;
+            if(actionType==DataModel.userTypes.sales){
+                if(type!=DataModel.userTypes.admin)
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
+                table=DataModel.tables.admin;
+            }else if(actionType==DataModel.userTypes.hr){
+                table=DataModel.tables.hr;
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
+            }
+
+            
+            //TODO Do the implementation to change the account status to the one for the blocked account
+            MyApp.database.update(table.table, {
+                [table.accountStatus]:DataModel.accountStatus.blocked
+            },{
+                [table.email]:email
+            }).then(result=>{
+                if(result){
+                    return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
+                }else{
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Woops! Nothing changed in our system");
+                }
+            }, error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong on our server.");
+            })
+        }
     }
 
     private unblockAccount(req:express.Request, res:express.Response){
@@ -337,77 +342,43 @@ export class HRAdminRoutes{
         if(!adminId)
             return;
 
-        let actionType = req.params.type;
-        let table:any=DataModel.tables.admin;
-        if(actionType==DataModel.userTypes.sales){
-            if(type!=DataModel.userTypes.admin)
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
-            table=DataModel.tables.admin;
-        }else if(actionType==DataModel.userTypes.hr){
-            table=DataModel.tables.hr;
-        }else{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
-        }
-
-        
-        //TODO Do the implementation to change the account status to the one for the blocked account
-        MyDatabase.database.update(table.table, {
-            [table.accountStatus]:DataModel.accountStatus.accepted
-        },{
-            [table.id]:adminId
-        }).then(result=>{
-            if(result){
-                return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
-            }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Woops! Nothing changed in our system");
-            }
+        let email = req.body.email;
+        WebUtility.getTypeOfEmail(email).then(result=>{
+            afterCheckingType(result);
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cannot find that email ID");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong.");
         })
-        
-    }
 
-    private setNewUserPassword(req:express.Request, res:express.Response){
-        if(!WebUtility.getParsedToken(req)){
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The token is invalid")
-        }
+        function afterCheckingType(actionType:string){
+            let table:any=DataModel.tables.admin;
+            if(actionType==DataModel.userTypes.sales){
+                if(type!=DataModel.userTypes.admin)
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
+                table=DataModel.tables.admin;
+            }else if(actionType==DataModel.userTypes.hr){
+                table=DataModel.tables.hr;
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
+            }
 
-        if(!req.body.email || !req.body.resetCode || !req.body.password)
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID");
-        
-        let email=req.body.email;
-        let resetCode=req.body.resetCode;
-        let password=req.body.password;
-
-        let decryptedStr = CryptoFunctions.aes256Decrypt(resetCode, CryptoFunctions.get256BitKey([email, UserRoutes.randomPatternToVerify]))
-        let json:{
-                email:string,
-                date:number
-            } = JSON.parse(decryptedStr);
-        if(!json)
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The reset code sent is invalid");
-
-        //DONE Write the segment to implement if a given reset token has been already used
-        this.checkIfTokenKeyUsed(req, res, resetCode, callback)
-
-        function callback(){
-            let users=DataModel.tables.users;
-            MyDatabase.database.update(users.table, {
-                [users.password]:password
-            }, {
-                [users.email]:email
+            
+            //TODO Do the implementation to change the account status to the one for the blocked account
+            MyApp.database.update(table.table, {
+                [table.accountStatus]:DataModel.accountStatus.accepted
+            },{
+                [table.email]:email
             }).then(result=>{
                 if(result){
-                    return WebUtility.sendSuccess(res, req, [], "Your password has been reset!!");
+                    return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
                 }else{
-                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The email ID is not registered with us");
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Woops! Nothing changed in our system");
                 }
             }, error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
             }).catch(error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
             })
         }
     }
@@ -416,58 +387,67 @@ export class HRAdminRoutes{
         if(!WebUtility.getParsedToken(req)){
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The token is invalid")
         }
-        if(!req.body.email || !req.params.type)
+        if(!req.body.email)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID or the type os User");
 
         let email=req.body.email;
-        let type=req.params.type;
-        
-        //TODO Check if the email ID exists
-        let users:any=DataModel.tables.admin;
-        if(type==DataModel.userTypes.admin){
-            users=DataModel.tables.admin;
-        }else if(type==DataModel.userTypes.hr){
-            users=DataModel.tables.hr;
-        }else if(type==DataModel.userTypes.sales){
-            users=DataModel.tables.admin;
-        }else if(type==DataModel.userTypes.provider){
-            users=DataModel.tables.providers;
-        }else{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Type specified was invalid")
-        }
-
-        let sql ="SELECT "+users.firstName+" \
-            FROM "+users.table+" \
-            WHERE "+users.email+"=?";
-
-        MyDatabase.database.getQueryResults(sql, [email]).then(result=>{
-            if(result.length==1)
-                proceedAfterVerifyingUser();
-            else
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The User with that email ID doesn't Esists");
+        WebUtility.getTypeOfEmail(email).then(result=>{
+            afterCheckingType(result);
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cannot find that email ID");
         }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong.");
         })
-        function proceedAfterVerifyingUser(){
-            let redirectURL=MyApp.appConfig.frontEndUrl+"/"+type+"/set/password?"
-            let json={
-                email:email,
-                date:Date.now()
+
+        function afterCheckingType(type:string){
+            //TODO Check if the email ID exists
+            let users:any=DataModel.tables.admin;
+            if(type==DataModel.userTypes.admin){
+                users=DataModel.tables.admin;
+            }else if(type==DataModel.userTypes.hr){
+                users=DataModel.tables.hr;
+            }else if(type==DataModel.userTypes.sales){
+                users=DataModel.tables.admin;
+            }else if(type==DataModel.userTypes.provider){
+                users=DataModel.tables.providers;
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Type specified was invalid")
             }
-            let encryptedStr = CryptoFunctions.aes256Encrypt(JSON.stringify(json), CryptoFunctions.get256BitKey([email, UserRoutes.randomPatternToVerify]))
-            redirectURL+="resetCode="+encodeURIComponent(encryptedStr)+"&email="+encodeURIComponent(email);
-            let body="<h3>Reset your password</h3>\
-                <p>Hi we have recieved your password reset request</p>\
-                <p>Please click on the <a href="+redirectURL+">link</a> to reset your password</p>"
-            EmailActivity.instance.sendEmail(email, "Reset Pasword requested", body, function(error, info){
-                if(!error){
-                    return WebUtility.sendSuccess(res, req, [], "Successfully sent the reset Link");
-                }else{
-                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.emailError, "Couldn't send the email.");
+
+            let sql ="SELECT "+users.firstName+" \
+                FROM "+users.table+" \
+                WHERE "+users.email+"=?";
+
+            MyApp.database.getQueryResults(sql, [email]).then(result=>{
+                if(result.length==1)
+                    proceedAfterVerifyingUser();
+                else
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The User with that email ID doesn't Esists");
+            }, error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "Oops! Something went wrong.");
+            })
+
+            function proceedAfterVerifyingUser(){
+                let redirectURL=MyApp.appConfig.frontEndUrl+"/"+type+"/set/password?"
+                let json={
+                    email:email,
+                    date:Date.now()
                 }
-            });
+                let encryptedStr = CryptoFunctions.aes256Encrypt(JSON.stringify(json), CryptoFunctions.get256BitKey([email, UserRoutes.randomPatternToVerify]))
+                redirectURL+="resetCode="+encodeURIComponent(encryptedStr)+"&email="+encodeURIComponent(email);
+                let body="<h3>Reset your password</h3>\
+                    <p>Hi we have recieved your password reset request</p>\
+                    <p>Please click on the <a href="+redirectURL+">link</a> to reset your password</p>"
+                EmailActivity.instance.sendEmail(email, "Reset Pasword requested", body, function(error, info){
+                    if(!error){
+                        return WebUtility.sendSuccess(res, req, [], "Successfully sent the reset Link");
+                    }else{
+                        return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.emailError, "Couldn't send the email.");
+                    }
+                });
+            }
         }
     }
 
@@ -476,10 +456,9 @@ export class HRAdminRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The token is invalid")
         }
 
-        if(!req.body.email || !req.body.resetCode || !req.body.password || !req.params.type)
+        if(!req.body.email || !req.body.resetCode || !req.body.password)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID");
         
-        let type=req.params.type;
         let email=req.body.email;
         let resetCode=req.body.resetCode;
         let password=req.body.password;
@@ -504,24 +483,36 @@ export class HRAdminRoutes{
         //DONE Write the segment to implement if a given reset token has been already used
         this.checkIfTokenKeyUsed(req, res, resetCode, callback);
 
-        // let users=DataModel.tables.users;
         function callback(){
-            let users:any=DataModel.tables.admin;
+            WebUtility.getTypeOfEmail(email).then(result=>{
+                callbackAfterType(result);
+            }, error=>{
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cannot find that email ID");
+            }).catch(error=>{
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong.");
+            })
+        }
+
+        // let users=DataModel.tables.users;
+        function callbackAfterType(type:string){
+            let table:any=DataModel.tables.admin;
             if(type==DataModel.userTypes.admin){
-                users=DataModel.tables.admin;
+                table=DataModel.tables.admin;
             }else if(type==DataModel.userTypes.hr){
-                users=DataModel.tables.hr;
+                table=DataModel.tables.hr;
             }else if(type==DataModel.userTypes.sales){
-                users=DataModel.tables.admin;
+                table=DataModel.tables.admin;
             }else if(type==DataModel.userTypes.provider){
-                users=DataModel.tables.providers;
+                table=DataModel.tables.providers;
+            }else if(type==DataModel.userTypes.user){
+                table=DataModel.tables.users;
             }else{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Type specified was invalid")
             }
-            MyDatabase.database.update(users.table, {
-                [users.password]:password
+            MyApp.database.update(table.table, {
+                [table.password]:password
             }, {
-                [users.email]:email
+                [table.email]:email
             }).then(result=>{
                 if(result){
                     return WebUtility.sendSuccess(res, req, [], "Your password has been successfully reset!!");
@@ -540,11 +531,11 @@ export class HRAdminRoutes{
 
         let usedToken=DataModel.tables.usedTokensOrKeys;
         let sql = "SELECT * FROM "+usedToken.table+" WHERE "+usedToken.token+"=?";
-        MyDatabase.database.getQueryResults(sql, [token]).then(result=>{
+        MyApp.database.getQueryResults(sql, [token]).then(result=>{
             if(result.length==1){
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The reset code has been already used.");
             }
-            MyDatabase.database.insert(usedToken.table, {
+            MyApp.database.insert(usedToken.table, {
                 [usedToken.token]:token
             }).then(result=>{
                 callback();
