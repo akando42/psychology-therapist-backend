@@ -40,8 +40,18 @@ export class DevelopmentRoutings{
         server.setRoute("/dev/newearth", (req:express.Request, res:express.Response)=>{
             me.newEarthVer(req, res);
         }, HTTPMethod.POST);
+
+
         server.setRoute("/dev/testmail", (req:express.Request, res:express.Response)=>{
             me.testEmail(req, res);
+        }, HTTPMethod.GET);
+
+        server.setRoute("/dev/emailcheck", (req:express.Request, res:express.Response)=>{
+            WebUtility.getTypeOfEmail(req.query.email).then(result=>{
+                res.end(result);
+            }, error=>{
+                res.end(error);
+            })
         }, HTTPMethod.GET);
     }
 

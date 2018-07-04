@@ -9,7 +9,6 @@ import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
 import { UserRoutes } from "./user-routes";
 import { MyApp } from "../app";
-import { MyApp } from "../app";
 import { EmailActivity } from "./email-activity";
 
 

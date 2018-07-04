@@ -8,7 +8,6 @@ import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
 import { EmailActivity } from "./email-activity";
 import { MyApp } from "../app";
-import { MyApp } from "../app";
 
 var nodemailer = require('nodemailer');
 var appConfig=require('../config/app.json');

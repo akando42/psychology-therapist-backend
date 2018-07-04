@@ -168,7 +168,9 @@ export class WebUtility{
                 let sql = "SELECT "+table.id+" \
                         FROM "+table.table+" \
                         WHERE "+table.email+"=? AND "+table.owner+"=1";
-                if(index==1){
+                if(index==0){
+                    //Do nothing. Its already initialized
+                }else if(index==1){
                     //Sales
                     table=DataModel.tables.admin;
                     sql = "SELECT "+table.id+" \
@@ -193,7 +195,7 @@ export class WebUtility{
                         FROM "+table.table+" \
                         WHERE "+table.email+"=?";
                 }else{
-                    reject("Cannot find the User")
+                    reject("Cannot find the User : "+email)
                 }
 
                 MyApp.database.getQueryResults(sql, [email]).then(result=>{
