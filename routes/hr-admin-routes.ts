@@ -33,7 +33,7 @@ export class HRAdminRoutes{
             me.setProfile(req, res);
         }, HTTPMethod.POST);
 
-        server.setRoute("/admin/add/:type", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/admin/adduser", (req:express.Request, res:express.Response)=>{
             me.addAccount(req, res);
         }, HTTPMethod.POST);
 
@@ -284,7 +284,7 @@ export class HRAdminRoutes{
         if(!adminId)
             return;
 
-        let actionType = req.params.type;
+        let actionType = req.body.type;
 
         //let table=DataModel.tables.admin;
         let table=DataModel.tables.admin;

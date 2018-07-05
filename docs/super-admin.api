@@ -55,18 +55,14 @@ admin/set/profile
 			}
 
 
-admin/add/sales
-    post
-        summary:
-            Gives the super admin access to the users
-        [continued..]
-admin/add/hr
+admin/adduser
     post
         summary:
             Sends an email to the specified Email ID for profile creation
         request
             accountToken:<>
             sessionToken:<>
+            type:<hr/sales>
             email:<email-address>@therapyondemand.io
             firstName:<>
             lastName:<>
