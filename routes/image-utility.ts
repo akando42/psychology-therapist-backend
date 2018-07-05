@@ -26,7 +26,7 @@ export class ImageUtility {
         return response;
     }
     
-    public static uploadImage(data:string, imageType:string ,id:any, isUser:boolean=true, directData:boolean=false):string{
+    public static uploadImage(data:string, imageType:string ,id:any, userType:string=DataModel.userTypes.user, directData:boolean=false):string{
         let response={};
         if(!directData){
             response = this.decodeBase64Image(data);
@@ -38,7 +38,7 @@ export class ImageUtility {
         }
         var buf = new Buffer(response["data"], 'base64');
         var resps = response["type"].split("/");
-        var address="/"+imageType+"/"+(isUser?"user":"provider")+"-"+Date.now()+"-"+id+"."+resps[1];
+        var address="/"+imageType+"/"+(userType)+"-"+Date.now()+"-"+id+"."+resps[1];
         console.log(address);
         fs.writeFileSync(this.dirLoc+address, buf);
         return address;

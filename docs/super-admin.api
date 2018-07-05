@@ -14,18 +14,6 @@ admin/login
                 message:""
             }
 
-admin/forgot
-    post
-        summary:
-            Sends a password reset link to info@therapyondemand.io
-        request
-            accountToken:<>
-        response:
-            200
-            {
-                message:"Successfully send the message email to info@therapyondemand.io"
-            }
-
 
 admin/decode/email
     post
@@ -44,6 +32,28 @@ admin/decode/email
                 type:<>
                 registerToken:<Use this token to register the User in the Next API calls>
             }
+
+
+admin/set/profile
+	post
+		summary: Set the profile details. Only put the information you want to update
+		request:
+			accountToken:<>
+			sessionToken:<>
+			firstName:"FirstName",
+			lastName:"LastName",
+			phone:"Phone",
+			image:<Base 64 encoded>,
+			password:{
+				oldPassword:<>
+				newPassword:<>
+			}
+		response:
+		200:
+			{
+				message:<Successfully updated the informations>
+			}
+
 
 admin/add/sales
     post

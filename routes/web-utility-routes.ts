@@ -158,37 +158,25 @@ export class WebUtility{
             resolve(encodedStr);
         });
     }
-    public static async getTypeOfEmail(email:string):Promise<string>{
+    public static async getUserType(email:string):Promise<string>{
         return new Promise<string>((resolve,reject)=>{
             //0:admin 1:sales 2:hr 3:provider 4:user 5:exit
             iterate(0);
 
             function iterate(index:number){
                 let table:any = DataModel.tables.admin;
-                let sql = "SELECT "+table.id+" \
+                let sql = "SELECT "+table.userType+" \
                         FROM "+table.table+" \
-                        WHERE "+table.email+"=? AND "+table.owner+"=1";
+                        WHERE "+table.email+"=?";
                 if(index==0){
                     //Do nothing. Its already initialized
                 }else if(index==1){
-                    //Sales
-                    table=DataModel.tables.admin;
-                    sql = "SELECT "+table.id+" \
-                        FROM "+table.table+" \
-                        WHERE "+table.email+"=? AND "+table.owner+"=0";
-                }else if(index==2){
-                    //HR
-                    table=DataModel.tables.hr;
-                    sql = "SELECT "+table.id+" \
-                        FROM "+table.table+" \
-                        WHERE "+table.email+"=?";
-                }else if(index==3){
                     //Providers
                     table=DataModel.tables.providers;
                     sql = "SELECT "+table.id+" \
                         FROM "+table.table+" \
                         WHERE "+table.email+"=?";
-                }else if(index==4){
+                }else if(index==2){
                     //Users
                     table=DataModel.tables.users;
                     sql = "SELECT "+table.id+" \
@@ -200,15 +188,13 @@ export class WebUtility{
 
                 MyApp.database.getQueryResults(sql, [email]).then(result=>{
                     if(result.length==1){
-                        if(index==0)
-                            resolve(DataModel.userTypes.admin);
-                        else if(index==1)
-                            resolve(DataModel.userTypes.sales);
-                        else if(index==2)
-                            resolve(DataModel.userTypes.hr);
-                        else if(index==3)
+                        if(index==0){
+                            console.log(JSON.stringify(result));
+                            
+                            resolve(result[0][table.userType]);
+                        }else if(index==1)
                             resolve(DataModel.userTypes.provider);
-                        else if(index==5)
+                        else if(index==2)
                             resolve(DataModel.userTypes.user);
                     }else{
                         iterate(index+1);

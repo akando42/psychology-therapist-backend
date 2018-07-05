@@ -10,6 +10,7 @@ import { SQLUtility } from "./sql-utility";
 import { EmailActivity } from "./email-activity";
 import { UserRoutes } from "./user-routes";
 import { MyApp } from "../app";
+import { ImageUtility } from "./image-utility";
 
 
 export class HRAdminRoutes{
@@ -26,6 +27,10 @@ export class HRAdminRoutes{
 
         server.setRoute("/admin/decode/email", (req:express.Request, res:express.Response)=>{
             me.decodeEmailVerification(req, res);
+        }, HTTPMethod.POST);
+
+        server.setRoute("/admin/set/profile", (req:express.Request, res:express.Response)=>{
+            me.setProfile(req, res);
         }, HTTPMethod.POST);
 
         server.setRoute("/admin/add/:type", (req:express.Request, res:express.Response)=>{
@@ -50,6 +55,80 @@ export class HRAdminRoutes{
         }, HTTPMethod.POST);
     }
 
+    private setProfile(req:express.Request, res:express.Response){
+        const { adminId, type}=this.preProcessToken(req, res);
+        if(!adminId)
+            return;
+        
+        let admin=DataModel.tables.admin;
+        let json={};
+
+        if(req.body.password){
+            //TODO Write segment to update password.
+            let passwords = req.body.password;
+            if(!WebUtility.validateStringFields(passwords.oldPassword, 8, 50)
+                || !WebUtility.validateStringFields(passwords.newPassword, 8, 50)
+                || !(passwords.newPassword.match(/[A-Z]/) && passwords.newPassword.match(/[a-z]/) && passwords.newPassword.match(/[0-9]/) && passwords.newPassword.match(/[^A-Za-z0-9]/))) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Password should conatain atleast 1 caps, 1 small letter, 1 number and 1 alphanumeric ");
+
+            json[admin.password]=passwords.newPassword;
+            MyApp.database.update(admin.table, json, {
+                [admin.id]:adminId,
+                [admin.password]:passwords.oldPassword
+            }).then(result=>{
+                if(result){
+                    return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
+                }else{
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Cannot find profile with that ID and password");
+                }
+            }, error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
+            })
+
+            return;
+        }
+
+        if(req.body.firstName){
+            if(!WebUtility.validateStringFields(req.body.firstName, 1, 50)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid First name");
+            json[admin.firstName]=req.body.firstName
+        }
+        if(req.body.lastName){
+            if(!WebUtility.validateStringFields(req.body.lastName, 1, 50)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Last name");
+            json[admin.lastName]=req.body.lastName
+        }
+        if(req.body.phone){
+            if(!WebUtility.validateStringFields(req.body.phone, 1, 10)
+                || !req.body.phone.match(/^[0-9]+$/)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid phone number");
+            json[admin.phone]=req.body.phone
+        }
+        if(req.body.image){
+            //this.decodeBase64Image(req.body.image)
+            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, adminId, DataModel.userTypes.admin);
+            if(!imageLoc)
+               return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image format is invalid");
+            json[admin.image]=imageLoc
+        }
+
+        MyApp.database.update(admin.table, json, {
+            [admin.id]:adminId
+        }).then(result=>{
+            if(result){
+                return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Cannot find profile with that ID");
+            }
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
+        })
+    }
+
     private adminLogin(req:express.Request, res:express.Response){
 
         var parsedVal  = WebUtility.getParsedToken(req)
@@ -67,16 +146,12 @@ export class HRAdminRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Make sure that the input fields are valid");
             }
         
-        this.verifyUser(email, password, req, res, true);
+        this.verifyUser(email, password, req, res);
     }
 
-    private verifyUser(email:string, pass:string, req:express.Request, res:express.Response, admin:boolean){
+    private verifyUser(email:string, pass:string, req:express.Request, res:express.Response){
         //console.log(email+" : "+pass);
-        let myTable;
-        if(admin)
-            myTable = DataModel.tables.admin;
-        else
-            myTable = DataModel.tables.hr;
+        let myTable = DataModel.tables.admin;;
 
         let sql = SQLUtility.formSelect(["*"],
                     myTable.table,
@@ -87,10 +162,7 @@ export class HRAdminRoutes{
         MyApp.database.getQueryResults(sql, [email]).then(result=>{
             console.log(JSON.stringify(result));
             if(result.length==0){
-                if(admin)
-                    return this.verifyUser(email, pass, req, res, false);
-                else
-                    WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "We cannot find any Admin with that name");
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "We cannot find any Admin with that name");
             }else{
                 var out = result[0];
                 if(out[myTable.password]!=pass){
@@ -105,17 +177,7 @@ export class HRAdminRoutes{
                     }
                 }
 
-                let type="";
-                if(admin){
-                    if(out[DataModel.tables.admin.owner]==1){
-                        type=DataModel.userTypes.admin;
-                    }else{
-                        type=DataModel.userTypes.sales;
-                    }
-                    
-                }else{
-                    type=DataModel.userTypes.hr;
-                }
+                let type=out[DataModel.tables.admin.userType];
                 var tokenKey:string = WebUtility.getTokenKey(req);
                 var date = Math.floor(new Date().getTime());
                 var jsonStr={
@@ -159,7 +221,7 @@ export class HRAdminRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again.");
             return undefined;
         }
-        if(!(sessionToken["type"]==DataModel.userTypes.admin || sessionToken["type"]==DataModel.userTypes.sales) || parseInt(sessionToken["adminId"])==NaN){
+        if(!(sessionToken["type"]==DataModel.userTypes.admin) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
         }
@@ -225,14 +287,16 @@ export class HRAdminRoutes{
         let actionType = req.params.type;
 
         //let table=DataModel.tables.admin;
-        let table:any;
-        //let table=DataModel.tables.admin;
-        if(actionType==DataModel.userTypes.sales){
-            if(type!=DataModel.userTypes.admin)
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access permissions");
-            table=DataModel.tables.admin;
+        let table=DataModel.tables.admin;
+
+        if(type!=DataModel.userTypes.admin)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access permissions");
+        
+        let userType:string;
+        if(actionType==DataModel.userTypes.sales){            
+            userType=DataModel.userTypes.sales
         }else if(actionType==DataModel.userTypes.hr){
-            table=DataModel.tables.hr;
+            userType=DataModel.userTypes.hr
         }else{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
         }
@@ -246,9 +310,9 @@ export class HRAdminRoutes{
             [table.firstName]:firstName,
             [table.lastName]:lastName,
             [table.email]:email,
+            [table.userType]:userType,
+            [table.adminCreatedRefID]:adminId,
         };
-        if(actionType==DataModel.userTypes.hr)
-            insertJson[table.adminCreatedRefID]=adminId;
         MyApp.database.insert(table.table, insertJson).then(result=>{
             //TODO Send the invitation Email to the user
             this.sendInvitationWithCode(req, res, table, email, firstName, lastName, actionType, result, callback);
@@ -296,7 +360,8 @@ export class HRAdminRoutes{
             return;
 
         let email = req.body.email;
-        WebUtility.getTypeOfEmail(email).then(result=>{
+        WebUtility.getUserType(email).then(result=>{
+            console.log("Type fetched : "+result);
             afterCheckingType(result);
         }, error=>{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cannot find that email ID");
@@ -311,7 +376,7 @@ export class HRAdminRoutes{
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
                 table=DataModel.tables.admin;
             }else if(actionType==DataModel.userTypes.hr){
-                table=DataModel.tables.hr;
+                table=DataModel.tables.admin;
             }else{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
             }
@@ -342,7 +407,7 @@ export class HRAdminRoutes{
             return;
 
         let email = req.body.email;
-        WebUtility.getTypeOfEmail(email).then(result=>{
+        WebUtility.getUserType(email).then(result=>{
             afterCheckingType(result);
         }, error=>{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cannot find that email ID");
@@ -357,7 +422,7 @@ export class HRAdminRoutes{
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
                 table=DataModel.tables.admin;
             }else if(actionType==DataModel.userTypes.hr){
-                table=DataModel.tables.hr;
+                table=DataModel.tables.admin;
             }else{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
             }
@@ -390,7 +455,7 @@ export class HRAdminRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID or the type os User");
 
         let email=req.body.email;
-        WebUtility.getTypeOfEmail(email).then(result=>{
+        WebUtility.getUserType(email).then(result=>{
             afterCheckingType(result);
         }, error=>{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cannot find that email ID");
@@ -404,7 +469,7 @@ export class HRAdminRoutes{
             if(type==DataModel.userTypes.admin){
                 users=DataModel.tables.admin;
             }else if(type==DataModel.userTypes.hr){
-                users=DataModel.tables.hr;
+                users=DataModel.tables.admin;
             }else if(type==DataModel.userTypes.sales){
                 users=DataModel.tables.admin;
             }else if(type==DataModel.userTypes.provider){
@@ -483,7 +548,7 @@ export class HRAdminRoutes{
         this.checkIfTokenKeyUsed(req, res, resetCode, callback);
 
         function callback(){
-            WebUtility.getTypeOfEmail(email).then(result=>{
+            WebUtility.getUserType(email).then(result=>{
                 callbackAfterType(result);
             }, error=>{
                 WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cannot find that email ID");
@@ -498,7 +563,7 @@ export class HRAdminRoutes{
             if(type==DataModel.userTypes.admin){
                 table=DataModel.tables.admin;
             }else if(type==DataModel.userTypes.hr){
-                table=DataModel.tables.hr;
+                table=DataModel.tables.admin;
             }else if(type==DataModel.userTypes.sales){
                 table=DataModel.tables.admin;
             }else if(type==DataModel.userTypes.provider){

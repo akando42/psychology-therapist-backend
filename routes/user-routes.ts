@@ -425,7 +425,7 @@ export class UserRoutes{
         console.log("Its here");
         if(req.body.image){
             //this.decodeBase64Image(req.body.image)
-            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, id, true, true);
+            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, id, DataModel.userTypes.user, true);
             if(!imageLoc)
                return UsersUtility.sendErrorMessage(res, DataModel.userResponse.inputError, "The Image you sent is not base64");
             json[users.image]=imageLoc

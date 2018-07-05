@@ -225,7 +225,7 @@ provider/get/profile
 
 provider/set/profile
 	post
-		summary: Get all the profile details. Only put the information you want to update
+		summary: Set the profile details. Only put the information you want to update
 		request:
 			accountToken:<>
 			sessionToken:<>

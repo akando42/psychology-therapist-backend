@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jun 27, 2018 at 03:19 AM
+-- Generation Time: Jul 05, 2018 at 01:37 PM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -32,13 +32,14 @@ use tod_database;
 
 CREATE TABLE `ADMINTABLE` (
   `AdminID` int(11) NOT NULL,
+  `AdminCreatedRef` int(11) DEFAULT NULL,
   `AdminFirstName` varchar(50) DEFAULT NULL,
   `AdminLastName` varchar(50) DEFAULT NULL,
   `AdminEmailID` varchar(150) NOT NULL,
   `AdminPassword` varchar(50) DEFAULT NULL,
   `AdminImageLink` text,
   `AdminPhone` varchar(15) DEFAULT NULL,
-  `AdminOwnerStatus` tinyint(4) NOT NULL DEFAULT '0',
+  `AdminUserType` varchar(10) DEFAULT NULL,
   `AdminAccountStatus` tinyint(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -46,10 +47,10 @@ CREATE TABLE `ADMINTABLE` (
 -- Dumping data for table `ADMINTABLE`
 --
 
-INSERT INTO `ADMINTABLE` (`AdminID`, `AdminFirstName`, `AdminLastName`, `AdminEmailID`, `AdminPassword`, `AdminImageLink`, `AdminPhone`, `AdminOwnerStatus`, `AdminAccountStatus`) VALUES
-(1, 'Adam', 'Parsons', 'info@therapyondemand.io', 'Admin@12345', NULL, NULL, 1, 1),
-(3, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', NULL, NULL, 0, 1),
-(4, 'Rahul', 'Sinha', 'rahul1@gmail.com', NULL, NULL, NULL, 0, 0);
+INSERT INTO `ADMINTABLE` (`AdminID`, `AdminCreatedRef`, `AdminFirstName`, `AdminLastName`, `AdminEmailID`, `AdminPassword`, `AdminImageLink`, `AdminPhone`, `AdminUserType`, `AdminAccountStatus`) VALUES
+(1, NULL, 'Adam', 'Parsons', 'info@therapyondemand.io', 'Admin@12345', NULL, NULL, 'admin', 1),
+(3, NULL, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', NULL, NULL, 'sales', 1),
+(4, NULL, 'Rahul', 'Sinha', 'rahul1@gmail.com', NULL, NULL, NULL, 'hr', 1);
 
 -- --------------------------------------------------------
 
@@ -245,7 +246,7 @@ CREATE TABLE `TOKENTRACKER` (
 --
 
 INSERT INTO `TOKENTRACKER` (`TokenCode`, `IPAddress`, `TokenCreationDateTime`, `TotalTokenCreatedInADay`, `LastAPICallTime`, `CurrentAPICallTime`, `TotalAPICallInAMinute`, `BlockedStatus`) VALUES
-('1d6608a9c4f8ef1f77065db165735b78:4e5c7d10b33dc95201543eae1b8d521678f9c9937432a8f122235f2378da64810d4d5970dc3d66e8ed619af03b08005410f42b02cd22d5037c1cf4cf15cf2cf8', '::1', '2018-06-26 21:33:44', 0, '2018-06-26 21:37:53', '2018-06-26 21:37:53', 0, 0),
+('75b5c66e31cc1c03d0595b75899bf673:9a74f6e724f25c3d2c050e8a4a4c609f16a5b91290e9e274505f21d4bd48e1aaa29a31e736b6bba05b672e040e13dc2d6a1f592369e30ca2bc626db70004c157', '::1', '2018-07-04 18:50:56', 0, '2018-07-04 18:53:32', '2018-07-04 18:53:32', 0, 0),
 ('8a40758a6f99da51a1ff506b512d5905:42ebd8fb68a57723ed6fc2fd2a8275b059c97c1fe975a187cd908806af8adb8d48b4f2f3d142f95703ad1a3da2db66f2bf0fbd125d58e64af71b55c5520d7e4e6862e4fdd3d6f7432dbcf2356d78b4b0', '::ffff:127.0.0.1', '2018-06-19 20:44:54', 0, '2018-06-20 02:14:54', '2018-06-20 02:14:54', 0, 0);
 
 -- --------------------------------------------------------
@@ -322,7 +323,8 @@ INSERT INTO `USERS` (`UserID`, `UserFirstName`, `UserLastName`, `UserEmailID`, `
 --
 ALTER TABLE `ADMINTABLE`
   ADD PRIMARY KEY (`AdminID`),
-  ADD UNIQUE KEY `AdminEmailConstraint` (`AdminEmailID`);
+  ADD UNIQUE KEY `AdminEmailConstraint` (`AdminEmailID`),
+  ADD KEY `admin_constraint` (`AdminCreatedRef`);
 
 --
 -- Indexes for table `HRTABLE`
@@ -435,7 +437,7 @@ ALTER TABLE `PROVIDERS`
 -- AUTO_INCREMENT for table `SESSIONFEEDBACK`
 --
 ALTER TABLE `SESSIONFEEDBACK`
-  MODIFY `SessionFeedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `SessionFeedbackID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT for table `SESSIONS`
 --
@@ -454,6 +456,12 @@ ALTER TABLE `USERS`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `ADMINTABLE`
+--
+ALTER TABLE `ADMINTABLE`
+  ADD CONSTRAINT `admin_constraint` FOREIGN KEY (`AdminCreatedRef`) REFERENCES `ADMINTABLE` (`AdminID`);
 
 --
 -- Constraints for table `HRTABLE`

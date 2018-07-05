@@ -47,7 +47,7 @@ export class DevelopmentRoutings{
         }, HTTPMethod.GET);
 
         server.setRoute("/dev/emailcheck", (req:express.Request, res:express.Response)=>{
-            WebUtility.getTypeOfEmail(req.query.email).then(result=>{
+            WebUtility.getUserType(req.query.email).then(result=>{
                 res.end(result);
             }, error=>{
                 res.end(error);

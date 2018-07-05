@@ -97,3 +97,23 @@ hr/action/reject
 			{
 				message:"successfully accepted/rejected the applications"
 			}
+
+hr/set/profile
+	post
+		summary: Set the profile details. Only put the information you want to update
+		request:
+			accountToken:<>
+			sessionToken:<>
+			firstName:"FirstName",
+			lastName:"LastName",
+			phone:"Phone",
+			image:<Base 64 encoded>,
+			password:{
+				oldPassword:<>
+				newPassword:<>
+			}
+		response:
+		200:
+			{
+				message:<Successfully updated the informations>
+			}

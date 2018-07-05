@@ -94,27 +94,15 @@ export class DataModel{
         admin:{
             table:"ADMINTABLE",
             id:"AdminID",
+            adminCreatedRefID:"AdminCreatedRef",
             firstName:"AdminFirstName",
             lastName:"AdminLastName",
             email:"AdminEmailID",
             password:"AdminPassword",
             image:"AdminImageLink",
             phone:"AdminPhone",
-            owner:"AdminOwnerStatus",  //Default 0. Only one of the the admin can be the owner
+            userType:"AdminUserType",  //String
             accountStatus:"AdminAccountStatus"
-        },
-
-        hr:{
-            table:"HRTABLE",
-            id:"HRID",
-            adminCreatedRefID:"AdminID",
-            firstName:"HRFirstName",
-            lastName:"HRLastName",
-            email:"HREmailID",
-            password:"HRPassword",
-            image:"HRImageLink",
-            phone:"HRPhone",
-            accountStatus:"HRAccountStatus"
         },
 
         tokenTracker:{

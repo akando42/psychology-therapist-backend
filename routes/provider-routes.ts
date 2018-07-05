@@ -325,7 +325,7 @@ export class ProviderRoutes{
         var email:string = req.body.email;
         var phone:string = ""+req.body.phone;
         var gender:number = parseInt(req.body.gender);
-        var resume:string = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.resume, phone, false);;
+        var resume:string = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.resume, phone, DataModel.userTypes.provider);;
         var password:string = req.body.password;
         var lattitude = parseFloat(req.body.lattitude);
         var longitude = parseFloat(req.body.longitude);
@@ -571,7 +571,7 @@ export class ProviderRoutes{
         let queries=[];
         for(var i in docs){
             let doc=docs[i];
-            let imgLoc = ImageUtility.uploadImage(doc.docContent, DataModel.imageTypes.docs, providerId, false);
+            let imgLoc = ImageUtility.uploadImage(doc.docContent, DataModel.imageTypes.docs, providerId, DataModel.userTypes.provider);
             let query={
                 query:"INSERT INTO "+providersDoc.table+"("+providersDoc.docTitle+", "+providersDoc.docContent+", "+providersDoc.providerID+") \
                         VALUES ('"+doc.docTitle+"', '"+imgLoc+"', "+providerId+")",
@@ -725,14 +725,14 @@ export class ProviderRoutes{
         }
         if(req.body.image){
             //this.decodeBase64Image(req.body.image)
-            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, providerId, false);
+            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, providerId, DataModel.userTypes.provider);
             if(!imageLoc)
                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image format is invalid");
             json[providers.image]=imageLoc
         }
         if(req.body.resume){
             //this.decodeBase64Image(req.body.image)
-            let imageLoc = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.docs, providerId, false);
+            let imageLoc = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.docs, providerId, DataModel.userTypes.provider);
             if(!imageLoc)
                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image format is invalid");
             json[providers.resume]=imageLoc
