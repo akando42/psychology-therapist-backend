@@ -33,7 +33,7 @@ export class HRAdminRoutes{
             me.setProfile(req, res);
         }, HTTPMethod.POST);
 
-        server.setRoute("/admin/adduser", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/admin/add_user", (req:express.Request, res:express.Response)=>{
             me.addAccount(req, res);
         }, HTTPMethod.POST);
 
@@ -53,6 +53,55 @@ export class HRAdminRoutes{
         server.setRoute("/set/password", (req:express.Request, res:express.Response)=>{
             me.setNewWebPassword(req, res);
         }, HTTPMethod.POST);
+
+        server.setRoute("/admin/list_users", (req:express.Request, res:express.Response)=>{
+            me.listUsers(req, res);
+        }, HTTPMethod.POST);
+
+    }
+
+    private listUsers(req:express.Request, res:express.Response){
+        const { adminId, type}=this.preProcessToken(req, res);
+        if(!adminId)
+            return;
+        
+        let admin=DataModel.tables.admin;
+        
+        let searchKey=req.body.searchKey;
+        let roles:any[]=req.body.roles;
+        let status:number[]=req.body.status;
+        let paging:number=req.body.paging;
+        let pageStart=0;
+        let pageEnd=10;
+
+        let sql = "SELECT SQL_CALC_FOUND_ROWS * \
+                FROM "+admin.table+" \
+                WHERE "+admin.userType+"!='"+DataModel.userTypes.admin+"' \
+                ";
+
+        if(searchKey && searchKey.length>0){
+            sql+=" AND ("+admin.email+" LIKE '%"+searchKey+"%'  OR  "+admin.firstName+" LIKE '%"+searchKey+"%' OR "+admin.lastName+" LIKE '%"+searchKey+"%') ";
+        }else if(roles && roles.length>0){
+            sql+=" AND "+admin.userType+" in ('"+roles.join("','")+"') ";
+        }else if(status && status.length>0){
+            sql+=" AND "+admin.accountStatus+" in ('"+status.join("','")+"') ";
+        }else if(paging){
+             pageStart= paging*10;
+             pageEnd=pageStart+10;
+        }
+
+        MyApp.database.getQueryResults(sql, []).then(result=>{
+            if(result.length>0){
+                
+            }else{
+
+            }
+        }, error=>{
+
+        }).catch(error=>{
+
+        })
+        
     }
 
     private setProfile(req:express.Request, res:express.Response){
@@ -169,6 +218,15 @@ export class HRAdminRoutes{
                     WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "The email ID and password doesnt match");
                     return false;
                 }
+
+                if(out[myTable.accountStatus] == DataModel.accountStatus.accepted){
+                    //Do Nothing
+                }else if(out[myTable.accountStatus] == DataModel.accountStatus.waiting){
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "Please accept the email confirmation to login");
+                }else{
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "The account is either blocked or deleted")
+                }
+
                 var response = {
                     value:{
                         email : out[myTable.email],

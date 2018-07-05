@@ -55,7 +55,7 @@ admin/set/profile
 			}
 
 
-admin/adduser
+admin/add_user
     post
         summary:
             Sends an email to the specified Email ID for profile creation
@@ -135,3 +135,44 @@ admin/unblock
             {
                 message:"The HR/Admin has been successfully unblocked"
             }
+
+admin/list_users
+    post
+        summary
+            To list the users with the given filters
+        request:
+            accountToken:<>
+            sessionToken:<>
+            searchKey:<>
+                //Search key if any. Or else empty
+            roles:["sales", "hr"] 
+                //An Array of what all roles you want to see. Empty if there is no such filters.
+            status:[...] 
+                //An Array of accountStatus integer codes. See the codes in datamodel.ts file under the variable "accountStatus". Empty if no such filters
+            paging:0
+                //An integer representing the number of pages in the result. Each page will contain 10 results.
+        response:
+            200:
+            {
+                data:{
+                    pages:<total-no-of-pages>
+                    users:[
+                        {
+                            firstName:<>
+                            lastName:<>
+                            email:<>
+                            role:<hr/sales>
+                            status:<0,1,2,3...>
+                        },
+                        {
+                            firstName:<>
+                            lastName:<>
+                            email:<>
+                            role:<hr/sales>
+                            status:<0,1,2,3...>
+                        },....//so on
+                    ]
+                }
+                message:"Data fetched successfully"
+            }
+            
