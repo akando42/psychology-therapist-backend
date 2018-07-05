@@ -304,13 +304,20 @@ export class HRAdminRoutes{
         let firstName=req.body.firstName;
         let lastName=req.body.lastName;
         let email=req.body.email;
+        let phone=(req.body.phone?req.body.phone:null);
         let callback=req.body.callbackUrl;
         
+        if(!WebUtility.validateEmail(email)
+            || !WebUtility.validateStringFields(firstName, 1, 50)
+            || !WebUtility.validateStringFields(lastName, 1, 50)){            
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Input");
+        }
         let insertJson={
             [table.firstName]:firstName,
             [table.lastName]:lastName,
             [table.email]:email,
             [table.userType]:userType,
+            [table.phone]:phone,
             [table.adminCreatedRefID]:adminId,
         };
         MyApp.database.insert(table.table, insertJson).then(result=>{

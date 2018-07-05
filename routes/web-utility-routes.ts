@@ -241,6 +241,27 @@ export class WebUtility{
             return false;
         }
     }
+    public static validateEmail(email:string):boolean{
+        if(!email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/))
+            return false;
+        return true;
+    }
+    public static validatePassword(password:string):boolean{
+        if(!(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/)))
+            return false;
+        return true;
+    }
+    public static validatePhoneNumber(phone:string):boolean{
+        if(!phone.match(/^[0-9]+$/))
+            return false;
+        return true;
+    }
+    public static validateNumber(n:string):boolean{
+        if(!n || parseInt(n)==NaN)
+            return false;
+        return true;
+    }
+    
     public static sendErrorMessage(res:express.Response, req:express.Request, code:number, description:string){
         RoutesHandler.respond(res, req, [], true, description, code);
     }
