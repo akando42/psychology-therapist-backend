@@ -264,7 +264,7 @@ export class HRAdminRoutes{
                 }else if(out[myTable.accountStatus] == DataModel.accountStatus.waiting){
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "Please accept the email confirmation to login");
                 }else{
-                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "The account is either blocked or deleted")
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "Your account has been blocked. Please, contact the administrator for details.")
                 }
 
                 var response = {
@@ -494,6 +494,14 @@ export class HRAdminRoutes{
                 [table.email]:email
             }).then(result=>{
                 if(result){
+                    let body="<p>We are sorry to say but you are blocked by the admin.</p>\
+                        <p>Please contact our support for more details.</p>";
+                    EmailActivity.instance.sendEmail(email, "Blocked by Admin | Therapy On Demand", body, function(err, info){
+                        if(err)
+                            console.log("Error Sending Mail : "+err);
+                        else
+                            console.log("Mail Sent: "+info);
+                    })
                     return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
                 }else{
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Woops! Nothing changed in our system");
@@ -540,6 +548,14 @@ export class HRAdminRoutes{
                 [table.email]:email
             }).then(result=>{
                 if(result){
+                    let body="<p>Congratulation! Our Admin has unblocked you.</p>\
+                        <p>We are glad to have you back on the platform. Please start your service</p>";
+                    EmailActivity.instance.sendEmail(email, "Unblocked by Admin | Therapy On Demand", body, function(err, info){
+                        if(err)
+                            console.log("Error Sending Mail : "+err);
+                        else
+                            console.log("Mail Sent: "+info);
+                    })
                     return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
                 }else{
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Woops! Nothing changed in our system");
