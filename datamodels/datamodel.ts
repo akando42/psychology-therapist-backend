@@ -213,6 +213,7 @@ export class DataModel{
         profileError:575,
 
         passwordResetError:585,
+        listUserError:590,
     }
 
     public static imageTypes={

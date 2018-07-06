@@ -74,33 +74,73 @@ export class HRAdminRoutes{
         let pageStart=0;
         let pageEnd=10;
 
-        let sql = "SELECT SQL_CALC_FOUND_ROWS * \
-                FROM "+admin.table+" \
+        let sql = " FROM "+admin.table+" \
                 WHERE "+admin.userType+"!='"+DataModel.userTypes.admin+"' \
                 ";
 
         if(searchKey && searchKey.length>0){
             sql+=" AND ("+admin.email+" LIKE '%"+searchKey+"%'  OR  "+admin.firstName+" LIKE '%"+searchKey+"%' OR "+admin.lastName+" LIKE '%"+searchKey+"%') ";
-        }else if(roles && roles.length>0){
+        }
+        if(roles && roles.length>0){
             sql+=" AND "+admin.userType+" in ('"+roles.join("','")+"') ";
-        }else if(status && status.length>0){
+        }
+        if(status && status.length>0){
             sql+=" AND "+admin.accountStatus+" in ('"+status.join("','")+"') ";
-        }else if(paging){
+        }
+        if(paging){
              pageStart= paging*10;
              pageEnd=pageStart+10;
         }
 
-        MyApp.database.getQueryResults(sql, []).then(result=>{
-            if(result.length>0){
-                
-            }else{
+        
+        function getTotalPageCount(){
+            let countSql="SELECT COUNT(*) as count"+sql;
+            MyApp.database.getQueryResults(countSql, []).then(result=>{
+                let pages = parseInt(result[0]["count"])
+                if(pages==NaN){
+                    WebUtility.sendErrorMessage(res, req, DataModel.webResponses.listUserError, "Something went wrong which fetching the pages");
+                }else{
+                    getActualData(Math.floor(pages/10));
+                }
+            }, error=>{
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.listUserError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.listUserError, "Oops! Something went wrong on our server.");
+            })
+        }
+        getTotalPageCount();
 
-            }
-        }, error=>{
+        function getActualData(pages:number){
+            pages++;
 
-        }).catch(error=>{
+            let mysql="SELECT * "+sql+" LIMIT "+pageStart+", "+pageEnd;;
 
-        })
+            MyApp.database.getQueryResults(mysql, []).then(result=>{
+                let users=[];
+                for(var i in result){
+                    let out = result[i];
+                    let json={
+                        firstName:out[admin.firstName],
+                        lastName:out[admin.lastName],
+                        email:out[admin.email],
+                        role:out[admin.userType],
+                        status:out[admin.accountStatus],
+                    }
+                    users.push(json);
+                }
+                var data={
+                    pages:pages,
+                    users:users
+                }
+                WebUtility.sendSuccess(res, req, data, "Data Fetched successfully");
+            }, error=>{
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.listUserError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.listUserError, "Oops! Something went wrong on our server.");
+            })
+        }
+
+        
         
     }
 
