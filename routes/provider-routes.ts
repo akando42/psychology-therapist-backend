@@ -670,14 +670,38 @@ export class ProviderRoutes{
         
         let providers=DataModel.tables.providers;
         let json={};
+        let passwords = req.body.password;
         if(req.body.password){
             //TODO Write segment to update password.
-            let passwords = req.body.password;
             if(!WebUtility.validateStringFields(passwords.oldPassword, 8, 50)
                 || !WebUtility.validateStringFields(passwords.newPassword, 8, 50)
                 || !(passwords.newPassword.match(/[A-Z]/) && passwords.newPassword.match(/[a-z]/) && passwords.newPassword.match(/[0-9]/) && passwords.newPassword.match(/[^A-Za-z0-9]/))) 
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Password should conatain atleast 1 caps, 1 small letter, 1 number and 1 alphanumeric ");
 
+            let sql = "SELECT "+providers.password+" \
+                FROM "+providers.table+" \
+                WHERE "+providers.id+"=?";
+            MyApp.database.getQueryResults(sql, [providerId]).then(result=>{
+                if(result.length==1){
+                    let out=result[0];
+                    let oPass=out[providers.password]
+                    if(oPass==passwords.oldPassword){
+                        afterPassVerification();
+                    }else{
+                        return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "The Old password doesnt match");
+                    }
+                }else{
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Something went wrong! We cant find your profile");
+                }
+            }, error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
+            })
+            
+            return;
+        }
+        function afterPassVerification(){
             json[providers.password]=passwords.newPassword;
             MyApp.database.update(providers.table, json, {
                 [providers.id]:providerId,
@@ -694,7 +718,6 @@ export class ProviderRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
             })
 
-            return;
         }
 
         if(req.body.firstName){

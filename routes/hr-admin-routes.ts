@@ -150,72 +150,7 @@ export class HRAdminRoutes{
             return;
         
         let admin=DataModel.tables.admin;
-        let json={};
-
-        if(req.body.password){
-            //TODO Write segment to update password.
-            let passwords = req.body.password;
-            if(!WebUtility.validateStringFields(passwords.oldPassword, 8, 50)
-                || !WebUtility.validateStringFields(passwords.newPassword, 8, 50)
-                || !(passwords.newPassword.match(/[A-Z]/) && passwords.newPassword.match(/[a-z]/) && passwords.newPassword.match(/[0-9]/) && passwords.newPassword.match(/[^A-Za-z0-9]/))) 
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Password should conatain atleast 1 caps, 1 small letter, 1 number and 1 alphanumeric ");
-
-            json[admin.password]=passwords.newPassword;
-            MyApp.database.update(admin.table, json, {
-                [admin.id]:adminId,
-                [admin.password]:passwords.oldPassword
-            }).then(result=>{
-                if(result){
-                    return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
-                }else{
-                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Cannot find profile with that ID and password");
-                }
-            }, error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
-            }).catch(error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
-            })
-
-            return;
-        }
-
-        if(req.body.firstName){
-            if(!WebUtility.validateStringFields(req.body.firstName, 1, 50)) 
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid First name");
-            json[admin.firstName]=req.body.firstName
-        }
-        if(req.body.lastName){
-            if(!WebUtility.validateStringFields(req.body.lastName, 1, 50)) 
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Last name");
-            json[admin.lastName]=req.body.lastName
-        }
-        if(req.body.phone){
-            if(!WebUtility.validateStringFields(req.body.phone, 1, 10)
-                || !req.body.phone.match(/^[0-9]+$/)) 
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid phone number");
-            json[admin.phone]=req.body.phone
-        }
-        if(req.body.image){
-            //this.decodeBase64Image(req.body.image)
-            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, adminId, DataModel.userTypes.admin);
-            if(!imageLoc)
-               return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image format is invalid");
-            json[admin.image]=imageLoc
-        }
-
-        MyApp.database.update(admin.table, json, {
-            [admin.id]:adminId
-        }).then(result=>{
-            if(result){
-                return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
-            }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Cannot find profile with that ID");
-            }
-        }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
-        }).catch(error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
-        })
+        WebUtility.adminSetProfile(req, res, admin, adminId);
     }
 
     private adminLogin(req:express.Request, res:express.Response){
