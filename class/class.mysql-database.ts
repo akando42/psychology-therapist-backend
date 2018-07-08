@@ -28,6 +28,16 @@ export class MySqlDatabase
        }
        return result;
    }
+   private processObj(element:any,uppercase:boolean = true):{columns:string[],values:string[]}
+   {
+       let result:{columns:string[],values:string[]}={columns:[],values:[]};
+       for(let property in element)
+       {
+            result.columns.push((uppercase?property.toUpperCase():property));
+            result.values.push((typeof element[property]!="undefined"&&element[property]!=null)?mysql.escape(element[property].toString()):"''");
+       }
+       return result;
+   }
    private getQueriesFromObject(element:any,connection:mysql.IConnection,uppercase:boolean = true,mysqlFunctions:any=[]):string[]
    {
        let result:string[]=[];
@@ -40,6 +50,20 @@ export class MySqlDatabase
        }
        return result;
    }
+
+    private getQuery(element:any,uppercase:boolean = true,mysqlFunctions:any=[]):string[]
+    {    
+       let result:string[]=[];
+       for(let property in element)
+       {
+            let column=uppercase?property.toUpperCase():property;
+            if(typeof mysqlFunctions[property]!="undefined"&&mysqlFunctions[property].length)
+                column=(uppercase?mysqlFunctions[property].toUpperCase():mysqlFunctions[property])+'('+column+')';
+            result.push(column+'='+mysql.escape(element[property]));
+       }
+       return result;
+    }
+
    public async paginate(query:string,values:string[],page:number,pageSize:number,countQuery:string="",countQueryValues:string[]=[]):Promise<any>
    {
         return new Promise<any>((resolve,reject)=>
@@ -122,6 +146,7 @@ export class MySqlDatabase
             });
         });
    }
+
    public async query(table:string,selectors:any,columns:string[],query:string ="",uppercase:boolean = true,mysqlFunctions:any=[]):Promise<any>
    {
         return new Promise<boolean>((resolve,reject)=>
@@ -161,8 +186,8 @@ export class MySqlDatabase
             });
         });
    }
-   public async update(table:string,element:any,selectors:any,uppercase:boolean = true):Promise<boolean>
-   {
+    public async update(table:string,element:any,selectors:any,uppercase:boolean = true):Promise<boolean>
+    {
         return new Promise<boolean>((resolve,reject)=>
         {
             this.pool.getConnection((err,connection)=>{
@@ -193,7 +218,7 @@ export class MySqlDatabase
                 }
             });
         });
-   }
+    }
 
    public async delete(table:string,selectors:any,uppercase:boolean = true):Promise<boolean>
    {
@@ -383,4 +408,36 @@ export class MySqlDatabase
        });
         
    }
+
+   public formQueryInsert(table:string,element:any, shouldReplace:boolean=false ,uppercase:boolean = true):{query:string,values:any[],result_id:string}{
+        let processedElement:{columns:string[],values:string[]}=this.processObj(element,uppercase);
+        let query:string;
+        if(!shouldReplace)
+            query = "INSERT INTO "+(uppercase?table.toUpperCase():table)+"("+processedElement.columns.join(',')+") VALUES("+processedElement.values.join(',')+")";
+        else
+            query = "REPLACE INTO "+(uppercase?table.toUpperCase():table)+"("+processedElement.columns.join(',')+") VALUES("+processedElement.values.join(',')+")";
+        return {query:query,values:[],result_id:""};
+   }
+    public formQueryDelete(table:string,selectors:any,uppercase:boolean = true):{query:string,values:any[],result_id:string}{
+        let selectorsQueries:string[]=this.getQuery(selectors,uppercase);
+        let query = ("DELETE FROM "+(uppercase?table.toUpperCase():table)+" WHERE "+selectorsQueries.join(' AND '));
+        return {query:query,values:[],result_id:""};
+    }
+    public formQueryupdate(table:string,element:any,selectors:any,uppercase:boolean = true):{query:string,values:any[],result_id:string}{
+        let updateQueries:string[]=this.getQuery(element,uppercase);   
+        let selectorsQueries:string[]=this.getQuery(selectors,uppercase);
+        let query=("UPDATE "+(uppercase?table.toUpperCase():table)+" SET "+updateQueries.join(',')+" WHERE "+selectorsQueries.join(' AND '));        
+        return {query:query,values:[],result_id:""};
+    }
+    public formQuerySelect(table:string,selectors:any,columns:string[],query:string ="",uppercase:boolean = true,mysqlFunctions:any=[]):{query:string,values:any[],result_id:string}{
+        let selectQuery="";
+        if(query.length>0)
+            selectQuery=query;
+        else
+        {
+            let selectorsQueries:string[]=this.getQuery(selectors,uppercase,mysqlFunctions);
+            selectQuery="SELECT "+columns.join(',')+" FROM "+(uppercase?table.toUpperCase():table)+((selectorsQueries.length)?" WHERE "+selectorsQueries.join(' AND '):"");
+        }
+        return {query:selectQuery,values:[],result_id:""};
+    }
 }

@@ -9,6 +9,7 @@ import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
 import { EmailActivity } from "./email-activity";
+import { MyApp } from "../app";
 
 var nodemailer = require('nodemailer');
 
@@ -56,8 +57,19 @@ export class DevelopmentRoutings{
     }
 
     private test1(req:express.Request, res:express.Response){
-        console.log(JSON.stringify(req.query));
-        res.send(JSON.stringify(req.query))
+        let providers = DataModel.tables.providers;
+        let queries=[]
+        queries.push(MyApp.database.formQueryupdate(providers.table,{
+            [providers.accountStatus]:1,
+            [providers.hrAcceptanceID]:12
+        }, {
+            [providers.id]:2
+        }));
+        queries.push(MyApp.database.formQueryInsert(providers.table, {
+            [providers.firstName]:"Rahul",
+            [providers.lastName]:"Sinha"
+        }));
+        res.end(JSON.stringify(queries));
     }
     private newEarthVer(req:express.Request, res:express.Response){
         console.log(JSON.stringify(req.body));

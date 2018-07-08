@@ -368,7 +368,7 @@ export class ProviderRoutes{
                 [providers.lattitude]:lattitude,
                 [providers.longitude]:longitude,
                 [providers.password]:password,
-                [providers.accountStatus]:DataModel.accountStatus.phaseOne,
+                [providers.accountStatus]:DataModel.accountStatus.phaseOnePending,
             }).then(result=>{
                 // var response={
                 //     status:200,

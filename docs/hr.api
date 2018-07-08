@@ -47,6 +47,8 @@ hr/register
             }
 
 
+hr/get/assigned
+hr/get/requested
 hr/get/pending
 hr/get/active
 hr/get/rejected
@@ -84,14 +86,17 @@ hr/get/rejected
 				message:"Some message"
 			}
 
+hr/action/assign
 hr/action/accept
 hr/action/reject
+hr/action/request
 	post:
 		summary: To accept or reject the account
 		request:
 			accountToken:<>
 			sessionToken:<>
 			providerId:<ID of the Provider you recieved>
+			comment:<Extra comment with each action you do>
 		response:
 		200:
 			{

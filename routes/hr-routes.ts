@@ -9,6 +9,7 @@ import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { MyApp } from "../app";
 import { ImageUtility } from "./image-utility";
+import { EmailActivity } from "./email-activity";
 
 export class HRRoutes{
     private static server:ExpressServer;
@@ -135,6 +136,10 @@ export class HRRoutes{
             sql+=DataModel.accountStatus.accepted+" AND "+providers.hrAcceptanceID+"="+hrId;
         }else if(action==="rejected"){
             sql+=DataModel.accountStatus.phaseOneRejected+" AND "+providers.hrAcceptanceID+"="+hrId;
+        }else if(action==="assigned"){
+            sql+=DataModel.accountStatus.phaseOneAssigned+" AND "+providers.hrAcceptanceID+"="+hrId;
+        }else if(action==="requested"){
+            sql+=DataModel.accountStatus.phaseOneReRequest+" AND "+providers.hrAcceptanceID+"="+hrId;
         }else{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "The routing you specified doesnot exists");
         }
@@ -192,28 +197,82 @@ export class HRRoutes{
         
         let action=req.params.action;
         let providerId=req.body.providerId;
+        let comment=req.body.comment;
 
         let providers = DataModel.tables.providers;
+        let providersAppAction = DataModel.tables.providerAppAction;
+
+        let queries=[]
+
         let status:number;
         if(action==="accept"){
             status=DataModel.accountStatus.accepted;
         }else if(action==="reject"){
             status=DataModel.accountStatus.phaseOneRejected;
+        }else if(action==="assign"){
+            status=DataModel.accountStatus.phaseOneAssigned;
+        }else if(action==="request"){
+            status=DataModel.accountStatus.phaseOneReRequest;
         }else{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "The routing you specified doesnot exists");
         }
-        
-        MyApp.database.update(providers.table,{
-            [providers.accountStatus]:status,
-            [providers.hrAcceptanceID]:hrId
-        }, {
-            [providers.id]:providerId
-        }).then(result=>{
+        if(action=="assign"){
+            queries.push(MyApp.database.formQueryupdate(providers.table,{
+                [providers.accountStatus]:status,
+                [providers.hrAcceptanceID]:hrId
+            }, {
+                [providers.id]:providerId,
+            }));
+        }else{
+            queries.push(MyApp.database.formQueryupdate(providers.table,{
+                [providers.accountStatus]:status,
+            }, {
+                [providers.id]:providerId,
+                [providers.hrAcceptanceID]:hrId,
+            }));
+        }
+        queries.push(MyApp.database.formQueryInsert(providers.table,{
+            [providersAppAction.hrId]:hrId,
+            [providersAppAction.providerId]:providerId,
+            [providersAppAction.action]:status,
+            [providersAppAction.comment]:comment,
+        }))
+
+        MyApp.database.transaction(queries).then(result=>{
             return WebUtility.sendSuccess(res, req, [], "Successfully accepted/rejected the applications");
         }, error=>{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong.");
         }).catch(error=>{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.serverError, "Oops! Something went wrong on server.");
+        })
+
+        MyApp.database.query(providers.table,{
+            [providers.id]:providerId
+        }, [providers.email]).then(result=>{
+            if(!result && result.length==1){
+                let out=result[0];
+                let email = out[providers.email];
+                let subject:string="";
+                let body:string="";
+
+                if(action==="accept"){
+                    
+                }else if(action==="reject"){
+                    
+                }else if(action==="assign"){
+                    
+                }else if(action==="request"){
+                    
+                }else
+                    return;
+                
+                EmailActivity.instance.sendEmail(email, subject, body, function(err, info){
+                    if(err)
+                        console.log(err)
+                    else
+                        console.log(info);
+                });
+            }
         })
     }
 
