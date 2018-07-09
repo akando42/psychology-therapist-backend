@@ -1,4 +1,10 @@
 Tasks to be Done -
+
+Assign a provider functions
+UnAssigning functions
+Request to resubmit the docs - Still remains in the assigned state
+Get Notification on any resubmission
+
  - Implement the security features.
 
  - Users shouldn't be able to register if already registered
