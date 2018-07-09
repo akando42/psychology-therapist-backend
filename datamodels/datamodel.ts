@@ -31,12 +31,22 @@ export class DataModel{
             resume:"ProviderResume",
             accountStatus:"ProviderAccountStatus",
         },
+        providerAppAction:{
+            table:"PROVIDEAPPACTION",
+            id:"ProviderAppActionID",
+            providerId:"ProviderID",
+            hrId:"AdminID",
+            action:"ProviderAppAccountStatus",
+            comment:"CommentByHR"
+        },
         providersDoc:{
             table:"PROVIDERDOCS",
             id:"ProviderDocID",
             providerID:"ProviderID",
             docTitle:"ProviderDocTitle",
-            docContent:"ProviderDocContent"
+            docContent:"ProviderDocContent",
+            docUploadTime:"ProviderDocUploadTime",
+            isDocVallid:"ProviderDocUploadTime"
         },
         providerNotifications:{
             table:"PROVIDERNOTIFICATION",
@@ -45,6 +55,14 @@ export class DataModel{
             content:"ProviderNotificationContent",
             dateTime:"ProviderNotificationDT",
             isRead:"ProviderNotificationReadStatus"
+        },
+        hrNotifications:{
+            table:"HRNotificaiton",
+            id:"HRNotificationId",
+            hrId:"AdminID",
+            content:"HRNotificationContent",
+            dateTime:"HRNotificationDT",
+            isRead:"HRNotificaitonReadStatus"
         },
 
         userAddress:{
@@ -152,9 +170,11 @@ export class DataModel{
         deleted:4,
 
         //Different Phase Statuses foe providers
-        phaseOne:11,
+        phaseOneAssigned:10,
+        phaseOnePending:11,
         phaseOneRejected:13,
         phaseOneDocSubmitted:15,
+        phaseOneReRequest:16,
 
         //Document Status
         docUploaded:50,

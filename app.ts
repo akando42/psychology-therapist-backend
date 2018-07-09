@@ -88,6 +88,18 @@ let hrAdminRoutes = new HRAdminRoutes(server, database);
 /** Example database query *****/
 /* database.getQueryResults("SELECT * FROM TABLE WHERE COLUMN1=? AND COLUMN2=?",["value1","value2"]).then(result=>//do something with the result,error=> //handle the error).catch(error=>//handle the error) */
 
+/*  This is forming queries
+
+let queries=[]
+queries.push(MyApp.database.formQueryupdate(providers.table,{
+    [providers.accountStatus]:status,
+    [providers.hrAcceptanceID]:hrId
+}, {
+    [providers.id]:providerId
+}));
+
+*/
+
 /*
 url.format({
     pathname:"/",
