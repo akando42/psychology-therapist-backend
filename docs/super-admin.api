@@ -9,9 +9,34 @@ admin/login
             {
                 data:{
                     sessionToken:"Use this token for all the other requests for HRs"
-                    type:"Admin"
+                    type:"Admin",
+                    profile:{
+                        firstName:<>
+                        lastName:<>
+                        email:<>
+                        image:<>
+                        phone:<>
+                    }
                 }
                 message:""
+            }
+
+get/profile
+    post
+        request
+            accountToken:<>
+            sessionToken:<>
+        response
+            200
+            {
+                data:{
+                    firstName:<>
+                    lastName:<>
+                    email:<>
+                    image:<>
+                    phone:<>
+                }
+                message:"Successfully fetched the profile details"
             }
 
 

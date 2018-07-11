@@ -32,6 +32,7 @@ export class HRAdminRoutes{
         server.setRoute("/admin/set/profile", (req:express.Request, res:express.Response)=>{
             me.setProfile(req, res);
         }, HTTPMethod.POST);
+        
 
         server.setRoute("/admin/add_user", (req:express.Request, res:express.Response)=>{
             me.addAccount(req, res);
@@ -53,10 +54,61 @@ export class HRAdminRoutes{
         server.setRoute("/set/password", (req:express.Request, res:express.Response)=>{
             me.setNewWebPassword(req, res);
         }, HTTPMethod.POST);
+        server.setRoute("/get/profile", (req:express.Request, res:express.Response)=>{
+            me.getProfile(req, res);
+        }, HTTPMethod.POST);
 
         server.setRoute("/admin/list_users", (req:express.Request, res:express.Response)=>{
             me.listUsers(req, res);
         }, HTTPMethod.POST);
+
+    }
+
+    private getProfile(req:express.Request, res:express.Response){
+        if(!WebUtility.getParsedToken(req)){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accoun token is not valid.");
+            return undefined;
+        }
+
+        let sessionToken  = WebUtility.getParsedToken(req, req.body.sessionToken, 30);
+        console.log("parsed Val 2: "+JSON.stringify(sessionToken));
+        if(!sessionToken){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again.");
+            return undefined;
+        }
+        if(!(sessionToken["type"]==DataModel.userTypes.admin || sessionToken["type"]==DataModel.userTypes.hr || sessionToken["type"]==DataModel.userTypes.sales) 
+            || parseInt(sessionToken["adminId"])==NaN){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
+            return undefined;
+        }
+
+        const { adminId, type}=sessionToken;
+        if(!adminId)
+            return;
+        
+        let admin=DataModel.tables.admin;
+
+        MyApp.database.query(admin.table, {
+            [admin.id]:adminId,
+            [admin.userType]:type
+        }, []).then(result=>{
+            if(result.length==1){
+                let out=result[0];
+                return WebUtility.sendSuccess(res, req, {
+                    firstName:out[admin.firstName],
+                    lastName:out[admin.lastName],
+                    email:out[admin.email],
+                    image:out[admin.image],
+                    phone:out[admin.phone],
+                }, "Successfully fetched the profile details");
+            }else{
+
+            }
+        }, error=>{
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
+        }).catch(error=>{
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on our server.");
+        })
 
     }
 
@@ -202,14 +254,7 @@ export class HRAdminRoutes{
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.loginError, "Your account has been blocked. Please, contact the administrator for details.")
                 }
 
-                var response = {
-                    value:{
-                        email : out[myTable.email],
-                        name : out[myTable.firstName],
-                        verification : out[myTable.accountStatus]=='Y'?true:false
-                    }
-                }
-
+                
                 let type=out[DataModel.tables.admin.userType];
                 var tokenKey:string = WebUtility.getTokenKey(req);
                 var date = Math.floor(new Date().getTime());
@@ -222,14 +267,18 @@ export class HRAdminRoutes{
                 }
 
                 var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
-                response["sessionToken"] = cookieStr;
                 //res.end(JSON.stringify(response));
                 return WebUtility.sendSuccess(res, req, {
-                    admin:true,
                     type:type,
-                    message:"Logged in as an Admin",
-                    sessionToken:cookieStr
-                }, "Admin Logged in!");
+                    sessionToken:cookieStr,
+                    profile:{
+                        firstName:out[myTable.firstName],
+                        lastName:out[myTable.lastName],
+                        email:out[myTable.email],
+                        image:out[myTable.image],
+                        phone:out[myTable.phone],
+                    }
+                }, "Logged in as an "+type);
             }
         }, error=>{
             console.log(error);
