@@ -95,6 +95,8 @@ export class HRAdminRoutes{
             if(result.length==1){
                 let out=result[0];
                 return WebUtility.sendSuccess(res, req, {
+                    type:type,
+                    fullName:out[admin.firstName]+" "+out[admin.lastName],
                     firstName:out[admin.firstName],
                     lastName:out[admin.lastName],
                     email:out[admin.email],
@@ -271,13 +273,12 @@ export class HRAdminRoutes{
                 return WebUtility.sendSuccess(res, req, {
                     type:type,
                     sessionToken:cookieStr,
-                    profile:{
-                        firstName:out[myTable.firstName],
-                        lastName:out[myTable.lastName],
-                        email:out[myTable.email],
-                        image:out[myTable.image],
-                        phone:out[myTable.phone],
-                    }
+                    fullName:out[myTable.firstName]+" "+out[myTable.lastName],
+                    firstName:out[myTable.firstName],
+                    lastName:out[myTable.lastName],
+                    email:out[myTable.email],
+                    image:out[myTable.image],
+                    phone:out[myTable.phone],
                 }, "Logged in as an "+type);
             }
         }, error=>{
