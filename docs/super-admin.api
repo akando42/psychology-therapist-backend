@@ -10,13 +10,13 @@ admin/login
                 data:{
                     sessionToken:"Use this token for all the other requests for HRs"
                     role:"Admin",
-                    profile:{
-                        firstName:<>
-                        lastName:<>
-                        email:<>
-                        image:<>
-                        phone:<>
-                    }
+                    type:"Admin",
+                    fullName:<>
+                    firstName:<>
+                    lastName:<>
+                    email:<>
+                    image:<>
+                    phone:<>
                 }
                 message:""
             }
@@ -30,6 +30,8 @@ get/profile
             200
             {
                 data:{
+                    type:<>
+                    fullName:<>
                     firstName:<>
                     lastName:<>
                     email:<>
