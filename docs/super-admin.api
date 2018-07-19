@@ -204,3 +204,25 @@ admin/list_users
                 message:"Data fetched successfully"
             }
             
+admin/get_user
+    post
+        summary
+            To list the users with the given filters
+        request:
+            accountToken:<>
+            sessionToken:<>
+            id:<>
+        response:
+            200:
+            {
+                data:{
+                    id:<>
+                    firstName:<>
+                    lastName:<>
+                    email:<>
+                    role:<hr/sales>
+                    status:<0,1,2,3...>
+                }
+                message:"Data fetched successfully"
+            }
+            

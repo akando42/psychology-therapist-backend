@@ -62,6 +62,9 @@ export class HRAdminRoutes{
         server.setRoute("/admin/list_users", (req:express.Request, res:express.Response)=>{
             me.listUsers(req, res);
         }, HTTPMethod.POST);
+        server.setRoute("/admin/get_user", (req:express.Request, res:express.Response)=>{
+            me.getUser(req, res);
+        }, HTTPMethod.POST);
 
     }
 
@@ -84,6 +87,7 @@ export class HRAdminRoutes{
         }
         return sessionToken;
     }
+    
     private getProfile(req:express.Request, res:express.Response){
         const { adminId, role}=this.preProcessForAllAdminTypes(req, res);
 
@@ -116,6 +120,43 @@ export class HRAdminRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on our server.");
         })
 
+    }
+
+    private getUser(req:express.Request, res:express.Response){
+        const { adminId, role}=this.preProcessToken(req, res);
+        if(!adminId)
+            return;
+        
+        let admin=DataModel.tables.admin;
+
+        let id = parseInt(req.body.id);
+        if(!id || id==NaN){
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Oops! Invalid ID.");
+        }
+
+        let mysql="SELECT * \
+                FROM "+admin.table+" \
+                WHERE "+admin.id+"=?"
+        MyApp.database.getQueryResults(mysql, [id]).then(result=>{
+            if(result.length==1){
+                let out = result[0];
+                let json={
+                    id:out[admin.id],
+                    firstName:out[admin.firstName],
+                    lastName:out[admin.lastName],
+                    email:out[admin.email],
+                    role:out[admin.userRole],
+                    status:out[admin.accountStatus],
+                }
+                WebUtility.sendSuccess(res, req, json, "Data Fetched successfully");
+            }else{
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.listUserError, "Oops! Couldn't find that ID");
+            }
+        }, error=>{
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.listUserError, "Oops! Something went wrong.");
+        }).catch(error=>{
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.listUserError, "Oops! Something went wrong on our server.");
+        })
     }
 
     private listUsers(req:express.Request, res:express.Response){
