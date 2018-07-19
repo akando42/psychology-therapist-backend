@@ -10,7 +10,6 @@ admin/login
                 data:{
                     sessionToken:"Use this token for all the other requests for HRs"
                     role:"Admin",
-                    type:"Admin",
                     fullName:<>
                     firstName:<>
                     lastName:<>
@@ -30,7 +29,7 @@ get/profile
             200
             {
                 data:{
-                    type:<>
+                    role:<>
                     fullName:<>
                     firstName:<>
                     lastName:<>
@@ -61,7 +60,7 @@ admin/decode/email
             }
 
 
-admin/set/profile
+admin/edit/profile
 	post
 		summary: Set the profile details. Only put the information you want to update
 		request:

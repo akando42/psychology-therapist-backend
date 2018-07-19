@@ -103,7 +103,7 @@ hr/action/request
 				message:"successfully accepted/rejected the applications"
 			}
 
-hr/set/profile
+hr/edit/profile
 	post
 		summary: Set the profile details. Only put the information you want to update
 		request:

@@ -29,7 +29,7 @@ export class HRAdminRoutes{
             me.decodeEmailVerification(req, res);
         }, HTTPMethod.POST);
 
-        server.setRoute("/admin/set/profile", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/admin/edit/profile", (req:express.Request, res:express.Response)=>{
             me.setProfile(req, res);
         }, HTTPMethod.POST);
         
@@ -90,12 +90,12 @@ export class HRAdminRoutes{
 
         MyApp.database.query(admin.table, {
             [admin.id]:adminId,
-            [admin.userType]:role
+            [admin.userRole]:role
         }, []).then(result=>{
             if(result.length==1){
                 let out=result[0];
                 return WebUtility.sendSuccess(res, req, {
-                    type:type,
+                    role:role,
                     fullName:out[admin.firstName]+" "+out[admin.lastName],
                     firstName:out[admin.firstName],
                     lastName:out[admin.lastName],
@@ -104,7 +104,7 @@ export class HRAdminRoutes{
                     phone:out[admin.phone],
                 }, "Successfully fetched the profile details");
             }else{
-
+                WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Couldn't find the user informations.");
             }
         }, error=>{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
@@ -129,14 +129,14 @@ export class HRAdminRoutes{
         let pageEnd=10;
 
         let sql = " FROM "+admin.table+" \
-                WHERE "+admin.userType+"!='"+DataModel.userTypes.admin+"' \
+                WHERE "+admin.userRole+"!='"+DataModel.userTypes.admin+"' \
                 ";
 
         if(searchKey && searchKey.length>0){
             sql+=" AND ("+admin.email+" LIKE '%"+searchKey+"%'  OR  "+admin.firstName+" LIKE '%"+searchKey+"%' OR "+admin.lastName+" LIKE '%"+searchKey+"%') ";
         }
         if(roles && roles.length>0){
-            sql+=" AND "+admin.userType+" in ('"+roles.join("','")+"') ";
+            sql+=" AND "+admin.userRole+" in ('"+roles.join("','")+"') ";
         }
         if(status && status.length>0){
             sql+=" AND "+admin.accountStatus+" in ('"+status.join("','")+"') ";
@@ -178,7 +178,7 @@ export class HRAdminRoutes{
                         firstName:out[admin.firstName],
                         lastName:out[admin.lastName],
                         email:out[admin.email],
-                        role:out[admin.userType],
+                        role:out[admin.userRole],
                         status:out[admin.accountStatus],
                     }
                     users.push(json);
@@ -258,7 +258,7 @@ export class HRAdminRoutes{
                 }
 
                 
-                let role=out[DataModel.tables.admin.userType];
+                let role=out[DataModel.tables.admin.userRole];
                 var tokenKey:string = WebUtility.getTokenKey(req);
                 var date = Math.floor(new Date().getTime());
                 var jsonStr={
@@ -400,7 +400,7 @@ export class HRAdminRoutes{
             [table.firstName]:firstName,
             [table.lastName]:lastName,
             [table.email]:email,
-            [table.userType]:userType,
+            [table.userRole]:userType,
             [table.phone]:phone,
             [table.adminCreatedRefID]:adminId,
         };

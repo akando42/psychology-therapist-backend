@@ -29,7 +29,7 @@ export class HRRoutes{
             me.hrAction(req, res);
         }, HTTPMethod.POST);
 
-        server.setRoute("/hr/set/profile", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/hr/edit/profile", (req:express.Request, res:express.Response)=>{
             me.setProfile(req, res);
         }, HTTPMethod.POST);
     }

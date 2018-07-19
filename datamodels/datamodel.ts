@@ -119,7 +119,7 @@ export class DataModel{
             password:"AdminPassword",
             image:"AdminImageLink",
             phone:"AdminPhone",
-            userType:"AdminUserType",  //String
+            userRole:"AdminUserType",  //String
             accountStatus:"AdminAccountStatus"
         },
 

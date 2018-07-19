@@ -25,7 +25,7 @@ export class SaleRoutes{
             me.registerSales(req, res);
         }, HTTPMethod.POST);
 
-        server.setRoute("/sales/set/profile", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/sales/edit/profile", (req:express.Request, res:express.Response)=>{
             me.setProfile(req, res);
         }, HTTPMethod.POST);
 

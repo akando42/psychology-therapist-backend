@@ -46,7 +46,7 @@ export class ProviderRoutes{
         server.setRoute("/provider/get/profile", (req:express.Request, res:express.Response)=>{
             me.getProfile(req, res);
         }, HTTPMethod.POST);
-        server.setRoute("/provider/set/profile", (req:express.Request, res:express.Response)=>{
+        server.setRoute("/provider/edit/profile", (req:express.Request, res:express.Response)=>{
             me.setProfile(req, res);
         }, HTTPMethod.POST);
 

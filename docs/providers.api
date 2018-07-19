@@ -223,7 +223,7 @@ provider/get/profile
 				message:<Successfully Fetched all the Profile Details>
 			}
 
-provider/set/profile
+provider/edit/profile
 	post
 		summary: Set the profile details. Only put the information you want to update
 		request:
