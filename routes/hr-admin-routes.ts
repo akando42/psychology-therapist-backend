@@ -76,13 +76,13 @@ export class HRAdminRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again.");
             return undefined;
         }
-        if(!(sessionToken["type"]==DataModel.userTypes.admin || sessionToken["type"]==DataModel.userTypes.hr || sessionToken["type"]==DataModel.userTypes.sales) 
+        if(!(sessionToken["role"]==DataModel.userTypes.admin || sessionToken["role"]==DataModel.userTypes.hr || sessionToken["role"]==DataModel.userTypes.sales) 
             || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
         }
 
-        const { adminId, type}=sessionToken;
+        const { adminId, role}=sessionToken;
         if(!adminId)
             return;
         
@@ -90,7 +90,7 @@ export class HRAdminRoutes{
 
         MyApp.database.query(admin.table, {
             [admin.id]:adminId,
-            [admin.userType]:type
+            [admin.userType]:role
         }, []).then(result=>{
             if(result.length==1){
                 let out=result[0];
@@ -113,7 +113,7 @@ export class HRAdminRoutes{
     }
 
     private listUsers(req:express.Request, res:express.Response){
-        const { adminId, type}=this.preProcessToken(req, res);
+        const { adminId, role}=this.preProcessToken(req, res);
         if(!adminId)
             return;
         
@@ -172,6 +172,7 @@ export class HRAdminRoutes{
                 for(var i in result){
                     let out = result[i];
                     let json={
+                        id:out[admin.id],
                         firstName:out[admin.firstName],
                         lastName:out[admin.lastName],
                         email:out[admin.email],
@@ -197,7 +198,7 @@ export class HRAdminRoutes{
     }
 
     private setProfile(req:express.Request, res:express.Response){
-        const { adminId, type}=this.preProcessToken(req, res);
+        const { adminId, role}=this.preProcessToken(req, res);
         if(!adminId)
             return;
         
@@ -255,7 +256,7 @@ export class HRAdminRoutes{
                 }
 
                 
-                let type=out[DataModel.tables.admin.userType];
+                let role=out[DataModel.tables.admin.userType];
                 var tokenKey:string = WebUtility.getTokenKey(req);
                 var date = Math.floor(new Date().getTime());
                 var jsonStr={
@@ -263,13 +264,13 @@ export class HRAdminRoutes{
                     date:date,
                     origin:req.get("origin"),
                     adminId : out[myTable.id],
-                    type:type
+                    role:role
                 }
 
                 var cookieStr = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonStr), tokenKey);
                 //res.end(JSON.stringify(response));
                 return WebUtility.sendSuccess(res, req, {
-                    type:type,
+                    role:role,
                     sessionToken:cookieStr,
                     profile:{
                         firstName:out[myTable.firstName],
@@ -278,7 +279,7 @@ export class HRAdminRoutes{
                         image:out[myTable.image],
                         phone:out[myTable.phone],
                     }
-                }, "Logged in as an "+type);
+                }, "Logged in as an "+role);
             }
         }, error=>{
             console.log(error);
@@ -303,7 +304,7 @@ export class HRAdminRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again.");
             return undefined;
         }
-        if(!(sessionToken["type"]==DataModel.userTypes.admin) || parseInt(sessionToken["adminId"])==NaN){
+        if(!(sessionToken["role"]==DataModel.userTypes.admin) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
         }
@@ -330,7 +331,7 @@ export class HRAdminRoutes{
             email:string,
             firstName:string,
             lastName:string,
-            type:string,
+            role:string,
             id:Number
         }=JSON.parse(myString);
 
@@ -346,8 +347,8 @@ export class HRAdminRoutes{
             date:date,
             origin:req.get("origin"),
             adminId : json.id,
-            type:json.type+"_temp",
-            actualType:json.type
+            role:json.role+"_temp",
+            actualType:json.role
         }
         let registerToken = CryptoFunctions.aes256Encrypt(JSON.stringify(jsonToken), tokenKey);
 
@@ -355,23 +356,23 @@ export class HRAdminRoutes{
             email:json.email,
             firstName:json.firstName,
             lastName:json.lastName,
-            type:json.type,
+            role:json.role,
             registerToken:registerToken
         }
         WebUtility.sendSuccess(res, req, outputStr, "Successfully Parsed the email Inputs");
     }
 
     private addAccount(req:express.Request, res:express.Response){
-        const { adminId, type}=this.preProcessToken(req, res);
+        const { adminId, role}=this.preProcessToken(req, res);
         if(!adminId)
             return;
 
-        let actionType = req.body.type;
+        let actionType = req.body.role;
 
         //let table=DataModel.tables.admin;
         let table=DataModel.tables.admin;
 
-        if(type!=DataModel.userTypes.admin)
+        if(role!=DataModel.userTypes.admin)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access permissions");
         
         let userType:string;
@@ -412,12 +413,12 @@ export class HRAdminRoutes{
         })
     }
 
-    private sendInvitationWithCode(req:express.Request, res:express.Response, table:any, email:string, firstName:string, lastName:string, type:string, id:number, callback:string){
+    private sendInvitationWithCode(req:express.Request, res:express.Response, table:any, email:string, firstName:string, lastName:string, role:string, id:number, callback:string){
         let json={
             email:email,
             firstName:firstName,
             lastName:lastName,
-            type:type,
+            role:role,
             id:id
         }
 
@@ -428,7 +429,7 @@ export class HRAdminRoutes{
         let url = callback+"?code="+code+"&email="+encodeURIComponent(email);
 
         let body="<H1>Welcome to Therapy On Demand</H1>\
-                <h3>Invitation to join Therapy On Demand ("+type+")</h3>\
+                <h3>Invitation to join Therapy On Demand ("+role+")</h3>\
                 <a href='"+url+"'>[Click this Link]</a>"
         
         EmailActivity.instance.sendEmail(email, "Welcome to Therapy on Demand!", body, function(err, info){
@@ -444,13 +445,13 @@ export class HRAdminRoutes{
     }
 
     private blockAccount(req:express.Request, res:express.Response){
-        const { adminId, type}=this.preProcessToken(req, res);
+        const { adminId, role}=this.preProcessToken(req, res);
         if(!adminId)
             return;
 
         let email = req.body.email;
         WebUtility.getUserType(email).then(result=>{
-            console.log("Type fetched : "+result);
+            console.log("role fetched : "+result);
             afterCheckingType(result);
         }, error=>{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cannot find that email ID");
@@ -461,7 +462,7 @@ export class HRAdminRoutes{
         function afterCheckingType(actionType:string){
             let table:any=DataModel.tables.admin;
             if(actionType==DataModel.userTypes.sales){
-                if(type!=DataModel.userTypes.admin)
+                if(role!=DataModel.userTypes.admin)
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
                 table=DataModel.tables.admin;
             }else if(actionType==DataModel.userTypes.hr){
@@ -499,7 +500,7 @@ export class HRAdminRoutes{
     }
 
     private unblockAccount(req:express.Request, res:express.Response){
-        const { adminId, type}=this.preProcessToken(req, res);
+        const { adminId, role}=this.preProcessToken(req, res);
         if(!adminId)
             return;
 
@@ -515,7 +516,7 @@ export class HRAdminRoutes{
         function afterCheckingType(actionType:string){
             let table:any=DataModel.tables.admin;
             if(actionType==DataModel.userTypes.sales){
-                if(type!=DataModel.userTypes.admin)
+                if(role!=DataModel.userTypes.admin)
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
                 table=DataModel.tables.admin;
             }else if(actionType==DataModel.userTypes.hr){
@@ -557,7 +558,7 @@ export class HRAdminRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The token is invalid")
         }
         if(!req.body.email)
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID or the type os User");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID or the role os User");
 
         let email=req.body.email;
         WebUtility.getUserType(email).then(result=>{
@@ -568,19 +569,19 @@ export class HRAdminRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong.");
         })
 
-        function afterCheckingType(type:string){
+        function afterCheckingType(role:string){
             //TODO Check if the email ID exists
             let users:any=DataModel.tables.admin;
-            if(type==DataModel.userTypes.admin){
+            if(role==DataModel.userTypes.admin){
                 users=DataModel.tables.admin;
-            }else if(type==DataModel.userTypes.hr){
+            }else if(role==DataModel.userTypes.hr){
                 users=DataModel.tables.admin;
-            }else if(type==DataModel.userTypes.sales){
+            }else if(role==DataModel.userTypes.sales){
                 users=DataModel.tables.admin;
-            }else if(type==DataModel.userTypes.provider){
+            }else if(role==DataModel.userTypes.provider){
                 users=DataModel.tables.providers;
             }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Type specified was invalid")
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "role specified was invalid")
             }
 
             let sql ="SELECT "+users.firstName+" \
@@ -599,7 +600,7 @@ export class HRAdminRoutes{
             })
 
             function proceedAfterVerifyingUser(){
-                let redirectURL=MyApp.appConfig.frontEndUrl+"/"+type+"/set/password?"
+                let redirectURL=MyApp.appConfig.frontEndUrl+"/"+role+"/set/password?"
                 let json={
                     email:email,
                     date:Date.now()
@@ -663,20 +664,20 @@ export class HRAdminRoutes{
         }
 
         // let users=DataModel.tables.users;
-        function callbackAfterType(type:string){
+        function callbackAfterType(role:string){
             let table:any=DataModel.tables.admin;
-            if(type==DataModel.userTypes.admin){
+            if(role==DataModel.userTypes.admin){
                 table=DataModel.tables.admin;
-            }else if(type==DataModel.userTypes.hr){
+            }else if(role==DataModel.userTypes.hr){
                 table=DataModel.tables.admin;
-            }else if(type==DataModel.userTypes.sales){
+            }else if(role==DataModel.userTypes.sales){
                 table=DataModel.tables.admin;
-            }else if(type==DataModel.userTypes.provider){
+            }else if(role==DataModel.userTypes.provider){
                 table=DataModel.tables.providers;
-            }else if(type==DataModel.userTypes.user){
+            }else if(role==DataModel.userTypes.user){
                 table=DataModel.tables.users;
             }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Type specified was invalid")
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "role specified was invalid")
             }
             MyApp.database.update(table.table, {
                 [table.password]:password

@@ -446,7 +446,7 @@ export class ProviderRoutes{
                     date:date,
                     origin:req.get("origin"),
                     providersId : out[providers.id],
-                    type:DataModel.userTypes.provider
+                    role:DataModel.userTypes.provider
                 }
                 // console.log("MySTR : "+JSON.stringify(jsonStr));
                 // console.log("MySTR 2 : "+out[providers.id]);
@@ -481,7 +481,7 @@ export class ProviderRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
-        if(sessionToken["type"]!=DataModel.userTypes.provider){
+        if(sessionToken["role"]!=DataModel.userTypes.provider){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }

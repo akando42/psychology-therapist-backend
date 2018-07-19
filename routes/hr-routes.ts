@@ -56,13 +56,13 @@ export class HRRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
-        if(!(sessionToken["type"]==DataModel.userTypes.hr+"_temp" || sessionToken["actualType"]==DataModel.userTypes.hr) || parseInt(sessionToken["adminId"])==NaN){
+        if(!(sessionToken["role"]==DataModel.userTypes.hr+"_temp" || sessionToken["actualType"]==DataModel.userTypes.hr) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
         }
 
         //let id=["adminId"];
-        const { adminId, type, actualType}=sessionToken;
+        const { adminId, role, actualType}=sessionToken;
         if(actualType!=DataModel.userTypes.hr){
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights.");
         }
@@ -108,9 +108,9 @@ export class HRRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
-        if(!(sessionToken["type"]==DataModel.userTypes.hr || 
-                sessionToken["type"]==DataModel.userTypes.admin ||
-                sessionToken["type"]==DataModel.userTypes.sales) || parseInt(sessionToken["adminId"])==NaN){
+        if(!(sessionToken["role"]==DataModel.userTypes.hr || 
+                sessionToken["role"]==DataModel.userTypes.admin ||
+                sessionToken["role"]==DataModel.userTypes.sales) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }

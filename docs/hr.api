@@ -29,7 +29,7 @@ hr/register
                 date:date,
         		origin:req.get("origin"),
         		hrId : -1,
-        		type:"HR"
+        		role:"HR"
         	}
         requests:
             - accountToken : <use the account token>

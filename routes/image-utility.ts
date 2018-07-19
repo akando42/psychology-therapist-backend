@@ -20,7 +20,7 @@ export class ImageUtility {
         if (matches.length !== 3) {
             return undefined;
         }
-        response["type"] = matches[1];
+        response["role"] = matches[1];
         response["data"] = new Buffer(matches[2], 'base64');
 
         return response;
@@ -33,11 +33,11 @@ export class ImageUtility {
             if(!response)
                 return undefined;
         }else{
-            response["type"] = "images/png";
+            response["role"] = "images/png";
             response["data"] = data
         }
         var buf = new Buffer(response["data"], 'base64');
-        var resps = response["type"].split("/");
+        var resps = response["role"].split("/");
         var address="/"+imageType+"/"+(userType)+"-"+Date.now()+"-"+id+"."+resps[1];
         console.log(address);
         fs.writeFileSync(this.dirLoc+address, buf);

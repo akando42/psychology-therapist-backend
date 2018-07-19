@@ -91,7 +91,7 @@
 							date:date,
 							origin:req.get("origin"),
 							providersId : <ID>,
-							type:"Provider"
+							role:"Provider"
             }
         produces:
             - application/json

@@ -9,7 +9,7 @@ admin/login
             {
                 data:{
                     sessionToken:"Use this token for all the other requests for HRs"
-                    type:"Admin",
+                    role:"Admin",
                     profile:{
                         firstName:<>
                         lastName:<>
@@ -54,7 +54,7 @@ admin/decode/email
                 email:<The email Address>
                 firstName:<>
                 lastName:<>
-                type:<>
+                role:<>
                 registerToken:<Use this token to register the User in the Next API calls>
             }
 
@@ -87,7 +87,7 @@ admin/add_user
         request
             accountToken:<>
             sessionToken:<>
-            type:<hr/sales>
+            role:<hr/sales>
             email:<email-address>@therapyondemand.io
             firstName:<>
             lastName:<>
@@ -183,6 +183,7 @@ admin/list_users
                     pages:<total-no-of-pages>
                     users:[
                         {
+                            id:<>
                             firstName:<>
                             lastName:<>
                             email:<>
@@ -190,6 +191,7 @@ admin/list_users
                             status:<0,1,2,3...>
                         },
                         {
+                            id:<>
                             firstName:<>
                             lastName:<>
                             email:<>
