@@ -28,10 +28,6 @@ export class HRAdminRoutes{
         server.setRoute("/admin/decode/email", (req:express.Request, res:express.Response)=>{
             me.decodeEmailVerification(req, res);
         }, HTTPMethod.POST);
-
-        server.setRoute("/admin/edit/profile", (req:express.Request, res:express.Response)=>{
-            me.setProfile(req, res);
-        }, HTTPMethod.POST);
         
 
         server.setRoute("/admin/add_user", (req:express.Request, res:express.Response)=>{
@@ -51,9 +47,14 @@ export class HRAdminRoutes{
         server.setRoute("/reset/password", (req:express.Request, res:express.Response)=>{
             me.resetWebPassword(req, res);
         }, HTTPMethod.POST);
+
         server.setRoute("/set/password", (req:express.Request, res:express.Response)=>{
             me.setNewWebPassword(req, res);
         }, HTTPMethod.POST);
+        server.setRoute("/edit/profile", (req:express.Request, res:express.Response)=>{
+            me.setProfile(req, res);
+        }, HTTPMethod.POST);
+
         server.setRoute("/get/profile", (req:express.Request, res:express.Response)=>{
             me.getProfile(req, res);
         }, HTTPMethod.POST);
@@ -64,7 +65,7 @@ export class HRAdminRoutes{
 
     }
 
-    private getProfile(req:express.Request, res:express.Response){
+    private preProcessForAllAdminTypes(req:express.Request, res:express.Response):any{
         if(!WebUtility.getParsedToken(req)){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The accoun token is not valid.");
             return undefined;
@@ -81,8 +82,11 @@ export class HRAdminRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
         }
+        return sessionToken;
+    }
+    private getProfile(req:express.Request, res:express.Response){
+        const { adminId, role}=this.preProcessForAllAdminTypes(req, res);
 
-        const { adminId, role}=sessionToken;
         if(!adminId)
             return;
         
@@ -194,17 +198,14 @@ export class HRAdminRoutes{
                 WebUtility.sendErrorMessage(res, req, DataModel.webResponses.listUserError, "Oops! Something went wrong on our server.");
             })
         }
-
-        
-        
     }
 
     private setProfile(req:express.Request, res:express.Response){
-        const { adminId, role}=this.preProcessToken(req, res);
+        const { adminId, role}=this.preProcessForAllAdminTypes(req, res);
         if(!adminId)
             return;
-        
         let admin=DataModel.tables.admin;
+        
         WebUtility.adminSetProfile(req, res, admin, adminId);
     }
 

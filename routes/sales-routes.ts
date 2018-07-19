@@ -24,11 +24,6 @@ export class SaleRoutes{
         server.setRoute("/sales/register", (req:express.Request, res:express.Response)=>{
             me.registerSales(req, res);
         }, HTTPMethod.POST);
-
-        server.setRoute("/sales/edit/profile", (req:express.Request, res:express.Response)=>{
-            me.setProfile(req, res);
-        }, HTTPMethod.POST);
-
     }
 
     private preProcessToken(req:express.Request, res:express.Response){
@@ -52,15 +47,7 @@ export class SaleRoutes{
         return sessionToken;
     }
 
-    private setProfile(req:express.Request, res:express.Response){
-        const { adminId, role}=this.preProcessToken(req, res);
-        if(!adminId)
-            return;
-        
-        let sales=DataModel.tables.admin;
-        
-        WebUtility.adminSetProfile(req, res, sales, adminId);
-    }
+    
 
     private registerSales(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){

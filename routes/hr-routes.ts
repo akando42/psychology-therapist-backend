@@ -29,19 +29,6 @@ export class HRRoutes{
             me.hrAction(req, res);
         }, HTTPMethod.POST);
 
-        server.setRoute("/hr/edit/profile", (req:express.Request, res:express.Response)=>{
-            me.setProfile(req, res);
-        }, HTTPMethod.POST);
-    }
-
-    private setProfile(req:express.Request, res:express.Response){
-        let hrId=this.preProcessToken(req, res);
-        if(!hrId)
-            return;
-        
-        let hr=DataModel.tables.admin;
-        
-        WebUtility.adminSetProfile(req, res, hr, hrId);
     }
 
     private registerHR(req:express.Request, res:express.Response){

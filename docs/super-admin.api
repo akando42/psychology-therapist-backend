@@ -60,7 +60,7 @@ admin/decode/email
             }
 
 
-admin/edit/profile
+/edit/profile
 	post
 		summary: Set the profile details. Only put the information you want to update
 		request:
