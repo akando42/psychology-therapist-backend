@@ -119,6 +119,8 @@ export class DataModel{
             password:"AdminPassword",
             image:"AdminImageLink",
             phone:"AdminPhone",
+            longitude:"AdminLongitude",
+            lattitude:"AdminLattitude",
             userRole:"AdminUserType",  //String
             accountStatus:"AdminAccountStatus"
         },

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 05, 2018 at 04:02 PM
+-- Generation Time: Jul 21, 2018 at 03:03 AM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -39,6 +39,8 @@ CREATE TABLE `ADMINTABLE` (
   `AdminPassword` varchar(50) DEFAULT NULL,
   `AdminImageLink` text,
   `AdminPhone` varchar(15) DEFAULT NULL,
+  `AdminLongitude` float DEFAULT NULL,
+  `AdminLattitude` float DEFAULT NULL,
   `AdminUserType` varchar(10) DEFAULT NULL,
   `AdminAccountStatus` tinyint(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -47,10 +49,10 @@ CREATE TABLE `ADMINTABLE` (
 -- Dumping data for table `ADMINTABLE`
 --
 
-INSERT INTO `ADMINTABLE` (`AdminID`, `AdminCreatedRef`, `AdminFirstName`, `AdminLastName`, `AdminEmailID`, `AdminPassword`, `AdminImageLink`, `AdminPhone`, `AdminUserType`, `AdminAccountStatus`) VALUES
-(1, NULL, 'Adam', 'Parsons', 'info@therapyondemand.io', 'Admin@12345', NULL, NULL, 'admin', 1),
-(3, NULL, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', NULL, NULL, 'sales', 1),
-(4, NULL, 'Rahul', 'Sinha', 'rahul1@gmail.com', 'Hello@12345', NULL, NULL, 'hr', 1);
+INSERT INTO `ADMINTABLE` (`AdminID`, `AdminCreatedRef`, `AdminFirstName`, `AdminLastName`, `AdminEmailID`, `AdminPassword`, `AdminImageLink`, `AdminPhone`, `AdminLongitude`, `AdminLattitude`, `AdminUserType`, `AdminAccountStatus`) VALUES
+(1, NULL, 'Adam', 'Parsons', 'info@therapyondemand.io', 'Admin@12345', NULL, NULL, NULL, NULL, 'admin', 1),
+(3, NULL, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', NULL, NULL, NULL, NULL, 'sales', 1),
+(4, NULL, 'Rahul', 'Sinha', 'rahul1@gmail.com', 'Hello@12345', NULL, NULL, NULL, NULL, 'hr', 2);
 
 -- --------------------------------------------------------
 
@@ -219,7 +221,7 @@ CREATE TABLE `TOKENTRACKER` (
 --
 
 INSERT INTO `TOKENTRACKER` (`TokenCode`, `IPAddress`, `TokenCreationDateTime`, `TotalTokenCreatedInADay`, `LastAPICallTime`, `CurrentAPICallTime`, `TotalAPICallInAMinute`, `BlockedStatus`) VALUES
-('75b5c66e31cc1c03d0595b75899bf673:9a74f6e724f25c3d2c050e8a4a4c609f16a5b91290e9e274505f21d4bd48e1aaa29a31e736b6bba05b672e040e13dc2d6a1f592369e30ca2bc626db70004c157', '::1', '2018-07-04 18:50:56', 0, '2018-07-05 08:19:04', '2018-07-05 08:19:58', 2, 0),
+('75b5c66e31cc1c03d0595b75899bf673:9a74f6e724f25c3d2c050e8a4a4c609f16a5b91290e9e274505f21d4bd48e1aaa29a31e736b6bba05b672e040e13dc2d6a1f592369e30ca2bc626db70004c157', '::1', '2018-07-04 18:50:56', 0, '2018-07-19 10:49:05', '2018-07-19 10:49:53', 4, 0),
 ('8a40758a6f99da51a1ff506b512d5905:42ebd8fb68a57723ed6fc2fd2a8275b059c97c1fe975a187cd908806af8adb8d48b4f2f3d142f95703ad1a3da2db66f2bf0fbd125d58e64af71b55c5520d7e4e6862e4fdd3d6f7432dbcf2356d78b4b0', '::ffff:127.0.0.1', '2018-06-19 20:44:54', 0, '2018-06-20 02:14:54', '2018-06-20 02:14:54', 0, 0);
 
 -- --------------------------------------------------------

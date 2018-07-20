@@ -110,6 +110,8 @@ export class HRAdminRoutes{
                     email:out[admin.email],
                     image:out[admin.image],
                     phone:out[admin.phone],
+                    lattitude:out[admin.lattitude],
+                    longitude:out[admin.longitude],
                 }, "Successfully fetched the profile details");
             }else{
                 WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Couldn't find the user informations.");
@@ -146,6 +148,10 @@ export class HRAdminRoutes{
                     lastName:out[admin.lastName],
                     email:out[admin.email],
                     role:out[admin.userRole],
+                    image:out[admin.image],
+                    phone:out[admin.phone],
+                    lattitude:out[admin.lattitude],
+                    longitude:out[admin.longitude],
                     status:out[admin.accountStatus],
                 }
                 WebUtility.sendSuccess(res, req, json, "Data Fetched successfully");

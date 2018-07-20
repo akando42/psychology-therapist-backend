@@ -36,6 +36,8 @@ get/profile
                     email:<>
                     image:<>
                     phone:<>
+                    lattitude:<>
+                    longitude:<>
                 }
                 message:"Successfully fetched the profile details"
             }
@@ -70,6 +72,8 @@ admin/decode/email
 			lastName:"LastName",
 			phone:"Phone",
 			image:<Base 64 encoded>,
+            lattitude:<>
+            longitude:<>
 			password:{
 				oldPassword:<>
 				newPassword:<>
@@ -221,6 +225,10 @@ admin/get_user
                     lastName:<>
                     email:<>
                     role:<hr/sales>
+                    image:<>
+                    phone:<>
+                    lattitude:<>
+                    longitude:<>
                     status:<0,1,2,3...>
                 }
                 message:"Data fetched successfully"

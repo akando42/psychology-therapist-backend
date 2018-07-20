@@ -7,6 +7,7 @@ import { DataModel } from "../datamodels/datamodel";
 import { SQLUtility } from "./sql-utility";
 import { SecurityFeatures } from "./security-features";
 import { MyApp } from "../app";
+import { ImageUtility } from "./image-utility";
 
 export class WebUtility{
     private database:MySqlDatabase;
@@ -261,6 +262,11 @@ export class WebUtility{
             return false;
         return true;
     }
+    public static validateFloat(n:string):boolean{
+        if(!n || parseFloat(n)==NaN)
+            return false;
+        return true;
+    }
     
     public static sendErrorMessage(res:express.Response, req:express.Request, code:number, description:string){
         RoutesHandler.respond(res, req, [], true, description, code);
@@ -341,6 +347,18 @@ export class WebUtility{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Last name");
             json[admin.lastName]=req.body.lastName
         }
+
+        if(req.body.lattitude){
+            if(!WebUtility.validateFloat(req.body.lattitude)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Lattitude input");
+            json[admin.lattitude]=req.body.lattitude
+        }
+        if(req.body.longitude){
+            if(!WebUtility.validateFloat(req.body.longitude)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Longitude input");
+            json[admin.longitude]=req.body.longitude
+        }
+
         if(req.body.phone){
             if(!WebUtility.validateStringFields(req.body.phone, 1, 10)
                 || !req.body.phone.match(/^[0-9]+$/)) 
