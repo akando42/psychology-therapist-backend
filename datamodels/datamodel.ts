@@ -154,7 +154,7 @@ export class DataModel{
         feedbackGiven:8
     }
 
-    public static userTypes={
+    public static userRoles={
         hr:"hr",
         sales:"sales",
         admin:"admin",

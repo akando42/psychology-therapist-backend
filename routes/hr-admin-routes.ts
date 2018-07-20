@@ -80,7 +80,7 @@ export class HRAdminRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again.");
             return undefined;
         }
-        if(!(sessionToken["role"]==DataModel.userTypes.admin || sessionToken["role"]==DataModel.userTypes.hr || sessionToken["role"]==DataModel.userTypes.sales) 
+        if(!(sessionToken["role"]==DataModel.userRoles.admin || sessionToken["role"]==DataModel.userRoles.hr || sessionToken["role"]==DataModel.userRoles.sales) 
             || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
@@ -174,7 +174,7 @@ export class HRAdminRoutes{
         let pageEnd=10;
 
         let sql = " FROM "+admin.table+" \
-                WHERE "+admin.userRole+"!='"+DataModel.userTypes.admin+"' \
+                WHERE "+admin.userRole+"!='"+DataModel.userRoles.admin+"' \
                 ";
 
         if(searchKey && searchKey.length>0){
@@ -347,7 +347,7 @@ export class HRAdminRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again.");
             return undefined;
         }
-        if(!(sessionToken["role"]==DataModel.userTypes.admin) || parseInt(sessionToken["adminId"])==NaN){
+        if(!(sessionToken["role"]==DataModel.userRoles.admin) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
         }
@@ -415,14 +415,14 @@ export class HRAdminRoutes{
         //let table=DataModel.tables.admin;
         let table=DataModel.tables.admin;
 
-        if(role!=DataModel.userTypes.admin)
+        if(role!=DataModel.userRoles.admin)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access permissions");
         
-        let userType:string;
-        if(actionType==DataModel.userTypes.sales){            
-            userType=DataModel.userTypes.sales
-        }else if(actionType==DataModel.userTypes.hr){
-            userType=DataModel.userTypes.hr
+        let userRole:string;
+        if(actionType==DataModel.userRoles.sales){            
+            userRole=DataModel.userRoles.sales
+        }else if(actionType==DataModel.userRoles.hr){
+            userRole=DataModel.userRoles.hr
         }else{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
         }
@@ -442,7 +442,7 @@ export class HRAdminRoutes{
             [table.firstName]:firstName,
             [table.lastName]:lastName,
             [table.email]:email,
-            [table.userRole]:userType,
+            [table.userRole]:userRole,
             [table.phone]:phone,
             [table.adminCreatedRefID]:adminId,
         };
@@ -504,11 +504,11 @@ export class HRAdminRoutes{
 
         function afterCheckingType(actionType:string){
             let table:any=DataModel.tables.admin;
-            if(actionType==DataModel.userTypes.sales){
-                if(role!=DataModel.userTypes.admin)
+            if(actionType==DataModel.userRoles.sales){
+                if(role!=DataModel.userRoles.admin)
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
                 table=DataModel.tables.admin;
-            }else if(actionType==DataModel.userTypes.hr){
+            }else if(actionType==DataModel.userRoles.hr){
                 table=DataModel.tables.admin;
             }else{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
@@ -558,11 +558,11 @@ export class HRAdminRoutes{
 
         function afterCheckingType(actionType:string){
             let table:any=DataModel.tables.admin;
-            if(actionType==DataModel.userTypes.sales){
-                if(role!=DataModel.userTypes.admin)
+            if(actionType==DataModel.userRoles.sales){
+                if(role!=DataModel.userRoles.admin)
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
                 table=DataModel.tables.admin;
-            }else if(actionType==DataModel.userTypes.hr){
+            }else if(actionType==DataModel.userRoles.hr){
                 table=DataModel.tables.admin;
             }else{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
@@ -615,13 +615,13 @@ export class HRAdminRoutes{
         function afterCheckingType(role:string){
             //TODO Check if the email ID exists
             let users:any=DataModel.tables.admin;
-            if(role==DataModel.userTypes.admin){
+            if(role==DataModel.userRoles.admin){
                 users=DataModel.tables.admin;
-            }else if(role==DataModel.userTypes.hr){
+            }else if(role==DataModel.userRoles.hr){
                 users=DataModel.tables.admin;
-            }else if(role==DataModel.userTypes.sales){
+            }else if(role==DataModel.userRoles.sales){
                 users=DataModel.tables.admin;
-            }else if(role==DataModel.userTypes.provider){
+            }else if(role==DataModel.userRoles.provider){
                 users=DataModel.tables.providers;
             }else{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "role specified was invalid")
@@ -709,15 +709,15 @@ export class HRAdminRoutes{
         // let users=DataModel.tables.users;
         function callbackAfterType(role:string){
             let table:any=DataModel.tables.admin;
-            if(role==DataModel.userTypes.admin){
+            if(role==DataModel.userRoles.admin){
                 table=DataModel.tables.admin;
-            }else if(role==DataModel.userTypes.hr){
+            }else if(role==DataModel.userRoles.hr){
                 table=DataModel.tables.admin;
-            }else if(role==DataModel.userTypes.sales){
+            }else if(role==DataModel.userRoles.sales){
                 table=DataModel.tables.admin;
-            }else if(role==DataModel.userTypes.provider){
+            }else if(role==DataModel.userRoles.provider){
                 table=DataModel.tables.providers;
-            }else if(role==DataModel.userTypes.user){
+            }else if(role==DataModel.userRoles.user){
                 table=DataModel.tables.users;
             }else{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "role specified was invalid")

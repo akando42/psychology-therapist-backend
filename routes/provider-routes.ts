@@ -325,7 +325,7 @@ export class ProviderRoutes{
         var email:string = req.body.email;
         var phone:string = ""+req.body.phone;
         var gender:number = parseInt(req.body.gender);
-        var resume:string = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.resume, phone, DataModel.userTypes.provider);;
+        var resume:string = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.resume, phone, DataModel.userRoles.provider);;
         var password:string = req.body.password;
         var lattitude = parseFloat(req.body.lattitude);
         var longitude = parseFloat(req.body.longitude);
@@ -446,7 +446,7 @@ export class ProviderRoutes{
                     date:date,
                     origin:req.get("origin"),
                     providersId : out[providers.id],
-                    role:DataModel.userTypes.provider
+                    role:DataModel.userRoles.provider
                 }
                 // console.log("MySTR : "+JSON.stringify(jsonStr));
                 // console.log("MySTR 2 : "+out[providers.id]);
@@ -481,7 +481,7 @@ export class ProviderRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
-        if(sessionToken["role"]!=DataModel.userTypes.provider){
+        if(sessionToken["role"]!=DataModel.userRoles.provider){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again");
             return undefined;
         }
@@ -571,7 +571,7 @@ export class ProviderRoutes{
         let queries=[];
         for(var i in docs){
             let doc=docs[i];
-            let imgLoc = ImageUtility.uploadImage(doc.docContent, DataModel.imageTypes.docs, providerId, DataModel.userTypes.provider);
+            let imgLoc = ImageUtility.uploadImage(doc.docContent, DataModel.imageTypes.docs, providerId, DataModel.userRoles.provider);
             let query={
                 query:"INSERT INTO "+providersDoc.table+"("+providersDoc.docTitle+", "+providersDoc.docContent+", "+providersDoc.providerID+") \
                         VALUES ('"+doc.docTitle+"', '"+imgLoc+"', "+providerId+")",
@@ -748,14 +748,14 @@ export class ProviderRoutes{
         }
         if(req.body.image){
             //this.decodeBase64Image(req.body.image)
-            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, providerId, DataModel.userTypes.provider);
+            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, providerId, DataModel.userRoles.provider);
             if(!imageLoc)
                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image format is invalid");
             json[providers.image]=imageLoc
         }
         if(req.body.resume){
             //this.decodeBase64Image(req.body.image)
-            let imageLoc = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.docs, providerId, DataModel.userTypes.provider);
+            let imageLoc = ImageUtility.uploadImage(req.body.resume, DataModel.imageTypes.docs, providerId, DataModel.userRoles.provider);
             if(!imageLoc)
                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image format is invalid");
             json[providers.resume]=imageLoc

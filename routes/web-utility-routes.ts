@@ -165,7 +165,7 @@ export class WebUtility{
 
             function iterate(index:number){
                 let table:any = DataModel.tables.admin;
-                let sql = "SELECT "+table.userType+" \
+                let sql = "SELECT "+table.userRole+" \
                         FROM "+table.table+" \
                         WHERE "+table.email+"=?";
                 if(index==0){
@@ -191,11 +191,11 @@ export class WebUtility{
                         if(index==0){
                             console.log(JSON.stringify(result));
                             
-                            resolve(result[0][table.userType]);
+                            resolve(result[0][table.userRole]);
                         }else if(index==1)
-                            resolve(DataModel.userTypes.provider);
+                            resolve(DataModel.userRoles.provider);
                         else if(index==2)
-                            resolve(DataModel.userTypes.user);
+                            resolve(DataModel.userRoles.user);
                     }else{
                         iterate(index+1);
                     }
@@ -349,7 +349,7 @@ export class WebUtility{
         }
         if(req.body.image){
             //this.decodeBase64Image(req.body.image)
-            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, adminId, DataModel.userTypes.admin);
+            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, adminId, DataModel.userRoles.admin);
             if(!imageLoc)
                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image format is invalid");
             json[admin.image]=imageLoc

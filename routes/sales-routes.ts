@@ -38,7 +38,7 @@ export class SaleRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please login again.");
             return undefined;
         }
-        if(!(sessionToken["role"]==DataModel.userTypes.sales) || parseInt(sessionToken["adminId"])==NaN){
+        if(!(sessionToken["role"]==DataModel.userRoles.sales) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access rights");
             return undefined;
         }
@@ -61,14 +61,14 @@ export class SaleRoutes{
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.session_token_error, "The session token is not valid. Please Login again");
             return undefined;
         }
-        if(!(sessionToken["role"]==DataModel.userTypes.sales+"_temp" || sessionToken["actualType"]==DataModel.userTypes.sales) || parseInt(sessionToken["adminId"])==NaN){
+        if(!(sessionToken["role"]==DataModel.userRoles.sales+"_temp" || sessionToken["actualType"]==DataModel.userRoles.sales) || parseInt(sessionToken["adminId"])==NaN){
             WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access permissions");
             return undefined;
         }
 
         //let id=["adminId"];
         const { adminId, role, actualType}=sessionToken;
-        if(actualType!=DataModel.userTypes.sales){
+        if(actualType!=DataModel.userRoles.sales){
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have valid access permissions");
         }
 
