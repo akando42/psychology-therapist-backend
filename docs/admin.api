@@ -211,7 +211,7 @@ admin/list_users
 admin/get_user
     post
         summary
-            To list the users with the given filters
+            To get profile info of a given profile
         request:
             accountToken:<>
             sessionToken:<>
