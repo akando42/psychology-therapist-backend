@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 21, 2018 at 03:03 AM
+-- Generation Time: Jul 21, 2018 at 11:56 AM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -41,6 +41,7 @@ CREATE TABLE `ADMINTABLE` (
   `AdminPhone` varchar(15) DEFAULT NULL,
   `AdminLongitude` float DEFAULT NULL,
   `AdminLattitude` float DEFAULT NULL,
+  `AdminAddress` text,
   `AdminUserType` varchar(10) DEFAULT NULL,
   `AdminAccountStatus` tinyint(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -49,10 +50,10 @@ CREATE TABLE `ADMINTABLE` (
 -- Dumping data for table `ADMINTABLE`
 --
 
-INSERT INTO `ADMINTABLE` (`AdminID`, `AdminCreatedRef`, `AdminFirstName`, `AdminLastName`, `AdminEmailID`, `AdminPassword`, `AdminImageLink`, `AdminPhone`, `AdminLongitude`, `AdminLattitude`, `AdminUserType`, `AdminAccountStatus`) VALUES
-(1, NULL, 'Adam', 'Parsons', 'info@therapyondemand.io', 'Admin@12345', NULL, NULL, NULL, NULL, 'admin', 1),
-(3, NULL, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', NULL, NULL, NULL, NULL, 'sales', 1),
-(4, NULL, 'Rahul', 'Sinha', 'rahul1@gmail.com', 'Hello@12345', NULL, NULL, NULL, NULL, 'hr', 2);
+INSERT INTO `ADMINTABLE` (`AdminID`, `AdminCreatedRef`, `AdminFirstName`, `AdminLastName`, `AdminEmailID`, `AdminPassword`, `AdminImageLink`, `AdminPhone`, `AdminLongitude`, `AdminLattitude`, `AdminAddress`, `AdminUserType`, `AdminAccountStatus`) VALUES
+(1, NULL, 'Adam', 'Parsons', 'info@therapyondemand.io', 'Admin@12345', NULL, NULL, NULL, NULL, NULL, 'admin', 1),
+(3, NULL, 'Rahul', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', NULL, NULL, NULL, NULL, NULL, 'sales', 1),
+(4, NULL, 'Rahul', 'Sinha', 'rahul1@gmail.com', 'Hello@12345', NULL, NULL, NULL, NULL, NULL, 'hr', 2);
 
 -- --------------------------------------------------------
 
