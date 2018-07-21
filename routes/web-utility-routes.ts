@@ -358,6 +358,11 @@ export class WebUtility{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Longitude input");
             json[admin.longitude]=req.body.longitude
         }
+        if(req.body.address){
+            if(!WebUtility.validateStringFields(req.body.address, 0, -1)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Address String");
+            json[admin.address]=req.body.address
+        }
 
         if(req.body.phone){
             if(!WebUtility.validateStringFields(req.body.phone, 1, 10)

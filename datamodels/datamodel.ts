@@ -121,6 +121,7 @@ export class DataModel{
             phone:"AdminPhone",
             longitude:"AdminLongitude",
             lattitude:"AdminLattitude",
+            address:"AdminAddress",
             userRole:"AdminUserType",  //String
             accountStatus:"AdminAccountStatus"
         },
