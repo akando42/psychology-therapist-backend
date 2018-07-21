@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Jul 21, 2018 at 11:56 AM
+-- Generation Time: Jul 21, 2018 at 12:07 PM
 -- Server version: 10.1.26-MariaDB-0+deb9u1
 -- PHP Version: 5.6.30-0+deb8u1
 
@@ -122,7 +122,7 @@ CREATE TABLE `PROVIDERNOTIFICATION` (
 
 CREATE TABLE `PROVIDERS` (
   `ProviderID` int(11) NOT NULL,
-  `HRID` int(11) DEFAULT NULL,
+  `AdminID` int(11) DEFAULT NULL,
   `ProviderFirstName` varchar(50) NOT NULL,
   `ProviderLastName` varchar(50) DEFAULT NULL,
   `ProviderEmailID` varchar(150) NOT NULL,
@@ -142,7 +142,7 @@ CREATE TABLE `PROVIDERS` (
 -- Dumping data for table `PROVIDERS`
 --
 
-INSERT INTO `PROVIDERS` (`ProviderID`, `HRID`, `ProviderFirstName`, `ProviderLastName`, `ProviderEmailID`, `ProviderPassword`, `ProviderPhone`, `ProviderGender`, `ProviderProfileImage`, `ProviderExperience`, `ProviderQualifications`, `ProviderLattitude`, `ProviderLongitude`, `ProviderResume`, `ProviderAccountStatus`) VALUES
+INSERT INTO `PROVIDERS` (`ProviderID`, `AdminID`, `ProviderFirstName`, `ProviderLastName`, `ProviderEmailID`, `ProviderPassword`, `ProviderPhone`, `ProviderGender`, `ProviderProfileImage`, `ProviderExperience`, `ProviderQualifications`, `ProviderLattitude`, `ProviderLongitude`, `ProviderResume`, `ProviderAccountStatus`) VALUES
 (6, 1, 'Rahul ', 'Sinha', 'rahul.sinha1908@gmail.com', 'Hello@12345', '9905264774', 0, '/profile-images/provider-1528283488600-6.jpeg', '2-3 years', 'Graduate', 13.0328, 77.5626, '', 1),
 (8, NULL, 'Rahul', 'Sinha', 'rsinha@tod.io', 'Hello@12345', '9352780025', 0, '/profile-images/provider-1528283621275-8.jpeg', 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283570006-9352780025.png', 11),
 (9, NULL, 'Rahul', 'Sinha', 'rsinha1@tod.io', 'Hello@12345', '9905264774', 0, NULL, 'less than 1 years', 'Under Graduate', 13.0275, 77.5567, '/resume/provider-1528283778628-9905264774.png', 11),
@@ -329,7 +329,7 @@ ALTER TABLE `PROVIDERNOTIFICATION`
 ALTER TABLE `PROVIDERS`
   ADD PRIMARY KEY (`ProviderID`),
   ADD UNIQUE KEY `EmailID` (`ProviderEmailID`),
-  ADD KEY `ProviderHRConstraint` (`HRID`);
+  ADD KEY `ProviderHRConstraint` (`AdminID`);
 
 --
 -- Indexes for table `SESSIONFEEDBACK`
@@ -448,7 +448,7 @@ ALTER TABLE `PROVIDERNOTIFICATION`
 -- Constraints for table `PROVIDERS`
 --
 ALTER TABLE `PROVIDERS`
-  ADD CONSTRAINT `ProviderHRConstraint` FOREIGN KEY (`HRID`) REFERENCES `HRTABLE` (`HRID`);
+  ADD CONSTRAINT `ProviderHRConstraint` FOREIGN KEY (`AdminID`) REFERENCES `ADMINTABLE` (`AdminID`);
 
 --
 -- Constraints for table `SESSIONFEEDBACK`
