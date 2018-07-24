@@ -34,12 +34,8 @@ export class HRAdminRoutes{
             me.addAccount(req, res);
         }, HTTPMethod.POST);
 
-        server.setRoute("/admin/block", (req:express.Request, res:express.Response)=>{
-            me.blockAccount(req, res);
-        }, HTTPMethod.POST);
-
-        server.setRoute("/admin/unblock", (req:express.Request, res:express.Response)=>{
-            me.unblockAccount(req, res);
+        server.setRoute("/admin/account_action", (req:express.Request, res:express.Response)=>{
+            me.accountAction(req, res);
         }, HTTPMethod.POST);
 
         
@@ -99,7 +95,7 @@ export class HRAdminRoutes{
         MyApp.database.query(admin.table, {
             [admin.id]:adminId,
             [admin.userRole]:role
-        }, []).then(result=>{
+        }, ["*"]).then(result=>{
             if(result.length==1){
                 let out=result[0];
                 return WebUtility.sendSuccess(res, req, {
@@ -220,7 +216,7 @@ export class HRAdminRoutes{
         function getActualData(pages:number){
             pages++;
 
-            let mysql="SELECT * "+sql+" LIMIT "+pageStart+", "+pageEnd;;
+            let mysql="SELECT * "+sql+" ORDER BY "+admin.id+" DESC LIMIT "+pageStart+", "+pageEnd;;
 
             MyApp.database.getQueryResults(mysql, []).then(result=>{
                 let users=[];
@@ -255,7 +251,111 @@ export class HRAdminRoutes{
             return;
         let admin=DataModel.tables.admin;
         
-        WebUtility.adminSetProfile(req, res, admin, adminId);
+        let json={};
+
+        let passwords = req.body.password;
+        if(req.body.password){
+            //TODO Write segment to update password.
+            if(!WebUtility.validateStringFields(passwords.oldPassword, 8, 50)
+                || !WebUtility.validateStringFields(passwords.newPassword, 8, 50)
+                || !(passwords.newPassword.match(/[A-Z]/) && passwords.newPassword.match(/[a-z]/) && passwords.newPassword.match(/[0-9]/) && passwords.newPassword.match(/[^A-Za-z0-9]/))) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Password should conatain atleast 1 caps, 1 small letter, 1 number and 1 alphanumeric ");
+
+            let sql = "SELECT "+admin.password+" \
+                    FROM "+admin.table+" \
+                    WHERE "+admin.id+"=?";
+            MyApp.database.getQueryResults(sql, [adminId]).then(result=>{
+                if(result.length==1){
+                    let out=result[0];
+                    let oPass=out[admin.password]
+                    if(oPass==passwords.oldPassword){
+                        afterPassVerification();
+                    }else{
+                        return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "The Old password doesnt match");
+                    }
+                }else{
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Something went wrong! We cant find your profile");
+                }
+            }, error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
+            })
+            return;
+        }
+        function afterPassVerification(){
+            json[admin.password]=passwords.newPassword;
+            MyApp.database.update(admin.table, json, {
+                [admin.id]:adminId,
+                [admin.password]:passwords.oldPassword
+            }).then(result=>{
+                if(result){
+                    return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
+                }else{
+                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Cannot find profile with that ID and password");
+                }
+            }, error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
+            }).catch(error=>{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
+            })
+        }
+
+        if(req.body.firstName){
+            if(!WebUtility.validateStringFields(req.body.firstName, 1, 50)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid First name");
+            json[admin.firstName]=req.body.firstName
+        }
+        if(req.body.lastName){
+            if(!WebUtility.validateStringFields(req.body.lastName, 1, 50)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Last name");
+            json[admin.lastName]=req.body.lastName
+        }
+
+        if(req.body.lattitude){
+            if(!WebUtility.validateFloat(req.body.lattitude)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Lattitude input");
+            json[admin.lattitude]=req.body.lattitude
+        }
+        if(req.body.longitude){
+            if(!WebUtility.validateFloat(req.body.longitude)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Longitude input");
+            json[admin.longitude]=req.body.longitude
+        }
+        if(req.body.address){
+            if(!WebUtility.validateStringFields(req.body.address, 0, -1)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Address String");
+            json[admin.address]=req.body.address
+        }
+        
+
+        if(req.body.phone){
+            if(!WebUtility.validateStringFields(req.body.phone, 1, 10)
+                || !req.body.phone.match(/^[0-9]+$/)) 
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid phone number");
+            json[admin.phone]=req.body.phone
+        }
+        if(req.body.image){
+            //this.decodeBase64Image(req.body.image)
+            let imageLoc = ImageUtility.uploadImage(req.body.image, DataModel.imageTypes.profileImage, adminId, DataModel.userRoles.admin);
+            if(!imageLoc)
+               return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Image format is invalid");
+            json[admin.image]=imageLoc
+        }
+
+        MyApp.database.update(admin.table, json, {
+            [admin.id]:adminId
+        }).then(result=>{
+            if(result){
+                return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
+            }else{
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Cannot find profile with that ID");
+            }
+        }, error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong.");
+        }).catch(error=>{
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Something went wrong on server.");
+        })
     }
 
     private adminLogin(req:express.Request, res:express.Response){
@@ -495,12 +595,17 @@ export class HRAdminRoutes{
         })
     }
 
-    private blockAccount(req:express.Request, res:express.Response){
+    private accountAction(req:express.Request, res:express.Response){
         const { adminId, role}=this.preProcessToken(req, res);
         if(!adminId)
             return;
 
         let email = req.body.email;
+        let action = req.body.action;
+        if(!(action==0 || action ==1 || action==2)){
+            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Action");
+        }
+
         WebUtility.getUserType(email).then(result=>{
             console.log("role fetched : "+result);
             afterCheckingType(result);
@@ -511,21 +616,14 @@ export class HRAdminRoutes{
         })
 
         function afterCheckingType(actionType:string){
-            let table:any=DataModel.tables.admin;
-            if(actionType==DataModel.userRoles.sales){
-                if(role!=DataModel.userRoles.admin)
-                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
-                table=DataModel.tables.admin;
-            }else if(actionType==DataModel.userRoles.hr){
-                table=DataModel.tables.admin;
-            }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
+            let table=DataModel.tables.admin;
+            if(actionType==DataModel.userRoles.admin){
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "You cant perform action on Admin Users");
             }
-
             
             //TODO Do the implementation to change the account status to the one for the blocked account
             MyApp.database.update(table.table, {
-                [table.accountStatus]:DataModel.accountStatus.blocked
+                [table.accountStatus]:action
             },{
                 [table.email]:email
             }).then(result=>{
@@ -550,59 +648,6 @@ export class HRAdminRoutes{
         }
     }
 
-    private unblockAccount(req:express.Request, res:express.Response){
-        const { adminId, role}=this.preProcessToken(req, res);
-        if(!adminId)
-            return;
-
-        let email = req.body.email;
-        WebUtility.getUserType(email).then(result=>{
-            afterCheckingType(result);
-        }, error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "We cannot find that email ID");
-        }).catch(error=>{
-            WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Oops! Something went wrong.");
-        })
-
-        function afterCheckingType(actionType:string){
-            let table:any=DataModel.tables.admin;
-            if(actionType==DataModel.userRoles.sales){
-                if(role!=DataModel.userRoles.admin)
-                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.accessError, "You dont have a valid access level");
-                table=DataModel.tables.admin;
-            }else if(actionType==DataModel.userRoles.hr){
-                table=DataModel.tables.admin;
-            }else{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The URL parameter is invalid");
-            }
-
-            
-            //TODO Do the implementation to change the account status to the one for the blocked account
-            MyApp.database.update(table.table, {
-                [table.accountStatus]:DataModel.accountStatus.accepted
-            },{
-                [table.email]:email
-            }).then(result=>{
-                if(result){
-                    let body="<p>Congratulation! Our Admin has unblocked you.</p>\
-                        <p>We are glad to have you back on the platform. Please start your service</p>";
-                    EmailActivity.instance.sendEmail(email, "Unblocked by Admin | Therapy On Demand", body, function(err, info){
-                        if(err)
-                            console.log("Error Sending Mail : "+err);
-                        else
-                            console.log("Mail Sent: "+info);
-                    })
-                    return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
-                }else{
-                    return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Woops! Nothing changed in our system");
-                }
-            }, error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
-            }).catch(error=>{
-                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.adminActionError, "Something went Wrong !! "+error);
-            })
-        }
-    }
 
     private resetWebPassword(req:express.Request, res:express.Response){
         if(!WebUtility.getParsedToken(req)){
