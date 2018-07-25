@@ -8,6 +8,7 @@ var helmet = require('helmet');
 var multer = require('multer');
 var fs = require('fs');
 var jimp = require("jimp");
+var https = require('https');
 
 
 export enum HTTPMethod
@@ -26,7 +27,7 @@ export class ExpressServer
     private router = express.Router();
 
 
-    public constructor(public config:{port:number,urls:string[],tmpfolder:string,filesfolder:string})
+    public constructor(public config:{port:number,urls:string[],tmpfolder:string,filesfolder:string, sslKey:string, sslCert:string})
     {
         this.server=express();
         this.server.use(compression());
@@ -42,10 +43,23 @@ export class ExpressServer
                 callback(null,false);
         }}));
         this.server.use(cookieParser());
-        this.server.listen(config.port,()=>
+
+        let isOnServer:boolean=false;
+        let options={}
+        if (fs.existsSync("localFile")) {
+            // Do something
+            console.log("Its on localhost - 1");
+        }else{
+            console.log("Its on Server -1");
+            options["key"] = fs.readFileSync(config.sslKey);
+            options["cert"] = fs.readFileSync(config.sslCert);
+        }
+
+        var server = https.createServer(options, this.server).listen(config.port,()=>
         {
             console.log("Server is running on port :",config.port);
         });
+        //this.server.
     }
     public isTmpImage(imageName:string):Promise<boolean>
     {

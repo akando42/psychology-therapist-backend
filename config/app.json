@@ -4,5 +4,7 @@
     "baseURL":"http://devapi.therapyondemand.io",
     "hostName":"http://devapi.therapyondemand.io",
     "frontEndUrl":"http://dev.therapyondemand.io",
-    "git_pass":"TOD12345"
+    "git_pass":"TOD12345",
+    "sslKey":"/etc/letsencrypt/live/devapi.therapyondemand.io/privkey.pem",
+    "sslCert":"/etc/letsencrypt/live/devapi.therapyondemand.io/fullchain.pem"
 }
