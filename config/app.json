@@ -1,10 +1,10 @@
 {
-    "urls":["127.0.0.1:3001", "http://localhost:4200", "http://localhost", "http://35.196.105.106", "http://35.231.43.230", "http://127.0.0.1", "https://rahul-sinha1908.github.io", "http://www.newearthva.com", "https://therapyondemand.io", "http://devapi.therapyondemand.io", "http://dev.therapyondemand.io"],
+    "urls":["127.0.0.1:3001", "http://localhost:4200", "http://localhost", "http://35.196.105.106", "http://35.231.43.230", "http://127.0.0.1", "https://rahul-sinha1908.github.io", "http://www.newearthva.com", "https://therapyondemand.io", "http://devapi.therapyondemand.io", "http://dev.therapyondemand.io","https://tond.andersenlab.com/"],
     "port":3001,
-    "baseURL":"http://devapi.therapyondemand.io",
-    "hostName":"http://devapi.therapyondemand.io",
-    "frontEndUrl":"http://dev.therapyondemand.io",
+    "baseURL":"https://devapi.therapyondemand.io",
+    "hostName":"https://devapi.therapyondemand.io",
+    "frontEndUrl":"https://tond.andersenlab.com/",
     "git_pass":"TOD12345",
-    "sslKey":"/etc/letsencrypt/live/devapi.therapyondemand.io/privkey.pem",
-    "sslCert":"/etc/letsencrypt/live/devapi.therapyondemand.io/fullchain.pem"
+    "sslKey":"~/key.pem",
+    "sslCert":"~/cert.pem"
 }
