@@ -5,6 +5,6 @@
     "hostName":"https://devapi.therapyondemand.io",
     "frontEndUrl":"https://tond.andersenlab.com/",
     "git_pass":"TOD12345",
-    "sslKey":"~/key.pem",
-    "sslCert":"~/cert.pem"
+    "sslKey":"/home/rsinha/key.pem",
+    "sslCert":"/home/rsinha/cert.pem"
 }
