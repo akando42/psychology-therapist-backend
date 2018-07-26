@@ -49,16 +49,20 @@ export class ExpressServer
         if (fs.existsSync("localFile")) {
             // Do something
             console.log("Its on localhost - 1");
+            this.server.listen(config.port,()=>
+            {
+                console.log("Server is running on port :",config.port);
+            });
         }else{
             console.log("Its on Server -1");
             options["key"] = fs.readFileSync(config.sslKey);
             options["cert"] = fs.readFileSync(config.sslCert);
+            var server = https.createServer(options, this.server).listen(config.port,()=>
+            {
+                console.log("Server is running on port :",config.port);
+            });
         }
 
-        var server = https.createServer(options, this.server).listen(config.port,()=>
-        {
-            console.log("Server is running on port :",config.port);
-        });
         //this.server.
     }
     public isTmpImage(imageName:string):Promise<boolean>
