@@ -58,7 +58,7 @@ export class CryptoFunctions
             decrypted = Buffer.concat([decrypted, decipher.final()]);    
             return decrypted.toString();
         } catch (error) {
-            return "error";
+            return undefined;
         }
         
     }

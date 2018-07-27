@@ -730,7 +730,7 @@ export class HRAdminRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID");
         
         let email=req.body.email;
-        let resetCode=req.body.resetCode;
+        let resetCode=req.body.code;
         let password=req.body.password;
 
         console.log("It reached 2");
@@ -740,7 +740,7 @@ export class HRAdminRoutes{
         console.log("It reached 3");
         let decryptedStr = CryptoFunctions.aes256Decrypt(resetCode, CryptoFunctions.get256BitKey([email, UserRoutes.randomPatternToVerify]))
         console.log(decryptedStr);
-        
+
         let json:{
                 email:string,
                 date:number
