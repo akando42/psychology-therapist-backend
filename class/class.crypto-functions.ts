@@ -48,15 +48,19 @@ export class CryptoFunctions
     }
     public static aes256Decrypt(text:any,key:string) 
     {
-        let textParts = text.split(':');
-        let iv = new Buffer(textParts.shift(), 'hex');
-        let encryptedText = new Buffer(textParts.join(':'), 'hex');
-        let decipher = crypto.createDecipheriv('aes-256-cbc', new Buffer(key), iv);
-        let decrypted = decipher.update(encryptedText);
-       
-        decrypted = Buffer.concat([decrypted, decipher.final()]);
-       
-        return decrypted.toString();
+        try {
+            let textParts = text.split(':');
+            let iv = new Buffer(textParts.shift(), 'hex');
+            let encryptedText = new Buffer(textParts.join(':'), 'hex');
+            let decipher = crypto.createDecipheriv('aes-256-cbc', new Buffer(key), iv);
+            let decrypted = decipher.update(encryptedText);
+            
+            decrypted = Buffer.concat([decrypted, decipher.final()]);    
+            return decrypted.toString();
+        } catch (error) {
+            return "error";
+        }
+        
     }
     public static get256BitKey(seeds:string[])
     {

@@ -558,7 +558,9 @@ export class HRAdminRoutes{
             //TODO Send the invitation Email to the user
             this.sendInvitationWithCode(req, res, table, email, firstName, lastName, actionType, result, callback);
         }, error=>{
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong.");
+            if(error=="ER_DUP_ENTRY")
+                return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "We already have a user/admin with that email ID.");
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong."+error);
         }).catch(error=>{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.hrError, "Oops! Something went wrong on our server.");
         })
@@ -718,6 +720,8 @@ export class HRAdminRoutes{
     }
 
     private setNewWebPassword(req:express.Request, res:express.Response){
+        console.log("It reached here though");
+        
         if(!WebUtility.getParsedToken(req)){
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The token is invalid")
         }
@@ -729,17 +733,27 @@ export class HRAdminRoutes{
         let resetCode=req.body.resetCode;
         let password=req.body.password;
 
-        if(!(password.match(/[A-Z]/) && password.match(/[a-z]/) && password.match(/[0-9]/) && password.match(/[^A-Za-z0-9]/)))
+        console.log("It reached 2");
+        if(!WebUtility.validatePassword(password))
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The password should contain 1 Caps, 1 Small, 1 number and 1 symbol");
 
+        console.log("It reached 3");
         let decryptedStr = CryptoFunctions.aes256Decrypt(resetCode, CryptoFunctions.get256BitKey([email, UserRoutes.randomPatternToVerify]))
+        console.log(decryptedStr);
+        
         let json:{
                 email:string,
                 date:number
-            } = JSON.parse(decryptedStr);
+            };
+        try {
+            json = JSON.parse(decryptedStr);
+        } catch (error) {
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The the reset code sent is invalid");
+        }
         if(!json)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The the reset code sent is invalid");
 
+        console.log("It reached 4");
         //Check the validity of link by checking the date
         let timeInMs = Date.now()-json.date;
         if(timeInMs<0 || timeInMs>24*60*60*60){
