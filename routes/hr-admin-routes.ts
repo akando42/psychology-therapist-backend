@@ -108,7 +108,7 @@ export class HRAdminRoutes{
                     phone:out[admin.phone],
                     lattitude:out[admin.lattitude],
                     longitude:out[admin.longitude],
-                    address:out[admin.address],
+                    location:out[admin.location],
                 }, "Successfully fetched the profile details");
             }else{
                 WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Oops! Couldn't find the user informations.");
@@ -149,7 +149,7 @@ export class HRAdminRoutes{
                     phone:out[admin.phone],
                     lattitude:out[admin.lattitude],
                     longitude:out[admin.longitude],
-                    address:out[admin.address],
+                    location:out[admin.location],
                     status:out[admin.accountStatus],
                 }
                 WebUtility.sendSuccess(res, req, json, "Data Fetched successfully");
@@ -322,10 +322,10 @@ export class HRAdminRoutes{
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Longitude input");
             json[admin.longitude]=req.body.longitude
         }
-        if(req.body.address){
-            if(!WebUtility.validateStringFields(req.body.address, 0, -1)) 
+        if(req.body.location){
+            if(!WebUtility.validateStringFields(req.body.location, 0, -1)) 
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Invalid Address String");
-            json[admin.address]=req.body.address
+            json[admin.location]=req.body.location
         }
         
 
