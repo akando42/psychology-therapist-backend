@@ -741,8 +741,8 @@ export class HRAdminRoutes{
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The token is invalid")
         }
 
-        if(!req.body.email || !req.body.resetCode || !req.body.password)
-            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input doesnt contains email ID");
+        if(!req.body.email || !req.body.code || !req.body.password)
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The input passed is invalid");
         
         let email=req.body.email;
         let resetCode=req.body.code;
