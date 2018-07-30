@@ -261,7 +261,7 @@ export class HRAdminRoutes{
                 || !(passwords.newPassword.match(/[A-Z]/) && passwords.newPassword.match(/[a-z]/) && passwords.newPassword.match(/[0-9]/) && passwords.newPassword.match(/[^A-Za-z0-9]/))) 
                 return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The Password should conatain atleast 1 caps, 1 small letter, 1 number and 1 alphanumeric ");
 
-            let sql = "SELECT "+admin.password+" \
+            let sql = "SELECT "+admin.email+","+admin.password+" \
                     FROM "+admin.table+" \
                     WHERE "+admin.id+"=?";
             MyApp.database.getQueryResults(sql, [adminId]).then(result=>{
@@ -269,7 +269,7 @@ export class HRAdminRoutes{
                     let out=result[0];
                     let oPass=out[admin.password]
                     if(oPass==passwords.oldPassword){
-                        afterPassVerification();
+                        afterPassVerification(out[admin.email]);
                     }else{
                         return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "The Old password doesnt match");
                     }
@@ -283,13 +283,23 @@ export class HRAdminRoutes{
             })
             return;
         }
-        function afterPassVerification(){
+        function afterPassVerification(email:string){
             json[admin.password]=passwords.newPassword;
             MyApp.database.update(admin.table, json, {
                 [admin.id]:adminId,
                 [admin.password]:passwords.oldPassword
             }).then(result=>{
                 if(result){
+                    let body="<h3>Hi<h3>\
+                        <p>Cheers! We have successfully resetted your password.</p>\
+                        <p>If you have not done this please contact/report to support at info@therapyondemand.io</p>\
+                        <p>Thanks for working with us</p>";
+                    EmailActivity.instance.sendEmail(email, "We are resetted your password", body, function(error, info){
+                        if(error)
+                            console.log("Error: "+error);
+                        else
+                            console.log("Success: "+info);
+                    })
                     return WebUtility.sendSuccess(res, req, [], "Successfully updated the details");
                 }else{
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.profileError, "Cannot find profile with that ID and password");
@@ -800,6 +810,16 @@ export class HRAdminRoutes{
                 [table.email]:email
             }).then(result=>{
                 if(result){
+                    let body="<h3>Hi<h3>\
+                        <p>Cheers! We have successfully resetted your password.</p>\
+                        <p>If you have not done this please contact/report to support at info@therapyondemand.io</p>\
+                        <p>Thanks for working with us</p>";
+                    EmailActivity.instance.sendEmail(email, "We are resetted your password", body, function(error, info){
+                        if(error)
+                            console.log("Error: "+error);
+                        else
+                            console.log("Success: "+info);
+                    })
                     return WebUtility.sendSuccess(res, req, [], "Your password has been successfully reset!!");
                 }else{
                     return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.passwordResetError, "The email ID is not registered with us");
