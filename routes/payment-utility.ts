@@ -153,11 +153,16 @@ export class StripePayments{
                 console.log("Success! "+JSON.stringify(req.body));
                 me.postCode(req.body, "/user/payments/complete", function(result){
                     console.log(JSON.stringify(result));
-                    let body = JSON.parse(result);
+                    let body;
+                    try{
+                        body = JSON.parse(result);
+                    }catch(error){
+                        return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "Payment Error. Faulty json Recieved");
+                    }
                     if(body.error==false){
-                        UsersUtility.sendSuccess(res, [],"Successfull");
+                        return UsersUtility.sendSuccess(res, [],"Successfull");
                     }else{
-                        UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "Payment Error");
+                        return UsersUtility.sendErrorMessage(res, DataModel.userResponse.paymentError, "Payment Error");
                     }
                 })
             }

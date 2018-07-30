@@ -35,7 +35,13 @@ export class WebUtility{
             console.log("02");
             try {
                 var tokenVal:string = CryptoFunctions.aes256Decrypt(req.body.accountToken, tokenKey);
-                var parsedVal = JSON.parse(tokenVal);
+                var parsedVal;
+                try {
+                    parsedVal = JSON.parse(tokenVal);
+                } catch (error) {
+                    parsedVal=undefined;
+                }
+                
                 if(parsedVal){
                     //if(parsedVal.ip!=ip || !parsedVal.date || parsedVal.origin!=req.get("origin"))
                     if(!WebUtility.validateParsedToken(parsedVal, req))
@@ -75,7 +81,12 @@ export class WebUtility{
             //UtilityRoutes.sendErrorMessage(res, req, 403, "The accountToken is not valid");
             return undefined;
         }
-        var parsedVal = JSON.parse(tokenVal);
+        try {
+            var parsedVal = JSON.parse(tokenVal);    
+        } catch (error) {
+            return undefined;
+        }
+        
         if(parsedVal){
             console.log("Parsed Val : "+JSON.stringify(parsedVal));
             if(WebUtility.validateParsedToken(parsedVal, req, aliveTimeInMinutes)){

@@ -223,8 +223,12 @@ export class ProviderRoutes{
 
         let decryptedSession = CryptoFunctions.aes256Decrypt(req.query.sessionCode, CryptoFunctions.get256BitKey([req.query.email, UserRoutes.randomPatternToVerify]))
 
-        let sessionCode = JSON.parse(decryptedSession);
-
+        let sessionCode;
+        try {
+            sessionCode = JSON.parse(decryptedSession);    
+        } catch (error) {
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The session code cant be parsed")
+        }        
         if(!sessionCode)
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "The session code cant be parsed")
 

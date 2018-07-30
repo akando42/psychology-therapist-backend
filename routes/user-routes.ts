@@ -340,7 +340,13 @@ export class UserRoutes{
         }
         let actVal = CryptoFunctions.aes256Decrypt(keyVal, encKey);
         console.log("actual Value : "+actVal);
-        let json:{email:string, fname:string, lname:string} = JSON.parse(actVal)
+        let json:{email:string, fname:string, lname:string};
+        
+        try {
+            json = JSON.parse(actVal)    
+        } catch (error) {
+            return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "Sorry Couldn't verify your email");
+        }
         if(!json || !json.email || !json.fname || !json.lname)
             return UsersUtility.sendErrorMessage(res, DataModel.userResponse.registerError, "Sorry Couldn't verify your email");
         

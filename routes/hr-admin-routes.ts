@@ -484,7 +484,12 @@ export class HRAdminRoutes{
             lastName:string,
             role:string,
             id:Number
-        }=JSON.parse(myString);
+        };
+        try {
+            json=JSON.parse(myString);    
+        } catch (error) {
+            return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Opps! Something went wrong. Please check email verification code");
+        }
 
         if(!json){
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.inputError, "Opps! Something went wrong. Please check email verification code");

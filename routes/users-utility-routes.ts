@@ -72,7 +72,13 @@ export class UsersUtility {
         } catch (error) {
             return undefined;
         }
-        var parsedVal = JSON.parse(tokenVal);
+        var parsedVal;
+        try {
+            parsedVal = JSON.parse(tokenVal);    
+        } catch (error) {
+            return undefined;
+        }
+        
         if(parsedVal){
             console.log("Parsed Val : "+JSON.stringify(parsedVal));
             if(!parsedVal.id)
@@ -93,7 +99,13 @@ export class UsersUtility {
         } catch (error) {
             return undefined;
         }
-        var parsedVal = JSON.parse(tokenVal);
+        var parsedVal;
+        try {
+            parsedVal = JSON.parse(tokenVal);
+        } catch (error) {
+            return undefined;
+        }
+        
         if(parsedVal){
             console.log("Parsed Val : "+JSON.stringify(parsedVal));
             if(UsersUtility.validateParsedToken(parsedVal, req, aliveTime)){
