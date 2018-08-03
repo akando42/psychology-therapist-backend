@@ -8,7 +8,7 @@ var helmet = require('helmet');
 var multer = require('multer');
 var fs = require('fs');
 var jimp = require("jimp");
-var https = require('https');
+var http = require('http');
 
 
 export enum HTTPMethod
@@ -55,9 +55,9 @@ export class ExpressServer
             });
         }else{
             console.log("Its on Server -1");
-            options["key"] = fs.readFileSync(config.sslKey);
-            options["cert"] = fs.readFileSync(config.sslCert);
-            var server = https.createServer(options, this.server).listen(config.port,()=>
+            // options["key"] = fs.readFileSync(config.sslKey);
+            // options["cert"] = fs.readFileSync(config.sslCert);
+            var server = http.createServer( this.server).listen(config.port,()=>
             {
                 console.log("Server is running on port :",config.port);
             });
