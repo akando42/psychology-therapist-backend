@@ -40,7 +40,9 @@
     "@types/cors": "^2.8.3",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
-    "jimp": "^0.2.28"
+    "jimp": "^0.2.28",
+    "jsonwebtoken": "^8.3.0",
+    "bcrypt": "^1.0.3"
   },
   "dependencies": {
     "mailgun-js": "^0.18.0",

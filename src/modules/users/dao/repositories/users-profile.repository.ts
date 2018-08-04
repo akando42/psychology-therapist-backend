@@ -1,5 +1,5 @@
 import { UserProfileConverterInstance } from "../../converters/my-sql/users-profile.converter";
-import { IUserProfile } from "../../../../models/User-profile";
+import { IUserProfile } from "../../../../models/user-profile";
 import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
 import { DataModel } from "../../../../../datamodels/datamodel";
 import { GetByIdQuery } from "../queries/mysql/get-by-id";

@@ -1,3 +1,4 @@
+import { GenderEnum } from "../../../../../../enums/gender.enum";
 
 
 export interface IUserProfileMySql {
@@ -8,11 +9,12 @@ export interface IUserProfileMySql {
     UserLastName?: string;
     UserEmailID?: string;
     UserPassword?: string;
-    UserImageLink?: string;
+    UserProfileImage?: string;
     UserPhone?: string;
     UserLongitude?: string;
     UserLattitude?: string;
     UserAddress?: string;
     UserUserType?: string;
     UserAccountStatus?: string;
+    UserGender?: GenderEnum
 }

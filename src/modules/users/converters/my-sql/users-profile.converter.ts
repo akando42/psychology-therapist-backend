@@ -1,32 +1,29 @@
 
 import { IDualConverter } from "../../../../behavior/converters/converter.interface";
-import { IUserProfile } from '../../../../models/User-profile'
+import { IUserProfile } from '../../../../models/user-profile'
 import { IUserProfileMySql } from "../../dao/my-sql/models/my-sql/User-my-sql.model";
 
 export class UserProfileConverter implements IDualConverter<IUserProfile, IUserProfileMySql> {
     converDomainToDBModel(raw: IUserProfile): IUserProfileMySql {
         return {
+            UserID: raw.id,
             UserFirstName: raw.firstName,
             UserLastName: raw.lastName,
-            UserAddress: raw.address.adressString,
-            UserLattitude: raw.address.latitud,
-            UserLongitude: raw.address.longitud,
-            UserImageLink: raw.profileImage,
-            UserPhone: raw.phone
+            UserProfileImage: raw.profileImage,
+            UserPhone: raw.phone,
+            UserEmailID: raw.email,
+            UserGender: raw.gender
         }
     }
     convertDBModelToDomain(raw: IUserProfileMySql): IUserProfile {
         return {
-            address: {
-                longitud: raw.UserLongitude,
-                latitud: raw.UserLattitude,
-                adressString: raw.UserAddress
-            },
+            id: raw.UserID,
+            email: raw.UserEmailID,
             firstName: raw.UserFirstName,
             lastName: raw.UserLastName,
-            profileImage: raw.UserImageLink,
-            gender: undefined,
-            phone: raw.UserPhone
+            profileImage: raw.UserProfileImage,
+            phone: raw.UserPhone,
+            gender: raw.UserGender
         }
     }
     converManyDomainToDBModel(raw: IUserProfile[]): IUserProfileMySql[] {

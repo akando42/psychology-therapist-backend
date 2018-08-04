@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 import { UsersProfileControllerInstance } from "./users-profile.controller";
 import { IWriteReadController } from "../../../../behavior/controllers/write-read-controller.interface";
-import { IUserProfile } from "../../../../models/User-profile";
+import { IUserProfile } from "../../../../models/user-profile";
 
 export class UsersProfileRouter {
 
@@ -14,6 +14,7 @@ export class UsersProfileRouter {
     init(): Router {
         const router: Router = Router();
 
+        router.get(`/users/${this.resourcePath}`, this.getAll.bind(this));
         //Get Resource
         router.get(`/Users/:Users_id/${this.resourcePath}`, this.getById.bind(this));
         //Delete Resource

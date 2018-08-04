@@ -1,6 +1,8 @@
 import { IUserProfileMySql } from "./models/my-sql/User-my-sql.model";
 
 import { MySqlDatabase } from "../../../../../class/class.mysql-database";
+import { GetAll } from "../queries/mysql/get-all";
+import { DataModel } from "../../../../../datamodels/datamodel";
 
 export class UserProfileMySqlDAO {
 
@@ -40,8 +42,15 @@ export class UserProfileMySqlDAO {
             });
         })
     }
-    getAllBy(query: any): Promise<IUserProfileMySql[]> {
+    find(query: any): Promise<IUserProfileMySql[]> {
         return new Promise(async (resolve, reject) => {
+            console.log(query)
+            query = new GetAll(DataModel.tables.users.table).toDQuery()
+            MySqlDatabase.tempPool.query(query, (err, result) => {
+                if (err) { reject(err['code']) }
+                console.log(result)
+                resolve(result);
+            });
 
         })
     }

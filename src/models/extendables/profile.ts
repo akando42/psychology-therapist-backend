@@ -5,10 +5,11 @@ import { GenderEnum } from "../../enums/gender.enum";
  * It represent a user Profile.
  */
 export interface IProfile {
+    id?: string;
     firstName?: string;
     lastName?: string;
     profileImage?: string;
     gender?: GenderEnum;
-    address: IAddress;
     phone?: string;
+    email?: string;
 }
