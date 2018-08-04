@@ -45,7 +45,7 @@ export class UserRoutes {
         }, HTTPMethod.POST);
 
         //User Profile
-        server.server.use('/v2', TokenValidationMiddleware, roleValidationMiddleware(['self', 'admin']), UsersProfileRouterInstance.init());
+        server.server.use('/v2', roleValidationMiddleware(['self', 'admin']), UsersProfileRouterInstance.init());
 
         server.setRoute("/user/reset/password", (req: express.Request, res: express.Response) => {
             me.resetPassword(req, res);

@@ -38,14 +38,14 @@ export class UserProfileMySqlDAO {
             MySqlDatabase.tempPool.query(query, (err, result) => {
                 if (err) { reject(err['code']) }
 
-                resolve(result);
+                resolve(result[0]);
             });
         })
     }
     find(query: any): Promise<IUserProfileMySql[]> {
         return new Promise(async (resolve, reject) => {
             console.log(query)
-            query = new GetAll(DataModel.tables.users.table).toDQuery()
+            query = new GetAll().toDQuery()
             MySqlDatabase.tempPool.query(query, (err, result) => {
                 if (err) { reject(err['code']) }
                 console.log(result)

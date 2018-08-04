@@ -1,11 +1,12 @@
+import { DataModel } from "../../../../../../datamodels/datamodel";
 
 
 export class GetAll {
-    constructor(public table: string) {
+    constructor() {
 
     }
 
     toDQuery(): any {
-        return `SELECT * FROM ${this.table} `;
+        return `SELECT * FROM ${DataModel.tables.users.table} `;
     }
 }

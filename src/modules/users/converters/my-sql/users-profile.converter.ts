@@ -5,6 +5,7 @@ import { IUserProfileMySql } from "../../dao/my-sql/models/my-sql/User-my-sql.mo
 
 export class UserProfileConverter implements IDualConverter<IUserProfile, IUserProfileMySql> {
     converDomainToDBModel(raw: IUserProfile): IUserProfileMySql {
+        if(!raw){return null}
         return {
             UserID: raw.id,
             UserFirstName: raw.firstName,
@@ -16,6 +17,7 @@ export class UserProfileConverter implements IDualConverter<IUserProfile, IUserP
         }
     }
     convertDBModelToDomain(raw: IUserProfileMySql): IUserProfile {
+        if(!raw){return null}
         return {
             id: raw.UserID,
             email: raw.UserEmailID,

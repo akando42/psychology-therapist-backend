@@ -1,3 +1,4 @@
+import { DataModel } from "../../../../../../datamodels/datamodel";
 
 
 export class GetByIdQuery {
@@ -6,6 +7,6 @@ export class GetByIdQuery {
     }
 
     toDQuery(): any {
-        return `SELECT * FROM ${this.table} WHERE ID = ${this.id}`;
+        return `SELECT * FROM ${this.table} WHERE ${DataModel.tables.users.id} = ${this.id}`;
     }
 }

@@ -11,6 +11,8 @@ import { EmailActivity } from "./email-activity";
 import { UserRoutes } from "./user-routes";
 import { MyApp } from "../app";
 import { ImageUtility } from "./image-utility";
+import { roleValidationMiddleware } from '../src/middlewares/role-validation.middleware';
+import { AdminProfileRouterInstance } from '../src/modules/admin/sub-modules/profiles/admin-profile.router';
 
 
 export class HRAdminRoutes {
@@ -37,6 +39,8 @@ export class HRAdminRoutes {
         server.setRoute("/admin/account_action", (req: express.Request, res: express.Response) => {
             me.accountAction(req, res);
         }, HTTPMethod.POST);
+
+        server.server.use('/v2', roleValidationMiddleware(['self', 'admin']), AdminProfileRouterInstance.init());
 
 
         //-------Password reset functions

@@ -38,7 +38,7 @@ export class AdminProfileMySqlDAO {
             MySqlDatabase.tempPool.query(query, (err, result) => {
                 if (err) { reject(err['code']) }
 
-                resolve(result);
+                resolve(result[0]);
             });
         })
     }

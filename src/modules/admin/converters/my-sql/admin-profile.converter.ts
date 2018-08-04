@@ -5,6 +5,7 @@ import { IAdminProfileMySql } from "../../dao/my-sql/models/my-sql/admin-my-sql.
 
 export class AdminProfileConverter implements IDualConverter<IAdminProfile, IAdminProfileMySql> {
     converDomainToDBModel(raw: IAdminProfile): IAdminProfileMySql {
+        if(!raw){return null}
         return {
             AdminFirstName: raw.firstName,
             AdminLastName: raw.lastName,
@@ -12,6 +13,7 @@ export class AdminProfileConverter implements IDualConverter<IAdminProfile, IAdm
         }
     }
     convertDBModelToDomain(raw: IAdminProfileMySql): IAdminProfile {
+        if(!raw){return null}
         return {
             firstName: raw.AdminFirstName,
             lastName: raw.AdminLastName,

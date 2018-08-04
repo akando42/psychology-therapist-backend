@@ -51,7 +51,7 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
         return new Promise<K>((resolve, reject) => {
             this._db.findOne(query)
                 .then((result: any) => {
-                    console.log(result)
+                    console.log('repository::',result)
                     const output: K = this._converter ?
                         this._converter.convertDBModelToDomain(result) : result;
 
