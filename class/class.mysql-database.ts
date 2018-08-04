@@ -17,7 +17,7 @@ export class MySqlDatabase {
             port: port
         });
 
-        MySqlDatabase.tempPool = this.pool
+        MySqlDatabase.tempPool = this.pool;
     }
     private processObject(element: any, connection: mysql.IConnection, uppercase: boolean = true): { columns: string[], values: string[] } {
         let result: { columns: string[], values: string[] } = { columns: [], values: [] };

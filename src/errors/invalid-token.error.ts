@@ -1,5 +1,5 @@
-import { HttpResponseCodes } from "@core/enums/http-response-codes.enum";
 import { IError } from "./error.interface";
+import { HttpResponseCodes } from "../enums/http-response-codes.enum";
 
 
 

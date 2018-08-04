@@ -6,13 +6,7 @@
     "lib": [
       "es2015"
     ],
-    "strict": true /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
-    // "baseUrl": "./src", /* Base directory to resolve non-absolute module names. */
-    // "paths": {
-    //   "@core/enums/*": ["enums/*"],
-    //   "@core/models/*": ["models/*"],
-    //   "@core/modules/*": ["modules/*"],
-    //   "@core/behaviors/*": ["behavior/*"]
-    // }
+    "strict": true, /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */
+
   }
 }

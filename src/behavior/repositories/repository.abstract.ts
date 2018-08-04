@@ -1,17 +1,11 @@
-import { IConverter } from "@core/behaviors/converters/converter.interface";
-import { IWriteReadRepository } from "@core/behaviors/repositories/write-read-repository.interface";
+import { IConverter } from "../converters/converter.interface";
+import { IWriteReadRepository } from "./write-read-repository.interface";
 
 
 export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
 
     constructor(private _db: any, private _converter?: IConverter) {
-        if (this._converter) {
 
-            let injected: any = <() => void><any>this['_converter'];
-            let instance = new injected();
-            this._converter = instance;
-
-        }
     }
 
 
@@ -63,7 +57,10 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
 
                     resolve(output)
                 })
-                .catch(reject);
+                .catch((err:any) => {
+                    console.log(err)
+                    reject(err)
+                });
         });
     }
 

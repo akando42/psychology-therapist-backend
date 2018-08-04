@@ -1,4 +1,4 @@
-import { IAdminProfile } from "@core/models/admin-profile";
+import { IAdminProfile } from "./admin-profile";
 
 
 export interface IAdmin {

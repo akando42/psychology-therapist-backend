@@ -1,6 +1,6 @@
-import { IRead } from "@core/behaviors/read.interface";
-import { IWrite } from "@core/behaviors/write.interface";
-import { IWriteReadRepository } from "@core/behaviors/repositories/write-read-repository.interface";
+import { IRead } from "../read.interface";
+import { IWrite } from "../write.interface";
+import { IWriteReadRepository } from "../repositories/write-read-repository.interface";
 
 
 export abstract class WriterReaderService<T> implements IRead<T>, IWrite<T> {

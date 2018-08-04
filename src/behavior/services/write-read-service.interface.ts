@@ -1,6 +1,5 @@
-import { IService } from "@core/behaviors/services/service.interface";
-import { IRead } from "@core/behaviors/read.interface";
-import { IWrite } from "@core/behaviors/write.interface";
-
+import { IService } from "./service.interface";
+import { IRead } from "../read.interface";
+import { IWrite } from "../write.interface";
 
 export interface IWriteReadService<T> extends IService<T>, IRead<T>, IWrite<T> { }

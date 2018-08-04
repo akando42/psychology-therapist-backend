@@ -1,5 +1,5 @@
-import { IWriteReadController } from "@core/behaviors/controllers/write-read-controller.interface";
-import { IWriteReadService } from "@core/behaviors/services/write-read-service.interface";
+import { IWriteReadService } from "../services/write-read-service.interface";
+import { IWriteReadController } from "./write-read-controller.interface";
 
 
 export abstract class WriteReadController<T> implements IWriteReadController<T>{

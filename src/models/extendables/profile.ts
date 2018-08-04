@@ -1,5 +1,5 @@
-import { GenderEnum } from "@core/enums/gender.enum";
-import { IAddress } from '@core/models/extendables/location';
+import { IAddress } from "./location";
+import { GenderEnum } from "../../enums/gender.enum";
 
 /**
  * It represent a user Profile.
@@ -9,5 +9,6 @@ export interface IProfile {
     lastName?: string;
     profileImage?: string;
     gender?: GenderEnum;
-    address: IAddress
+    address: IAddress;
+    phone?: string;
 }

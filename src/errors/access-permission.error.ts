@@ -1,5 +1,5 @@
 import { IError } from "./error.interface";
-import { HttpResponseCodes } from "@core/enums/http-response-codes.enum";
+import { HttpResponseCodes } from "../enums/http-response-codes.enum";
 
 
 export class AccessPermissionError implements IError {

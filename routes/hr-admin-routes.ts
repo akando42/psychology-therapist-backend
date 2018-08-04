@@ -11,7 +11,8 @@ import { EmailActivity } from "./email-activity";
 import { UserRoutes } from "./user-routes";
 import { MyApp } from "../app";
 import { ImageUtility } from "./image-utility";
-import { AdminProfileRouterInstance } from '@core/modules/admin/sub-modules/profiles/admin-profile.router';
+import { AdminProfileRouterInstance } from '../src/modules/admin/sub-modules/profiles/admin-profile.router';
+import { adminGuardMiddleware } from '../src/middlewares/admin-guard.middleware';
 
 
 export class HRAdminRoutes {
@@ -63,7 +64,7 @@ export class HRAdminRoutes {
             me.getUser(req, res);
         }, HTTPMethod.POST);
 
-        server.server.use('/admin', AdminProfileRouterInstance.init())
+        server.server.use(AdminProfileRouterInstance.init())
 
     }
 
