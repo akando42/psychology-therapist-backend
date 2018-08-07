@@ -2,6 +2,9 @@ import * as bc from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { IAccount } from '../../models/account';
 import { AccountsServiceInstance } from './sub-modules/accounts/accounts.service';
+import { INewAccountDTO } from '../../dto/new-account.dto';
+import { IUser } from '../../models/user';
+import { UsersServiceInstance } from '../users/users.service';
 
 /**
  * Main module for authenticatiom, other modules for diferent user rol
@@ -12,58 +15,66 @@ export class AuthenticationService {
     constructor() {
     }
 
-    registerUser(account: IAccount): Promise<any> {
+    registerUser(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
-                const exist: IAccount = await AccountsServiceInstance.getByEmail(account.email);
+                const exist: IAccount = await AccountsServiceInstance.getByEmail(newAccount.email);
                 //handle better
-                if (account) {
-                    resolve({ success: false, message: 'Email its already been used' });
+                if (exist) {
+                    resolve({ success: false, message: 'Email its already been used', used: true });
+                }
+                //create user
+                let user: IUser = await UsersServiceInstance.create(newAccount.userInfo);
+
+                const hashPassword = await bc.hash(newAccount.password, 10);
+                let account: IAccount = {
+                    email: newAccount.email,
+                    userId: user.id,
+                    // accountStatus:
+                    //change password of user for encrypted one (we dont save the password plain value ).
+                    password: hashPassword,
+                    signUpDate: Math.floor(Date.now() / 1000)
                 }
 
-                const hashPassword = await bc.hash(account.password, 10)
-                //change password of user for encrypted one (we dont save the password plain value ).
-                account.password = hashPassword;
-                account.signUpDate = Math.floor(Date.now() / 1000);;
+                const saved: any = await AccountsServiceInstance.create(account);
 
-                return resolve(await AccountsServiceInstance.create(account));
                 //success resolve.
-                resolve({ succes: true, message: 'Account registed' });
+                resolve({ success: true, message: 'Account registed', used: false });
             } catch (e) {
-                //should handle errors
-                let err = {
-                    nativeMessage: e['message'],
-                    error: true
-                };
-                reject(err)
+
+                reject(e)
 
             }
         })
     }
 
-    async authenticate(credentials: { password: string, email: string }): Promise<any> {
+    async authenticate(credentials: { password: string, email: string }):
+        Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
 
                 const account: IAccount = await AccountsServiceInstance.getByEmail(credentials.email);
                 if (!account) {
 
-                    reject({ auth: false, message: 'invalid credentials' });
+                    return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
                 }
 
                 const itsMatch: boolean = await bc.compare(credentials.password, account.password);
 
                 if (!itsMatch) {
-                    reject({ auth: false, message: 'invalid credentials' });
+                    return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
                 }
+                //sanatize
+                account.password = undefined;
 
-                const token = jwt.sign({ userId: account.accountId }, process.env.SECRET_KEY, { expiresIn: 60000 });
+                const token = jwt.sign(
+                    { accountId: account.accountId },
+                    process.env.SECRET_KEY, { expiresIn: 60000 });
 
-                resolve({ auth: true, token: token });
+                resolve({ auth: true, token: token, userAccount: account, message: 'succesfully authenticated' });
 
 
             } catch (error) {
-                console.log(error['message'])
                 reject(error);
             }
         });

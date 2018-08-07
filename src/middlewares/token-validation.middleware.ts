@@ -2,6 +2,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import * as jwt from 'jsonwebtoken';
+import { InvalidTokenError } from "../errors/invalid-token.error";
 
 export function TokenValidationMiddleware(req: Request, res: Response | any, next: NextFunction): void {
     if (req.headers['auth-token'] != 'undefined' && req.headers['auth-token']) {
@@ -9,10 +10,10 @@ export function TokenValidationMiddleware(req: Request, res: Response | any, nex
 
         jwt.verify(token, process.env.SECRET_KEY, (err: any, decoded: any) => {
             if (err) {
-                return res.status(500).send({ auth: false, message: 'token authentication failed!' });
+                return res.status(500)
+                    .send(new InvalidTokenError());
             }
-
-            req['userId'] = decoded['userId'];
+            req['accountId'] = decoded['accountId'];
             next();
         });
 

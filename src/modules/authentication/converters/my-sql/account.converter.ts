@@ -9,29 +9,21 @@ export class AccountConverter implements IDualConverter<IAccount, IAccountMySql>
         return {
             accountStatus: raw.accountStatus,
             email: raw.email,
-            firstName: raw.basicInfo.firstName,
-            lastName: raw.basicInfo.lastName,
-            gender: raw.basicInfo.gender,
-            userRol: raw.userRol,
             password: raw.password,
             accountId: raw.accountId,
-            signUpDate: raw.signUpDate
+            signUpDate: raw.signUpDate,
+            userId: raw.userId
         }
     }
     convertDBModelToDomain(raw: IAccountMySql): IAccount {
         if (!raw) { return null }
         return {
             accountStatus: raw.accountStatus,
-            basicInfo: {
-                firstName: raw.firstName,
-                gender: raw.gender,
-                lastName: raw.lastName
-            },
             email: raw.email,
             password: raw.password,
-            userRol: raw.userRol,
             accountId: raw.accountId,
-            signUpDate: raw.signUpDate
+            signUpDate: raw.signUpDate,
+            userId: raw.userId
         }
     }
     converManyDomainToDBModel(raw: IAccount[]): IAccountMySql[] {

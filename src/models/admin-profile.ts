@@ -1,5 +1,9 @@
 import { IProfile } from "./extendables/profile";
 
-export interface IAdminProfile extends IProfile {
+export interface IAdminProfile {
 
+    accountId: string;
+    id?: string;
+    createdRef?: string;
+    imageLink?: string;
 }

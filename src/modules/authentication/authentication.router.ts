@@ -1,11 +1,10 @@
 import { Router, Request, Response } from "express";
-import * as express from 'express';
 
-import { AuthenticationControllerInstance } from "./authentication.controller";
+import { AuthenticationController, AuthenticationControllerInstance } from "./authentication.controller";
 
 export class AuthenticationRouter {
 
-    constructor() {
+    constructor(protected _authController: AuthenticationController) {
     }
 
 
@@ -14,12 +13,12 @@ export class AuthenticationRouter {
         router.post('/authentication/login', (req, res) => this.authenticate(req, res));
         router.post('/authentication/signup', (req, res) => this.signup(req, res));
 
-        this._logger.log('router mounted!');
         return router;
+
     }
 
     authenticate(req: Request, res: Response): void {
-        AuthenticationControllerInstance.authenticate(req.body)
+        this._authController.authenticate(req.body)
             .then((result: any) => {
                 //sent the response.
                 res.status(200).json(result);
@@ -31,7 +30,7 @@ export class AuthenticationRouter {
     }
 
     signup(req: Request, res: Response): void {
-        AuthenticationControllerInstance.signup(req, res)
+        this._authController.signup(req.body)
             .then((result: any) => {
                 res.status(200).json(result);
             }).catch((err) => {
@@ -42,5 +41,6 @@ export class AuthenticationRouter {
 
 }
 
-export const AuthenticationRouterInstance: AuthenticationRouter = new AuthenticationRouter();
+export const AuthenticationRouterInstance: AuthenticationRouter =
+    new AuthenticationRouter(AuthenticationControllerInstance)
 

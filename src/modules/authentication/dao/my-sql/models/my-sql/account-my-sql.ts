@@ -7,10 +7,9 @@ export interface IAccountMySql {
     accountId?: string;
     email: string;
     password?: string;
-    userRol?: UsersRolEnum
-    lastName?: string;
-    firstName?: string;
     gender?: GenderEnum;
     signUpDate: any;
+    userId: string;
     accountStatus?: AccountStatusEnum;
+
 }

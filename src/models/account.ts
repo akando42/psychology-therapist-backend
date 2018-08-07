@@ -7,8 +7,8 @@ export interface IAccount {
     accountId?: string;
     email?: string;
     password?: string;
-    userRol?: UsersRolEnum
-    basicInfo?: IBasicInfo;
     accountStatus?: AccountStatusEnum;
     signUpDate: any;
+    //array of ids for usrs
+    userId: string;
 }

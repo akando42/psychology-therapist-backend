@@ -1,21 +1,23 @@
 import { Router, Request, Response } from "express";
 
-import { ProvidersControllerInstance } from "./providers.controller";
+import { UsersControllerInstance } from "./users.controller";
 import { IWriteReadController } from "../../behavior/controllers/write-read-controller.interface";
 import { WRAbstractRouter } from "../../behavior/routers/w-r-abstract.router";
-import { IProvider } from "../../models/provider";
+import { IUser } from "../../models/user";
+import { roleValidationMiddleware } from "../../middlewares/role-validation.middleware";
+import { TokenValidationMiddleware } from "../../middlewares/token-validation.middleware";
 
-export class ProvidersRouter extends WRAbstractRouter<IProvider> {
+export class UsersRouter extends WRAbstractRouter<IUser> {
 
-    constructor(protected _controller: IWriteReadController<IProvider>) {
+    constructor(protected _controller: IWriteReadController<IUser>) {
         super(_controller);
-        this.resourcePath = 'profile'
+        this.resourcePath = 'users'
     }
 
 
     init(): Router {
         const router: Router = Router();
-
+        //Get All Resource
         router.get(`/${this.resourcePath}/`, this.getAll.bind(this));
         //Get Resource
         router.get(`/${this.resourcePath}/:id/${this.resourcePath}`, this.getById.bind(this));
@@ -24,7 +26,8 @@ export class ProvidersRouter extends WRAbstractRouter<IProvider> {
         //Create Resource
         router.post(`/${this.resourcePath}`, this.create.bind(this));
         //Update Resource
-        router.put(`/${this.resourcePath}/:id`, this.update.bind(this));
+        router.put(`/${this.resourcePath}/:id`, TokenValidationMiddleware, this.update.bind(this));
+        
 
         return router;
     }
@@ -32,4 +35,4 @@ export class ProvidersRouter extends WRAbstractRouter<IProvider> {
 }
 
 
-export const ProvidersRouterInstance: ProvidersRouter = new ProvidersRouter(ProvidersControllerInstance);
+export const UsersRouterInstance: UsersRouter = new UsersRouter(UsersControllerInstance);
