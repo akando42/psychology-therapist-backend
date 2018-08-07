@@ -25,5 +25,6 @@ export function adminGuardMiddleware(req: Request, res: Response, next: NextFunc
 
     }
     req['sessionToken'] = sessionToken;
+    console.log('midlesate',sessionToken)
     next();
 }

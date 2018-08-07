@@ -1,8 +1,8 @@
-import { IAdminProfile } from "./admin-profile";
+import { IUser } from "./extendables/user";
 
 
-export interface IAdmin {
 
-    profile: IAdminProfile
+export interface IAdmin extends IUser {
+
 
 }

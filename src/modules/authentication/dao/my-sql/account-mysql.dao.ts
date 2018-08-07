@@ -1,14 +1,11 @@
-import { IUserProfileMySql } from "./models/my-sql/user-my-sql.model";
-
+import { IAccountMySql } from "./models/my-sql/account-my-sql";
 import { MySqlDatabase } from "../../../../../class/class.mysql-database";
-import { GetAll } from "../queries/mysql/get-all";
-import { DataModel } from "../../../../../datamodels/datamodel";
 
-export class UserProfileMySqlDAO {
+export class AccountMySqlDAO {
 
-    create(newObj: IUserProfileMySql): Promise<IUserProfileMySql> {
+    create(newObj: IAccountMySql): Promise<IAccountMySql> {
         return new Promise(async (resolve, reject) => {
-            const query = 'INSERT INTO UserTABLE SET ?'
+            const query = 'INSERT INTO AdminTABLE SET ?'
 
             MySqlDatabase.tempPool.query(query, newObj, (err, result) => {
                 if (err) { reject(err) }
@@ -22,9 +19,9 @@ export class UserProfileMySqlDAO {
 
         })
     }
-    findOneAndUpdate(id: { _id: string }, model: IUserProfileMySql): Promise<IUserProfileMySql> {
+    findOneAndUpdate(id: { _id: string }, model: IAccountMySql): Promise<IAccountMySql> {
         return new Promise(async (resolve, reject) => {
-            const query = 'UPDATE UserTABLE SET ? WHERE ID = ?'
+            const query = 'UPDATE AdminTABLE SET ? WHERE ID = ?'
 
             MySqlDatabase.tempPool.query(query, [model, id._id], (err, result) => {
                 if (err) { reject(err) }
@@ -33,7 +30,7 @@ export class UserProfileMySqlDAO {
             });
         })
     }
-    findOne(query: any): Promise<IUserProfileMySql> {
+    findOne(query: any): Promise<IAccountMySql> {
         return new Promise(async (resolve, reject) => {
             MySqlDatabase.tempPool.query(query, (err, result) => {
                 if (err) { reject(err['code']) }
@@ -42,10 +39,9 @@ export class UserProfileMySqlDAO {
             });
         })
     }
-    find(query: any): Promise<IUserProfileMySql[]> {
+    find(query: any): Promise<IAccountMySql[]> {
         return new Promise(async (resolve, reject) => {
             console.log(query)
-            query = new GetAll().toDQuery()
             MySqlDatabase.tempPool.query(query, (err, result) => {
                 if (err) { reject(err['code']) }
                 console.log(result)
@@ -61,4 +57,4 @@ export class UserProfileMySqlDAO {
 
 }
 
-export const UserProfileMySqlDAOInstance: UserProfileMySqlDAO = new UserProfileMySqlDAO();
+export const AccountMySqlDAOInstance: AccountMySqlDAO = new AccountMySqlDAO();

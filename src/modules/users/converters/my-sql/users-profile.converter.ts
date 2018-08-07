@@ -1,7 +1,7 @@
 
 import { IDualConverter } from "../../../../behavior/converters/converter.interface";
 import { IUserProfile } from '../../../../models/user-profile'
-import { IUserProfileMySql } from "../../dao/my-sql/models/my-sql/User-my-sql.model";
+import { IUserProfileMySql } from "../../dao/my-sql/models/my-sql/user-my-sql.model";
 
 export class UserProfileConverter implements IDualConverter<IUserProfile, IUserProfileMySql> {
     converDomainToDBModel(raw: IUserProfile): IUserProfileMySql {

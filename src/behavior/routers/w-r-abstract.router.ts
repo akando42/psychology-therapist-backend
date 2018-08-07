@@ -18,9 +18,10 @@ export class WRAbstractRouter<T> {
 
 
     getAll(req: Request, res: Response): void {
-        console.log(req.params)
-        // console.log(req)
-        this._controller.getAllBy({})
+        //temp spec.
+        let query = req.query;
+
+        this._controller.getAllBy(query)
             .then((result: T[]) => {
 
                 //sent the response.

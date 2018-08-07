@@ -13,6 +13,7 @@ import { MyApp } from "../app";
 import { ImageUtility } from "./image-utility";
 import { roleValidationMiddleware } from '../src/middlewares/role-validation.middleware';
 import { AdminProfileRouterInstance } from '../src/modules/admin/sub-modules/profiles/admin-profile.router';
+import { AdminProvidersRouterInstance } from '../src/modules/admin/sub-modules/hr-providers/admin-providers.router';
 
 
 export class HRAdminRoutes {
@@ -41,6 +42,7 @@ export class HRAdminRoutes {
         }, HTTPMethod.POST);
 
         server.server.use('/v2', roleValidationMiddleware(['self', 'admin']), AdminProfileRouterInstance.init());
+        server.server.use('/v2', AdminProvidersRouterInstance.init());
 
 
         //-------Password reset functions
@@ -375,7 +377,7 @@ export class HRAdminRoutes {
     private adminLogin(req: express.Request, res: express.Response) {
 
         var parsedVal = WebUtility.getParsedToken(req)
-        console.log("parsed Val : " + JSON.stringify(parsedVal));
+        console.log("1 parsed Val : " + JSON.stringify(parsedVal));
         if (!parsedVal) {
             return WebUtility.sendErrorMessage(res, req, DataModel.webResponses.account_token_error, "The account token is invalid.");;
         }
@@ -475,6 +477,7 @@ export class HRAdminRoutes {
         }
 
         //let id=["adminId"];
+        console.log(sessionToken)
         return sessionToken;
     }
 

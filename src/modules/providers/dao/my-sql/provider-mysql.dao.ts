@@ -1,12 +1,12 @@
-import { IUserProfileMySql } from "./models/my-sql/user-my-sql.model";
 
 import { MySqlDatabase } from "../../../../../class/class.mysql-database";
 import { GetAll } from "../queries/mysql/get-all";
 import { DataModel } from "../../../../../datamodels/datamodel";
+import { IProviderMySql } from "./models/my-sql/provider-my-sql.model";
 
-export class UserProfileMySqlDAO {
+export class ProviderMySqlDAO {
 
-    create(newObj: IUserProfileMySql): Promise<IUserProfileMySql> {
+    create(newObj: IProviderMySql): Promise<IProviderMySql> {
         return new Promise(async (resolve, reject) => {
             const query = 'INSERT INTO UserTABLE SET ?'
 
@@ -22,7 +22,7 @@ export class UserProfileMySqlDAO {
 
         })
     }
-    findOneAndUpdate(id: { _id: string }, model: IUserProfileMySql): Promise<IUserProfileMySql> {
+    findOneAndUpdate(id: { _id: string }, model: IProviderMySql): Promise<IProviderMySql> {
         return new Promise(async (resolve, reject) => {
             const query = 'UPDATE UserTABLE SET ? WHERE ID = ?'
 
@@ -33,7 +33,7 @@ export class UserProfileMySqlDAO {
             });
         })
     }
-    findOne(query: any): Promise<IUserProfileMySql> {
+    findOne(query: any): Promise<IProviderMySql> {
         return new Promise(async (resolve, reject) => {
             MySqlDatabase.tempPool.query(query, (err, result) => {
                 if (err) { reject(err['code']) }
@@ -42,7 +42,7 @@ export class UserProfileMySqlDAO {
             });
         })
     }
-    find(query: any): Promise<IUserProfileMySql[]> {
+    find(query: any): Promise<IProviderMySql[]> {
         return new Promise(async (resolve, reject) => {
             console.log(query)
             query = new GetAll().toDQuery()
@@ -61,4 +61,4 @@ export class UserProfileMySqlDAO {
 
 }
 
-export const UserProfileMySqlDAOInstance: UserProfileMySqlDAO = new UserProfileMySqlDAO();
+export const ProviderMySqlDAOInstance: ProviderMySqlDAO = new ProviderMySqlDAO();
