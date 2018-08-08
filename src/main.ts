@@ -1,8 +1,12 @@
+//better hanle env variables
+process.env.SECRET_KEY = "this is my secretkey";
+process.env.MAILGUN_API_KEY = '759a41ec453b708bcb16e0769be3e864-b892f62e-d75c1e60';
+process.env.MAILGUN_USERNAME = 'therapyondemand.xyz';
+
 import { API } from "./api";
+import { DumDB } from "./modules/utils/dumb-db";
 
 const http = require('http');
-
-process.env.SECRET_KEY = "this is my secretkey";
 
 const api: API = new API();
 

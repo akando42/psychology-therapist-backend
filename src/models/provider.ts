@@ -1,7 +1,6 @@
-import { IUser } from "./extendables/user";
 
 
-export interface IProvider extends IUser {
+export interface IProvider {
     id?: string
     experience?: string
     qualifications?: string;

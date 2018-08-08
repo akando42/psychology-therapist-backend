@@ -205,3 +205,9 @@ url.format({
 //   });
 //   email.initTransporter(TOKEN_PATH);
 // }
+
+
+setInterval(function () {
+    var used = process.memoryUsage().heapUsed / 1024 / 1024;
+    console.log(`Script : ${Math.round(used * 100) / 100} MB `);
+}, 1000);

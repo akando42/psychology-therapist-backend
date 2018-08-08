@@ -7,29 +7,29 @@ export class UsersConverter implements IDualConverter<IUser, IUserMySql> {
     converDomainToDBModel(raw: IUser): IUserMySql {
         if (!raw) { return null }
         return {
-            USERID: raw.id,
-            FIRST_NAME: raw.basicInfo.firstName,
-            LAST_NAMEE: raw.basicInfo.lastName,
-            USER_ROL: raw.userRol,
-            EMAIL: raw.contactInfo.email,
-            GENDER: raw.basicInfo.gender,
-            PHONE_NUMBER: raw.contactInfo.phoneNumber
+            UserID: raw.id,
+            UserFirstName: raw.basicInfo.firstName,
+            UserLastName: raw.basicInfo.lastName,
+            UserRol: raw.userRol,
+            UserEmail: raw.contactInfo.email,
+            UserGender: raw.basicInfo.gender,
+            UserPhoneNumber: raw.contactInfo.phoneNumber
         }
     }
     convertDBModelToDomain(raw: IUserMySql): IUser {
         if (!raw) { return null }
         return {
             basicInfo: {
-                firstName: raw.FIRST_NAME,
-                lastName: raw.LAST_NAMEE,
-                gender: raw.GENDER
+                firstName: raw.UserFirstName,
+                lastName: raw.UserLastName,
+                gender: raw.UserGender
             },
             contactInfo: {
-                phoneNumber: raw.PHONE_NUMBER,
-                email: raw.EMAIL
+                phoneNumber: raw.UserPhoneNumber,
+                email: raw.UserEmail
             },
-            id: raw.USERID,
-            userRol: raw.USER_ROL
+            id: raw.UserID,
+            userRol: raw.UserRol
         }
     }
     converManyDomainToDBModel(raw: IUser[]): IUserMySql[] {

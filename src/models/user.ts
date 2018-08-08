@@ -6,6 +6,9 @@ export interface IUser {
     id: string;
     contactInfo: IContactInfo
     basicInfo?: IBasicInfo;
+    //should be a array
     userRol: UsersRolEnum;
+
+    
 
 }

@@ -12,6 +12,9 @@ export class AccountsService extends WriterReaderService<IAccount>  {
     getByEmail(email: string): Promise<IAccount> {
         return AccountsRepoInstance.getByEmail(email);
     }
+    getById(id: string): Promise<IAccount> {
+        return AccountsRepoInstance.getById(id);
+    }
 }
 
 export const AccountsServiceInstance: AccountsService = new AccountsService();

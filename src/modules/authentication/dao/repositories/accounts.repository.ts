@@ -16,6 +16,10 @@ export class AccountsRepository extends AbstractRepository<IAccount>{
         return super.getBy(new GetBy({ email: email }));
     }
 
+
+    getById(id: string): Promise<IAccount> {
+        return super.getBy(new GetBy({ AccountID: id }));
+    }
 }
 
 export const AccountsRepoInstance: AccountsRepository = new AccountsRepository();

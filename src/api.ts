@@ -3,6 +3,7 @@ import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
 import { AuthenticationRouterInstance } from './modules/authentication';
+import { CabinetUserAuthRouter, CabinetUserAuthRouterInstance } from './modules/admin/sub-modules/cabinet-users/cabinet-user.router';
 
 
 export class API {
@@ -30,6 +31,7 @@ export class API {
     private mountRoutes(): void {
 
         this.express.use('/api/v1', AuthenticationRouterInstance.init());
+        this.express.use('/api/v1', CabinetUserAuthRouterInstance.init());
 
     }
 

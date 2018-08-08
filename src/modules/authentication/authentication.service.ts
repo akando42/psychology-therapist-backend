@@ -30,7 +30,7 @@ export class AuthenticationService {
                 let account: IAccount = {
                     email: newAccount.email,
                     userId: user.id,
-                    // accountStatus:
+                    accountStatus: newAccount.accountStatus,
                     //change password of user for encrypted one (we dont save the password plain value ).
                     password: hashPassword,
                     signUpDate: Math.floor(Date.now() / 1000)
@@ -78,6 +78,38 @@ export class AuthenticationService {
                 reject(error);
             }
         });
+    }
+
+    changePassword(accountId: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                const account = await AccountsServiceInstance.getById(accountId);
+
+                if (!account) {
+                    return reject({ success: false, message: 'invalid account id' })
+                }
+
+                //check old password
+                const itsMatch: boolean = await bc.compare(account.password, changeRequest.oldPassword);
+
+                if (!itsMatch) {
+                    return reject({ success: false, message: 'invalid old password' });
+                }
+                //success
+                const hashPassword: string = await bc.hash(changeRequest.newPassword, 10);
+
+                account.password = hashPassword;
+                const result = await AccountsServiceInstance.update(accountId, account);
+                if (result) {
+                    //tood sent email with notification of the password change
+
+                    return resolve({ success: true, message: 'account password changed succefully' })
+                }
+
+            } catch (error) {
+
+            }
+        })
     }
 
 }

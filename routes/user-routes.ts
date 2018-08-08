@@ -8,9 +8,7 @@ import { SQLUtility } from "./sql-utility";
 import { ImageUtility } from "./image-utility";
 import { EmailActivity } from "./email-activity";
 import { MyApp } from "../app";
-import { UsersProfileRouterInstance } from '../src/modules/users/sub-modules/profiles/users-profile.router';
-import { TokenValidationMiddleware } from '../src/middlewares/token-validation.middleware';
-import { roleValidationMiddleware } from '../src/middlewares/role-validation.middleware';
+
 
 var nodemailer = require('nodemailer');
 var appConfig = require('../config/app.json');
@@ -45,7 +43,7 @@ export class UserRoutes {
         }, HTTPMethod.POST);
 
         //User Profile
-        server.server.use('/v2', roleValidationMiddleware(['self', 'admin']), UsersProfileRouterInstance.init());
+        // server.server.use('/v2', roleValidationMiddleware(['self', 'admin']), UsersProfileRouterInstance.init());
 
         server.setRoute("/user/reset/password", (req: express.Request, res: express.Response) => {
             me.resetPassword(req, res);
