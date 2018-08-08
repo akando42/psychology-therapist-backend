@@ -12,7 +12,7 @@ const api: API = new API();
 
 http.createServer(api.express).listen(3030, () => {
     console.log(`up and running on port ${3030}`)
-})
+});
 
 
 // setInterval(function () {

@@ -17,8 +17,6 @@ export class API {
         this.express = express();
         this.middleware();
         this.mountRoutes();
-        console.log('runing')
-        //initial charge of data
     }
 
     private middleware() {
