@@ -4,12 +4,11 @@ import { GenderEnum } from "../../../../../../enums/gender.enum";
 
 
 export interface IAccountMySql {
-    accountId?: string;
-    email: string;
-    password?: string;
-    gender?: GenderEnum;
-    signUpDate: any;
-    userId: string;
-    accountStatus?: AccountStatusEnum;
+    AccountID?: string;
+    AccountEmail: string;
+    AccountPassword?: string;
+    AccountSignUpDate: any;
+    AccountUserID: string;
+    AccountStatus?: AccountStatusEnum;
 
 }
