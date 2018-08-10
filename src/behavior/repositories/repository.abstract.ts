@@ -9,28 +9,33 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
     }
 
 
-    create(model: K): Promise<K> {
-        return new Promise<K>((resolve, reject) => {
-            this._db.create(model)
+    create(model: K): Promise<string> {
+        const input: K = this._converter ?
+            this._converter.converDomainToDBModel(model) : model;
+        console.log('Repository::creating', input)
+        return new Promise<string>((resolve, reject) => {
+            this._db.create(input)
                 .then((result: any) => {
-                    const output: K = this._converter ?
-                        this._converter.convertDBModelToDomain(result) : result;
-
-                    console.log('created', output)
-                    resolve(output)
+                    console.log('inserted ID', result)
+                    resolve(result)
                 })
-                .catch(reject);
+                .catch((err) => {
+                    return reject(err);
+                });
         });
     }
 
-    update(id: string, model: K): Promise<K> {
-        return new Promise<K>(async (resolve, reject) => {
-            console.log(`respository findind ${id} and replace with`, model)
-            this._db.findOneAndUpdate({ _id: id }, model)
-                .then(async (result: any) => {
-                    const item: K = await this.getBy({ _id: result._id });
+    update(query, model: K): Promise<boolean> {
+        return new Promise<boolean>(async (resolve, reject) => {
+
+            const input: K = this._converter ?
+                this._converter.converDomainToDBModel(model) : model;
+            console.log('repositoy::', query)
+            this._db.findOneAndUpdate(query, input)
+                .then((result: boolean) => {
+                    // const item: K = await this.getBy({ _id: result._id });
                     // console.log(item);
-                    resolve(item);
+                    resolve(result);
                 })
                 .catch(reject);
         });
@@ -51,13 +56,12 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
         return new Promise<K>((resolve, reject) => {
             this._db.findOne(query)
                 .then((result: any) => {
-                    console.log('repository::',result)
                     const output: K = this._converter ?
                         this._converter.convertDBModelToDomain(result) : result;
 
                     resolve(output)
                 })
-                .catch((err:any) => {
+                .catch((err: any) => {
                     console.log(err)
                     reject(err)
                 });

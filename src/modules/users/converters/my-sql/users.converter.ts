@@ -10,7 +10,7 @@ export class UsersConverter implements IDualConverter<IUser, IUserMySql> {
             UserID: raw.id,
             UserFirstName: raw.basicInfo.firstName,
             UserLastName: raw.basicInfo.lastName,
-            UserRol: raw.userRol,
+            UserRole: raw.role,
             UserEmail: raw.contactInfo.email,
             UserGender: raw.basicInfo.gender,
             UserPhoneNumber: raw.contactInfo.phoneNumber
@@ -29,7 +29,7 @@ export class UsersConverter implements IDualConverter<IUser, IUserMySql> {
                 email: raw.UserEmail
             },
             id: raw.UserID,
-            userRol: raw.UserRol
+            role: raw.UserRole
         }
     }
     converManyDomainToDBModel(raw: IUser[]): IUserMySql[] {

@@ -10,5 +10,6 @@ export interface IAccountMySql {
     AccountSignUpDate: any;
     AccountUserID: string;
     AccountStatus?: AccountStatusEnum;
-
+    AccountVerificationHash?: string;
+    AccountEmailVerified?: boolean;
 }

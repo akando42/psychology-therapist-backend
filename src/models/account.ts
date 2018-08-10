@@ -6,9 +6,10 @@ import { IBasicInfo } from "./extendables/basic-info";
 export interface IAccount {
     accountId?: string;
     email?: string;
-    password?: string;
+    password?: string;  
     accountStatus?: AccountStatusEnum;
     signUpDate: any;
-    //array of ids for usrs
+    verificationHash?: string;
     userId: string;
+    emailVerified?: boolean;
 }

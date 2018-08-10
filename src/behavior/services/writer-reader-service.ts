@@ -9,14 +9,16 @@ export abstract class WriterReaderService<T> implements IRead<T>, IWrite<T> {
 
     }
 
-    create(newObj: T): Promise<T> {
-        return new Promise<T>(async (resolve, reject) => {
+    create(newObj: T): Promise<string> {
+        return new Promise<string>(async (resolve, reject) => {
             try {
-                console.log('service')
-                const item: T = await this._repository.create(newObj)
+                console.log('Service::attempting to create', newObj)
+                const item: string = await this._repository.create(newObj)
+
                 return resolve(item);
             } catch (error) {
-                reject(error);
+                // console.log('ups')
+                return reject(error);
             }
         });
     }
@@ -32,12 +34,11 @@ export abstract class WriterReaderService<T> implements IRead<T>, IWrite<T> {
             }
         });
     }
-    update(id: string, model: T): Promise<T> {
-        return new Promise<T>(async (resolve, reject) => {
+    update(id: string, model: T): Promise<boolean> {
+        return new Promise<boolean>(async (resolve, reject) => {
             try {
-                console.log(`updating ${id} with -->`, model)
-                const item: T = await this._repository.update(id, model);
-                return resolve(item);
+                const successRepo: boolean = await this._repository.update(id, model);
+                return resolve(successRepo);
             } catch (error) {
                 reject(error);
             }

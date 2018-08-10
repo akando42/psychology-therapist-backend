@@ -1,12 +1,11 @@
-import { DataModel } from "../../../../../../datamodels/datamodel";
 
 //todo move to global
-export class GetBy {
+export class GetByQuery {
     constructor(public query: any) {
 
     }
 
-    toDQuery(): any {
+    toDBQuery(table:string): any {
         let query = ''
         for (const key in this.query) {
             if (this.query.hasOwnProperty(key)) {
@@ -14,7 +13,7 @@ export class GetBy {
 
             }
         }
-        let q = `SELECT * FROM ACCOUNTS WHERE ${query}`
+        let q = `SELECT * FROM ${table} WHERE ${query}`
         return q;
     }
 }

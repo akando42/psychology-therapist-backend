@@ -1,17 +1,24 @@
-import { MySqlDatabase } from "../../../class/class.mysql-database";
+import { MySqlConnection } from "../../database-connection/db-connection.mysql";
 
 /**
  * Data access object to mysql basic behavior
  */
 export abstract class AbstractDao<T> {
-    create(newObj: T): Promise<T> {
+
+    protected table: string;
+
+    create(newObj: T): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            const query = 'INSERT INTO UserTABLE SET ?'
-
-            MySqlDatabase.tempPool.query(query, newObj, (err, result) => {
-                if (err) { reject(err) }
-
-                resolve(result);
+            console.log('attempting to create', newObj)
+            const query: string = `INSERT INTO ${this.table} SET ?`;
+            console.log(query)
+            MySqlConnection.pool.query(query, newObj, (err, result) => {
+                if (err) {
+                    err['sql'] = null;
+                    return reject(err);
+                }
+                console.log(result['insertId']);
+                resolve(result['insertId']);
             });
         })
     }
@@ -20,32 +27,40 @@ export abstract class AbstractDao<T> {
 
         })
     }
-    findOneAndUpdate(id: { _id: string }, model: T): Promise<T> {
+    findOneAndUpdate(query, model: T): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
-            const query = 'UPDATE UserTABLE SET ? WHERE ID = ?'
+            let q = query.toDBQuery(this.table);
+            console.log("DAO:FindOneANdUpdate", q)
+            MySqlConnection.pool.query(q, [model], (err, result) => {
+                if (err) {
+                    console.log('findOneAndUpdate', err['code'])
+                    return reject(err)
+                }
+                console.log('findOneAndUpdate', result)
+                if (result['affectedRows']) {
+                    return resolve(true);
 
-            MySqlDatabase.tempPool.query(query, [model, id._id], (err, result) => {
-                if (err) { reject(err) }
-
-                resolve(result);
+                }
             });
         })
     }
     findOne(query: any): Promise<T> {
         return new Promise(async (resolve, reject) => {
-            MySqlDatabase.tempPool.query(query, (err, result) => {
-                if (err) { reject(err['code']) }
-
+            MySqlConnection.pool.query(query, (err, result) => {
+                if (err) {
+                    console.log(err)
+                    return reject(err['code'])
+                }
+                if (!result[0]) {
+                    resolve(null)
+                }
                 resolve(result[0]);
             });
         })
     }
     find(query: any): Promise<T[]> {
         return new Promise(async (resolve, reject) => {
-            if (!query) {
-
-            }
-            MySqlDatabase.tempPool.query(query, (err, result) => {
+            MySqlConnection.pool.query(query, (err, result) => {
                 if (err) { reject(err['code']) }
                 console.log(result)
                 resolve(result);

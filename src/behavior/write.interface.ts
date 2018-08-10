@@ -3,7 +3,7 @@ export interface IWrite<J> {
      * it will create a new obj
      * @param J its the model from database 
      */
-    create(newObj: J): Promise<J>
+    create(newObj: J): Promise<string>
 
     /**
      * delete a  (logical delete)
@@ -14,7 +14,7 @@ export interface IWrite<J> {
      * 
      * @param update 
      */
-    update(id: string, model: J): Promise<J>
+    update(id: string, model: J): Promise<boolean>
 
 
 }

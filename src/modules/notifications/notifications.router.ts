@@ -17,7 +17,7 @@ export class NotificationsRouter extends WRAbstractRouter<INotification> {
     init(): Router {
         const router: Router = Router();
         //Get All Resource
-        router.get(`/${this.resourcePath}/`, this.getAll.bind(this));
+        router.get(`/${this.resourcePath}`, this.getAll.bind(this));
         //Get Resource
         router.get(`/${this.resourcePath}/:id/${this.resourcePath}`, this.getById.bind(this));
         //Delete Resource

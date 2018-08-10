@@ -324,7 +324,9 @@ export class UserRoutes {
         let key = encodeURIComponent(CryptoFunctions.aes256Encrypt(JSON.stringify(json), encKey));
         console.log("Key : " + key);
 
-        let body = "<H2>Verify Your Email Address</H2><H5>Massage on Demand</H5></br><H4>Hello " + fname + " " + lname + ",</H4><p>Thanks for registering with us</p><p>Please Click <a href='" + link + key + "'>here</a> to verify you email Address</p>";
+        let body = "<H2>Verify Your Email Address</H2><H5>Massage on Demand</H5></br><H4>Hello " 
+        + fname + " " + 
+        lname + ",</H4><p>Thanks for registering with us</p><p>Please Click <a href='" + link + key + "'>here</a> to verify you email Address</p>";
         EmailActivity.instance.sendEmail(email, 'Verification Mail | Massage On Demand', body, function (error, info) {
             if (error) {
                 console.log(error);

@@ -63,12 +63,13 @@ export class WRAbstractRouter<T> {
 
     create(req: Request, res: Response) {
         this._controller.create(req.body)
-            .then((result: T) => {
+            .then((result: any) => {
                 //sent the response.
                 res.status(200).json(result);
 
             }).catch((err) => {
                 //handler error propertly
+                console.log('router')
                 console.log(err)
             });
     }

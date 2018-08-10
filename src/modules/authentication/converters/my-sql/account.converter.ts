@@ -12,7 +12,9 @@ export class AccountConverter implements IDualConverter<IAccount, IAccountMySql>
             AccountPassword: raw.password,
             AccountID: raw.accountId,
             AccountSignUpDate: raw.signUpDate,
-            AccountUserID: raw.userId
+            AccountUserID: raw.userId,
+            AccountVerificationHash: raw.verificationHash,
+            AccountEmailVerified: raw.emailVerified
         }
     }
     convertDBModelToDomain(raw: IAccountMySql): IAccount {
@@ -23,7 +25,9 @@ export class AccountConverter implements IDualConverter<IAccount, IAccountMySql>
             password: raw.AccountPassword,
             accountId: raw.AccountID,
             signUpDate: raw.AccountSignUpDate,
-            userId: raw.AccountUserID
+            userId: raw.AccountUserID,
+            verificationHash: raw.AccountVerificationHash,
+            emailVerified:raw.AccountEmailVerified
         }
     }
     converManyDomainToDBModel(raw: IAccount[]): IAccountMySql[] {

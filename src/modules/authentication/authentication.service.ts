@@ -5,6 +5,14 @@ import { AccountsServiceInstance } from './sub-modules/accounts/accounts.service
 import { INewAccountDTO } from '../../dto/new-account.dto';
 import { IUser } from '../../models/user';
 import { UsersServiceInstance } from '../users/users.service';
+import { UsersRolEnum } from '../../enums/users-rol.enum';
+import { resolve } from 'path';
+import { MailGunEmailServiceInstance } from '../communication/email/mailgun-email.service';
+import { NewAccountVerificationTemplate } from '../communication/email/templates/new-account-verification.template';
+import { json } from 'body-parser';
+import { SendGridEmailServiceInstace } from '../communication/email/sendgrid-email.service';
+import { UnverifiedAccountError } from '../../errors/unverfied-account.error';
+import { InvalidCredentialsError } from '../../errors/invalid-credentials.error';
 
 /**
  * Main module for authenticatiom, other modules for diferent user rol
@@ -18,31 +26,68 @@ export class AuthenticationService {
     registerUser(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
+
                 const exist: IAccount = await AccountsServiceInstance.getByEmail(newAccount.email);
                 //handle better
                 if (exist) {
-                    resolve({ success: false, message: 'Email its already been used', used: true });
+                    return reject({ success: false, message: 'Email its already been used', used: true });
                 }
                 //create user
-                let user: IUser = await UsersServiceInstance.create(newAccount.userInfo);
+                const newUser: IUser = {
+                    basicInfo: {
+                        firstName: newAccount.firstName,
+                        lastName: newAccount.lastName,
+                        gender: newAccount.gender
+                    },
+                    contactInfo: {
+                        email: newAccount.email,
+                        phoneNumber: newAccount.phoneNumber
+                    },
+                    role: UsersRolEnum.admin
+                }
+                let userId: string = await UsersServiceInstance.create(newUser);
 
                 const hashPassword = await bc.hash(newAccount.password, 10);
                 let account: IAccount = {
                     email: newAccount.email,
-                    userId: user.id,
+                    userId: userId,
                     accountStatus: newAccount.accountStatus,
                     //change password of user for encrypted one (we dont save the password plain value ).
                     password: hashPassword,
-                    signUpDate: Math.floor(Date.now() / 1000)
+                    signUpDate: Math.floor(Date.now() / 1000),
+                    verificationHash:
+                        bc.hashSync(JSON.stringify({ email: newAccount.email, userId: userId }), 10),
+                    emailVerified: false
                 }
 
                 const saved: any = await AccountsServiceInstance.create(account);
+                console.log('creating account', saved)
+
+                const fullName: string = `${newAccount.firstName}  ${newAccount.lastName}`;
+                const verificatinLink: string =
+                    `http://localhost:3000/api/v1/authentication/verify-email?email=${account.email}&hash=${account.verificationHash}'`;
+
+                const email = {
+
+                    subject: 'Verification Mail | Massage On Demand',
+                    body: new NewAccountVerificationTemplate(fullName, verificatinLink).getHtml()
+                }
+
+                // MailGunEmailServiceInstance.sentToOne(account.email, email)
+                //     .then(console.log)
+                //     .catch((err) => {
+                //development only should make a variable for this lol.
+                SendGridEmailServiceInstace.sentToOne(account.email, email)
+                    .then(console.log)
+                    .catch(console.log)
+                // })
+
 
                 //success resolve.
                 resolve({ success: true, message: 'Account registed', used: false });
             } catch (e) {
-
-                reject(e)
+                console.log(e)
+                return reject(e)
 
             }
         })
@@ -52,12 +97,11 @@ export class AuthenticationService {
         Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-
                 const account: IAccount = await AccountsServiceInstance.getByEmail(credentials.email);
-                if (!account) {
-
-                    return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
-                }
+                //not match account
+                if (!account) { return reject(new InvalidCredentialsError()); }
+                //unverified account
+                if (!account.emailVerified) { return reject(new UnverifiedAccountError()) }
 
                 const itsMatch: boolean = await bc.compare(credentials.password, account.password);
 
@@ -66,12 +110,16 @@ export class AuthenticationService {
                 }
                 //sanatize
                 account.password = undefined;
+                account.verificationHash = undefined;
 
                 const token = jwt.sign(
                     { accountId: account.accountId },
                     process.env.SECRET_KEY, { expiresIn: 60000 });
 
-                resolve({ auth: true, token: token, userAccount: account, message: 'succesfully authenticated' });
+                return resolve({
+                    auth: true, token: token,
+                    data: account, message: 'succesfully authenticated'
+                });
 
 
             } catch (error) {
@@ -109,7 +157,29 @@ export class AuthenticationService {
             } catch (error) {
 
             }
-        })
+        });
+    }
+
+    verifyEmail(email: string, verificationToken: string): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            if (!email || !verificationToken) {
+                return reject({ message: 'no emial or hascode povided!' })
+            }
+
+            // const itMatch = bc.
+            const account: IAccount = await AccountsServiceInstance.getByEmail(email);
+            //verify hashed code;
+            if (account.verificationHash === verificationToken) {
+                account.emailVerified = true;
+            }
+
+            // console.log('account from service', account.accountId)
+            const updated = await AccountsServiceInstance.update(account.accountId, account);
+            console.log('result from account updated', updated)
+            return resolve({ message: 'verification success' });
+
+
+        });
     }
 
 }

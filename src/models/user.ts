@@ -3,11 +3,10 @@ import { UsersRolEnum } from "../enums/users-rol.enum";
 import { IContactInfo } from "./extendables/contact-info";
 
 export interface IUser {
-    id: string;
+    id?: string;
     contactInfo: IContactInfo
     basicInfo?: IBasicInfo;
-    //should be a array
-    userRol: UsersRolEnum;
+    role: UsersRolEnum;
 
     
 

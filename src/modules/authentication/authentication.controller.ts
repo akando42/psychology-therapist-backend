@@ -6,6 +6,7 @@ import { INewAccountDTO } from "../../dto/new-account.dto";
 import { IUser } from "../../models/user";
 import { UsersServiceInstance } from "../users/users.service";
 import { UsersRolEnum } from "../../enums/users-rol.enum";
+import { AccountStatusEnum } from "../../enums/account-stats.enum";
 
 
 export class AuthenticationController {
@@ -17,25 +18,25 @@ export class AuthenticationController {
         return new Promise<any>(async (resolve, reject) => {
             try {
 
-                const result: { token: string, auth: boolean, message: string, userAccount: IAccount | null } =
+                const result: { token: string, auth: boolean, message: string, data: IAccount | null } =
                     await this._authService.authenticate(credentials);
+
                 //sugar
-                const { auth, userAccount, token } = result;
+                const { auth, data, token } = result;
 
                 if (!auth) {
                     //throw error
-                    reject(result);
+                    return reject(result);
                 }
                 /**
                  * Get the user attached to that account.
                  */
-                const user: IUser = await UsersServiceInstance.getByEmail(userAccount.email);
+                const user: IUser = await UsersServiceInstance.getByEmail(data.email);
                 //send token and user back
                 return resolve({ user: user, token: token });
 
             } catch (error) {
-
-                resolve(error);
+                reject({ error: error, status: 403 });
             }
         })
     }
@@ -44,19 +45,23 @@ export class AuthenticationController {
         return new Promise<any>(async (resolve, reject) => {
             try {
                 //simple register set rol to user. before procced.
-                account.userInfo.userRol = UsersRolEnum.user;
+                account.accountStatus = AccountStatusEnum.accepted;
 
-                const result: { success: boolean, message: string, used: boolean } = await this._authService.registerUser(account);
-
+                const result: { success: boolean, message: string, used: boolean } = await
+                    this._authService.registerUser(account);
+                console.log(result)
                 return resolve(result);
             } catch (error) {
                 //handle errors     properly here;
-
-                resolve(error);
+                // console.log(error);
+                reject(error);
             }
         })
     }
 
+    verifyEmail(email: string, verificationToken: string): Promise<any> {
+        return this._authService.verifyEmail(email, verificationToken)
+    }
 
 }
 

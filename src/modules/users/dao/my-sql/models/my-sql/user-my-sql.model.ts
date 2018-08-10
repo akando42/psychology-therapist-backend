@@ -9,5 +9,5 @@ export interface IUserMySql {
     UserFirstName: string;
     UserGender: GenderEnum;
     UserEmail: string;
-    UserRol: UsersRolEnum;
+    UserRole: UsersRolEnum;
 }
