@@ -113,7 +113,7 @@ export class AuthenticationService {
                 account.verificationHash = undefined;
 
                 const token = jwt.sign(
-                    { accountId: account.accountId },
+                    { userId: account.userId },
                     process.env.SECRET_KEY, { expiresIn: 60000 });
 
                 return resolve({

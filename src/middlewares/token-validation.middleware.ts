@@ -13,7 +13,7 @@ export function TokenValidationMiddleware(req: Request, res: Response | any, nex
                 return res.status(500)
                     .send(new InvalidTokenError());
             }
-            req['accountId'] = decoded['accountId'];
+            req['userId'] = decoded['userId'];
             next();
         });
 

@@ -19,15 +19,21 @@ export class UsersRouter extends WRAbstractRouter<IUser> {
         const router: Router = Router();
         //Get All Resource
         router.get(`/${this.resourcePath}/`, this.getAll.bind(this));
-        //Get Resource
-        router.get(`/${this.resourcePath}/:id/${this.resourcePath}`, this.getById.bind(this));
         //Delete Resource
         router.delete(`/${this.resourcePath}/:id`, this.delete.bind(this));
         //Create Resource
         router.post(`/${this.resourcePath}`, this.create.bind(this));
+
+
+        /**
+         * user profile.
+         */
+        //Get Resource
+        router.get(`/${this.resourcePath}/:id/profile`, this.getById.bind(this));
         //Update Resource
-        router.put(`/${this.resourcePath}/:id`, TokenValidationMiddleware, this.update.bind(this));
-        
+        router.patch(`/${this.resourcePath}/:id/profile`, this.update.bind(this));
+        // router.put(`/${this.resourcePath}/:id`, TokenValidationMiddleware, this.update.bind(this));
+
 
         return router;
     }

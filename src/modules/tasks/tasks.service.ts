@@ -1,5 +1,5 @@
 import { WriterReaderService } from "../../behavior/services/writer-reader-service";
-import { TasksRepoInstance } from "./dao/repositories/accounts.repository";
+import { TasksRepoInstance } from "./dao/repositories/tasks.repository";
 import { ITask } from "../../models/task";
 
 export class TasksService extends WriterReaderService<ITask> {

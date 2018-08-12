@@ -31,7 +31,7 @@ export class AuthenticationController {
                 /**
                  * Get the user attached to that account.
                  */
-                const user: IUser = await UsersServiceInstance.getByEmail(data.email);
+                const user: IUser = await UsersServiceInstance.getById(data.userId);
                 //send token and user back
                 return resolve({ user: user, token: token });
 

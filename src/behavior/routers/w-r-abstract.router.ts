@@ -36,7 +36,7 @@ export class WRAbstractRouter<T> {
 
     update(req: Request, res: Response) {
 
-        this._controller.update(req.body['id'], req.body)
+        this._controller.update(req.params['id'], req.body)
             .then((result: T) => {
                 //sent the response.
                 res.status(200).json(result);
@@ -51,7 +51,7 @@ export class WRAbstractRouter<T> {
         this._controller['getById'](req.params['id'])
             .then((result: T) => {
                 //sent the response.
-                res.status(200).json(result);
+                res.status(200).json({ payload: result });
 
             }).catch((err) => {
                 //handler error propertly

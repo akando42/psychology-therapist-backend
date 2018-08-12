@@ -1,13 +1,13 @@
 import { WriteReadController } from "../../../../behavior/controllers/write-read.controller";
 import { IUser } from "../../../../models/user";
-import { CabinetUsersServiceInstance } from "./cabinet-users.service";
+import { CabinetsServiceInstance } from "./cabinet.service";
 import { AuthenticationServiceInstance, AuthenticationService } from "../../../authentication/authentication.service";
 import { INewAccountDTO } from "../../../../dto/new-account.dto";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 import { MailGunEmailServiceInstance } from "../../../communication/email/mailgun-email.service";
 
 
-export class CabinetUserController {
+export class CabinetController {
     constructor(private _authService: AuthenticationService) {
     }
 
@@ -23,7 +23,7 @@ export class CabinetUserController {
                     //sent credentials on email so user can login and change his password.
                     MailGunEmailServiceInstance
                         .sentToOne(account.email, { body: '', subject: '' })
-                        
+
 
                 }
 
@@ -35,7 +35,13 @@ export class CabinetUserController {
             }
         })
     }
+
+
+    getCabinet(userId: string): Promise<IUser[]> {
+
+        return CabinetsServiceInstance.getCabinetUsers(userId);
+    }
 }
 
-export const CabinetUserControllerInstance: CabinetUserController =
-    new CabinetUserController(CabinetUsersServiceInstance);
+export const CabinetControllerInstance: CabinetController =
+    new CabinetController(CabinetsServiceInstance);

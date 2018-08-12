@@ -3,7 +3,7 @@ import { AbstractRepository } from "../../../../behavior/repositories/repository
 import { IAccount } from "../../../../models/account";
 import { AccountsConverterInstance } from "../../converters/my-sql/account.converter";
 import { GetBy } from "../queries/mysql/get-by";
-import { UpdateQuery } from "../../../users/dao/queries/mysql/update";
+import { UpdateQuery } from "../../../../query-spec/my-sql/update.query";
 
 
 
@@ -22,9 +22,10 @@ export class AccountsRepository extends AbstractRepository<IAccount>{
         return super.getBy(new GetBy({ AccountID: id }).toDQuery());
     }
 
-    update(id, model: IAccount): Promise<boolean> {
-        return super.update(new UpdateQuery({ AccountID: id }), model);
+    update(id: string, data: IAccount): Promise<boolean> {
+        return super.update(new UpdateQuery({ AccountID: id }).toDBQuery('ACCOUNTS'), data);
     }
+
 
 }
 

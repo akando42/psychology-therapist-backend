@@ -14,7 +14,7 @@ export interface IWrite<J> {
      * 
      * @param update 
      */
-    update(id: string, model: J): Promise<boolean>
+    update(id: string, model: J): Promise<boolean | any>
 
 
 }

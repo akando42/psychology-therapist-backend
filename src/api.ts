@@ -3,9 +3,10 @@ import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
 import { AuthenticationRouterInstance } from './modules/authentication';
-import { CabinetUserAuthRouter, CabinetUserAuthRouterInstance } from './modules/admin/sub-modules/cabinet-users/cabinet-user.router';
 import { MySqlConnection } from './database-connection/db-connection.mysql';
 import { NotificationsRouterInstance } from './modules/notifications/notifications.router';
+import { UsersRouterInstance } from './modules/users/users.router';
+import { CabinetAuthRouterInstance } from './modules/admin/sub-modules/cabinet/cabinet.router';
 
 
 export class API {
@@ -38,7 +39,8 @@ export class API {
     private mountRoutes(): void {
 
         this.express.use('/api/v1', AuthenticationRouterInstance.init());
-        this.express.use('/api/v1', CabinetUserAuthRouterInstance.init());
+        this.express.use('/api/v1', UsersRouterInstance.init());
+        this.express.use('/api/v1', CabinetAuthRouterInstance.init());
         this.express.use('/api/v1', NotificationsRouterInstance.init());
     }
 

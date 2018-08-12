@@ -4,18 +4,19 @@ import { AuthenticationService } from "../../../authentication/authentication.se
 import { INewAccountDTO } from "../../../../dto/new-account.dto";
 import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
+import { IUser } from "../../../../models/user";
+import { CabinetsRepoInstance } from "../../dao/repositories/cabinet.repository";
 
-export class CabinetUsersService extends AuthenticationService {
+export class CabinetsService extends AuthenticationService {
     constructor() {
         super();
     }
 
-    registerUser(newAccount: INewAccountDTO):
-        Promise<{ success: boolean, message: string, used: boolean }> {
+    registerUser(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
 
-                const rol = newAccount.userInfo.userRol;
+                const rol = newAccount.role;
                 if (rol !== `${UsersRolEnum.hr}` || rol !== `${UsersRolEnum.sales}`) {
                     reject({ message: 'invalid rol assign' });
                 }
@@ -33,8 +34,11 @@ export class CabinetUsersService extends AuthenticationService {
         })
     }
 
+    getCabinetUsers(adminId: string): Promise<IUser[]> {
+        return CabinetsRepoInstance.getAdminCabinetUsers(adminId);
+    }
 
 }
 
 
-export const CabinetUsersServiceInstance: CabinetUsersService = new CabinetUsersService();
+export const CabinetsServiceInstance: CabinetsService = new CabinetsService();

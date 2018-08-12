@@ -11,8 +11,11 @@ export class UsersController extends WriteReadController<IUser>{
     }
 
     getByEmail(email: string): Promise<IUser> {
-
         return UsersServiceInstance.getByEmail(email);
+    }
+
+    getById(id: string): Promise<IUser> {
+        return UsersServiceInstance.getById(id);
     }
 
 }

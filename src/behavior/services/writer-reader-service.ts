@@ -37,6 +37,8 @@ export abstract class WriterReaderService<T> implements IRead<T>, IWrite<T> {
     update(id: string, model: T): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
             try {
+                if (!id) { return reject({ message: 'no id provided' }); }
+
                 const successRepo: boolean = await this._repository.update(id, model);
                 return resolve(successRepo);
             } catch (error) {

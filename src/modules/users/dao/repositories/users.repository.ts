@@ -19,6 +19,13 @@ export class UsersRepository extends AbstractRepository<IUser>{
         return super.getBy(new GetByQuery({ UserEmail: email }).toDBQuery('USERS'));
     }
 
+    getById(id: string): Promise<IUser> {
+        return super.getBy(new GetByQuery({ UserID: id }).toDBQuery('USERS'));
+    }
+
+    update(id: string, data): Promise<boolean> {
+        return super.update(new UpdateQuery({ UserID: id }).toDBQuery('USERS'), data);
+    }
 
 }
 

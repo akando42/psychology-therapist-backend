@@ -4,11 +4,11 @@ import { TokenValidationMiddleware } from "../../../../middlewares/token-validat
 import { IWriteReadController } from "../../../../behavior/controllers/write-read-controller.interface";
 import { IUser } from "../../../../models/user";
 import { WRAbstractRouter } from "../../../../behavior/routers/w-r-abstract.router";
-import { CabinetUserControllerInstance } from "./cabinet-users.controller";
+import { CabinetControllerInstance } from "./cabinet.controller";
 
 
 
-export class CabinetUserAuthRouter extends WRAbstractRouter<IUser>{
+export class CabinetAuthRouter extends WRAbstractRouter<IUser>{
     constructor(protected _authController: any) {
         super(_authController);
     }
@@ -17,12 +17,24 @@ export class CabinetUserAuthRouter extends WRAbstractRouter<IUser>{
         const router: Router = Router();
         router.post(`/cabinet-users`, TokenValidationMiddleware, this.create.bind(this));
 
-        router.get(`/cabinet-users`, TokenValidationMiddleware, this.getAll.bind(this));
+        router.get(`/cabinet/users`, TokenValidationMiddleware, this.getAll.bind(this));
 
         return router;
     }
 
+    getCabinetUsers(req: Request, res: Response): void {
+
+        this._authController.getCabinetUsers(req['userId'])
+            .then((result) => {
+                //sent the response.
+                res.status(200).json(result);
+
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+    }
 }
 
-export const CabinetUserAuthRouterInstance: CabinetUserAuthRouter =
-    new CabinetUserAuthRouter(CabinetUserControllerInstance);
+export const CabinetAuthRouterInstance: CabinetAuthRouter =
+    new CabinetAuthRouter(CabinetControllerInstance);

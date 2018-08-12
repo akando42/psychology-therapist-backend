@@ -29,11 +29,11 @@ export abstract class AbstractDao<T> {
     }
     findOneAndUpdate(query, model: T): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
-            let q = query.toDBQuery(this.table);
-            console.log("DAO:FindOneANdUpdate", q)
-            MySqlConnection.pool.query(q, [model], (err, result) => {
+
+            MySqlConnection.pool.query(query, [model], (err, result) => {
                 if (err) {
                     console.log('findOneAndUpdate', err['code'])
+                    console.log('full error', err)
                     return reject(err)
                 }
                 console.log('findOneAndUpdate', result)

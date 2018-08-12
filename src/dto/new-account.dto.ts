@@ -1,6 +1,7 @@
 import { IAccount } from "../models/account";
 import { IUser } from "../models/user";
 import { GenderEnum } from "../enums/gender.enum";
+import { UsersRolEnum } from "../enums/users-rol.enum";
 
 
 export interface INewAccountDTO extends IAccount {
@@ -8,4 +9,5 @@ export interface INewAccountDTO extends IAccount {
     lastName?: string;
     gender?: GenderEnum;
     phoneNumber: string;
+    role?: UsersRolEnum
 }
