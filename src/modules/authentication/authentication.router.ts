@@ -13,6 +13,7 @@ export class AuthenticationRouter {
         const router: Router = Router();
         router.post('/authentication/login', (req, res) => this.authenticate(req, res));
         router.post('/authentication/signup', (req, res) => this.signup(req, res));
+        router.post('/authentication/change-password', (req, res) => this.signup(req, res));
 
         router.get('/authentication/verify-email', (req, res) => this.verifyEmail(req, res));
 
@@ -33,6 +34,20 @@ export class AuthenticationRouter {
                 console.log(err)
             });
     }
+
+    
+    // changePassword(req: Request, res: Response): void {
+    //     this._authController.(req.body)
+    //         .then((result: any) => {
+    //             //sent the response.
+    //             res.status(200).json(result);
+
+    //         }).catch((err) => {
+    //             //handler error propertly
+    //             res.status(HttpResponseCodes.loginError).json(err)
+    //             console.log(err)
+    //         });
+    // }
 
     signup(req: Request, res: Response): void {
         this._authController.signup(req.body)

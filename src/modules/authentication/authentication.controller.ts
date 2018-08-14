@@ -63,6 +63,10 @@ export class AuthenticationController {
         return this._authService.verifyEmail(email, verificationToken)
     }
 
+    // changePassword(creds: any): Promise<any> {
+    //     return this._authService.changePassword()
+    // }
+
 }
 
 export const AuthenticationControllerInstance: AuthenticationController = new AuthenticationController(AuthenticationServiceInstance)
