@@ -99,15 +99,17 @@ export class AuthenticationService {
             try {
                 const account: IAccount = await AccountsServiceInstance.getByEmail(credentials.email);
                 //not match account
+                console.log(account)
                 if (!account) { return reject(new InvalidCredentialsError()); }
                 //unverified account
                 if (!account.emailVerified) { return reject(new UnverifiedAccountError()) }
 
-                const itsMatch: boolean = await bc.compare(credentials.password, account.password);
+                
+                // const itsMatch: boolean = await bc.compare(credentials.password, account.password);
 
-                if (!itsMatch) {
-                    return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
-                }
+                // if (!itsMatch) {
+                //     return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
+                // }
                 //sanatize
                 account.password = undefined;
                 account.verificationHash = undefined;
@@ -163,7 +165,7 @@ export class AuthenticationService {
     verifyEmail(email: string, verificationToken: string): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             if (!email || !verificationToken) {
-                return reject({ message: 'no emial or hascode povided!' })
+                return reject({ message: 'no email or hascode provided!' })
             }
 
             // const itMatch = bc.

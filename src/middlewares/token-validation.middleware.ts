@@ -5,12 +5,12 @@ import * as jwt from 'jsonwebtoken';
 import { InvalidTokenError } from "../errors/invalid-token.error";
 
 export function TokenValidationMiddleware(req: Request, res: Response | any, next: NextFunction): void {
-    if (req.headers['auth-token'] != 'undefined' && req.headers['auth-token']) {
-        let token: any = req.headers['auth-token'];
-
+    const token =req.headers['authorization'] 
+    if (token) {
         jwt.verify(token, process.env.SECRET_KEY, (err: any, decoded: any) => {
             if (err) {
-                return res.status(500)
+                console.log(err)
+                return res.status(403)
                     .send(new InvalidTokenError());
             }
             req['userId'] = decoded['userId'];

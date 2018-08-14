@@ -7,7 +7,8 @@ export class GetCabinetUsersQuery {
     }
 
     toDBQuery() {
-        return `SELECT * FROM ADMIN_CABINET_USERS where AdminCabinetID = ${this.adminId}
+        console.log()
+        return `SELECT * FROM ADMIN_CABINET_USERS where AdminID = ${this.adminId}
         join USERS ON UserID = ADMIN_CABINET_USERS.UserID;`
     }
 }
