@@ -115,30 +115,12 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `tod`.`ADMIN_CABINET`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `tod`.`ADMIN_CABINET` (
-  `AdminCabinetID` INT NOT NULL AUTO_INCREMENT,
-  `AdminCabinetOnwerID` INT NOT NULL,
-  PRIMARY KEY (`AdminCabinetID`),
-  UNIQUE INDEX `AdminCabinetOnwerID_UNIQUE` (`AdminCabinetOnwerID` ASC))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
 -- Table `tod`.`ADMIN_CABINET_USERS`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tod`.`ADMIN_CABINET_USERS` (
-  `AdminCabinetID` INT NOT NULL,
+  `AdminID` INT NOT NULL,
   `UserID` INT NOT NULL,
-  PRIMARY KEY (`AdminCabinetID`, `UserID`),
   INDEX `fk_ADMIN_CABINET_has_USERS_USERS1_idx` (`UserID` ASC),
-  INDEX `fk_ADMIN_CABINET_has_USERS_ADMIN_CABINET1_idx` (`AdminCabinetID` ASC),
-  CONSTRAINT `fk_ADMIN_CABINET_has_USERS_ADMIN_CABINET1`
-    FOREIGN KEY (`AdminCabinetID`)
-    REFERENCES `tod`.`ADMIN_CABINET` (`AdminCabinetID`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_ADMIN_CABINET_has_USERS_USERS1`
     FOREIGN KEY (`UserID`)
     REFERENCES `tod`.`USERS` (`UserID`)
@@ -150,3 +132,38 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- -----------------------------------------------------
+-- Data for table `tod`.`USERS`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `tod`;
+INSERT INTO `tod`.`USERS` (`UserID`, `UserLastName`, `UserFirstName`, `UserEmail`, `UserRole`, `UserGender`, `UserPhoneNumber`) VALUES (1, 'Test', 'ADmin', 'info@therapyondemand.io', 'admin', 'male', '991238');
+INSERT INTO `tod`.`USERS` (`UserID`, `UserLastName`, `UserFirstName`, `UserEmail`, `UserRole`, `UserGender`, `UserPhoneNumber`) VALUES (2, 'sales', 'tester', 'sales@test.com', 'sales', 'female', '03023020');
+INSERT INTO `tod`.`USERS` (`UserID`, `UserLastName`, `UserFirstName`, `UserEmail`, `UserRole`, `UserGender`, `UserPhoneNumber`) VALUES (3, 'hr', 'human', 'hr@test.com', 'hr', 'male', '010210');
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `tod`.`ACCOUNTS`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `tod`;
+INSERT INTO `tod`.`ACCOUNTS` (`AccountID`, `AccountPassword`, `AccountEmail`, `AccountStatus`, `AccountSignUpDate`, `AccountUserID`, `AccountVerificationHash`, `AccountEmailVerified`) VALUES (1, 'Admin@12345', 'info@therapyondemand.io', 'verified', 15555324, 1, 'asdlasd', 1);
+INSERT INTO `tod`.`ACCOUNTS` (`AccountID`, `AccountPassword`, `AccountEmail`, `AccountStatus`, `AccountSignUpDate`, `AccountUserID`, `AccountVerificationHash`, `AccountEmailVerified`) VALUES (2, 'Hr@12345', 'hr@test.com', 'verified', 123123, 3, 'asdasd', 1);
+INSERT INTO `tod`.`ACCOUNTS` (`AccountID`, `AccountPassword`, `AccountEmail`, `AccountStatus`, `AccountSignUpDate`, `AccountUserID`, `AccountVerificationHash`, `AccountEmailVerified`) VALUES (3, 'Sales@12345', 'sales@test.com', 'verified', 123123123, 2, 'asdasdak', 1);
+
+COMMIT;
+
+
+-- -----------------------------------------------------
+-- Data for table `tod`.`ADMIN_CABINET_USERS`
+-- -----------------------------------------------------
+START TRANSACTION;
+USE `tod`;
+INSERT INTO `tod`.`ADMIN_CABINET_USERS` (`AdminID`, `UserID`) VALUES (1, 2);
+INSERT INTO `tod`.`ADMIN_CABINET_USERS` (`AdminID`, `UserID`) VALUES (1, 2);
+
+COMMIT;
+
