@@ -37,7 +37,7 @@ export class CabinetController {
     }
 
 
-    getCabinet(userId: string): Promise<IUser[]> {
+    getCabinetUsers(userId: string): Promise<IUser[]> {
 
         return CabinetsServiceInstance.getCabinetUsers(userId);
     }

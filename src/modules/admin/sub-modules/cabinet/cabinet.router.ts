@@ -17,7 +17,7 @@ export class CabinetAuthRouter extends WRAbstractRouter<IUser>{
         const router: Router = Router();
         router.post(`/cabinet-users`, TokenValidationMiddleware, this.create.bind(this));
 
-        router.get(`/cabinet/users`, TokenValidationMiddleware, this.getAll.bind(this));
+        router.get(`/cabinet/users`, TokenValidationMiddleware, this.getCabinetUsers.bind(this));
 
         return router;
     }

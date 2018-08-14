@@ -6,9 +6,14 @@ export class GetCabinetUsersQuery {
 
     }
 
+    /**
+     * TODO: make that fields are selectebale from outside by array of string, for query listing filter 
+     */
     toDBQuery() {
-        console.log()
-        return `SELECT * FROM ADMIN_CABINET_USERS where AdminID = ${this.adminId}
-        join USERS ON UserID = ADMIN_CABINET_USERS.UserID;`
+        
+        return `SELECT AdminID, tod.users.UserID,UserFirstName,UserLastName,UserGender, UserRole,UserEmail
+        FROM tod.admin_cabinet_users JOIN tod.users
+          ON tod.admin_cabinet_users.UserID = tod.users.UserID
+          WHERE tod.admin_cabinet_users.AdminID = ${this.adminId}`
     }
 }
