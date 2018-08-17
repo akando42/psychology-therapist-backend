@@ -6,6 +6,7 @@ import { WRAbstractRouter } from "../../behavior/routers/w-r-abstract.router";
 import { IUser } from "../../models/user";
 import { roleValidationMiddleware } from "../../middlewares/role-validation.middleware";
 import { TokenValidationMiddleware } from "../../middlewares/token-validation.middleware";
+import { TasksRouterInstance } from "../tasks/tasks.router";
 
 export class UsersRouter extends WRAbstractRouter<IUser> {
 
@@ -34,6 +35,7 @@ export class UsersRouter extends WRAbstractRouter<IUser> {
         router.patch(`/${this.resourcePath}/:id/profile`, this.update.bind(this));
         // router.put(`/${this.resourcePath}/:id`, TokenValidationMiddleware, this.update.bind(this));
 
+        router.use('/users/:userId/',TasksRouterInstance.init())
 
         return router;
     }

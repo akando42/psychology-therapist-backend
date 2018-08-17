@@ -15,9 +15,9 @@ export class TasksRouter extends WRAbstractRouter<ITask> {
 
 
     init(): Router {
-        const router: Router = Router();
+        const router: Router = Router({mergeParams:true});
         //Get All Resource
-        router.get(`/${this.resourcePath}/`, this.getAll.bind(this));
+        router.get(`/${this.resourcePath}`, this.getByAssignedUser.bind(this));
         //Get Resource
         router.get(`/${this.resourcePath}/:id/${this.resourcePath}`, this.getById.bind(this));
         //Delete Resource
@@ -29,6 +29,18 @@ export class TasksRouter extends WRAbstractRouter<ITask> {
 
 
         return router;
+    }
+
+    getByAssignedUser(req: Request, res: Response): void {
+        console.log(req.params)
+        console.log(req.path)
+        this._controller['getByUserAssigned'](req.params['userId'])
+            .then((result) => {
+                res.status(200).json(result);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
     }
 
 }

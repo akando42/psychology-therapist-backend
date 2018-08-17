@@ -6,13 +6,11 @@ import { TaskStatusEnum } from "../../../../../../enums/task-status.enum";
 
 export interface ITaskMySql {
     TaskID?: string;
-    Status: TaskStatusEnum;
-    Title?: string;
-    CreatorID: string;
-    AssignedTo?: string;
-    CreationDate: number;
-    ResolutionDate: number;
-    Details: string;
-    Comments: string;
-    //why not?
+    TaskStatus: TaskStatusEnum;
+    TaskTitle?: string;
+    TaskReporterID: string;
+    TaskAssignedToID?: string;
+    TaskCreationDate: number;
+    TaskResolutionDate: number;
+    TaskDetails: string;
 }

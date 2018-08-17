@@ -35,19 +35,19 @@ export class AuthenticationRouter {
             });
     }
 
-    
-    // changePassword(req: Request, res: Response): void {
-    //     this._authController.(req.body)
-    //         .then((result: any) => {
-    //             //sent the response.
-    //             res.status(200).json(result);
 
-    //         }).catch((err) => {
-    //             //handler error propertly
-    //             res.status(HttpResponseCodes.loginError).json(err)
-    //             console.log(err)
-    //         });
-    // }
+    changePassword(req: Request, res: Response): void {
+        this._authController.changePassword(req.body)
+            .then((result: any) => {
+                //sent the response.
+                res.status(200).json(result);
+
+            }).catch((err) => {
+                //handler error propertly
+                res.status(HttpResponseCodes.loginError).json(err)
+                console.log(err)
+            });
+    }
 
     signup(req: Request, res: Response): void {
         this._authController.signup(req.body)

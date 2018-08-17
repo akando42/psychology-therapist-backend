@@ -6,17 +6,15 @@ export interface ITask {
     id?: string;
     status: TaskStatusEnum;
     title?: string;
-    creator: { name: string };
+    reportTo?:
+    { name?: string, id?: string };
     assignedTo?: {
-        name: string,
-        id: string
+        name?: string,
+        id?: string
     };
-
-    creationDate: number;
-    resolutionDate: number;
-    details: string;
-
-    comments: IComment[]
+    creationDate?: number;
+    resolutionDate?: number;
+    details?: string;
     //why not?
     estimedTime: string;
 

@@ -130,10 +130,10 @@ export class AuthenticationService {
         });
     }
 
-    changePassword(accountId: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any> {
+    changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                const account = await AccountsServiceInstance.getById(accountId);
+                const account = await AccountsServiceInstance.getByEmail(email);
 
                 if (!account) {
                     return reject({ success: false, message: 'invalid account id' })
@@ -149,7 +149,7 @@ export class AuthenticationService {
                 const hashPassword: string = await bc.hash(changeRequest.newPassword, 10);
 
                 account.password = hashPassword;
-                const result = await AccountsServiceInstance.update(accountId, account);
+                const result = await AccountsServiceInstance.update(account.accountId, account);
                 if (result) {
                     //tood sent email with notification of the password change
 
