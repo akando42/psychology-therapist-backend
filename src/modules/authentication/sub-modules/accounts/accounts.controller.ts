@@ -11,6 +11,10 @@ export class AccountsController extends WriteReadController<IAccount> {
         super(AccountsServiceInstance)
     }
 
+    getByEmail(email: string): Promise<IAccount> {
+        return AccountsServiceInstance.getByEmail(email);
+    }
+
 }
 
 export const AccountsControllerInstance: AccountsController = new AccountsController();
