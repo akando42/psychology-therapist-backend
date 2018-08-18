@@ -7,6 +7,7 @@ import { MySqlConnection } from './database-connection/db-connection.mysql';
 import { NotificationsRouterInstance } from './modules/notifications/notifications.router';
 import { UsersRouterInstance } from './modules/users/users.router';
 import { CabinetAuthRouterInstance } from './modules/admin/sub-modules/cabinet/cabinet.router';
+import { AdminModule } from './modules/admin/admin.module';
 
 
 export class API {
@@ -37,6 +38,9 @@ export class API {
     }
 
     private mountRoutes(): void {
+        let adminModule = new AdminModule();
+
+        this.express.use('/admin', adminModule.init());
 
         this.express.use('/api/v1', AuthenticationRouterInstance.init());
         this.express.use('/api/v1', UsersRouterInstance.init());
