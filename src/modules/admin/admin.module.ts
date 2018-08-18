@@ -18,7 +18,9 @@ export class AdminModule {
         return this.application;
     }
     private _mounthRouter(): void {
-
+        this.application.use('/', (req, res) => {
+            res.send('NO WAY')
+        })
         this.application.use('authentication', AuthenticationRouterInstance.init());
         this.application.use('cabinet', CabinetAuthRouterInstance.init());
     }
