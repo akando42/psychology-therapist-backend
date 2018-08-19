@@ -4,6 +4,7 @@ import { IUser } from "../../../../models/user";
 import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 import { UsersService } from "../../feight-clients/users.service";
 import { INewAccountDTO } from "../../../../dto/new-account.dto";
+import { AuthService } from "../../feight-clients/auth.service";
 
 
 export class AuthenticationController {
@@ -16,25 +17,16 @@ export class AuthenticationController {
         return new Promise<any>(async (resolve, reject) => {
             try {
 
-                const result: { token: string, auth: boolean, message: string, data: IAccount | null } =
-                    await this._authService.authenticate(credentials);
+                const { user, token } = await AuthService.authenticate(credentials);
 
-                //sugar
-                const { auth, data, token } = result;
-
-                if (!auth) {
-                    //throw error
-                    return reject(result);
-                }
                 /**
                  * Get the user attached to that account.
                  */
-                const user: IUser = await UsersService.getById(data.userId);
                 //send token and user back
                 return resolve({ user: user, token: token });
 
             } catch (error) {
-                reject({ error: error, status: 403 });
+                reject(error);
             }
         })
     }

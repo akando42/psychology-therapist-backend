@@ -1,6 +1,6 @@
 import { TasksServiceInstance } from "./tasks.service";
 import { WriteReadController } from "../../behavior/controllers/write-read.controller";
-import { ITask } from "../../models/task";
+import { ITask } from "./models/task";
 
 
 

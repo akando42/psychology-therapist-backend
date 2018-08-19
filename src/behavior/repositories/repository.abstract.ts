@@ -69,7 +69,7 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
     }
 
     getAllBy(query?: any): Promise<K[]> {
-        console.log('queryng')
+        console.log(query)
         return new Promise<K[]>((resolve, reject) => {
             this._db.find(query)
                 .then((result: any) => {

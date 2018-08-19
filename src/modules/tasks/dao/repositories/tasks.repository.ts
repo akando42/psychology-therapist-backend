@@ -2,9 +2,9 @@ import { TaskMySqlDAOInstance } from "../my-sql/task-mysql.dao";
 import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
 import { GetBy } from "../queries/mysql/get-by";
 import { TasksConverterInstance } from "../../converters/my-sql/tasks.converter";
-import { ITask } from "../../../../models/task";
 import { UpdateQuery } from "../../../../query-spec/my-sql/update.query";
 import { GetByQuery } from "../../../../query-spec/my-sql/get-by.query";
+import { ITask } from "../../models/task";
 
 
 

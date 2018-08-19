@@ -6,19 +6,29 @@ import { ITaskMySql } from "../../dao/my-sql/models/my-sql/task-my-sql";
 export class TaskConverter implements IDualConverter<ITask, ITaskMySql> {
     converDomainToDBModel(raw: ITask): ITaskMySql {
         if (!raw) { return null }
-        // return {
-        //    }
+        return {
+            TaskAssignedToID: raw.assignedTo.id,
+            TaskReporterID: raw.reportTo.id,
+            TaskID: raw.id,
+            TaskDetails: raw.details,
+            TaskCreationDate: raw.creationDate,
+            TaskStatus: raw.status,
+            TaskResolutionDate: raw.resolutionDate,
+            TaskTitle: raw.title
+        }
     }
     convertDBModelToDomain(raw: ITaskMySql): ITask {
         if (!raw) { return null }
-        // return {
-        //     TaskStatus: raw.TaskStatus,
-        //     email: raw.email,
-        //     password: raw.password,
-        //     TaskId: raw.TaskId,
-        //     signUpDate: raw.signUpDate,
-        //     userId: raw.userId
-        // }
+        return {
+            assignedTo: { id: raw.TaskAssignedToID, name: raw.TaskAssignedToFullName },
+            creationDate: raw.TaskCreationDate,
+            details: raw.TaskDetails,
+            reportTo: { id: raw.TaskReporterID, name: raw.TaskReporterFullName },
+            id: raw.TaskID,
+            title: raw.TaskTitle,
+            status: raw.TaskStatus,
+            resolutionDate: raw.TaskResolutionDate
+        }
     }
     converManyDomainToDBModel(raw: ITask[]): ITaskMySql[] {
         return raw.map((item) => this.converDomainToDBModel(item));

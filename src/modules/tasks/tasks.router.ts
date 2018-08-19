@@ -4,7 +4,8 @@ import { TasksControllerInstance } from "./tasks.controller";
 import { IWriteReadController } from "../../behavior/controllers/write-read-controller.interface";
 import { WRAbstractRouter } from "../../behavior/routers/w-r-abstract.router";
 import { TokenValidationMiddleware } from "../../middlewares/token-validation.middleware";
-import { ITask } from "../../models/task";
+import { ITask } from "./models/task";
+import { TasksCommentsRouterInstance } from "./sub-modules/task-comments/tasks-comments.router";
 
 export class TasksRouter extends WRAbstractRouter<ITask> {
 
@@ -15,25 +16,24 @@ export class TasksRouter extends WRAbstractRouter<ITask> {
 
 
     init(): Router {
-        const router: Router = Router({mergeParams:true});
+        const router: Router = Router({ mergeParams: true });
         //Get All Resource
-        router.get(`/${this.resourcePath}`, this.getByAssignedUser.bind(this));
+        router.get(`/tasks`, this.getByAssignedUser.bind(this));
         //Get Resource
-        router.get(`/${this.resourcePath}/:id/${this.resourcePath}`, this.getById.bind(this));
         //Delete Resource
-        router.delete(`/${this.resourcePath}/:id`, this.delete.bind(this));
+        router.delete(`/tasks/:task_id`, this.delete.bind(this));
         //Create Resource
-        router.post(`/${this.resourcePath}`, this.create.bind(this));
+        router.post(`/tasks`, this.create.bind(this));
         //Update Resource
-        router.put(`/${this.resourcePath}/:id`, TokenValidationMiddleware, this.update.bind(this));
+        router.put(`/tasks/:task_id`, TokenValidationMiddleware, this.update.bind(this));
 
+        //COMMENTS
+        router.use('/tasks/:task_id', TasksCommentsRouterInstance.init());
 
         return router;
     }
 
     getByAssignedUser(req: Request, res: Response): void {
-        console.log(req.params)
-        console.log(req.path)
         this._controller['getByUserAssigned'](req.params['userId'])
             .then((result) => {
                 res.status(200).json(result);

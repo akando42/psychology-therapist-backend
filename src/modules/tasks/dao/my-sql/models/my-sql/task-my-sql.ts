@@ -9,7 +9,9 @@ export interface ITaskMySql {
     TaskStatus: TaskStatusEnum;
     TaskTitle?: string;
     TaskReporterID: string;
+    TaskReporterFullName?: string;
     TaskAssignedToID?: string;
+    TaskAssignedToFullName?: string;
     TaskCreationDate: number;
     TaskResolutionDate: number;
     TaskDetails: string;

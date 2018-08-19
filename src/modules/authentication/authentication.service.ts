@@ -6,10 +6,7 @@ import { INewAccountDTO } from '../../dto/new-account.dto';
 import { IUser } from '../../models/user';
 import { UsersServiceInstance } from '../users/users.service';
 import { UsersRolEnum } from '../../enums/users-rol.enum';
-import { resolve } from 'path';
-import { MailGunEmailServiceInstance } from '../communication/email/mailgun-email.service';
 import { NewAccountVerificationTemplate } from '../communication/email/templates/new-account-verification.template';
-import { json } from 'body-parser';
 import { SendGridEmailServiceInstace } from '../communication/email/sendgrid-email.service';
 import { UnverifiedAccountError } from '../../errors/unverfied-account.error';
 import { InvalidCredentialsError } from '../../errors/invalid-credentials.error';
@@ -104,7 +101,7 @@ export class AuthenticationService {
                 //unverified account
                 if (!account.emailVerified) { return reject(new UnverifiedAccountError()) }
 
-                
+
                 // const itsMatch: boolean = await bc.compare(credentials.password, account.password);
 
                 // if (!itsMatch) {

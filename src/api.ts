@@ -8,6 +8,7 @@ import { NotificationsRouterInstance } from './modules/notifications/notificatio
 import { UsersRouterInstance } from './modules/users/users.router';
 import { CabinetAuthRouterInstance } from './modules/admin/sub-modules/cabinet/cabinet.router';
 import { AdminModule } from './modules/admin/admin.module';
+import { TasksModule } from './modules/tasks/task.module';
 
 
 export class API {
@@ -41,6 +42,7 @@ export class API {
         let adminModule = new AdminModule();
 
         this.express.use('/admin', adminModule.init());
+        this.express.use('/api/v1', new TasksModule().init());
 
         this.express.use('/api/v1', AuthenticationRouterInstance.init());
         this.express.use('/api/v1', UsersRouterInstance.init());

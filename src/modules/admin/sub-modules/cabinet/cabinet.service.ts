@@ -6,13 +6,14 @@ import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 import { IUser } from "../../../../models/user";
 import { CabinetsRepoInstance } from "../../dao/repositories/cabinet.repository";
+import { AuthService } from "../../feight-clients/auth.service";
 
-export class CabinetsService extends AuthenticationService {
+export class CabinetsService {
     constructor() {
-        super();
+
     }
 
-    registerUser(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
+    inviteToCabinet(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
 
@@ -23,7 +24,7 @@ export class CabinetsService extends AuthenticationService {
 
                 newAccount.accountStatus = AccountStatusEnum.waiting;
 
-                const result = await super.registerUser(newAccount);
+                const result = await AuthService.signUp(newAccount);
 
                 return resolve(result);
             } catch (e) {

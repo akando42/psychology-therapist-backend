@@ -1,6 +1,6 @@
 import { WriteReadController } from "../../../../behavior/controllers/write-read.controller";
 import { IUser } from "../../../../models/user";
-import { CabinetsServiceInstance } from "./cabinet.service";
+import { CabinetsServiceInstance, CabinetsService } from "./cabinet.service";
 import { AuthenticationServiceInstance, AuthenticationService } from "../../../authentication/authentication.service";
 import { INewAccountDTO } from "../../../../dto/new-account.dto";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
@@ -8,7 +8,7 @@ import { MailGunEmailServiceInstance } from "../../../communication/email/mailgu
 
 
 export class CabinetController {
-    constructor(private _authService: AuthenticationService) {
+    constructor(private _authService: CabinetsService) {
     }
 
     signup(account: INewAccountDTO): Promise<any> {
@@ -16,7 +16,7 @@ export class CabinetController {
             try {
 
                 const result: { success: boolean, message: string, used: boolean } = await
-                    this._authService.registerUser(account);
+                    this._authService.inviteToCabinet(account);
 
                 if (result.success) {
                     //use mail service to notify user that account has been created
