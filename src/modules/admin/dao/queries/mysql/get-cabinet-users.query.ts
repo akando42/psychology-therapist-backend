@@ -3,7 +3,7 @@
 
 export class GetCabinetUsersQuery {
     constructor(public adminId: string) {
-
+        console.log(this)
     }
 
     /**

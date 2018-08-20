@@ -7,9 +7,6 @@ export class TasksService extends WriterReaderService<ITask> {
         super(TasksRepoInstance);
     }
 
-    getByUserAssigned(userId: string): Promise<ITask[]> {
-        return TasksRepoInstance.getByUserAssigned(userId);
-    }
 }
 
 export const TasksServiceInstance: TasksService = new TasksService();

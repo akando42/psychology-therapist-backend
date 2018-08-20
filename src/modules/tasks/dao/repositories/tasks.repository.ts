@@ -18,9 +18,13 @@ export class TasksRepository extends AbstractRepository<ITask>{
         return super.update(new UpdateQuery({ TaskID: id }).toDBQuery('TASKS'), data);
     }
 
-    getByUserAssigned(userId: string): Promise<ITask[]> {
-        return super.getAllBy(new GetByQuery({ TaskUserAssignedID: userId }).toDBQuery('TASKS'))
+    getAllBy(query: any): Promise<ITask[]> {
+
+        return super.getAllBy(
+            new GetByQuery({ TaskUserAssignedID: query.assinedTo }).toDBQuery('TASKS'));
+
     }
+
 
 }
 

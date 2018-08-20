@@ -10,9 +10,8 @@ export class TasksController extends WriteReadController<ITask>{
         super(TasksServiceInstance);
     }
 
-
-    getByUserAssigned(userId: string): Promise<ITask[]> {
-        return TasksServiceInstance.getByUserAssigned(userId);
+    getAllBy(query: any): Promise<ITask[]> {
+        return super.getAllBy(query);
     }
 }
 

@@ -3,7 +3,9 @@ import { Application } from "express";
 import { TasksRouterInstance } from './tasks.router';
 
 
-
+/**
+ * Module to tasks
+ */
 export class TasksModule {
     public application: Application;
     constructor() {
@@ -17,8 +19,11 @@ export class TasksModule {
         this._mounthRouter();
         return this.application;
     }
+
     private _mounthRouter(): void {
-        this.application.use(TasksRouterInstance.init());
+        const router = TasksRouterInstance.init();
+        this.application.use( router)
+        // this.application.use(router);
 
     }
 

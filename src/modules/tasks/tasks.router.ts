@@ -6,6 +6,7 @@ import { WRAbstractRouter } from "../../behavior/routers/w-r-abstract.router";
 import { TokenValidationMiddleware } from "../../middlewares/token-validation.middleware";
 import { ITask } from "./models/task";
 import { TasksCommentsRouterInstance } from "./sub-modules/task-comments/tasks-comments.router";
+import { TasksHistoryRouterInstance } from "./sub-modules/task-history/tasks-history.router";
 
 export class TasksRouter extends WRAbstractRouter<ITask> {
 
@@ -18,8 +19,10 @@ export class TasksRouter extends WRAbstractRouter<ITask> {
     init(): Router {
         const router: Router = Router({ mergeParams: true });
         //Get All Resource
-        router.get(`/tasks`, this.getByAssignedUser.bind(this));
-        //Get Resource
+        router.get(`/tasks`, this.getAll.bind(this));
+
+
+        // router.get(`/tasks`, this.getByAssignedUser.bind(this));
         //Delete Resource
         router.delete(`/tasks/:task_id`, this.delete.bind(this));
         //Create Resource
@@ -29,12 +32,14 @@ export class TasksRouter extends WRAbstractRouter<ITask> {
 
         //COMMENTS
         router.use('/tasks/:task_id', TasksCommentsRouterInstance.init());
+        // HITORY
+        router.use('task/task_id', TasksHistoryRouterInstance.init())
 
         return router;
     }
 
     getByAssignedUser(req: Request, res: Response): void {
-        this._controller['getByUserAssigned'](req.params['userId'])
+        this._controller['getByUserAssigned'](req.params['user_id'])
             .then((result) => {
                 res.status(200).json(result);
             })

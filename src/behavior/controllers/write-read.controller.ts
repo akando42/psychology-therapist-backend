@@ -21,7 +21,6 @@ export abstract class WriteReadController<T> implements IWriteReadController<T>{
     getAllBy(query: any): Promise<T[]> {
         return new Promise<T[]>(async (resolve, reject) => {
             try {
-                console.log('controller')
                 const items: T[] = await this._service.getAllBy(query);
                 return resolve(items)
 

@@ -50,7 +50,6 @@ export abstract class WriterReaderService<T> implements IRead<T>, IWrite<T> {
     getBy(query: any): Promise<T> {
         return new Promise<T>(async (resolve, reject) => {
             try {
-                console.log('service')
                 const item: T = await this._repository.getBy(query)
                 return resolve(item);
             } catch (error) {
@@ -61,7 +60,6 @@ export abstract class WriterReaderService<T> implements IRead<T>, IWrite<T> {
     getAllBy(query: any): Promise<T[]> {
         return new Promise<T[]>(async (resolve, reject) => {
             try {
-                console.log('service')
                 const items: T[] = await this._repository.getAllBy(query)
                 return resolve(items);
             } catch (error) {
