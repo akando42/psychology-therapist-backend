@@ -4,11 +4,11 @@ import * as bodyParser from "body-parser";
 import * as cors from 'cors';
 import { AuthenticationRouterInstance } from './modules/authentication';
 import { MySqlConnection } from './database-connection/db-connection.mysql';
-import { NotificationsRouterInstance } from './modules/notifications/notifications.module';
 import { UsersRouterInstance } from './modules/users/users.router';
 import { CabinetAuthRouterInstance } from './modules/admin/sub-modules/cabinet/cabinet.router';
 import { AdminModule } from './modules/admin/admin.module';
 import { TasksModule } from './modules/tasks/task.module';
+import { NotificationsRouterInstance } from './modules/notifications/notification.router';
 
 
 export class API {
@@ -32,7 +32,7 @@ export class API {
     }
 
     private middleware() {
-        this.express.use(cors('*'));
+        this.express.use(cors({ origin: '*' }));
         this.express.use(bodyParser.json());
         // this.express.use(bodyParser.urlencoded({ extended: false }));
 
@@ -64,7 +64,7 @@ export class API {
     //hr aprrove,ask resumision (comments),decline
     //hr after decline, the hr must authorize the provider to upload again
     //the doc otherside proivder will remain blocked
-    
+
     //provider
     //lock account 
     //falied login attemps

@@ -1,7 +1,7 @@
 
 
 export interface INotification {
-    readed: boolean;
+    readed: any;
     title: string;
     content: string;
     date: number;

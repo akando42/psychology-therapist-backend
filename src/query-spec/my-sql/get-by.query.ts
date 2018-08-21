@@ -9,11 +9,11 @@ export class GetByQuery {
         let query = ''
         for (const key in this.query) {
             if (this.query.hasOwnProperty(key)) {
-                query += `${key} = '${this.query[key]}'`
+                query += `${key} = '${this.query[key]}' &`
 
             }
         }
-        let q = `SELECT * FROM ${table} WHERE ${query}`
+        let q = `SELECT * FROM ${table} WHERE ${query.slice(0,query.length-1)}`
         return q;
     }
 }

@@ -5,14 +5,19 @@ import { INotification } from "../../models/notification";
 
 
 
- class NotificationsController extends WriteReadController<INotification>{
+class NotificationsController extends WriteReadController<INotification>{
     constructor() {
         super(NotificationsServiceInstance);
     }
 
-    getUserNotifications(userID): Promise<INotification[]> {
-        return NotificationsServiceInstance.getUserNotifications(userID);
+    getUserUnreadNotifications(userID): Promise<INotification[]> {
+        return NotificationsServiceInstance.getUserUnreadNotifications(userID);
     }
+
+    markAsReaded(notificationID: string): Promise<boolean> {
+        return NotificationsServiceInstance.markAsReaded(notificationID);
+    }
+
 }
 
 export const NotificationsControllerInstance: NotificationsController = new NotificationsController();
