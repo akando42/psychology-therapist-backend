@@ -10,7 +10,8 @@ export class NotificationConverter implements IDualConverter<INotification, INot
             NotificationContent: raw.content,
             NotificationCreationDate: raw.date,
             NotificationReadStatus: raw.readed,
-            NotificationTitle: raw.title
+            NotificationTitle: raw.title,
+            NotificationRecipentID: raw.recipentID
         }
     }
     convertDBModelToDomain(raw: INotificationMySql): INotification {
@@ -19,7 +20,8 @@ export class NotificationConverter implements IDualConverter<INotification, INot
             content: raw.NotificationContent,
             date: raw.NotificationCreationDate,
             readed: raw.NotificationReadStatus,
-            title: raw.NotificationTitle
+            title: raw.NotificationTitle,
+            recipentID: raw.NotificationRecipentID
         }
     }
     converManyDomainToDBModel(raw: INotification[]): INotificationMySql[] {

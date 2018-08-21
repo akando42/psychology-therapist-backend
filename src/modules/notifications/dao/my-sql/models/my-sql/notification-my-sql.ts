@@ -4,4 +4,5 @@ export interface INotificationMySql {
     NotificationTitle: string;
     NotificationContent: string;
     NotificationCreationDate: number;
+    NotificationRecipentID: any;
 }

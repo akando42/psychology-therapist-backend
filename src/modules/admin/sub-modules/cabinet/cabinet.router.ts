@@ -13,16 +13,18 @@ export class CabinetAuthRouter extends WRAbstractRouter<IUser>{
 
     init(): Router {
         const router: Router = Router({ mergeParams: true });
-        router.post(`/cabinet`, this.create.bind(this));
+        // router.post(`/cabinet`, this.create.bind(this));
 
-        router.get(`/cabinet/members`, this.getCabinetUsers.bind(this));
+        router.get(`/members`, TokenValidationMiddleware, this.getCabinetUsers.bind(this));
+
+        router.get(`/members/:member_id/request`, this.requestActionToCabinetUser.bind(this))
 
         return router;
     }
 
     getCabinetUsers(req: Request, res: Response): void {
         console.log(req.params)
-        this._authController.getCabinetUsers(req.params['admin_id'])
+        this._authController.getCabinetUsers(req['userId'])
             .then((result) => {
                 //sent the response.
                 res.status(200).json(result);
@@ -31,6 +33,10 @@ export class CabinetAuthRouter extends WRAbstractRouter<IUser>{
             .catch((error) => {
                 console.log(error);
             })
+    }
+
+    requestActionToCabinetUser(req: Request, res: Response): void {
+        CabinetControllerInstance
     }
 }
 

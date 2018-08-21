@@ -5,6 +5,7 @@ import { AuthenticationServiceInstance, AuthenticationService } from "../../../a
 import { INewAccountDTO } from "../../../../dto/new-account.dto";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 import { MailGunEmailServiceInstance } from "../../../communication/email/mailgun-email.service";
+import { ICabinetActionRequest } from "../../../../models/cabinet-action-request";
 
 
 export class CabinetController {
@@ -41,6 +42,13 @@ export class CabinetController {
 
         return CabinetsServiceInstance.getCabinetUsers(adminId);
     }
+
+    requestActionToCabinetUser(request: ICabinetActionRequest): Promise<any> {
+        return null;
+    }
+
+
+
 }
 
 export const CabinetControllerInstance: CabinetController =

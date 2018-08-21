@@ -2,6 +2,7 @@ import * as express from 'express';
 import { Application } from "express";
 import { AuthenticationRouterInstance } from './sub-modules/authentication';
 import { CabinetAuthRouterInstance } from './sub-modules/cabinet/cabinet.router';
+import { CabinetModule } from './sub-modules/cabinet/cabinet.module';
 
 
 export class AdminModule {
@@ -18,13 +19,13 @@ export class AdminModule {
         return this.application;
     }
     private _mounthRouter(): void {
-        this.application.use('/', (req, res) => {
-            res.send('ADMIN MODULE')
-        })
-        
+        this.application.use('/cabinet', new CabinetModule().init());
         this.application.use(AuthenticationRouterInstance.init());
+        this.application.use('/*', (req, res) => {
+            res.send('WHAT ARE YOU TRYING TO DO -.-')
+        })
+
         //resources attached to one admin    
-        this.application.use('/:admin_id', CabinetAuthRouterInstance.init());
     }
 
 }

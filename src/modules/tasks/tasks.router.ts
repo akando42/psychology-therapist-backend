@@ -7,6 +7,7 @@ import { TokenValidationMiddleware } from "../../middlewares/token-validation.mi
 import { ITask } from "./models/task";
 import { TasksCommentsRouterInstance } from "./sub-modules/task-comments/tasks-comments.router";
 import { TasksHistoryRouterInstance } from "./sub-modules/task-history/tasks-history.router";
+// import { TasksHistoryRouterInstance } from "./sub-modules/task-history/tasks-history.component";
 
 export class TasksRouter extends WRAbstractRouter<ITask> {
 

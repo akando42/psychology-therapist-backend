@@ -5,4 +5,5 @@ export interface INotification {
     title: string;
     content: string;
     date: number;
+    recipentID: any;
 }

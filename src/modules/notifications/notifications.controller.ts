@@ -5,9 +5,13 @@ import { INotification } from "../../models/notification";
 
 
 
-export class NotificationsController extends WriteReadController<INotification>{
+ class NotificationsController extends WriteReadController<INotification>{
     constructor() {
         super(NotificationsServiceInstance);
+    }
+
+    getUserNotifications(userID): Promise<INotification[]> {
+        return NotificationsServiceInstance.getUserNotifications(userID);
     }
 }
 
