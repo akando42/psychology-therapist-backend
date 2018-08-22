@@ -1,4 +1,4 @@
-import { logger } from './../utils/logger';
+import { logger } from '../utils/logger';
 import * as express from 'express';
 import { Application } from "express";
 import { ProviderRouterInstance } from './core/provider.router';

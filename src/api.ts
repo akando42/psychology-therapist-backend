@@ -30,7 +30,7 @@ export class API {
 		    "user": "root",
 		    "password": "",
 		    "database": "tod",
-		    "port": 3364
+		    "port": 3306
 		})
 	}
 

@@ -1,4 +1,4 @@
-import { Provider } from './../../../entity/provider';
+import { Provider } from '../../../entity/provider';
 import { ProviderServiceInstance, ProviderService } from "./provider.service";
 import { TODResponse } from '../../../dto/tod-response';
 

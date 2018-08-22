@@ -9,11 +9,11 @@ export abstract class WriterReaderService<T> implements IRead<T>, IWrite<T> {
 
     }
 
-    create(newObj: T): Promise<string> {
-        return new Promise<string>(async (resolve, reject) => {
+    create(newObj: T): Promise<T> {
+        return new Promise<T>(async (resolve, reject) => {
             try {
                 console.log('Service::attempting to create', newObj)
-                const item: string = await this._repository.create(newObj)
+                const item: T = await this._repository.create(newObj)
 
                 return resolve(item);
             } catch (error) {

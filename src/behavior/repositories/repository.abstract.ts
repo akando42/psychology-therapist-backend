@@ -9,14 +9,13 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
     }
 
 
-    create(model: K): Promise<string> {
+    create(model: K): Promise<K> {
         const input: K = this._converter ?
             this._converter.converDomainToDBModel(model) : model;
-        console.log('Repository::creating', input)
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<K>((resolve, reject) => {
             this._db.create(input)
                 .then((result: any) => {
-                    console.log('inserted ID', result)
+
                     resolve(result)
                 })
                 .catch((err) => {

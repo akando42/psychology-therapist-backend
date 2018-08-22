@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 
-import { TasksControllerInstance } from "./tasks.controller";
-import { IWriteReadController } from "../../behavior/controllers/write-read-controller.interface";
+import { TasksControllerInstance, TasksController } from "./tasks.controller";
 import { WRAbstractRouter } from "../../behavior/routers/w-r-abstract.router";
 import { TokenValidationMiddleware } from "../../middlewares/token-validation.middleware";
 import { ITask } from "./models/task";
@@ -11,7 +10,7 @@ import { TasksHistoryRouterInstance } from "./sub-modules/task-history/tasks-his
 
 export class TasksRouter extends WRAbstractRouter<ITask> {
 
-    constructor(protected _controller: IWriteReadController<ITask>) {
+    constructor(protected _controller: TasksController) {
         super(_controller);
         this.resourcePath = 'tasks'
     }
@@ -20,14 +19,15 @@ export class TasksRouter extends WRAbstractRouter<ITask> {
     init(): Router {
         const router: Router = Router({ mergeParams: true });
         //Get All Resource
-        router.get(`/tasks`, this.getAll.bind(this));
+        // router.get(`/tasks`, this.getAll.bind(this));
 
 
-        // router.get(`/tasks`, this.getByAssignedUser.bind(this));
+        router.get(`/tasks`, this.getByAssignedUser.bind(this));
+        router.get(`/tasks/search`, this.getAll.bind(this));
         //Delete Resource
         router.delete(`/tasks/:task_id`, this.delete.bind(this));
         //Create Resource
-        router.post(`/tasks`, this.create.bind(this));
+        router.post(`/tasks`, this.createAndNotify.bind(this));
         //Update Resource
         router.put(`/tasks/:task_id`, TokenValidationMiddleware, this.update.bind(this));
 
@@ -39,13 +39,35 @@ export class TasksRouter extends WRAbstractRouter<ITask> {
         return router;
     }
 
+
+    search(req: Request, res: Response): void {
+        this._controller.getAllBy(req.query)
+            .then((result) => {
+                res.status(200).json(result);
+            })
+            .catch((err) => {
+                res.status(200).json(err);
+            })
+    }
+
+
     getByAssignedUser(req: Request, res: Response): void {
         this._controller['getByUserAssigned'](req.params['user_id'])
             .then((result) => {
                 res.status(200).json(result);
             })
             .catch((err) => {
-                console.log(err);
+                res.status(200).json(err);
+            })
+    }
+
+    createAndNotify(req: Request, res: Response): void {
+        this._controller.createTaskAndNotify(req.body)
+            .then((result) => {
+                res.status(200).json(result);
+            })
+            .catch((err) => {
+                res.status(200).json(err);
             })
     }
 

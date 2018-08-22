@@ -1,4 +1,4 @@
-import { logger } from './../../utils/logger';
+import { logger } from '../../utils/logger';
 import { Provider } from "../../../entity/provider";
 import { CrudService } from "./interface/crud-service";
 import { getManager } from "typeorm";

@@ -7,6 +7,17 @@ import { GetByQuery } from "../../../../query-spec/my-sql/get-by.query";
 import { ITask } from "../../models/task";
 
 
+function tasksCustomQueryGenerator(fieldsDictionay: any, query: any): string {
+    let cq: string = 'select * from TASKS Where ';
+
+    for (const key in query) {
+        if (query.hasOwnProperty(key)) {
+            const value = query[key];
+            cq += `${fieldsDictionay[key]} = '${value}' `
+        }
+    }
+    return cq;
+}
 
 
 export class TasksRepository extends AbstractRepository<ITask>{
@@ -14,12 +25,18 @@ export class TasksRepository extends AbstractRepository<ITask>{
         super(TaskMySqlDAOInstance, TasksConverterInstance);
     }
 
+
+    getAllBy(query: any): Promise<ITask[]> {
+        const customQuery: string = tasksCustomQueryGenerator({ 'title': 'TaskTitle' }, query);
+        return super.getAllBy(customQuery);
+    }
+
     update(id: string, data): Promise<boolean> {
         return super.update(new UpdateQuery({ TaskID: id }).toDBQuery('TASKS'), data);
     }
 
-    getAllBy(query: any): Promise<ITask[]> {
 
+    getAllByAssignedID(query: any): Promise<ITask[]> {
         return super.getAllBy(
             new GetByQuery({ TaskUserAssignedID: query.assinedTo }).toDBQuery('TASKS'));
 

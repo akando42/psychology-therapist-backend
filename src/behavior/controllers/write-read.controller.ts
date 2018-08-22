@@ -30,11 +30,11 @@ export abstract class WriteReadController<T> implements IWriteReadController<T>{
         });
     }
 
-    create(newObj: T): Promise<string> {
-        return new Promise<string>(async (resolve, reject) => {
+    create(newObj: T): Promise<T> {
+        return new Promise<T>(async (resolve, reject) => {
             try {
                 console.log('created ID', newObj)
-                const created: string = await this._service.create(newObj);
+                const created: T = await this._service.create(newObj);
 
                 return resolve(created)
 
