@@ -14,9 +14,13 @@ export class ProviderRouter {
 
 		const router: Router = Router({ mergeParams: true });
 
-		router.post(`/`, (req: Request, res: Response) => this.handleCreateProvider(req, res));
+		router.post(`/providers/`, (req: Request, res: Response) => this.handleCreateProvider(req, res));
+
+		router.get(`/providers/`, (req: Request, res: Response) => this.handleGetAllProvider(req, res));
 
 		router.get(`/providers/:provider_id/`, (req: Request, res: Response) => this.handleGetProvider(req, res))
+
+		router.delete(`/providers/:provider_id/`, (req: Request, res: Response) => this.handleDeleteProvider(req, res))
 
 		logger.info("provider module initialized correctly");
 
@@ -34,8 +38,27 @@ export class ProviderRouter {
 	}
 
 	handleGetProvider(req: Request, res: Response): void {
-		console.log(req.params)
 		this.providerController.getProvider(req.params['provider_id'])
+			.then((result) => {
+				res.status(200).json(result);
+			})
+			.catch((error) => {
+				console.log(error);
+			})
+	}
+
+	handleDeleteProvider(req: Request, res: Response): void {
+		this.providerController.delete(req.params['provider_id'])
+			.then((result) => {
+				res.status(200).json(result);
+			})
+			.catch((error) => {
+				console.log(error);
+			})
+	}
+
+	handleGetAllProvider(req: Request, res: Response): void {
+		this.providerController.getAllProvider()
 			.then((result) => {
 				res.status(200).json(result);
 			})

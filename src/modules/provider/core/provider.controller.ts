@@ -42,6 +42,44 @@ export class ProviderController {
 			}
 		});
 	}
+
+	getAllProvider(): Promise<TODResponse> {
+		return new Promise(async (resolve, reject) => {
+			const response: TODResponse = new TODResponse();
+			try {
+				const provider = await this.providerService.findAll();
+				response.message = "success!";
+				response.payload = provider;
+				response.timestamp = new Date();
+				resolve(response);
+			} catch (e) {
+				response.message = "something was wrong!";
+				response.timestamp = new Date();
+				response.error = e;
+				resolve(response)
+			}
+		});
+	}
+
+	delete(providerId: number): Promise<TODResponse> {
+		return new Promise(async (resolve, reject) => {
+			const response: TODResponse = new TODResponse();
+			try {
+				const provider = await this.providerService.delete(providerId);
+				response.message = "provider deleted!";
+				response.payload = true;
+				response.timestamp = new Date();
+				resolve(response);
+			} catch (e) {
+				response.message = "provider not found!";
+				response.timestamp = new Date();
+				response.error = e;
+				resolve(response)
+			}
+		});
+	}
+
+
 }
 export const ProviderControllerInstance: ProviderController =
 	new ProviderController(ProviderServiceInstance);
