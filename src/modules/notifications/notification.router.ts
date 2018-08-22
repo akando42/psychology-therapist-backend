@@ -24,10 +24,10 @@ export class NotificationsRouter {
 
         NotificationsControllerInstance.markAsReaded(userId)
             .then((marked: boolean) => {
-                res.status(200).send({ payload: marked });
+                res.status(200).json({ payload: marked });
             })
             .catch((err) => {
-                res.status(500).send(err);
+                res.status(500).json(err);
             });
     }
 
@@ -36,20 +36,20 @@ export class NotificationsRouter {
 
         NotificationsControllerInstance.getUserUnreadNotifications(userId)
             .then((nots: INotification[]) => {
-                res.status(200).send({ payload: nots });
+                res.status(200).json({ payload: nots });
             })
             .catch((err) => {
-                res.status(500).send(err);
+                res.status(500).json(err);
             });
     }
 
     createNotification(req: Request, res: Response): void {
         NotificationsControllerInstance.create(req.body)
             .then((id: string) => {
-                res.status(200).send({ resource_id: id });
+                res.status(200).json({ resource_id: id });
             })
             .catch((err) => {
-                res.status(500).send(err);
+                res.status(500).json(err);
             });
     }
 
