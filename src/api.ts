@@ -8,10 +8,10 @@ import { MySqlConnection } from './database-connection/db-connection.mysql';
 import { UsersRouterInstance } from './modules/users/users.router';
 import { CabinetAuthRouterInstance } from './modules/admin/sub-modules/cabinet/cabinet.router';
 import { AdminModule } from './modules/admin/admin.module';
-import { TasksModule } from './modules/tasks/task.module';
 import { NotificationsRouterInstance } from './modules/notifications/notification.router';
 import "reflect-metadata";
 import { createConnection } from 'typeorm';
+import { TasksRouterInstance } from './modules/tasks/tasks.router';
 
 export class API {
 
@@ -45,7 +45,7 @@ export class API {
 		let adminModule = new AdminModule();
 
 		this.express.use('/admin', adminModule.init());
-		this.express.use('/api/v1', new TasksModule().init());
+		this.express.use('/api/v1', TasksRouterInstance.init());
 
 		this.express.use('/api/v1', AuthenticationRouterInstance.init());
 		this.express.use('/api/v1', UsersRouterInstance.init());

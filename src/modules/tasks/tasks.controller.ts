@@ -16,7 +16,7 @@ export class TasksController extends WriteReadController<ITask> implements ITask
         super(_service);
     }
 
-    async search(query: any): Promise<TODResponse> {
+    search(query: any): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
                 const result: TODResponse = {

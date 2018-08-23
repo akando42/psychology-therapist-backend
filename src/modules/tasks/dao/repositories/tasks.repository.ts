@@ -27,7 +27,10 @@ export class TasksRepository extends AbstractRepository<ITask>{
 
 
     getAllBy(query: any): Promise<ITask[]> {
-        const customQuery: string = tasksCustomQueryGenerator({ 'title': 'TaskTitle' }, query);
+        const customQuery: string = tasksCustomQueryGenerator({
+            'title': 'TaskTitle',
+            'assignedTo': 'TaskAssignedToID'
+        }, query);
         return super.getAllBy(customQuery);
     }
 

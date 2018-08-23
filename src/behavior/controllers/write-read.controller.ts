@@ -25,7 +25,7 @@ export abstract class WriteReadController<T> implements IWriteReadController<T>{
                 return resolve(items)
 
             } catch (error) {
-                reject(error)
+                return reject(error)
             }
         });
     }
@@ -39,7 +39,7 @@ export abstract class WriteReadController<T> implements IWriteReadController<T>{
                 return resolve(created)
 
             } catch (error) {
-                reject(error)
+                return reject(error)
             }
         });
     }
@@ -53,7 +53,7 @@ export abstract class WriteReadController<T> implements IWriteReadController<T>{
                 return resolve(deleted)
 
             } catch (error) {
-                reject(error)
+                return reject(error)
             }
         });
     }
@@ -65,7 +65,7 @@ export abstract class WriteReadController<T> implements IWriteReadController<T>{
                 return resolve(updated)
 
             } catch (error) {
-                reject(error)
+                return reject(error)
             }
         });
     }

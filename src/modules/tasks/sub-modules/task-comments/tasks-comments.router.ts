@@ -9,7 +9,7 @@ export class TasksCommentsRouter extends WRAbstractRouter<ITaskComment> {
 
     constructor(protected _controller: IWriteReadController<ITaskComment>) {
         super(_controller);
-        this.resourcePath = 'history'
+        this.resourcePath = 'comments'
     }
 
 

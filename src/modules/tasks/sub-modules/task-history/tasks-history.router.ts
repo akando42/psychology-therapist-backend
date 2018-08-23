@@ -4,28 +4,47 @@ import { WRAbstractRouter } from "../../../../behavior/routers/w-r-abstract.rout
 import { TasksHistoryControllerInstance, TasksHistoryController } from "./tasks-history.controller";
 
 
-export class TasksHistoryRouter extends WRAbstractRouter<ITaskComment> {
+export class TasksHistoryRouter {
+
+    private resourcePath = 'history'
 
     constructor(protected _controller: TasksHistoryController) {
-        super(_controller);
-        this.resourcePath = 'history'
     }
 
 
     init(): Router {
         const router: Router = Router({ mergeParams: true });
         //Get Resource
-        router.get(`/${this.resourcePath}`, this.getAll.bind(this));
-        //Delete Resource
-        router.delete(`/${this.resourcePath}/:id`, this.delete.bind(this));
+        router.get(`/${this.resourcePath}`, this.search.bind(this));
+
         //Create Resource
-        router.post(`/${this.resourcePath}`, this.create.bind(this));
-        //Update Resource
-        router.put(`/${this.resourcePath}/:id`, this.update.bind(this));
+        router.post(`/${this.resourcePath}`, this.addToHistory.bind(this));
 
 
         return router;
     }
+
+
+    search(req: Request, res: Response): void {
+        this._controller.search(req.query)
+            .then((result) => {
+                res.status(200).json(result);
+            })
+            .catch((err) => {
+                res.status(200).json(err);
+            })
+    }
+
+    addToHistory(req: Request, res: Response): void {
+        this._controller.addToHistory(req.body)
+            .then((result) => {
+                res.status(200).json(result);
+            })
+            .catch((err) => {
+                res.status(200).json(err);
+            })
+    }
+
 
 }
 

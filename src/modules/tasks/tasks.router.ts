@@ -23,7 +23,7 @@ export class TasksRouter extends WRAbstractRouter<ITask> {
 
 
         router.get(`/tasks`, this.getByAssignedUser.bind(this));
-        router.get(`/tasks/search`, this.getAll.bind(this));
+        // router.get(`/tasks/search`, this.getAll.bind(this));
         //Delete Resource
         router.delete(`/tasks/:task_id`, this.delete.bind(this));
         //Create Resource
@@ -34,7 +34,7 @@ export class TasksRouter extends WRAbstractRouter<ITask> {
         //COMMENTS
         router.use('/tasks/:task_id', TasksCommentsRouterInstance.init());
         // HITORY
-        router.use('task/task_id', TasksHistoryRouterInstance.init())
+        router.use('/tasks/:task_id', TasksHistoryRouterInstance.init())
 
         return router;
     }
@@ -43,6 +43,8 @@ export class TasksRouter extends WRAbstractRouter<ITask> {
     search(req: Request, res: Response): void {
         this._controller.getAllBy(req.query)
             .then((result) => {
+
+                console.log(result)
                 res.status(200).json(result);
             })
             .catch((err) => {
