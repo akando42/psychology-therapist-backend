@@ -12,7 +12,7 @@ export class AuthenticationRouter {
     init(): Router {
         const router: Router = Router();
         router.post('/authentication/login', (req, res) => this.authenticate(req, res));
-        router.post('/authentication/signup', (req, res) => this.signup(req, res));
+        // router.post('/authentication/signup', (req, res) => this.signup(req, res));
         router.post('/authentication/change-password', (req, res) => this.signup(req, res));
 
         router.get('/authentication/verify-email', (req, res) => this.verifyEmail(req, res));

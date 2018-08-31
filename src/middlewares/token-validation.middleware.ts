@@ -13,6 +13,7 @@ export function TokenValidationMiddleware(req: Request, res: Response | any, nex
                 return res.status(403)
                     .send(new InvalidTokenError());
             }
+            console.log(decoded)
             req['userId'] = decoded['userId'];
             next();
         });

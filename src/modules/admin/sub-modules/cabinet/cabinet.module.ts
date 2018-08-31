@@ -5,10 +5,7 @@ import { CabinetAuthRouterInstance } from './cabinet.router';
 export class CabinetModule {
     public application: Application;
     constructor() {
-
         this.application = express();
-
-
     }
 
     public init(): Application {
@@ -19,7 +16,7 @@ export class CabinetModule {
         this.application.use(CabinetAuthRouterInstance.init());
         this.application.use('/*', (req, res) => {
             res.send('WHAT ARE YOU TRYING TO DO with cabinet -.-')
-        })
+        });
 
         //resources attached to one admin    
     }

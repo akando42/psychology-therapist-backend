@@ -1,8 +1,8 @@
 
 import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
 import { GenericDao } from "../../../../behavior/mysql/generic.dao";
-import { GetCabinetUsersQuery } from "../queries/mysql/get-cabinet-users.query";
 import { IUser } from "../../../../models/user";
+import { GetCabinetUsersQuery } from "../my-sql/queries/get-cabinet-users.query";
 
 
 export class CabinetsRepository extends AbstractRepository<any>{

@@ -3,8 +3,6 @@ import { WriteReadController } from "../../behavior/controllers/write-read.contr
 import { INotification } from "../../models/notification";
 
 
-
-
 class NotificationsController extends WriteReadController<INotification>{
     constructor() {
         super(NotificationsServiceInstance);

@@ -7,6 +7,9 @@ import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 import { IUser } from "../../../../models/user";
 import { CabinetsRepoInstance } from "../../dao/repositories/cabinet.repository";
 import { AuthService } from "../../feight-clients/auth.service";
+import { resolve } from "dns";
+import { ActionRequestsRepoInstance } from "../../dao/repositories/action-request.repository";
+import { IActionRequest } from "../../../../models/action-request";
 
 export class CabinetsService {
     constructor() {
@@ -37,6 +40,19 @@ export class CabinetsService {
 
     getCabinetUsers(adminId: string): Promise<IUser[]> {
         return CabinetsRepoInstance.getAdminCabinetUsers(adminId);
+    }
+
+    requestAction(memberId: any, request: IActionRequest): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                request.requestDate = new Date().getTime();
+                request.targetId = memberId;
+                const saveResult: any = await ActionRequestsRepoInstance.create(request);
+                return resolve(saveResult);
+            } catch (error) {
+                return reject(error);
+            }
+        })
     }
 
 }

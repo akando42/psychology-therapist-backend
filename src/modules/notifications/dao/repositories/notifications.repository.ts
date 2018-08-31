@@ -14,7 +14,8 @@ export class NotificationsRepository extends AbstractRepository<INotification>{
 
 
     getUserUnreadNotifications(userID: string): Promise<INotification[]> {
-        const query = new GetByQuery({ NotificationRecipentID: userID, NotificationReadStatus: 0 }).toDBQuery('NOTIFICATIONS');
+        const query = 
+        new GetByQuery({ NotificationRecipentID: userID, NotificationReadStatus: 0 }).toDBQuery('NOTIFICATIONS');
         console.log(query)
         return super.getAllBy(query);
     }

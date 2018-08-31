@@ -5,19 +5,20 @@ import { MySqlConnection } from "../../database-connection/db-connection.mysql";
  */
 export abstract class AbstractDao<T> {
 
-    protected table: string;
+    constructor(protected table?: string) { };
 
     create(newObj: T): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            console.log('attempting to create', newObj)
+            console.log('attempting to create', newObj);
+
             const query: string = `INSERT INTO ${this.table} SET ?`;
-            console.log(query)
+
             MySqlConnection.pool.query(query, newObj, (err, result) => {
                 if (err) {
                     err['sql'] = null;
                     return reject(err);
                 }
-                console.log(result['insertId']);
+            
                 resolve(result['insertId']);
             });
         })

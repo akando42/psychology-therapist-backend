@@ -42,7 +42,7 @@ export class AuthenticationService {
                     },
                     role: UsersRolEnum.admin
                 }
-                let userId: string = await UsersServiceInstance.create(newUser);
+                let userId: any = await UsersServiceInstance.create(newUser);
 
                 const hashPassword = await bc.hash(newAccount.password, 10);
                 let account: IAccount = {
@@ -178,6 +178,12 @@ export class AuthenticationService {
             return resolve({ message: 'verification success' });
 
 
+        });
+    }
+
+    resetPassword(): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            
         });
     }
 
