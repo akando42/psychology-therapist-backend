@@ -7,3 +7,4 @@ export class MySqlHealthServiceRepository extends AbstractHealthServiceRepositor
         super(dao, converter);
     }
 }
+

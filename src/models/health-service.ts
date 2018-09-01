@@ -1,5 +1,5 @@
 
 
-export interface IHealtService {
+export interface IHealthService {
     id?: number;
 }
