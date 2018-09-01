@@ -8,8 +8,6 @@ export class NewAccountVerificationTemplate {
         </br>
         <H4>Hello <strong>${this.userName}</strong></H4>
         <p>Thanks for join  us</p>
-        <p>Please Click <a href="${this.verificationLink}">here</a> to verify you email Address</p>  
-        
-        `
+        <p>Please Click <a href="${this.verificationLink}">here</a> to verify you email Address</p>`;
     }
 }

@@ -8,21 +8,22 @@ import { resolve } from "path";
 import { TODResponse } from "../../../../dto/tod-response";
 import { NotificationsService } from "../../feight-clients/notifications.service";
 import { IActionRequest } from "../../../../models/action-request";
+import { AuthenticationService, AuthenticationServiceInstance } from "../../../authentication/authentication.service";
 
 
 export class CabinetController {
     constructor(
-        private _cabinetService: CabinetsService
-
+        private _cabinetService: CabinetsService,
+        private _authService: AuthenticationService
     ) {
     }
-
-    inviteToCabinet(account: INewAccountDTO): Promise<any> {
+    355989085455397
+    inviteToCabinet(inviterId: number, account: INewAccountDTO): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
 
                 const result: { success: boolean, message: string, used: boolean } = await
-                    this._cabinetService.inviteToCabinet(account);
+                    this._cabinetService.inviteToCabinet(inviterId, account);
 
                 if (result.success) {
                     //use mail service to notify user that account has been created
@@ -88,4 +89,6 @@ export class CabinetController {
 }
 
 export const CabinetControllerInstance: CabinetController =
-    new CabinetController(CabinetsServiceInstance);
+    new CabinetController(
+        CabinetsServiceInstance,
+        AuthenticationServiceInstance);

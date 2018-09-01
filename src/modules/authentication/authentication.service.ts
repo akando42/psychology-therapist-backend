@@ -6,10 +6,18 @@ import { INewAccountDTO } from '../../dto/new-account.dto';
 import { IUser } from '../../models/user';
 import { UsersServiceInstance } from '../users/users.service';
 import { UsersRolEnum } from '../../enums/users-rol.enum';
-import { NewAccountVerificationTemplate } from '../communication/email/templates/new-account-verification.template';
+import { NewAccountVerificationTemplate } from '../../email-templates/new-account-verification.template';
 import { SendGridEmailServiceInstace } from '../communication/email/sendgrid-email.service';
 import { UnverifiedAccountError } from '../../errors/unverfied-account.error';
 import { InvalidCredentialsError } from '../../errors/invalid-credentials.error';
+import { generateResetToken } from './utils/generate-reset-token.func';
+import { MySqlResetPasswordRequestRepositoryInstance } from './dao/my-sql/repositories/reset-password-request.repository';
+import { IResetPasswordRequest } from '../../models/reset-password-request';
+import { AbstractResetPasswordRequestRepository } from './dao/repositories/reset-passwod-request.repositoty.interface';
+import { TODResponse } from '../../dto/tod-response';
+import { AbstractAccountInviteRepository } from './dao/repositories/account-invite.repositoty';
+import { IAccountInvite } from '../../models/account-invite';
+import { MySqlAccountInviteRepositoryInstance } from './dao/my-sql/repositories/account-invite.repository';
 
 /**
  * Main module for authenticatiom, other modules for diferent user rol
@@ -17,7 +25,10 @@ import { InvalidCredentialsError } from '../../errors/invalid-credentials.error'
  */
 export class AuthenticationService {
 
-    constructor() {
+    constructor(
+        private _resetPasswordRequestRepository: AbstractResetPasswordRequestRepository,
+        private _accountInviteRepository: AbstractAccountInviteRepository
+    ) {
     }
 
     registerUser(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
@@ -40,7 +51,7 @@ export class AuthenticationService {
                         email: newAccount.email,
                         phoneNumber: newAccount.phoneNumber
                     },
-                    role: UsersRolEnum.admin
+                    role: newAccount.role
                 }
                 let userId: any = await UsersServiceInstance.create(newUser);
 
@@ -90,8 +101,7 @@ export class AuthenticationService {
         })
     }
 
-    async authenticate(credentials: { password: string, email: string }):
-        Promise<any> {
+    authenticate(credentials: { password: string, email: string }): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
                 const account: IAccount = await AccountsServiceInstance.getByEmail(credentials.email);
@@ -181,13 +191,115 @@ export class AuthenticationService {
         });
     }
 
-    resetPassword(): Promise<any> {
-        return new Promise<any>(async (resolve, reject) => {
-            
+    resetPassword(email: string): Promise<IResetPasswordRequest> {
+        return new Promise<IResetPasswordRequest>(async (resolve, reject) => {
+            try {
+                const account: IAccount = await AccountsServiceInstance.getByEmail(email);
+                //account not registered
+                if (!account.accountId) {
+                    return resolve(null);
+                }
+
+                //create a token probably add token 
+                const resetToken: string = generateResetToken(account);
+
+                //save the token
+                const request: IResetPasswordRequest = await this._resetPasswordRequestRepository.create({
+                    requestDate: new Date().getTime(),
+                    requestToken: resetToken
+                });
+
+                return resolve(request)
+
+            } catch (error) {
+                return reject(error)
+            }
         });
+    }
+
+    signUpWithInvite(inviteToken: string, newAccount: INewAccountDTO): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                const invitation: IAccountInvite = await this._accountInviteRepository.getInviteByToken(inviteToken);
+                //no token 
+                if (invitation.id) {
+                    return reject({ message: 'invalid invite token', success: false });
+                }
+                //Token already has expired
+                if (invitation.expired) {
+                    return reject({ message: 'invite token expired', success: false });
+                }
+
+                newAccount.role = invitation.role;
+                const result = await this.registerUser(newAccount);
+
+                return resolve(result);
+
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
+
+    validateTokenAndReset(token: string, newPassword: string): Promise<{ message: string, valid: boolean }> {
+        return new Promise<{ message: string, valid: boolean }>(async (resolve, reject) => {
+            try {
+                const request: IResetPasswordRequest = await this._resetPasswordRequestRepository.getRequestByToken(token)
+                //token already expired;
+                if (request.expired) {
+                    return resolve({ message: 'expired', valid: false });
+                }
+
+                //here token its valid "exist", and still haavent expired;
+                const account: IAccount = await AccountsServiceInstance.getByEmail(request.requestEmail);
+                //hashin password to save
+                const hashPassword: string = await bc.hash(newPassword, 10);
+                //replace new password
+                account.password = hashPassword;
+                // TODO CAMBIAR EL ESTADO DEL REQUEST PARA HACERLO INVALIDO
+                // this._resetPasswordRequestRepository
+
+                const updatedAccount: any = await AccountsServiceInstance.update(account.accountId, account);
+
+                return resolve({ valid: true, message: 'password changed succefully' });
+            } catch (error) {
+                reject(error)
+            }
+        });
+    }
+
+    createInvitationToken(invitationRequest: { email: string, role: UsersRolEnum, inviterId: number }): Promise<string> {
+        return new Promise<string>(async (resolve, reject) => {
+            try {
+
+                const exist: IAccount = await AccountsServiceInstance.getByEmail(invitationRequest.email);
+                //check that its not a email on use.
+                if (exist['accountId']) {
+                    return reject({ message: 'email already on use', success: false });
+                }
+
+                const invitation: IAccountInvite = await this._accountInviteRepository
+                    .create({
+                        date: new Date().getTime(),
+                        email: invitationRequest.email,
+                        expired: false,
+                        inviterID: invitationRequest.inviterId,
+                        role: invitationRequest.role,
+                        token: ''
+                    });
+
+                return resolve(invitation.token);
+            } catch (error) {
+
+                return reject(error);
+            }
+        })
     }
 
 }
 
 
-export const AuthenticationServiceInstance: AuthenticationService = new AuthenticationService();
+export const AuthenticationServiceInstance: AuthenticationService =
+    new AuthenticationService(
+        MySqlResetPasswordRequestRepositoryInstance,
+        MySqlAccountInviteRepositoryInstance);

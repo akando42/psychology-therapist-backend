@@ -1,6 +1,6 @@
-import { AccountStatusEnum } from "../../../../../../enums/account-stats.enum";
-import { UsersRolEnum } from "../../../../../../enums/users-rol.enum";
-import { GenderEnum } from "../../../../../../enums/gender.enum";
+import { AccountStatusEnum } from "../../../../../enums/account-stats.enum";
+import { UsersRolEnum } from "../../../../../enums/users-rol.enum";
+import { GenderEnum } from "../../../../../enums/gender.enum";
 
 
 export interface IAccountMySql {

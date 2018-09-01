@@ -1,6 +1,6 @@
 import { IUser } from "../../../models/user";
 import { IAccount } from "../../../models/account";
-import { NewAccountVerificationTemplate } from "../../communication/email/templates/new-account-verification.template";
+import { NewAccountVerificationTemplate } from "../../../email-templates/new-account-verification.template";
 
 
 export function generateAccountVerificationEmail(user: IUser, account: IAccount): { subject: string, body: any } {

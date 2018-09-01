@@ -1,5 +1,5 @@
 import { IAccount } from "../../../../models/account";
-import { IAccountMySql } from "../../dao/my-sql/models/my-sql/account-my-sql";
+import { IAccountMySql } from "../../dao/my-sql/models/account-my-sql";
 import { IDualConverter } from "../../../../behavior/converters/converter.interface";
 
 

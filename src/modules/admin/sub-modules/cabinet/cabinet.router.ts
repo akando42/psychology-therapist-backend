@@ -15,7 +15,7 @@ export class CabinetAuthRouter {
     init(): Router {
         const router: Router = Router({ mergeParams: true });
 
-        router.post(`/cabinet`, this.inviteToCabinet.bind(this));
+        router.post(`/members`, this.inviteToCabinet.bind(this));
 
         router.get(`/members`, this.getCabinetUsers.bind(this));
 
@@ -53,7 +53,7 @@ export class CabinetAuthRouter {
     }
 
     inviteToCabinet(req: Request, res: Response): void {
-
+        
     }
 }
 

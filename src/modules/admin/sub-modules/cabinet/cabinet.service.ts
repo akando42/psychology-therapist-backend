@@ -16,7 +16,7 @@ export class CabinetsService {
 
     }
 
-    inviteToCabinet(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
+    inviteToCabinet(inviterId: number, newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
 
@@ -27,7 +27,12 @@ export class CabinetsService {
 
                 newAccount.accountStatus = AccountStatusEnum.waiting;
 
-                const result = await AuthService.signUp(newAccount);
+                const result = await AuthService
+                    .invite({
+                        email: newAccount.email,
+                        role: newAccount.role,
+                        inviterId: inviterId
+                    });
 
                 return resolve(result);
             } catch (e) {
