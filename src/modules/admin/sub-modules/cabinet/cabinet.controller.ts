@@ -17,7 +17,7 @@ export class CabinetController {
         private _authService: AuthenticationService
     ) {
     }
-    355989085455397
+
     inviteToCabinet(inviterId: number, account: INewAccountDTO): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
