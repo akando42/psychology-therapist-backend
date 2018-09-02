@@ -10,9 +10,6 @@ export class Provider {
 	@OneToMany(type => ProviderExperience, experience => experience.provider)
 	experiences: ProviderExperience[];
 
-	@OneToMany(type => ProviderFile, file => file.provider)
-	files: ProviderFile[];
-
 	@Column()
 	type: number;
 
@@ -61,7 +58,5 @@ export class ProviderFile {
 	@Column('blob')
 	data: Buffer;
 
-	@ManyToOne(type => Provider, provider => provider.files)
-	provider: Provider
 
 }
