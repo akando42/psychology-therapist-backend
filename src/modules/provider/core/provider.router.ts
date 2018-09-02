@@ -14,6 +14,8 @@ export class ProviderRouter {
 
 		const router: Router = Router({ mergeParams: true });
 
+		router.post(`/providers/upload-file`, (req: Request, res: Response) => this.handleUploadFile(req, res));
+
 		router.post(`/providers/`, (req: Request, res: Response) => this.handleCreateProvider(req, res));
 
 		router.get(`/providers/`, (req: Request, res: Response) => this.handleGetAllProvider(req, res));
@@ -59,6 +61,16 @@ export class ProviderRouter {
 
 	handleGetAllProvider(req: Request, res: Response): void {
 		this.providerController.getAllProvider()
+			.then((result) => {
+				res.status(200).json(result);
+			})
+			.catch((error) => {
+				console.log(error);
+			})
+	}
+
+	handleUploadFile(req: any, res: Response): void {
+		this.providerController.uploadFile(req.files.file)
 			.then((result) => {
 				res.status(200).json(result);
 			})

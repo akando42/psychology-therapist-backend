@@ -1,4 +1,4 @@
-import { Provider } from '../../../entity/provider';
+import { Provider, ProviderFile } from './../../../entity/provider';
 import { ProviderServiceInstance, ProviderService } from "./provider.service";
 import { TODResponse } from '../../../dto/tod-response';
 
@@ -79,6 +79,29 @@ export class ProviderController {
 		});
 	}
 
+	uploadFile(file: any): Promise<TODResponse> {
+		return new Promise(async (resolve, reject) => {
+			const providerFile = new ProviderFile();
+			providerFile.data = file.data;
+			providerFile.name = file.name;
+			providerFile.type = file.mimetype;
+			providerFile.uploadDate = new Date();
+			console.log(typeof file.data);
+			const response: TODResponse = new TODResponse();
+			try {
+				const savedFile = await this.providerService.uploadFile(providerFile);
+				response.message = "file uploaded!";
+				response.payload = savedFile.id;
+				response.timestamp = new Date();
+				resolve(response);
+			} catch (e) {
+				response.message = "provider not found!";
+				response.timestamp = new Date();
+				response.error = e;
+				resolve(response)
+			}
+		});
+	}
 
 }
 export const ProviderControllerInstance: ProviderController =

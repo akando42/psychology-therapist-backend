@@ -24,6 +24,39 @@ export class ProviderExperience {
 	@PrimaryGeneratedColumn()
 	id: number;
 
+	@Column()
+	title: string;
+
+	@Column()
+	description: string;
+
+	@Column('datetime')
+	startDate: Date;
+
+	@Column('datetime')
+	endDate: Date;
+
 	@ManyToOne(type => Provider, provider => provider.experiences)
 	provider: Provider
+}
+
+@Entity()
+export class ProviderFile {
+
+	@PrimaryGeneratedColumn()
+	id: number;
+
+	@Column()
+	name: string;
+
+	@Column()
+	type: string;
+
+	@Column('datetime')
+	uploadDate: Date;
+
+	@Column('blob')
+	data: Buffer;
+
+
 }
