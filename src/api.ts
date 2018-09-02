@@ -12,7 +12,7 @@ import { TasksModule } from './modules/tasks/task.module';
 import { NotificationsRouterInstance } from './modules/notifications/notification.router';
 import "reflect-metadata";
 import { createConnection } from 'typeorm';
-
+const fileUpload = require('express-fileupload');
 export class API {
 
 	public express: Application;
@@ -26,17 +26,18 @@ export class API {
 		this.mountRoutes();
 		createConnection();
 		MySqlConnection.connect({
-		    "server": "localhost",
-		    "user": "root",
-		    "password": "",
-		    "database": "tod",
-		    "port": 3364
+			"server": "localhost",
+			"user": "root",
+			"password": "",
+			"database": "tod",
+			"port": 3364
 		})
 	}
 
 	private middleware() {
 		this.express.use(cors({ origin: '*' }));
 		this.express.use(bodyParser.json());
+		this.express.use(fileUpload());
 		// this.express.use(bodyParser.urlencoded({ extended: false }));
 
 	}

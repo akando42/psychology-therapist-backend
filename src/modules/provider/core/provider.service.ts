@@ -1,5 +1,6 @@
+import { ProviderFile } from './../../../entity/provider';
 import { logger } from './../../utils/logger';
-import { Provider } from "../../../entity/provider";
+import { Provider, ProviderFile } from "../../../entity/provider";
 import { CrudService } from "./interface/crud-service";
 import { getManager } from "typeorm";
 import { isUndefined } from "util";
@@ -96,7 +97,22 @@ export class ProviderService implements CrudService<Provider> {
 		});
 	}
 
+	uploadFile(uploadFile: any): Promise<ProviderFile> {
+		return new Promise(async (resolve, reject) => {
+			try {
+				logger.info(`uploading files...`);
+				const fileRepository = getManager().getRepository(ProviderFile);
 
+
+				const fileSaved: ProviderFile = await fileRepository.save(uploadFile);
+
+				resolve(fileSaved);
+			} catch (e) {
+				logger.error(e);
+				reject(e)
+			}
+		});
+	}
 
 
 }
