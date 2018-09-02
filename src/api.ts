@@ -11,12 +11,8 @@ import { AdminModule } from './modules/admin/admin.module';
 import { NotificationsRouterInstance } from './modules/notifications/notification.router';
 import "reflect-metadata";
 import { createConnection } from 'typeorm';
-<<<<<<< HEAD
 import { TasksRouterInstance } from './modules/tasks/tasks.router';
-
-=======
 const fileUpload = require('express-fileupload');
->>>>>>> f338475805d2e2a397ae4f57e58fd578d1f0846f
 export class API {
 
 	public express: Application;
@@ -30,19 +26,11 @@ export class API {
 		this.mountRoutes();
 		createConnection();
 		MySqlConnection.connect({
-<<<<<<< HEAD
-		    "server": "localhost",
-		    "user": "root",
-		    "password": "",
-		    "database": "tod",
-		    "port": 3306
-=======
 			"server": "localhost",
 			"user": "root",
 			"password": "",
 			"database": "tod",
-			"port": 3364
->>>>>>> f338475805d2e2a397ae4f57e58fd578d1f0846f
+			"port": 3306
 		})
 	}
 

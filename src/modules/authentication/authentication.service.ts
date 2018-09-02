@@ -35,11 +35,13 @@ export class AuthenticationService {
         return new Promise(async (resolve, reject) => {
             try {
 
-                const exist: IAccount = await AccountsServiceInstance.getByEmail(newAccount.email);
-                //handle better
-                if (exist) {
-                    return reject({ success: false, message: 'Email its already been used', used: true });
+
+                const disponibility: boolean = await this.checkEmailDisponibility(newAccount.email);
+
+                if (!disponibility) {
+                    return resolve({ message: 'already on use', used: true, success: false });
                 }
+
                 //create user
                 const newUser: IUser = {
                     basicInfo: {
@@ -291,6 +293,28 @@ export class AuthenticationService {
                 return resolve(invitation.token);
             } catch (error) {
 
+                return reject(error);
+            }
+        })
+    }
+
+    checkEmailDisponibility(email: string): Promise<boolean> {
+        return new Promise<boolean>(async (resolve, reject) => {
+            try {
+
+                const exist: IAccount = await AccountsServiceInstance.getByEmail(email);
+                //handle better
+                if (exist) {
+                    return resolve(false);
+                }
+
+                const invitation: IAccountInvite = await this._accountInviteRepository.getByEmail(email);
+                //still on recerved;
+                if (!invitation.expired) {
+                    return resolve(false);
+                }
+
+            } catch (error) {
                 return reject(error);
             }
         })

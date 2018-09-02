@@ -53,16 +53,15 @@ export class AuthenticationController {
     signup(account: INewAccountDTO): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
+
                 //simple register set rol to user. before procced.
                 account.accountStatus = AccountStatusEnum.accepted;
-
                 const result: { success: boolean, message: string, used: boolean } = await
                     this._authService.registerUser(account);
-                console.log(result)
+
+
                 return resolve(result);
             } catch (error) {
-                //handle errors     properly here;
-                // console.log(error);
                 reject(error);
             }
         })

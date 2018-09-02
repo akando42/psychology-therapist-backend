@@ -7,9 +7,7 @@ import { ServiceException } from "./exception/service.exception";
 
 export class ProviderService implements CrudService<Provider> {
 
-	constructor() {
-
-	}
+	constructor() {}
 
 
 	save(entity: Provider): Promise<Provider> {
