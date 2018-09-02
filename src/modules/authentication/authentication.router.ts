@@ -13,6 +13,9 @@ export class AuthenticationRouter {
         const router: Router = Router();
         router.post('/authentication/login', (req, res) => this.authenticate(req, res));
         // router.post('/authentication/signup', (req, res) => this.signup(req, res));
+
+        router.post('/authentication/signup/:invitation_token', (req, res) => this.signUpWithInvitation(req, res));
+
         router.post('/authentication/change-password', (req, res) => this.signup(req, res));
 
         router.get('/authentication/verify-email', (req, res) => this.verifyEmail(req, res));
@@ -67,6 +70,15 @@ export class AuthenticationRouter {
                 res.status(200).json(result);
             }).catch((err) => {
                 console.log(err);
+            });
+    }
+
+    signUpWithInvitation(req: Request, res: Response): void {
+        this._authController.signUpWithInvitation(req.query['invitation_token'], req.body)
+            .then((result: any) => {
+                res.status(200).json(result);
+            }).catch((err) => {
+                res.status(400).json(err);
             });
     }
 }

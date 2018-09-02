@@ -224,7 +224,8 @@ export class AuthenticationService {
             try {
                 const invitation: IAccountInvite = await this._accountInviteRepository.getInviteByToken(inviteToken);
                 //no token 
-                if (invitation.id) {
+                // console.log(invitation)
+                if (!invitation) {
                     return reject({ message: 'invalid invite token', success: false });
                 }
                 //Token already has expired
@@ -309,10 +310,17 @@ export class AuthenticationService {
                 }
 
                 const invitation: IAccountInvite = await this._accountInviteRepository.getByEmail(email);
+
                 //still on recerved;
-                if (!invitation.expired) {
-                    return resolve(false);
+                if (!invitation) {
+                    return reject({ error: 'invalid invitation token', success: false });
                 }
+
+                if (invitation.expired) {
+                    return reject({ error: 'invitation token expired', success: false });
+                }
+
+                return resolve(true);
 
             } catch (error) {
                 return reject(error);

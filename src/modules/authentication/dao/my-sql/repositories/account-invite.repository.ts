@@ -14,9 +14,13 @@ export class MySqlAccountInviteRepository extends AbstractAccountInviteRepositor
         super(dao, converter);
     }
 
+    getByEmail(email: string): Promise<IAccountInvite> {
+        return super.getBy(new GetByQuery({ AccountInviteEmail: email })
+            .toDBQuery('CABINET_INVITATIONS'));
+    }
     getInviteByToken(token: string): Promise<IAccountInvite> {
-        return super.getBy(new GetByQuery({ ResetPasswordRequestToken: token })
-            .toDBQuery('CABINET_INVITE'));
+        return super.getBy(new GetByQuery({ AccountInviteToken: token })
+            .toDBQuery('CABINET_INVITATIONS'));
     }
 }
 

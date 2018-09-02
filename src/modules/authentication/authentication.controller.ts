@@ -114,7 +114,7 @@ export class AuthenticationController {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
                 const validationResult: any = await this._authService.signUpWithInvite(invitationToken, newAccount);
-
+                console.log(validationResult)
                 const result: TODResponse = {
                     message: 'registration succfully',
                     payload: validationResult,
