@@ -4,16 +4,27 @@ import { IHealthServiceMySql } from "../../dao/my-sql/models/my-sql-health-servi
 
 
 export class MySqlHealthServiceServicesConverter implements IDualConverter<IHealthService, IHealthServiceMySql>{
+    
     converDomainToDBModel(raw: IHealthService): IHealthServiceMySql {
-        throw new Error("Method not implemented.");
+        if (!raw) { return null; }
+        return {
+            HealthServiceDescription: raw.description,
+            HealthServiceID: raw.id,
+            HealthServiceName: raw.name
+        }
     }
     convertDBModelToDomain(raw: IHealthServiceMySql): IHealthService {
-        throw new Error("Method not implemented.");
+        if (!raw) { return null; }
+        return {
+            description: raw.HealthServiceDescription,
+            id: raw.HealthServiceID,
+            name: raw.HealthServiceName
+        }
     }
     converManyDomainToDBModel(raw: IHealthService[]): IHealthServiceMySql[] {
-        throw new Error("Method not implemented.");
+        return raw.map((item) => this.converDomainToDBModel(item));
     }
     convertManyDBModelToDomain(raw: IHealthServiceMySql[]): IHealthService[] {
-        throw new Error("Method not implemented.");
+        return raw.map((item) => this.convertDBModelToDomain(item));
     }
 }
