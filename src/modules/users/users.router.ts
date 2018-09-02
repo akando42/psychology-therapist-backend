@@ -10,7 +10,8 @@ import { TasksRouterInstance } from "../tasks/tasks.router";
 
 export class UsersRouter extends WRAbstractRouter<IUser> {
 
-    constructor(protected _controller: IWriteReadController<IUser>) {
+    constructor(
+        protected _controller: IWriteReadController<IUser>) {
         super(_controller);
         this.resourcePath = 'users'
     }

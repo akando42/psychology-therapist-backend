@@ -224,7 +224,6 @@ export class AuthenticationService {
             try {
                 const invitation: IAccountInvite = await this._accountInviteRepository.getInviteByToken(inviteToken);
                 //no token 
-                // console.log(invitation)
                 if (!invitation) {
                     return reject({ message: 'invalid invite token', success: false });
                 }

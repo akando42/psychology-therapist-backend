@@ -16,6 +16,10 @@ export class TasksController extends WriteReadController<ITask> implements ITask
         super(_service);
     }
 
+    getTasksByUserAssigned(userId: string): Promise<TODResponse> {
+        return this.search({ assignedTo: userId });
+    }
+
     search(query: any): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
