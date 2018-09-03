@@ -47,7 +47,11 @@ export class API {
 
 		this.express.use('/admin', adminModule.init());
 		this.express.use('/api/v1', TasksRouterInstance.init());
-
+		this.express.use('/agent', (req, res) => {
+			console.log(req.headers.host)
+			console.log(req.headers.location)
+			console.log(req.headers['user-agent'])
+		})
 		this.express.use('/api/v1', AuthenticationRouterInstance.init());
 		this.express.use('/api/v1', UsersRouterInstance.init());
 		this.express.use('/api/v1', CabinetAuthRouterInstance.init());

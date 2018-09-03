@@ -1,9 +1,10 @@
 import { IAppointment } from "../../models/appointment";
+import { ITransaction } from "../../models/transaction";
 
 
 export interface ITransactionsNotificationService {
 
-    notifyPatient(appointment: IAppointment): Promise<any>;
+    notifyPatient(transaction: ITransaction): Promise<any>;
 
-    notifyProvider(appointment: IAppointment): Promise<any>;
+    notifyProvider(transaction: ITransaction): Promise<any>;
 }
