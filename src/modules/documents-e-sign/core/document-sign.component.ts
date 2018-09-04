@@ -1,22 +1,23 @@
 import { IDocumentSignService } from "./document-sign.service";
-import { TODResponse } from "../../dto/tod-response";
-import { IAppointment } from "../../models/appointment";
-import { IDocumentSign } from "../../models/e-sign-document";
+import { TODResponse } from "../../../dto/tod-response";
+import { IAppointment } from "../../../models/appointment";
+import { IDocumentSign } from "../../../models/e-sign-document";
 
 
-export abstract class AbstractAppointmentComponent {
+export abstract class AbstractDocumentSignComponent {
     constructor(
         private _documentSignService: IDocumentSignService,
     ) {
     }
 
-    programateAppointment(appointment: IDocumentSign): Promise<TODResponse> {
+    markAsSigned(documetnSignReport: IDocumentSign): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
 
+                const signed = await this._documentSignService.markAsSigned(documetnSignReport)
 
                 const result: TODResponse = {
-                    message: "appointment created",
+                    message: "document signed",
                     payload: null,
                     timestamp: new Date()
                 };
@@ -26,7 +27,7 @@ export abstract class AbstractAppointmentComponent {
             } catch (error) {
 
                 const badResult: TODResponse = {
-                    message: "Sorry! something went wrong creating the appointment",
+                    message: "Sorry! something went wrong",
                     error: error,
                     timestamp: new Date()
                 };
@@ -35,5 +36,7 @@ export abstract class AbstractAppointmentComponent {
             }
         })
     }
+
+
 
 }

@@ -1,4 +1,4 @@
-import { IDocumentSign } from "../../models/e-sign-document";
+import { IDocumentSign } from "../../../models/e-sign-document";
 
 
 export interface IDocumentSignService {
@@ -9,4 +9,7 @@ export interface IDocumentSignService {
      */
     markAsSigned(documentSignRecord: IDocumentSign): Promise<IDocumentSign>;
 
+    getUserDocumentSigned(userId: number): Promise<IDocumentSign[]>;
+
+    getUserDocumentUnSigned(userId: number): Promise<IDocumentSign[]>;
 }
