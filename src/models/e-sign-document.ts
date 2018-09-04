@@ -1,6 +1,9 @@
+import { DocumentSignableStatusEnum } from "../enums/document-signable-status.enum";
 
 
-export interface IESignDocument {
+export interface IDocumentSign {
     date?: number;
-    documentPath?: string;
+    documentID?: number;
+    documentType?: string;
+    documentStatus?: DocumentSignableStatusEnum
 }
