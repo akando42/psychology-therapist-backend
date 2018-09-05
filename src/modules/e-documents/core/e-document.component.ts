@@ -5,7 +5,7 @@ import { IEDocument } from "../../../models/e-document";
 
 export abstract class AbstractEDocumentComponent {
     constructor(
-        private _documentSignService: IEDocumentService,
+        private _documentsService: IEDocumentService,
     ) {
     }
 
@@ -36,6 +36,34 @@ export abstract class AbstractEDocumentComponent {
         })
     }
 
+
+    createContract(contract: IEDocument): Promise<TODResponse> {
+        return new Promise<TODResponse>(async (resolve, reject) => {
+            try {
+
+                const createdContract: IEDocument = await this._documentsService.createContract(contract);
+
+                const result: TODResponse = {
+                    message: "contract created",
+                    payload: createdContract,
+                    timestamp: new Date()
+                };
+
+                return resolve(result);
+
+            } catch (error) {
+
+                const badResult: TODResponse = {
+                    message: "Sorry! something went wrong",
+                    error: error,
+                    timestamp: new Date()
+                };
+
+                return reject(badResult);
+
+            }
+        })
+    }
 
 
 }

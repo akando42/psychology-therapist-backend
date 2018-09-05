@@ -6,4 +6,11 @@ export interface IEDocumentService {
 
     getBAAContract(): Promise<IEDocument>;
 
+    createContract(contract: IEDocument): Promise<IEDocument>;
+
+    updateContract(id: any, updated: IEDocument): Promise<IEDocument>;
+
+    invalidContract(id: any): Promise<IEDocument>;
+
+
 }
