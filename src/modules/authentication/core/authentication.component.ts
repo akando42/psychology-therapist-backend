@@ -1,25 +1,25 @@
-import { IAccount } from "../../models/account";
+import { IAccount } from "../../../models/account";
 import * as bc from 'bcrypt';
-import { AuthenticationService } from "./authentication.service";
-import { INewAccountDTO } from "../../dto/new-account.dto";
-import { IUser } from "../../models/user";
-import { AccountStatusEnum } from "../../enums/account-stats.enum";
-import { TODResponse } from "../../dto/tod-response";
-import { IResetPasswordRequest } from "../../models/reset-password-request";
-import { EmailService } from "../../behavior/services/email.service";
-import { SendGridEmailService, SendGridEmailServiceInstace } from "../communication/email/sendgrid-email.service";
-import { NoAccountHolderResetTemplate } from "../../email-templates/no-account-holder-reset.template";
-import { ResetPasswordTemplate } from "../../email-templates/reset-password.template";
-import { UsersRolEnum } from "../../enums/users-rol.enum";
-import { InvitationEmailTemplate } from "../../email-templates/invitation-email.template";
-import { IUserService } from "../users/core/users.service";
-import { IAuthenticationService } from "./core/authentication.service";
+import { AuthenticationService } from "../authentication.service";
+import { INewAccountDTO } from "../../../dto/new-account.dto";
+import { IUser } from "../../../models/user";
+import { AccountStatusEnum } from "../../../enums/account-stats.enum";
+import { TODResponse } from "../../../dto/tod-response";
+import { IResetPasswordRequest } from "../../../models/reset-password-request";
+import { EmailService } from "../../../behavior/services/email.service";
+import { SendGridEmailService, SendGridEmailServiceInstace } from "../../communication/email/sendgrid-email.service";
+import { NoAccountHolderResetTemplate } from "../../../email-templates/no-account-holder-reset.template";
+import { ResetPasswordTemplate } from "../../../email-templates/reset-password.template";
+import { UsersRolEnum } from "../../../enums/users-rol.enum";
+import { InvitationEmailTemplate } from "../../../email-templates/invitation-email.template";
+import { IUserService } from "../../users/core/users.service";
+import { IAuthenticationService } from "./authentication.service";
 
 
 export abstract class AuthenticationComponent {
 
     constructor(
-        protected _authService: AuthenticationService,
+        protected _authService: IAuthenticationService,
         private _emailService: EmailService,
         private _userService: IUserService) {
     }
