@@ -1,5 +1,5 @@
-import { GenderEnum } from "../../../../../../enums/gender.enum";
-import { UsersRolEnum } from "../../../../../../enums/users-rol.enum";
+import { GenderEnum } from "../../../../../enums/gender.enum";
+import { UsersRolEnum } from "../../../../../enums/users-rol.enum";
 
 
 export interface IUserMySql {

@@ -1,5 +1,3 @@
-import { UsersService } from "../../../users/users.service";
-import { UsersRepoInstance } from "../../../users/dao/repositories/users.repository";
 import { AuthenticationService } from "../../../authentication/authentication.service";
 import { INewAccountDTO } from "../../../../dto/new-account.dto";
 import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
@@ -7,7 +5,6 @@ import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 import { IUser } from "../../../../models/user";
 import { CabinetsRepoInstance } from "../../dao/repositories/cabinet.repository";
 import { AuthService } from "../../feight-clients/auth.service";
-import { resolve } from "dns";
 import { ActionRequestsRepoInstance } from "../../dao/repositories/action-request.repository";
 import { IActionRequest } from "../../../../models/action-request";
 

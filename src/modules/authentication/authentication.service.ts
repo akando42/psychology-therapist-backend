@@ -4,30 +4,29 @@ import { IAccount } from '../../models/account';
 import { AccountsServiceInstance } from './sub-modules/accounts/accounts.service';
 import { INewAccountDTO } from '../../dto/new-account.dto';
 import { IUser } from '../../models/user';
-import { UsersServiceInstance } from '../users/users.service';
 import { UsersRolEnum } from '../../enums/users-rol.enum';
 import { NewAccountVerificationTemplate } from '../../email-templates/new-account-verification.template';
 import { SendGridEmailServiceInstace } from '../communication/email/sendgrid-email.service';
 import { UnverifiedAccountError } from '../../errors/unverfied-account.error';
 import { InvalidCredentialsError } from '../../errors/invalid-credentials.error';
 import { generateResetToken } from './utils/generate-reset-token.func';
-import { MySqlResetPasswordRequestRepositoryInstance } from './dao/my-sql/repositories/reset-password-request.repository';
 import { IResetPasswordRequest } from '../../models/reset-password-request';
 import { AbstractResetPasswordRequestRepository } from './dao/repositories/reset-passwod-request.repositoty.interface';
-import { TODResponse } from '../../dto/tod-response';
 import { AbstractAccountInviteRepository } from './dao/repositories/account-invite.repositoty';
 import { IAccountInvite } from '../../models/account-invite';
-import { MySqlAccountInviteRepositoryInstance } from './dao/my-sql/repositories/account-invite.repository';
+import { AbstractUsersRepository } from '../users/dao/users.repository';
+import { IAuthenticationService } from './core/authentication.service';
 
 /**
  * Main module for authenticatiom, other modules for diferent user rol
  * can extends this one and implement self logic per requiremnts.
  */
-export class AuthenticationService {
+export class AuthenticationService implements IAuthenticationService {
 
     constructor(
         private _resetPasswordRequestRepository: AbstractResetPasswordRequestRepository,
-        private _accountInviteRepository: AbstractAccountInviteRepository
+        private _accountInviteRepository: AbstractAccountInviteRepository,
+        private _usersRepository: AbstractUsersRepository
     ) {
     }
 
@@ -55,7 +54,7 @@ export class AuthenticationService {
                     },
                     role: newAccount.role
                 }
-                let userId: any = await UsersServiceInstance.create(newUser);
+                let userId: any = await this._usersRepository.create(newUser);
 
                 const hashPassword = await bc.hash(newAccount.password, 10);
                 let account: IAccount = {
@@ -328,9 +327,3 @@ export class AuthenticationService {
     }
 
 }
-
-
-export const AuthenticationServiceInstance: AuthenticationService =
-    new AuthenticationService(
-        MySqlResetPasswordRequestRepositoryInstance,
-        MySqlAccountInviteRepositoryInstance);

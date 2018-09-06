@@ -4,7 +4,7 @@ import { IWriteReadRepository } from "./write-read-repository.interface";
 
 export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
 
-    constructor(private _db: any, private _converter?: IConverter) {
+    constructor(protected _db: any, private _converter?: IConverter) {
 
     }
 

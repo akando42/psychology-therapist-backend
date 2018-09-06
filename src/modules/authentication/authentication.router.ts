@@ -1,11 +1,11 @@
 import { Router, Request, Response } from "express";
 
-import { AuthenticationController, AuthenticationControllerInstance } from "./authentication.controller";
 import { HttpResponseCodes } from "../../enums/http-response-codes.enum";
+import { AuthenticationComponent } from "./authentication.component";
 
 export class AuthenticationRouter {
 
-    constructor(protected _authController: AuthenticationController) {
+    constructor(protected _authComponent: AuthenticationComponent) {
     }
 
 
@@ -26,7 +26,7 @@ export class AuthenticationRouter {
     }
 
     authenticate(req: Request, res: Response): void {
-        this._authController.authenticate(req.body)
+        this._authComponent.authenticate(req.body)
             .then((result: any) => {
                 //sent the response.
                 res.status(200).json(result);
@@ -40,7 +40,7 @@ export class AuthenticationRouter {
 
 
     changePassword(req: Request, res: Response): void {
-        this._authController.changePassword(req.body)
+        this._authComponent.changePassword(req.body)
             .then((result: any) => {
                 //sent the response.
                 res.status(200).json(result);
@@ -53,7 +53,7 @@ export class AuthenticationRouter {
     }
 
     signup(req: Request, res: Response): void {
-        this._authController.signup(req.body)
+        this._authComponent.signup(req.body)
             .then((result: any) => {
                 console.log(result);
                 res.status(200).json(result);
@@ -65,7 +65,7 @@ export class AuthenticationRouter {
 
 
     verifyEmail(req: Request, res: Response): void {
-        this._authController.verifyEmail(req.query['email'], req.query['hash'])
+        this._authComponent.verifyEmail(req.query['email'], req.query['hash'])
             .then((result: any) => {
                 res.status(200).json(result);
             }).catch((err) => {
@@ -74,7 +74,7 @@ export class AuthenticationRouter {
     }
 
     signUpWithInvitation(req: Request, res: Response): void {
-        this._authController.signUpWithInvitation(req.query['invitation_token'], req.body)
+        this._authComponent.signUpWithInvitation(req.query['invitation_token'], req.body)
             .then((result: any) => {
                 res.status(200).json(result);
             }).catch((err) => {
@@ -83,6 +83,4 @@ export class AuthenticationRouter {
     }
 }
 
-export const AuthenticationRouterInstance: AuthenticationRouter =
-    new AuthenticationRouter(AuthenticationControllerInstance)
 

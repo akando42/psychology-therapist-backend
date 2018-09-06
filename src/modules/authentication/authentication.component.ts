@@ -1,10 +1,8 @@
 import { IAccount } from "../../models/account";
-import { AccountsServiceInstance } from "./sub-modules/accounts/accounts.service";
 import * as bc from 'bcrypt';
-import { AuthenticationService, AuthenticationServiceInstance } from "./authentication.service";
+import { AuthenticationService } from "./authentication.service";
 import { INewAccountDTO } from "../../dto/new-account.dto";
 import { IUser } from "../../models/user";
-import { UsersServiceInstance } from "../users/users.service";
 import { AccountStatusEnum } from "../../enums/account-stats.enum";
 import { TODResponse } from "../../dto/tod-response";
 import { IResetPasswordRequest } from "../../models/reset-password-request";
@@ -14,13 +12,16 @@ import { NoAccountHolderResetTemplate } from "../../email-templates/no-account-h
 import { ResetPasswordTemplate } from "../../email-templates/reset-password.template";
 import { UsersRolEnum } from "../../enums/users-rol.enum";
 import { InvitationEmailTemplate } from "../../email-templates/invitation-email.template";
+import { IUserService } from "../users/core/users.service";
+import { IAuthenticationService } from "./core/authentication.service";
 
 
-export class AuthenticationController {
+export abstract class AuthenticationComponent {
 
     constructor(
         protected _authService: AuthenticationService,
-        private _emailService: EmailService) {
+        private _emailService: EmailService,
+        private _userService: IUserService) {
     }
 
     authenticate(credentials: { password: string, email: string }): Promise<any> {
@@ -40,7 +41,7 @@ export class AuthenticationController {
                 /**
                  * Get the user attached to that account.
                  */
-                const user: IUser = await UsersServiceInstance.getById(data.userId);
+                const user: IUser = await this._userService.getUserById(data.userId);
                 //send token and user back
                 return resolve({ user: user, token: token });
 
@@ -165,8 +166,3 @@ export class AuthenticationController {
     }
 
 }
-
-export const AuthenticationControllerInstance: AuthenticationController =
-    new AuthenticationController(
-        AuthenticationServiceInstance,
-        SendGridEmailServiceInstace);
