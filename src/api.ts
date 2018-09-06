@@ -3,7 +3,6 @@ import { Application } from 'express';
 import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
-import { AuthenticationRouterInstance } from './modules/authentication';
 import { MySqlConnection } from './database-connection/db-connection.mysql';
 import { CabinetAuthRouterInstance } from './modules/admin/sub-modules/cabinet/cabinet.router';
 import { AdminModule } from './modules/admin/admin.module';
@@ -53,7 +52,7 @@ export class API {
 			console.log(req.headers['user-agent'])
 		});
 		
-		this.express.use('/api/v1', AuthenticationRouterInstance.init());
+		// this.express.use('/api/v1', AuthenticationRouterInstance.init());
 		this.express.use('/api/v1', CabinetAuthRouterInstance.init());
 		this.express.use('/api/v1', NotificationsRouterInstance.init());
 		this.express.use('/api/v1', ProviderRouterInstance.init());

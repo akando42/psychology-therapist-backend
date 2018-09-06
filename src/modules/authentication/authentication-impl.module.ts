@@ -16,11 +16,11 @@ import { IAccountInvite } from '../../models/account-invite';
 import { AbstractUsersRepository } from '../users/dao/users.repository';
 import { IAuthenticationService } from './core/authentication.service';
 import { AccountsComponent } from './core/accounts/accounts.component';
-import { AbstractAuthenticationModule } from './core/authentication.component';
+import { AbstractAuthenticationModule } from './core/abstract-authentication.module';
 import { InvitationsComponent } from './core/invitations/invitations.components';
 import { TODResponse } from '../../dto/tod-response';
 
-export class AuthenticationModule extends AbstractAuthenticationModule {
+export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
 
 
@@ -32,7 +32,7 @@ export class AuthenticationModule extends AbstractAuthenticationModule {
     }
 
 
-    inviteUser(invitationRequest: { email: string; role: UsersRolEnum; inviterId: number; }): Promise<import("c:/vagrant/tod_backend/src/dto/tod-response").TODResponse> {
+    inviteUser(invitationRequest: { email: string; role: UsersRolEnum; inviterId: number; }): Promise<TODResponse> {
         throw new Error("Method not implemented.");
     }
 
@@ -279,7 +279,9 @@ export class AuthenticationModule extends AbstractAuthenticationModule {
             } catch (error) {
                 return reject(error);
             }
-        })
+        });
     }
-
 }
+
+
+

@@ -6,24 +6,22 @@ import { MySqlAccountConverter } from "../../../converters/my-sql/my-sql-account
 
 
 export class MySqlAccountsRepository extends AbstractAccountsRepository {
-    constructor(dbAccess, converter) {
-        super(dbAccess, converter);
+    constructor() {
+        super(new GenericDao(), new MySqlAccountConverter());
     }
 
     getByEmail(email: string): Promise<IAccount> {
         return super.getBy(new GetByQuery({ AccountEmail: email }).toDBQuery('ACCOUNTS'));
     }
+
     getById(id: string): Promise<IAccount> {
         return super.getBy(new GetByQuery({ AccountID: id }).toDBQuery('ACCOUNTS'));
     }
-    updateAccount(id: string, data: IAccount): Promise<boolean> {
+
+    updateAccount(id: number, data: IAccount): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 }
 
 
-export const MySqlAccountsRepositoryInstance: MySqlAccountsRepository =
-    new MySqlAccountsRepository(
-        new GenericDao(),
-        new MySqlAccountConverter()
-    );
+export const MySqlAccountsRepositoryInstance: MySqlAccountsRepository = new MySqlAccountsRepository();

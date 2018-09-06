@@ -1,8 +1,8 @@
 import { Router, Request, Response } from "express";
 
 import { HttpResponseCodes } from "../../enums/http-response-codes.enum";
-import { AuthenticationModule } from "./authentication.module";
-import { AbstractAuthenticationModule } from "./core/authentication.component";
+import { AuthenticationImplModule } from "./authentication-impl.module";
+import { AbstractAuthenticationModule } from "./core/abstract-authentication.module";
 
 export class AuthenticationRouter {
 
@@ -84,7 +84,4 @@ export class AuthenticationRouter {
     }
 }
 
-
-export const AuthenticationRouterInstance: AuthenticationRouter =
-    new AuthenticationRouter(new AuthenticationModule().init())
 

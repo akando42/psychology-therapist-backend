@@ -27,22 +27,22 @@ export abstract class AbstractAuthenticationModule {
     }
 
     init(): AbstractAuthenticationModule {
-
+        console.log(this)
         return this;
     }
 
 
-    abstract authenticate(credentials: { password: string, email: string }): Promise<any>
+    abstract authenticate(credentials: { password: string, email: string }): Promise<any>;
 
-    abstract signup(account: INewAccountDTO): Promise<any>
+    abstract signup(account: INewAccountDTO): Promise<any>;
 
-    abstract verifyEmail(email: string, verificationToken: string): Promise<any>
+    abstract verifyEmail(email: string, verificationToken: string): Promise<any>;
 
-    abstract changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any>
+    abstract changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any>;
 
-    abstract resetPassword(email: string): Promise<TODResponse>
+    abstract resetPassword(email: string): Promise<TODResponse>;
 
-    abstract signUpWithInvitation(invitationToken: string, newAccount: INewAccountDTO): Promise<TODResponse>
+    abstract signUpWithInvitation(invitationToken: string, newAccount: INewAccountDTO): Promise<TODResponse>;
 
-    abstract inviteUser(invitationRequest: { email: string, role: UsersRolEnum, inviterId: number }): Promise<TODResponse>
+    abstract inviteUser(invitationRequest: { email: string, role: UsersRolEnum, inviterId: number }): Promise<TODResponse>;
 }

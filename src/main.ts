@@ -5,6 +5,7 @@ process.env.MAILGUN_USERNAME = 'therapyondemand.xyz';
 const port: any = process.env.PORT || '3000';
 
 import * as os from 'os';
+// import { authModule } from './modules/authentication';
 import { API } from "./api";
 
 const http = require('http');
@@ -22,3 +23,6 @@ http.createServer(api.express).listen(port, () => {
 // }, 1000);
 
 
+// authModule.init();
+
+// console.log(authModule.authenticate({ email: 'info@therapyondemand', password: 'testest' }))

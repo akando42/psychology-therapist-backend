@@ -1,14 +1,15 @@
-import { IAccount } from "../../models/account";
-import { IAccountsService } from "./core/accounts/accounts.service";
-import { AbstractAccountInviteRepository } from "./dao/repositories/account-invite.repositoty";
-import { AbstractAccountsRepository } from "./dao/repositories/accounts.repository";
-import { MySqlAccountsRepository } from "./dao/my-sql/repositories/my-sql-accounts.repository";
-import { GenericDao } from "../../behavior/mysql/generic.dao";
-import { MySqlAccountConverter } from "./converters/my-sql/my-sql-account.converter";
-import { IResetPasswordRequest } from "../../models/reset-password-request";
-import { AbstractResetPasswordRequestRepository } from "./dao/repositories/reset-passwod-request.repositoty.interface";
-import { generateResetToken } from "./utils/generate-reset-token.func";
-import { AccountStatusEnum } from "../../enums/account-stats.enum";
+import { IAccount } from "../../../../models/account";
+import { IAccountsService } from "./accounts.service";
+import { AbstractAccountInviteRepository } from "../../dao/repositories/account-invite.repositoty";
+import { AbstractAccountsRepository } from "../../dao/repositories/accounts.repository";
+import { MySqlAccountsRepository, MySqlAccountsRepositoryInstance } from "../../dao/my-sql/repositories/my-sql-accounts.repository";
+import { GenericDao } from "../../../../behavior/mysql/generic.dao";
+import { MySqlAccountConverter } from "../../converters/my-sql/my-sql-account.converter";
+import { IResetPasswordRequest } from "../../../../models/reset-password-request";
+import { AbstractResetPasswordRequestRepository } from "../../dao/repositories/reset-passwod-request.repositoty.interface";
+import { generateResetToken } from "../../utils/generate-reset-token.func";
+import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
+import { MySqlResetPasswordRequestRepositoryInstance } from "../../dao/my-sql/repositories/my-sql-reset-password-request.repository";
 
 
 export class AccountsServiceImpl implements IAccountsService {
@@ -65,8 +66,9 @@ export class AccountsServiceImpl implements IAccountsService {
     }
 }
 
-// export const AccountsServiceInstance: AccountsServiceImpl =
-//     new AccountsServiceImpl(
-
-//     );
+export const AccountsServiceImpInstance: AccountsServiceImpl =
+    new AccountsServiceImpl(
+        MySqlAccountsRepositoryInstance,
+        MySqlResetPasswordRequestRepositoryInstance
+    );
 

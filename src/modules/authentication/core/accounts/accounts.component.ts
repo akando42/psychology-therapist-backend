@@ -12,9 +12,6 @@ export class AccountsComponent {
     constructor(
         private _acountService: IAccountsService) { }
 
-
-
-
     updateAccount(accountId: number, account: IAccount): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
             try {
