@@ -1,11 +1,11 @@
 import { Router, Request, Response } from "express";
 
 import { HttpResponseCodes } from "../../enums/http-response-codes.enum";
-import { AuthenticationComponent } from "./core/authentication.component";
+import { AuthenticationModule } from "./core/authentication.component";
 
 export class AuthenticationRouter {
 
-    constructor(protected _authComponent: AuthenticationComponent) {
+    constructor(protected _authComponent: AuthenticationModule) {
     }
 
 

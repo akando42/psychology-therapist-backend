@@ -8,13 +8,13 @@ import { resolve } from "path";
 import { TODResponse } from "../../../../dto/tod-response";
 import { NotificationsService } from "../../feight-clients/notifications.service";
 import { IActionRequest } from "../../../../models/action-request";
-import { AuthenticationService, AuthenticationServiceInstance } from "../../../authentication/authentication.service";
+import { AuthenticationModule } from "../../../authentication/authentication.module";
 
 
 export class CabinetController {
     constructor(
         private _cabinetService: CabinetsService,
-        private _authService: AuthenticationService
+        private _authenticationModule: AuthenticationModule
     ) {
     }
 
@@ -83,12 +83,4 @@ export class CabinetController {
             }
         })
     }
-
-
-
 }
-
-export const CabinetControllerInstance: CabinetController =
-    new CabinetController(
-        CabinetsServiceInstance,
-        AuthenticationServiceInstance);

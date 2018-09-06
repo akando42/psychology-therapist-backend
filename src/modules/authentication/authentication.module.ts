@@ -1,7 +1,6 @@
 import * as bc from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { IAccount } from '../../models/account';
-import { AccountsServiceInstance } from './sub-modules/accounts/accounts.service';
 import { INewAccountDTO } from '../../dto/new-account.dto';
 import { IUser } from '../../models/user';
 import { UsersRolEnum } from '../../enums/users-rol.enum';
@@ -16,16 +15,14 @@ import { AbstractAccountInviteRepository } from './dao/repositories/account-invi
 import { IAccountInvite } from '../../models/account-invite';
 import { AbstractUsersRepository } from '../users/dao/users.repository';
 import { IAuthenticationService } from './core/authentication.service';
+import { AccountsComponent } from './core/accounts/accounts.component';
 
-/**
- * Main module for authenticatiom, other modules for diferent user rol
- * can extends this one and implement self logic per requiremnts.
- */
-export class AuthenticationService implements IAuthenticationService {
+export class AuthenticationModule implements IAuthenticationService {
 
     constructor(
-        private _resetPasswordRequestRepository: AbstractResetPasswordRequestRepository,
+        private _accountComponent: AccountsComponent,
         private _accountInviteRepository: AbstractAccountInviteRepository,
+        private _resetPasswordRequestRepository: AbstractResetPasswordRequestRepository,
         private _usersRepository: AbstractUsersRepository
     ) {
     }
@@ -33,7 +30,6 @@ export class AuthenticationService implements IAuthenticationService {
     registerUser(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
-
 
                 const disponibility: boolean = await this.checkEmailDisponibility(newAccount.email);
 
@@ -56,25 +52,11 @@ export class AuthenticationService implements IAuthenticationService {
                 }
                 let userId: any = await this._usersRepository.create(newUser);
 
-                const hashPassword = await bc.hash(newAccount.password, 10);
-                let account: IAccount = {
-                    email: newAccount.email,
-                    userId: userId,
-                    accountStatus: newAccount.accountStatus,
-                    //change password of user for encrypted one (we dont save the password plain value ).
-                    password: hashPassword,
-                    signUpDate: Math.floor(Date.now() / 1000),
-                    verificationHash:
-                        bc.hashSync(JSON.stringify({ email: newAccount.email, userId: userId }), 10),
-                    emailVerified: false
-                }
-
-                const saved: any = await AccountsServiceInstance.create(account);
-                console.log('creating account', saved)
+                const accountCreated: any = await this._accountComponent.createAccount(userId, newAccount);
 
                 const fullName: string = `${newAccount.firstName}  ${newAccount.lastName}`;
                 const verificatinLink: string =
-                    `http://localhost:3000/api/v1/authentication/verify-email?email=${account.email}&hash=${account.verificationHash}'`;
+                    `http://localhost:3000/api/v1/authentication/verify-email?email=${accountCreated.email}&hash=${accountCreated.verificationHash}'`;
 
                 const email = {
 
@@ -86,7 +68,7 @@ export class AuthenticationService implements IAuthenticationService {
                 //     .then(console.log)
                 //     .catch((err) => {
                 //development only should make a variable for this lol.
-                SendGridEmailServiceInstace.sentToOne(account.email, email)
+                SendGridEmailServiceInstace.sentToOne(accountCreated.email, email)
                     .then(console.log)
                     .catch(console.log)
                 // })
@@ -105,7 +87,7 @@ export class AuthenticationService implements IAuthenticationService {
     authenticate(credentials: { password: string, email: string }): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const account: IAccount = await AccountsServiceInstance.getByEmail(credentials.email);
+                const account: IAccount = await this._accountComponent.getByEmail(credentials.email);
                 //not match account
                 console.log(account)
                 if (!account) { return reject(new InvalidCredentialsError()); }
@@ -141,7 +123,7 @@ export class AuthenticationService implements IAuthenticationService {
     changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                const account = await AccountsServiceInstance.getByEmail(email);
+                const account = await this._accountComponent.getByEmail(email);
 
                 if (!account) {
                     return reject({ success: false, message: 'invalid account id' })
@@ -157,7 +139,7 @@ export class AuthenticationService implements IAuthenticationService {
                 const hashPassword: string = await bc.hash(changeRequest.newPassword, 10);
 
                 account.password = hashPassword;
-                const result = await AccountsServiceInstance.update(account.accountId, account);
+                const result = await this._accountComponent.updateAccount(account.accountId, account);
                 if (result) {
                     //tood sent email with notification of the password change
 
@@ -177,14 +159,14 @@ export class AuthenticationService implements IAuthenticationService {
             }
 
             // const itMatch = bc.
-            const account: IAccount = await AccountsServiceInstance.getByEmail(email);
+            const account: IAccount = await this._accountComponent.getByEmail(email);
             //verify hashed code;
             if (account.verificationHash === verificationToken) {
                 account.emailVerified = true;
             }
 
             // console.log('account from service', account.accountId)
-            const updated = await AccountsServiceInstance.update(account.accountId, account);
+            const updated = await this._accountComponent.updateAccount(account.accountId, account);
             console.log('result from account updated', updated)
             return resolve({ message: 'verification success' });
 
@@ -195,7 +177,7 @@ export class AuthenticationService implements IAuthenticationService {
     resetPassword(email: string): Promise<IResetPasswordRequest> {
         return new Promise<IResetPasswordRequest>(async (resolve, reject) => {
             try {
-                const account: IAccount = await AccountsServiceInstance.getByEmail(email);
+                const account: IAccount = await this._accountComponent.getByEmail(email);
                 //account not registered
                 if (!account.accountId) {
                     return resolve(null);
@@ -252,7 +234,7 @@ export class AuthenticationService implements IAuthenticationService {
                 }
 
                 //here token its valid "exist", and still haavent expired;
-                const account: IAccount = await AccountsServiceInstance.getByEmail(request.requestEmail);
+                const account: IAccount = await this._accountComponent.getByEmail(request.requestEmail);
                 //hashin password to save
                 const hashPassword: string = await bc.hash(newPassword, 10);
                 //replace new password
@@ -260,7 +242,7 @@ export class AuthenticationService implements IAuthenticationService {
                 // TODO CAMBIAR EL ESTADO DEL REQUEST PARA HACERLO INVALIDO
                 // this._resetPasswordRequestRepository
 
-                const updatedAccount: any = await AccountsServiceInstance.update(account.accountId, account);
+                const updatedAccount: any = await this._accountComponent.updateAccount(account.accountId, account);
 
                 return resolve({ valid: true, message: 'password changed succefully' });
             } catch (error) {
@@ -273,7 +255,7 @@ export class AuthenticationService implements IAuthenticationService {
         return new Promise<string>(async (resolve, reject) => {
             try {
 
-                const exist: IAccount = await AccountsServiceInstance.getByEmail(invitationRequest.email);
+                const exist: IAccount = await this._accountComponent.getByEmail(invitationRequest.email);
                 //check that its not a email on use.
                 if (exist['accountId']) {
                     return reject({ message: 'email already on use', success: false });
@@ -301,7 +283,7 @@ export class AuthenticationService implements IAuthenticationService {
         return new Promise<boolean>(async (resolve, reject) => {
             try {
 
-                const exist: IAccount = await AccountsServiceInstance.getByEmail(email);
+                const exist: IAccount = await this._accountComponent.getByEmail(email);
                 //handle better
                 if (exist) {
                     return resolve(false);

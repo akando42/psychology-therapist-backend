@@ -1,4 +1,3 @@
-import { AuthenticationService } from "../../../authentication/authentication.service";
 import { INewAccountDTO } from "../../../../dto/new-account.dto";
 import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";

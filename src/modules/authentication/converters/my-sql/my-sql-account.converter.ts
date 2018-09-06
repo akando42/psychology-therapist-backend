@@ -3,7 +3,7 @@ import { IAccountMySql } from "../../dao/my-sql/models/account-my-sql";
 import { IDualConverter } from "../../../../behavior/converters/converter.interface";
 
 
-export class AccountConverter implements IDualConverter<IAccount, IAccountMySql> {
+export class MySqlAccountConverter implements IDualConverter<IAccount, IAccountMySql> {
     converDomainToDBModel(raw: IAccount): IAccountMySql {
         if (!raw) { return null }
         return {
@@ -27,7 +27,7 @@ export class AccountConverter implements IDualConverter<IAccount, IAccountMySql>
             signUpDate: raw.AccountSignUpDate,
             userId: raw.AccountUserID,
             verificationHash: raw.AccountVerificationHash,
-            emailVerified:raw.AccountEmailVerified
+            emailVerified: raw.AccountEmailVerified
         }
     }
     converManyDomainToDBModel(raw: IAccount[]): IAccountMySql[] {
@@ -38,5 +38,3 @@ export class AccountConverter implements IDualConverter<IAccount, IAccountMySql>
     }
 
 }
-
-export const AccountsConverterInstance: AccountConverter = new AccountConverter();
