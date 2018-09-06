@@ -1,3 +1,4 @@
+import { NotificationTypeEnum } from "../../../../../../enums/notification-type.enum";
 
 export interface INotificationMySql {
     NotificationReadStatus: boolean;
@@ -5,4 +6,6 @@ export interface INotificationMySql {
     NotificationContent: string;
     NotificationCreationDate: number;
     NotificationRecipentID: any;
+    NotificationType?: NotificationTypeEnum;
+    NotificationAction?: any;
 }

@@ -4,10 +4,11 @@ import { IContactInfo } from "./extendables/contact-info";
 
 export interface IUser {
     id?: string;
-    contactInfo: IContactInfo
+    idVerified?: boolean;
+    contactInfo: IContactInfo;
     basicInfo?: IBasicInfo;
     role: UsersRolEnum;
 
-    
+
 
 }

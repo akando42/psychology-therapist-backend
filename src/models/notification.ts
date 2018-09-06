@@ -1,3 +1,4 @@
+import { NotificationTypeEnum } from "../enums/notification-type.enum";
 
 
 export interface INotification {
@@ -6,4 +7,6 @@ export interface INotification {
     content: string;
     date: number;
     recipentID: any;
+    action?: any;
+    type?: NotificationTypeEnum
 }

@@ -13,11 +13,14 @@ export class UsersConverter implements IDualConverter<IUser, IUserMySql> {
             UserRole: raw.role,
             UserEmail: raw.contactInfo.email,
             UserGender: raw.basicInfo.gender,
-            UserPhoneNumber: raw.contactInfo.phoneNumber
+            UserPhoneNumber: raw.contactInfo.phoneNumber,
+            UserIDVerified: raw.idVerified
+
         }
     }
     convertDBModelToDomain(raw: IUserMySql): IUser {
         if (!raw) { return null }
+        console.log(raw);
         return {
             basicInfo: {
                 firstName: raw.UserFirstName,
@@ -29,7 +32,9 @@ export class UsersConverter implements IDualConverter<IUser, IUserMySql> {
                 email: raw.UserEmail
             },
             id: raw.UserID,
-            role: raw.UserRole
+            role: raw.UserRole,
+            idVerified: raw.UserIDVerified,
+
         }
     }
     converManyDomainToDBModel(raw: IUser[]): IUserMySql[] {
