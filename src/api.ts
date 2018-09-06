@@ -5,7 +5,6 @@ import * as bodyParser from "body-parser";
 import * as cors from 'cors';
 import { AuthenticationRouterInstance } from './modules/authentication';
 import { MySqlConnection } from './database-connection/db-connection.mysql';
-import { UsersRouterInstance } from './modules/users/users.router';
 import { CabinetAuthRouterInstance } from './modules/admin/sub-modules/cabinet/cabinet.router';
 import { AdminModule } from './modules/admin/admin.module';
 import { NotificationsRouterInstance } from './modules/notifications/notification.router';
@@ -55,7 +54,6 @@ export class API {
 		});
 		
 		this.express.use('/api/v1', AuthenticationRouterInstance.init());
-		this.express.use('/api/v1', UsersRouterInstance.init());
 		this.express.use('/api/v1', CabinetAuthRouterInstance.init());
 		this.express.use('/api/v1', NotificationsRouterInstance.init());
 		this.express.use('/api/v1', ProviderRouterInstance.init());

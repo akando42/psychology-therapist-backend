@@ -1,11 +1,12 @@
 import { Router, Request, Response } from "express";
 
 import { HttpResponseCodes } from "../../enums/http-response-codes.enum";
-import { AuthenticationModule } from "./core/authentication.component";
+import { AuthenticationModule } from "./authentication.module";
+import { AbstractAuthenticationModule } from "./core/authentication.component";
 
 export class AuthenticationRouter {
 
-    constructor(protected _authComponent: AuthenticationModule) {
+    constructor(protected _authComponent: AbstractAuthenticationModule) {
     }
 
 
@@ -40,16 +41,16 @@ export class AuthenticationRouter {
 
 
     changePassword(req: Request, res: Response): void {
-        this._authComponent.changePassword(req.body)
-            .then((result: any) => {
-                //sent the response.
-                res.status(200).json(result);
+        // this._authComponent.changePassword(req.body)
+        //     .then((result: any) => {
+        //         //sent the response.
+        //         res.status(200).json(result);
 
-            }).catch((err) => {
-                //handler error propertly
-                res.status(HttpResponseCodes.loginError).json(err)
-                console.log(err)
-            });
+        //     }).catch((err) => {
+        //         //handler error propertly
+        //         res.status(HttpResponseCodes.loginError).json(err)
+        //         console.log(err)
+        //     });
     }
 
     signup(req: Request, res: Response): void {
@@ -83,4 +84,7 @@ export class AuthenticationRouter {
     }
 }
 
+
+export const AuthenticationRouterInstance: AuthenticationRouter =
+    new AuthenticationRouter(new AuthenticationModule().init())
 

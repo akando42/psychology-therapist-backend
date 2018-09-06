@@ -1,14 +1,13 @@
 import { IUser } from "../../../models/user";
-import { UsersControllerInstance } from "../../users/users.controller";
 
 
 export class UsersService {
 
     static getById(userId: string): Promise<IUser> {
-        return UsersControllerInstance.getById(userId);
+        return null;
     }
 
     static create(user: IUser): Promise<any> {
-        return UsersControllerInstance.create(user);
+        return null;
     }
 }

@@ -3,7 +3,7 @@ import { IDualConverter } from "../../../../behavior/converters/converter.interf
 import { IUser } from "../../../../models/user";
 import { IUserMySql } from "../../dao/my-sql/models/user-my-sql.model";
 
-export class UsersConverter implements IDualConverter<IUser, IUserMySql> {
+export class MySqlUsersConverter implements IDualConverter<IUser, IUserMySql> {
     converDomainToDBModel(raw: IUser): IUserMySql {
         if (!raw) { return null }
         return {
@@ -48,4 +48,5 @@ export class UsersConverter implements IDualConverter<IUser, IUserMySql> {
 
 }
 
-export const UsersConverterInstance: UsersConverter = new UsersConverter();
+export const MySqlUsersConverterUsersConverterInstance: MySqlUsersConverter =
+ new MySqlUsersConverter();

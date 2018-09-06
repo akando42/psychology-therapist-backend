@@ -5,11 +5,18 @@ import { AbstractAccountsRepository } from "./dao/repositories/accounts.reposito
 import { MySqlAccountsRepository } from "./dao/my-sql/repositories/my-sql-accounts.repository";
 import { GenericDao } from "../../behavior/mysql/generic.dao";
 import { MySqlAccountConverter } from "./converters/my-sql/my-sql-account.converter";
+import { IResetPasswordRequest } from "../../models/reset-password-request";
 
 
 export class AccountsServiceImpl implements IAccountsService {
 
+
     constructor(private _accountsRepository: AbstractAccountsRepository) { }
+
+    generatePasswordReset(): Promise<IResetPasswordRequest> {
+        throw new Error("Method not implemented.");
+    }
+
 
     updateAccount(accountId: number, account: IAccount): Promise<IAccount> {
         throw new Error("Method not implemented.");

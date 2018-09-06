@@ -7,7 +7,8 @@ import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 
 export class AccountsComponent {
 
-    constructor(private _acountService: IAccountsService) { }
+    constructor(
+        private _acountService: IAccountsService) { }
 
 
     updateAccount(accountId: number, account: IAccount): Promise<IAccount> {
@@ -24,7 +25,19 @@ export class AccountsComponent {
         });
     }
 
+    resetAccountPasswordRequest(): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                const request = await this._acountService.generatePasswordReset();
+                return resolve(request);
+            } catch (error) {
 
+            }
+        })
+    }
+
+    agregar el metodo para resetear ael passowrd, y validar invitacion
+    son internos de cada modulo
 
     createAccount(userId, newAccount: IAccount): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {

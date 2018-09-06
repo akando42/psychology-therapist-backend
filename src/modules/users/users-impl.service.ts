@@ -3,10 +3,16 @@ import { IUser } from "../../models/user";
 import { AbstractUsersRepository } from "./dao/users.repository";
 import { propertiesMatcherUtil } from "../../utils/properties-matcher.util";
 import { IUserService } from "./core/users.service";
+import { MySqlUsersRepository } from "./dao/repositories/my-sql-users.repository";
+import { GenericDao } from "../../behavior/mysql/generic.dao";
+import { MySqlUsersConverterUsersConverterInstance } from "./converters/my-sql/my-sql-users.converter";
 
 export class UsersServiceImpl implements IUserService {
-    constructor(private _usersRepository: AbstractUsersRepository) {
 
+    constructor(private _usersRepository: AbstractUsersRepository) { }
+
+    createUser(newUser: IUser): Promise<IUser> {
+        throw new Error("Method not implemented.");
     }
 
     async updateUser(id: string, model: IUser): Promise<boolean> {
@@ -29,3 +35,8 @@ export class UsersServiceImpl implements IUserService {
     }
 }
 
+
+export const UserServiceImplInstance: UsersServiceImpl =
+    new UsersServiceImpl(
+        new MySqlUsersRepository(new GenericDao(), MySqlUsersConverterUsersConverterInstance)
+    );

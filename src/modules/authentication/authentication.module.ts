@@ -16,18 +16,27 @@ import { IAccountInvite } from '../../models/account-invite';
 import { AbstractUsersRepository } from '../users/dao/users.repository';
 import { IAuthenticationService } from './core/authentication.service';
 import { AccountsComponent } from './core/accounts/accounts.component';
+import { AbstractAuthenticationModule } from './core/authentication.component';
+import { InvitationsComponent } from './core/invitations/invitations.components';
+import { TODResponse } from '../../dto/tod-response';
 
-export class AuthenticationModule implements IAuthenticationService {
+export class AuthenticationModule extends AbstractAuthenticationModule {
+
+
 
     constructor(
-        private _accountComponent: AccountsComponent,
-        private _accountInviteRepository: AbstractAccountInviteRepository,
-        private _resetPasswordRequestRepository: AbstractResetPasswordRequestRepository,
-        private _usersRepository: AbstractUsersRepository
+        _accountsComponent?: AccountsComponent,
+        _invitationsComponent?: InvitationsComponent,
     ) {
+        super(_accountsComponent, _invitationsComponent)
     }
 
-    registerUser(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
+
+    inviteUser(invitationRequest: { email: string; role: UsersRolEnum; inviterId: number; }): Promise<import("c:/vagrant/tod_backend/src/dto/tod-response").TODResponse> {
+        throw new Error("Method not implemented.");
+    }
+
+    signup(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
 
@@ -50,9 +59,9 @@ export class AuthenticationModule implements IAuthenticationService {
                     },
                     role: newAccount.role
                 }
-                let userId: any = await this._usersRepository.create(newUser);
+                let userId: any = await this._usersComponent.createUser(newUser);
 
-                const accountCreated: any = await this._accountComponent.createAccount(userId, newAccount);
+                const accountCreated: any = await this._accountsComponent.createAccount(userId, newAccount);
 
                 const fullName: string = `${newAccount.firstName}  ${newAccount.lastName}`;
                 const verificatinLink: string =
@@ -87,7 +96,7 @@ export class AuthenticationModule implements IAuthenticationService {
     authenticate(credentials: { password: string, email: string }): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                const account: IAccount = await this._accountComponent.getByEmail(credentials.email);
+                const account: IAccount = await this._accountsComponent.getByEmail(credentials.email);
                 //not match account
                 console.log(account)
                 if (!account) { return reject(new InvalidCredentialsError()); }
@@ -123,7 +132,7 @@ export class AuthenticationModule implements IAuthenticationService {
     changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                const account = await this._accountComponent.getByEmail(email);
+                const account = await this._accountsComponent.getByEmail(email);
 
                 if (!account) {
                     return reject({ success: false, message: 'invalid account id' })
@@ -139,7 +148,7 @@ export class AuthenticationModule implements IAuthenticationService {
                 const hashPassword: string = await bc.hash(changeRequest.newPassword, 10);
 
                 account.password = hashPassword;
-                const result = await this._accountComponent.updateAccount(account.accountId, account);
+                const result = await this._accountsComponent.updateAccount(account.accountId, account);
                 if (result) {
                     //tood sent email with notification of the password change
 
@@ -159,14 +168,14 @@ export class AuthenticationModule implements IAuthenticationService {
             }
 
             // const itMatch = bc.
-            const account: IAccount = await this._accountComponent.getByEmail(email);
+            const account: IAccount = await this._accountsComponent.getByEmail(email);
             //verify hashed code;
             if (account.verificationHash === verificationToken) {
                 account.emailVerified = true;
             }
 
             // console.log('account from service', account.accountId)
-            const updated = await this._accountComponent.updateAccount(account.accountId, account);
+            const updated = await this._accountsComponent.updateAccount(account.accountId, account);
             console.log('result from account updated', updated)
             return resolve({ message: 'verification success' });
 
@@ -174,10 +183,10 @@ export class AuthenticationModule implements IAuthenticationService {
         });
     }
 
-    resetPassword(email: string): Promise<IResetPasswordRequest> {
-        return new Promise<IResetPasswordRequest>(async (resolve, reject) => {
+    resetPassword(email: string): Promise<TODResponse> {
+        return new Promise<TODResponse>(async (resolve, reject) => {
             try {
-                const account: IAccount = await this._accountComponent.getByEmail(email);
+                const account: IAccount = await this._accountsComponent.getByEmail(email);
                 //account not registered
                 if (!account.accountId) {
                     return resolve(null);
@@ -187,10 +196,8 @@ export class AuthenticationModule implements IAuthenticationService {
                 const resetToken: string = generateResetToken(account);
 
                 //save the token
-                const request: IResetPasswordRequest = await this._resetPasswordRequestRepository.create({
-                    requestDate: new Date().getTime(),
-                    requestToken: resetToken
-                });
+                const request: any = this._accountsComponent.resetAccountPasswordRequest()
+
 
                 return resolve(request)
 
@@ -200,21 +207,15 @@ export class AuthenticationModule implements IAuthenticationService {
         });
     }
 
-    signUpWithInvite(inviteToken: string, newAccount: INewAccountDTO): Promise<any> {
+    signUpWithInvitation(inviteToken: string, newAccount: INewAccountDTO): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                const invitation: IAccountInvite = await this._accountInviteRepository.getInviteByToken(inviteToken);
-                //no token 
-                if (!invitation) {
-                    return reject({ message: 'invalid invite token', success: false });
-                }
-                //Token already has expired
-                if (invitation.expired) {
-                    return reject({ message: 'invite token expired', success: false });
-                }
+
+
+                const invitation = await this._invitationsComponent.validateInvitation(inviteToken)
 
                 newAccount.role = invitation.role;
-                const result = await this.registerUser(newAccount);
+                const result = await this.signup(newAccount);
 
                 return resolve(result);
 
@@ -227,14 +228,14 @@ export class AuthenticationModule implements IAuthenticationService {
     validateTokenAndReset(token: string, newPassword: string): Promise<{ message: string, valid: boolean }> {
         return new Promise<{ message: string, valid: boolean }>(async (resolve, reject) => {
             try {
-                const request: IResetPasswordRequest = await this._resetPasswordRequestRepository.getRequestByToken(token)
+                const request: IResetPasswordRequest = await this._accountsComponent.getRequestByToken(token)
                 //token already expired;
                 if (request.expired) {
                     return resolve({ message: 'expired', valid: false });
                 }
 
                 //here token its valid "exist", and still haavent expired;
-                const account: IAccount = await this._accountComponent.getByEmail(request.requestEmail);
+                const account: IAccount = await this._accountsComponent.getByEmail(request.requestEmail);
                 //hashin password to save
                 const hashPassword: string = await bc.hash(newPassword, 10);
                 //replace new password
@@ -242,7 +243,7 @@ export class AuthenticationModule implements IAuthenticationService {
                 // TODO CAMBIAR EL ESTADO DEL REQUEST PARA HACERLO INVALIDO
                 // this._resetPasswordRequestRepository
 
-                const updatedAccount: any = await this._accountComponent.updateAccount(account.accountId, account);
+                const updatedAccount: any = await this._accountsComponent.updateAccount(account.accountId, account);
 
                 return resolve({ valid: true, message: 'password changed succefully' });
             } catch (error) {
@@ -251,18 +252,20 @@ export class AuthenticationModule implements IAuthenticationService {
         });
     }
 
+
+
     createInvitationToken(invitationRequest: { email: string, role: UsersRolEnum, inviterId: number }): Promise<string> {
         return new Promise<string>(async (resolve, reject) => {
             try {
 
-                const exist: IAccount = await this._accountComponent.getByEmail(invitationRequest.email);
+                const exist: IAccount = await this._accountsComponent.getByEmail(invitationRequest.email);
                 //check that its not a email on use.
                 if (exist['accountId']) {
                     return reject({ message: 'email already on use', success: false });
                 }
 
-                const invitation: IAccountInvite = await this._accountInviteRepository
-                    .create({
+                const invitation: IAccountInvite = await this._invitationsComponent.createInvitation
+                    ({
                         date: new Date().getTime(),
                         email: invitationRequest.email,
                         expired: false,
@@ -283,13 +286,13 @@ export class AuthenticationModule implements IAuthenticationService {
         return new Promise<boolean>(async (resolve, reject) => {
             try {
 
-                const exist: IAccount = await this._accountComponent.getByEmail(email);
+                const exist: IAccount = await this._accountsComponent.getByEmail(email);
                 //handle better
                 if (exist) {
                     return resolve(false);
                 }
 
-                const invitation: IAccountInvite = await this._accountInviteRepository.getByEmail(email);
+                const invitation: IAccountInvite = await this._accountsComponent.getByEmail(email);
 
                 //still on recerved;
                 if (!invitation) {
@@ -306,6 +309,10 @@ export class AuthenticationModule implements IAuthenticationService {
                 return reject(error);
             }
         })
+    }
+
+    validateResetToken(token: string): Promise<import("c:/vagrant/tod_backend/src/dto/tod-response").TODResponse> {
+        throw new Error("Method not implemented.");
     }
 
 }

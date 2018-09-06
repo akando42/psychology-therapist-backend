@@ -13,16 +13,24 @@ import { InvitationEmailTemplate } from "../../../email-templates/invitation-ema
 import { IUserService } from "../../users/core/users.service";
 import { IAuthenticationService } from "./authentication.service";
 import { AccountsComponent } from "./accounts/accounts.component";
+import { InvitationsComponent } from "./invitations/invitations.components";
 
 
-export abstract class AuthenticationModule {
+export abstract class AbstractAuthenticationModule {
 
     constructor(
-        protected _accountsComponent: AccountsComponent,
-        protected _usersComponent: IUserService,
-        private _emailService: EmailService,
+        protected _accountsComponent?: AccountsComponent,
+        protected _invitationsComponent?: InvitationsComponent,
+        protected _usersComponent?: IUserService,
+        private _emailService?: EmailService,
     ) {
     }
+
+    init(): AbstractAuthenticationModule {
+
+        return this;
+    }
+    
 
     abstract authenticate(credentials: { password: string, email: string }): Promise<any>
 
@@ -30,7 +38,7 @@ export abstract class AuthenticationModule {
 
     abstract verifyEmail(email: string, verificationToken: string): Promise<any>
 
-    abstract changePassword(creds: any): Promise<any>
+    abstract changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any>
 
     abstract resetPassword(email: string): Promise<TODResponse>
 

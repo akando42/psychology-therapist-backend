@@ -1,4 +1,5 @@
 import { IAccount } from "../../../../models/account";
+import { IResetPasswordRequest } from "../../../../models/reset-password-request";
 
 
 export interface IAccountsService {
@@ -10,5 +11,7 @@ export interface IAccountsService {
     getByEmail(email: string): Promise<IAccount>;
 
     getById(id: string): Promise<IAccount>;
+
+    generatePasswordReset(): Promise<IResetPasswordRequest>;
 }
 
