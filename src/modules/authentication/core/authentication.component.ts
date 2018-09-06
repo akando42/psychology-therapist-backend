@@ -30,7 +30,7 @@ export abstract class AbstractAuthenticationModule {
 
         return this;
     }
-    
+
 
     abstract authenticate(credentials: { password: string, email: string }): Promise<any>
 
@@ -45,8 +45,4 @@ export abstract class AbstractAuthenticationModule {
     abstract signUpWithInvitation(invitationToken: string, newAccount: INewAccountDTO): Promise<TODResponse>
 
     abstract inviteUser(invitationRequest: { email: string, role: UsersRolEnum, inviterId: number }): Promise<TODResponse>
-
-    //remove maybe?
-    abstract validateResetToken(token: string): Promise<TODResponse>
-
 }

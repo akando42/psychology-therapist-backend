@@ -3,12 +3,16 @@ import * as bc from 'bcrypt';
 import { IAccount } from "../../../../models/account";
 import { IAccountsService } from "./accounts.service";
 import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
+import { IResetPasswordRequest } from '../../../../models/reset-password-request';
+import { generateResetToken } from '../../utils/generate-reset-token.func';
 
 
 export class AccountsComponent {
 
     constructor(
         private _acountService: IAccountsService) { }
+
+
 
 
     updateAccount(accountId: number, account: IAccount): Promise<IAccount> {
@@ -25,19 +29,72 @@ export class AccountsComponent {
         });
     }
 
-    resetAccountPasswordRequest(): Promise<any> {
+    changeAccountPassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                const request = await this._acountService.generatePasswordReset();
-                return resolve(request);
+                const account = await this._acountService.getByEmail(email);
+
+                if (!account) {
+                    return reject({ success: false, message: 'invalid account id' })
+                }
+
+                //check old password
+                const itsMatch: boolean = await bc.compare(account.password, changeRequest.oldPassword);
+
+                if (!itsMatch) {
+                    return reject({ success: false, message: 'invalid old password' });
+                }
+                //success
+                const hashPassword: string = await bc.hash(changeRequest.newPassword, 10);
+
+                account.password = hashPassword;
+                const result = await this._acountService.updateAccount(account.accountId, account);
+                if (result) {
+                    //tood sent email with notification of the password change
+
+                    return resolve({ success: true, message: 'account password changed succefully' })
+                }
             } catch (error) {
 
             }
         })
     }
 
-    agregar el metodo para resetear ael passowrd, y validar invitacion
-    son internos de cada modulo
+    resetAccountPassword(email: string): Promise<string> {
+        return new Promise<string>(async (resolve, reject) => {
+            try {
+                //create a token probably add token 
+                const request = await this._acountService.generatePasswordReset(email);
+
+                return resolve(request.requestToken);
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
+
+    validateTokenAndChangePassword(token: string, newPassword: string): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            const request: IResetPasswordRequest = await this._acountService.getResetRequestByToken(token)
+            //token already expired;
+            if (request.expired) {
+                return reject({ message: 'token expired', success: false });
+            }
+
+            //here token its valid "exist", and still haavent expired;
+            const account: IAccount = await this._acountService.getByEmail(request.requestEmail);
+            //hashin password to save
+            const hashPassword: string = await bc.hash(newPassword, 10);
+            //replace new password
+            account.password = hashPassword;
+            // TODO CAMBIAR EL ESTADO DEL REQUEST PARA HACERLO INVALIDO
+            const updatedAccount: any = await this._acountService.updateAccount(account.accountId, account);
+
+            if (updatedAccount) {
+                return resolve({ message: 'password updated!', success: true });
+            }
+        })
+    }
 
     createAccount(userId, newAccount: IAccount): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {

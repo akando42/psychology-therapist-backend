@@ -13,7 +13,7 @@ export abstract class AbstractAccountsRepository extends AbstractRepository<IAcc
 
     abstract getById(id: string): Promise<IAccount>;
 
-    abstract updateAccount(id: string, data: IAccount): Promise<boolean>;
+    abstract updateAccount(id: number, data: IAccount): Promise<boolean>;
 
 
 }

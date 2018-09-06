@@ -104,12 +104,12 @@ export class AuthenticationModule extends AbstractAuthenticationModule {
                 if (!account.emailVerified) { return reject(new UnverifiedAccountError()) }
 
 
-                // const itsMatch: boolean = await bc.compare(credentials.password, account.password);
+                const itsMatch: boolean = await bc.compare(credentials.password, account.password);
 
-                // if (!itsMatch) {
-                //     return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
-                // }
-                //sanatize
+                if (!itsMatch) {
+                    return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
+                }
+                // sanatize
                 account.password = undefined;
                 account.verificationHash = undefined;
 
@@ -129,34 +129,27 @@ export class AuthenticationModule extends AbstractAuthenticationModule {
         });
     }
 
-    changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any> {
-        return new Promise<any>(async (resolve, reject) => {
+    changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<TODResponse> {
+        return new Promise<TODResponse>(async (resolve, reject) => {
             try {
-                const account = await this._accountsComponent.getByEmail(email);
+                const changeResult: any = await this._accountsComponent.changeAccountPassword(email, changeRequest);
 
-                if (!account) {
-                    return reject({ success: false, message: 'invalid account id' })
+                if (changeResult.success) {
+                    // notify user by email or phone that password was changed
                 }
-
-                //check old password
-                const itsMatch: boolean = await bc.compare(account.password, changeRequest.oldPassword);
-
-                if (!itsMatch) {
-                    return reject({ success: false, message: 'invalid old password' });
+                const result: TODResponse = {
+                    message: 'password changed!',
+                    payload: { success: true },
+                    timestamp: new Date()
                 }
-                //success
-                const hashPassword: string = await bc.hash(changeRequest.newPassword, 10);
-
-                account.password = hashPassword;
-                const result = await this._accountsComponent.updateAccount(account.accountId, account);
-                if (result) {
-                    //tood sent email with notification of the password change
-
-                    return resolve({ success: true, message: 'account password changed succefully' })
-                }
+                return resolve(result);
 
             } catch (error) {
-
+                return reject({
+                    message: 'password changed',
+                    error: true,
+                    timestamp: new Date().getTime()
+                });
             }
         });
     }
@@ -186,20 +179,14 @@ export class AuthenticationModule extends AbstractAuthenticationModule {
     resetPassword(email: string): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
-                const account: IAccount = await this._accountsComponent.getByEmail(email);
-                //account not registered
-                if (!account.accountId) {
-                    return resolve(null);
-                }
 
-                //create a token probably add token 
-                const resetToken: string = generateResetToken(account);
+                const request = await this._accountsComponent.resetAccountPassword(email);
 
-                //save the token
-                const request: any = this._accountsComponent.resetAccountPasswordRequest()
-
-
-                return resolve(request)
+                return resolve({
+                    message: 'Password reset',
+                    payload: { success: true },
+                    timestamp: new Date()
+                })
 
             } catch (error) {
                 return reject(error)
@@ -210,7 +197,6 @@ export class AuthenticationModule extends AbstractAuthenticationModule {
     signUpWithInvitation(inviteToken: string, newAccount: INewAccountDTO): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-
 
                 const invitation = await this._invitationsComponent.validateInvitation(inviteToken)
 
@@ -228,22 +214,9 @@ export class AuthenticationModule extends AbstractAuthenticationModule {
     validateTokenAndReset(token: string, newPassword: string): Promise<{ message: string, valid: boolean }> {
         return new Promise<{ message: string, valid: boolean }>(async (resolve, reject) => {
             try {
-                const request: IResetPasswordRequest = await this._accountsComponent.getRequestByToken(token)
-                //token already expired;
-                if (request.expired) {
-                    return resolve({ message: 'expired', valid: false });
-                }
 
-                //here token its valid "exist", and still haavent expired;
-                const account: IAccount = await this._accountsComponent.getByEmail(request.requestEmail);
-                //hashin password to save
-                const hashPassword: string = await bc.hash(newPassword, 10);
-                //replace new password
-                account.password = hashPassword;
-                // TODO CAMBIAR EL ESTADO DEL REQUEST PARA HACERLO INVALIDO
-                // this._resetPasswordRequestRepository
-
-                const updatedAccount: any = await this._accountsComponent.updateAccount(account.accountId, account);
+                const request: any =
+                    await this._accountsComponent.validateTokenAndChangePassword(token, newPassword);
 
                 return resolve({ valid: true, message: 'password changed succefully' });
             } catch (error) {
@@ -251,8 +224,6 @@ export class AuthenticationModule extends AbstractAuthenticationModule {
             }
         });
     }
-
-
 
     createInvitationToken(invitationRequest: { email: string, role: UsersRolEnum, inviterId: number }): Promise<string> {
         return new Promise<string>(async (resolve, reject) => {
@@ -309,10 +280,6 @@ export class AuthenticationModule extends AbstractAuthenticationModule {
                 return reject(error);
             }
         })
-    }
-
-    validateResetToken(token: string): Promise<import("c:/vagrant/tod_backend/src/dto/tod-response").TODResponse> {
-        throw new Error("Method not implemented.");
     }
 
 }
