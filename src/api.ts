@@ -4,7 +4,6 @@ import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
 import { MySqlConnection } from './database-connection/db-connection.mysql';
-import { CabinetAuthRouterInstance } from './modules/admin/sub-modules/cabinet/cabinet.router';
 import { AdminModule } from './modules/admin/admin.module';
 import { NotificationsRouterInstance } from './modules/notifications/notification.router';
 import "reflect-metadata";
@@ -53,9 +52,9 @@ export class API {
 		});
 
 		// this.express.use('/api/v1', AuthenticationRouterInstance.init());
-		this.express.use('/api/v1', CabinetAuthRouterInstance.init());
-		this.express.use('/api/v1', NotificationsRouterInstance.init());
-		this.express.use('/api/v1', ProviderRouterInstance.init());
+		// this.express.use('/api/v1', CabinetAuthRouterInstance.init());
+		// this.express.use('/api/v1', NotificationsRouterInstance.init());
+		// this.express.use('/api/v1', ProviderRouterInstance.init());
 	}
 }
 

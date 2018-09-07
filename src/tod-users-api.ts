@@ -4,7 +4,6 @@ import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
 import { MySqlConnection } from './database-connection/db-connection.mysql';
-import { CabinetAuthRouterInstance } from './modules/admin/sub-modules/cabinet/cabinet.router';
 import { AdminModule } from './modules/admin/admin.module';
 import { NotificationsRouterInstance } from './modules/notifications/notification.router';
 import "reflect-metadata";
@@ -49,7 +48,7 @@ export class TODUsersApi {
 		router.get('/api/v1/authentication/login',
 			(req, res) => this._res(req, res, TODAuthenticationModule.authenticate));
 		console.log('mounted')
-		this.express.use('/',router);
+		this.express.use('/', router);
 	}
 
 

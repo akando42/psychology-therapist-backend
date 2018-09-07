@@ -1,6 +1,5 @@
 import { WriteReadController } from "../../../../behavior/controllers/write-read.controller";
 import { IUser } from "../../../../models/user";
-import { CabinetsServiceInstance, CabinetsService } from "./cabinet.service";
 import { INewAccountDTO } from "../../../../dto/new-account.dto";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 import { MailGunEmailServiceInstance } from "../../../communication/email/mailgun-email.service";
@@ -13,8 +12,8 @@ import { AbstractAuthenticationModule } from "../../../authentication/core/abstr
 
 export class CabinetController {
     constructor(
-        private _cabinetService: CabinetsService,
-        private _authenticationModule: AbstractAuthenticationModule
+        private _cabinetService: any,
+        private _authenticationModule: any
     ) {
     }
 
@@ -43,8 +42,8 @@ export class CabinetController {
 
 
     getCabinetUsers(adminId: string): Promise<IUser[]> {
-
-        return CabinetsServiceInstance.getCabinetUsers(adminId);
+        return null
+        // return CabinetsServiceInstance.getCabinetUsers(adminId);
     }
 
     requestActionToCabinetUser(memberId: string, request: IActionRequest): Promise<TODResponse> {
@@ -81,6 +80,6 @@ export class CabinetController {
                 return reject(badResult);
 
             }
-        })
+        });
     }
 }

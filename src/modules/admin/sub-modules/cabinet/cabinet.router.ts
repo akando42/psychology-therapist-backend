@@ -2,7 +2,7 @@ import { Router, Response, Request } from "express";
 import { TokenValidationMiddleware } from "../../../../middlewares/token-validation.middleware";
 import { IUser } from "../../../../models/user";
 import { WRAbstractRouter } from "../../../../behavior/routers/w-r-abstract.router";
-import { CabinetControllerInstance, CabinetController } from "./cabinet.controller";
+import { CabinetController } from "./cabinet.controller";
 import { selfResponsabilityMiddleware } from "../../../../middlewares/self-responsability";
 
 
@@ -53,9 +53,6 @@ export class CabinetAuthRouter {
     }
 
     inviteToCabinet(req: Request, res: Response): void {
-        
+
     }
 }
-
-export const CabinetAuthRouterInstance: CabinetAuthRouter =
-    new CabinetAuthRouter(CabinetControllerInstance);

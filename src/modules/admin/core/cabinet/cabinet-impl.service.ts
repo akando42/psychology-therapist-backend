@@ -2,13 +2,12 @@ import { INewAccountDTO } from "../../../../dto/new-account.dto";
 import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 import { IUser } from "../../../../models/user";
-import { CabinetsRepoInstance } from "../../dao/repositories/cabinet.repository";
 import { AuthService } from "../../feight-clients/auth.service";
 import { ActionRequestsRepoInstance } from "../../dao/repositories/action-request.repository";
 import { IActionRequest } from "../../../../models/action-request";
 
 export class CabinetsService {
-    constructor() {
+    constructor(private _cabinetRepository: any) {
 
     }
 
@@ -40,7 +39,7 @@ export class CabinetsService {
     }
 
     getCabinetUsers(adminId: string): Promise<IUser[]> {
-        return CabinetsRepoInstance.getAdminCabinetUsers(adminId);
+        return this._cabinetRepository.getAdminCabinetUsers(adminId);
     }
 
     requestAction(memberId: any, request: IActionRequest): Promise<any> {
@@ -59,4 +58,3 @@ export class CabinetsService {
 }
 
 
-export const CabinetsServiceInstance: CabinetsService = new CabinetsService();
