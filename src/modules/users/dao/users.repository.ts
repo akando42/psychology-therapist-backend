@@ -6,6 +6,8 @@ export abstract class AbstractUsersRepository extends AbstractRepository<IUser>{
         super(dbAccess, converter);
     }
 
+    abstract createUserProfile(user: IUser): Promise<IUser>;
+
     abstract getByEmail(email: string): Promise<IUser>;
 
     abstract getById(id: number): Promise<IUser>;

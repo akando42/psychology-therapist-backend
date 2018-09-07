@@ -13,14 +13,20 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { AbstractAuthenticationModule } from './abstract-authentication.module';
 import { InvitationsComponent } from './invitations/invitations.components';
 import { TODResponse } from '../../../dto/tod-response';
+import { AbstractUsersModule } from '../../users/core/users.module';
 
 export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
     constructor(
+        _usersModule: AbstractUsersModule,
         _accountsComponent?: AccountsComponent,
         _invitationsComponent?: InvitationsComponent,
     ) {
-        super(_accountsComponent, _invitationsComponent)
+        super(
+            _usersModule,
+            _accountsComponent,
+            _invitationsComponent,
+        );
     }
 
 
@@ -75,7 +81,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                     },
                     role: newAccount.role
                 }
-                let userId: any = await this._usersComponent.createUser(newUser);
+                let userId: any = await this._usersModule.createUser(newUser, null);
 
                 const accountCreated: any = await this._accountsComponent.createAccount(userId, newAccount);
 

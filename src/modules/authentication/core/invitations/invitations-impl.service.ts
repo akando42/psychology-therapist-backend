@@ -1,9 +1,11 @@
 import { IAccountInvite } from "../../../../models/account-invite";
 import { AbstractAccountInviteRepository } from "../../dao/repositories/account-invite.repositoty";
 import { TaskHistoryMySqlDAO } from "../../../tasks/dao/my-sql/task-history-mysql.dao";
+import { IInvitationService } from "./invitations.service.interface";
 
 
-export class InvitationServiceImpl {
+export class InvitationServiceImpl implements IInvitationService {
+
 
     constructor(private _invitationsRepository: AbstractAccountInviteRepository) { }
 
@@ -20,5 +22,13 @@ export class InvitationServiceImpl {
                 return reject(error);
             }
         });
+
+    }
+
+    createInvitation(invitation: IAccountInvite): Promise<IAccountInvite> {
+        throw new Error("Method not implemented.");
+    }
+    getInvitationByEmail(token: string): Promise<IAccountInvite> {
+        throw new Error("Method not implemented.");
     }
 }

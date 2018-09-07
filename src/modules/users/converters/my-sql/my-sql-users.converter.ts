@@ -48,5 +48,5 @@ export class MySqlUsersConverter implements IDualConverter<IUser, IUserMySql> {
 
 }
 
-export const MySqlUsersConverterUsersConverterInstance: MySqlUsersConverter =
- new MySqlUsersConverter();
+export const MySqlUsersConverterInstance: MySqlUsersConverter =
+    new MySqlUsersConverter();

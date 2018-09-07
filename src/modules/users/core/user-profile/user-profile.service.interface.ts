@@ -10,4 +10,6 @@ export interface IUserProfileService {
     getUserByEmail(id: string): Promise<IUser>;
 
     getUserById(id: string): Promise<IUser>;
+
+    verifiedUserIdentity(id: number): Promise<IUser>;
 }

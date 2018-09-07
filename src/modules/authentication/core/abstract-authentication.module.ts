@@ -19,9 +19,9 @@ import { AbstractUsersModule } from "../../users/core/users.module";
 export abstract class AbstractAuthenticationModule {
 
     constructor(
+        protected _usersModule?: AbstractUsersModule,
         protected _accountsComponent?: AccountsComponent,
         protected _invitationsComponent?: InvitationsComponent,
-        protected _usersComponent?: AbstractUsersModule,
         private _emailService?: EmailService,
     ) {
     }

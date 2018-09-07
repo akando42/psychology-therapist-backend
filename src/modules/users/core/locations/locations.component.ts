@@ -1,7 +1,8 @@
+import { ILocationsService } from "./locations.service.interface";
 
 
 export class LocationsComponent {
-    constructor() {
+    constructor(private _locations: ILocationsService) {
 
     }
 }

@@ -2,13 +2,18 @@ import { AbstractUsersRepository } from "../users.repository";
 import { GetByQuery } from "../../../../query-spec/my-sql/get-by.query";
 import { UpdateQuery } from "../../../../query-spec/my-sql/update.query";
 import { IUser } from "../../../../models/user";
+import { GenericDao } from "../../../../behavior/mysql/generic.dao";
+import { MySqlUsersConverterInstance } from "../../converters/my-sql/my-sql-users.converter";
 
 
 export class MySqlUsersRepository extends AbstractUsersRepository {
-    constructor(dbAccess, converter) {
-        super(dbAccess, converter);
+    constructor() {
+        super(new GenericDao('USERS'), MySqlUsersConverterInstance);
     }
-    //TODO spam this style to other repositories
+
+    createUserProfile(user: IUser): Promise<IUser> {
+        return super.create(user);
+    }
     getByEmail(email: string): Promise<IUser> {
         return super.getBy(new GetByQuery({ UserEmail: email }).toDBQuery('USERS'));
     }

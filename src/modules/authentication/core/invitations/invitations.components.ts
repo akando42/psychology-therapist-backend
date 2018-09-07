@@ -9,7 +9,7 @@ import { IAccountsService } from "../accounts/accounts.service.interface";
 export class InvitationsComponent {
     constructor(
         private _invitationService: IInvitationService,
-        private _accountsService: IAccountsService) {
+        private _accountsService?: IAccountsService) {
 
     }
 

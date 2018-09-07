@@ -3,7 +3,7 @@ import { UsersRolEnum } from "../../../../../enums/users-rol.enum";
 
 
 export interface IUserMySql {
-    UserID: string;
+    UserID: number;
     UserPhoneNumber: string;
     UserLastName: string;
     UserFirstName: string;

@@ -1,39 +1,30 @@
 import { AbstractUsersModule } from "./users.module";
 import { IUser } from '../../../models/user';
 import { ILocation } from '../../../models/location';
+import { UsersProfileComponent } from "./user-profile/user-profile.component";
+import { LocationsComponent } from "./locations/locations.component";
 
 
 export class UsersImplModule extends AbstractUsersModule {
     constructor(
-        locationComponent,
-        userProfileComponent) {
-        super(locationComponent, userProfileComponent);
+        userProfileComponent: UsersProfileComponent,
+        locationComponent?: LocationsComponent
+    ) {
+        super(userProfileComponent, locationComponent);
     }
 
     createUser(user: IUser, roleid: number): Promise<IUser> {
-        return new Promise<IUser>(async (resolve, reject) => {
-            try {
-                //create the basic user
-                const createdUser: IUser = await this._userProfilesComponent.createUserProfile(user);
-
-            } catch (error) {
-
-            }
-        });
+        return this._userProfilesComponent.createUserProfile(user);
     }
+
     updateUser(id: string, model: IUser): Promise<IUser> {
-        throw new Error("Method not implemented.");
+        return this._userProfilesComponent.updateUserProfile(id, model);
     }
-    getUserByEmail(id: string): Promise<IUser> {
-        return new Promise<IUser>(async (resolve, reject) => {
-            try {
 
-            } catch (error) {
-
-            }
-        });
-
+    getUserByEmail(email: string): Promise<IUser> {
+        return this._userProfilesComponent.getUserProfileByEmail(email);
     }
+
     getUserById(id: string): Promise<IUser> {
         throw new Error("Method not implemented.");
     }

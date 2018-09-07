@@ -4,7 +4,7 @@ import { IAccountInvite } from "../../../../models/account-invite";
 import { IAccountInviteMySql } from "../../dao/my-sql/models/account-invite-my-sql";
 
 
-export class AccountInviteConverter implements IDualConverter<IAccountInvite, IAccountInviteMySql> {
+export class MySqlAccountInviteConverter implements IDualConverter<IAccountInvite, IAccountInviteMySql> {
     converDomainToDBModel(raw: IAccountInvite): IAccountInviteMySql {
         if (!raw) { return null }
         return {
@@ -38,4 +38,3 @@ export class AccountInviteConverter implements IDualConverter<IAccountInvite, IA
 
 }
 
-export const AccountsInviteConverterInstance: AccountInviteConverter = new AccountInviteConverter();
