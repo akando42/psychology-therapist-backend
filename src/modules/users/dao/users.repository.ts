@@ -8,8 +8,8 @@ export abstract class AbstractUsersRepository extends AbstractRepository<IUser>{
 
     abstract getByEmail(email: string): Promise<IUser>;
 
-    abstract getById(id: string): Promise<IUser>;
+    abstract getById(id: number): Promise<IUser>;
 
-    abstract updateUser(id: string, data): Promise<boolean>;
+    abstract updateUser(id: any, data): Promise<boolean>;
 
 }

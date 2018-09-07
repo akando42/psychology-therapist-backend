@@ -10,10 +10,10 @@ import { NoAccountHolderResetTemplate } from "../../../email-templates/no-accoun
 import { ResetPasswordTemplate } from "../../../email-templates/reset-password.template";
 import { UsersRolEnum } from "../../../enums/users-rol.enum";
 import { InvitationEmailTemplate } from "../../../email-templates/invitation-email.template";
-import { IUserService } from "../../users/core/users.service.interface";
 import { IAuthenticationService } from "./authentication.service";
 import { AccountsComponent } from "./accounts/accounts.component";
 import { InvitationsComponent } from "./invitations/invitations.components";
+import { AbstractUsersModule } from "../../users/core/users.module";
 
 
 export abstract class AbstractAuthenticationModule {
@@ -21,7 +21,7 @@ export abstract class AbstractAuthenticationModule {
     constructor(
         protected _accountsComponent?: AccountsComponent,
         protected _invitationsComponent?: InvitationsComponent,
-        protected _usersComponent?: IUserService,
+        protected _usersComponent?: AbstractUsersModule,
         private _emailService?: EmailService,
     ) {
     }

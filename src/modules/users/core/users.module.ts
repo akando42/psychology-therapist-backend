@@ -10,9 +10,9 @@ export abstract class AbstractUsersModule {
         protected _locationsComponent: LocationsComponent
     ) { }
 
-    abstract createUser(user: IUser): Promise<IUser>;
+    abstract createUser(user: IUser, roleId: number): Promise<IUser>;
 
-    abstract updateUser(id: string, model: IUser): Promise<IUser>;
+    abstract updateUser(id: any, model: IUser): Promise<IUser>;
 
     abstract getUserByEmail(id: string): Promise<IUser>;
 

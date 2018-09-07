@@ -13,11 +13,11 @@ export class MySqlUsersRepository extends AbstractUsersRepository {
         return super.getBy(new GetByQuery({ UserEmail: email }).toDBQuery('USERS'));
     }
 
-    getById(id: string): Promise<IUser> {
+    getById(id: any): Promise<IUser> {
         return super.getBy(new GetByQuery({ UserID: id }).toDBQuery('USERS'));
     }
 
-    updateUser(id: string, data): Promise<boolean> {
+    updateUser(id: any, data): Promise<boolean> {
         return super.update(new UpdateQuery({ UserID: id }).toDBQuery('USERS'), data);
     }
 }

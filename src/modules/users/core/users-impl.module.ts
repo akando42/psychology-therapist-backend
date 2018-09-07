@@ -4,13 +4,21 @@ import { ILocation } from '../../../models/location';
 
 
 export class UsersImplModule extends AbstractUsersModule {
-    constructor(locationComponent, userProfileComponent) {
+    constructor(
+        locationComponent,
+        userProfileComponent) {
         super(locationComponent, userProfileComponent);
     }
 
-    createUser(user: IUser): Promise<IUser> {
+    createUser(user: IUser, roleid: number): Promise<IUser> {
         return new Promise<IUser>(async (resolve, reject) => {
+            try {
+                //create the basic user
+                const createdUser: IUser = await this._userProfilesComponent.createUserProfile(user);
 
+            } catch (error) {
+
+            }
         });
     }
     updateUser(id: string, model: IUser): Promise<IUser> {
@@ -19,9 +27,9 @@ export class UsersImplModule extends AbstractUsersModule {
     getUserByEmail(id: string): Promise<IUser> {
         return new Promise<IUser>(async (resolve, reject) => {
             try {
-                
+
             } catch (error) {
-                
+
             }
         });
 

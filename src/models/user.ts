@@ -3,7 +3,7 @@ import { UsersRolEnum } from "../enums/users-rol.enum";
 import { IContactInfo } from "./extendables/contact-info";
 
 export interface IUser {
-    id?: string;
+    id?: number;
     idVerified?: boolean;
     contactInfo: IContactInfo;
     basicInfo?: IBasicInfo;
