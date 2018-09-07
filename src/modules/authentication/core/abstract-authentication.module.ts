@@ -10,7 +10,7 @@ import { NoAccountHolderResetTemplate } from "../../../email-templates/no-accoun
 import { ResetPasswordTemplate } from "../../../email-templates/reset-password.template";
 import { UsersRolEnum } from "../../../enums/users-rol.enum";
 import { InvitationEmailTemplate } from "../../../email-templates/invitation-email.template";
-import { IUserService } from "../../users/core/users.service";
+import { IUserService } from "../../users/core/users.service.interface";
 import { IAuthenticationService } from "./authentication.service";
 import { AccountsComponent } from "./accounts/accounts.component";
 import { InvitationsComponent } from "./invitations/invitations.components";

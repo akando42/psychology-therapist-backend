@@ -1,10 +1,32 @@
 import { IConverter } from "../converters/converter.interface";
 import { IWriteReadRepository } from "./write-read-repository.interface";
+import { MetadataArgsStorage } from "typeorm/metadata-args/MetadataArgsStorage";
+import { AbstractUsersRepository } from "../../modules/users/dao/users.repository";
 
+class Container {
 
+    static container: any = []
+
+}
+
+function injected(target) {
+    // cambiar constructores para q reciban estring como nombre de o talves agregar metadata
+    // Y HACERLO ACORDE AL NOMBRE Y EL TIPO SEA OPCIONAL COMO MYSQL + AbstractUsersRepositorY
+    // DONDE MYSQL ES PARAMETRO OPCIONAL Y ESTARA GUARDADO EN LA BASE DE DATOS YA QUE TODO SERA 
+    // REFERENTE AL NOMBRE Y SE LLAMARA WHOAREYOU
+
+}
+
+@injected
 export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
 
     constructor(protected _db: any, private _converter?: IConverter) {
+        // const test =
+
+        //     new _db.prototype.constructor();
+        // console.dir(test)
+        // console.dir(_converter)
+
 
     }
 
@@ -40,7 +62,7 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
         });
     }
 
-    delete(modelId: string): Promise<{ id: string, success: boolean }> {
+    delete(modelId: any): Promise<{ id: string, success: boolean }> {
         return new Promise<{ id: string, success: boolean }>((resolve, reject) => {
             this._db.deleteOne({ _id: modelId })
                 .then((result: any) => {

@@ -7,14 +7,17 @@ const port: any = process.env.PORT || '3000';
 import * as os from 'os';
 // import { authModule } from './modules/authentication';
 import { API } from "./api";
+import { MySqlLocationsRepository } from './modules/users/dao/repositories/my-sql-locations.repository';
+import { GenericDao } from './behavior/mysql/generic.dao';
+import { MySqlLocationsConverter } from './modules/users/converters/my-sql/my-sql-locations.converter';
 
-const http = require('http');
+// const http = require('http');
 
-const api: API = new API();
+// const api: API = new API();
 
-http.createServer(api.express).listen(port, () => {
-    console.log(`up and running on under ${port}`)
-});
+// http.createServer(api.express).listen(port, () => {
+//     console.log(`up and running on under ${port}`)
+// });
 
 
 // setInterval(function () {
@@ -26,3 +29,6 @@ http.createServer(api.express).listen(port, () => {
 // authModule.init();
 
 // console.log(authModule.authenticate({ email: 'info@therapyondemand', password: 'testest' }))
+
+const repo =
+    new MySqlLocationsRepository(GenericDao, MySqlLocationsConverter)

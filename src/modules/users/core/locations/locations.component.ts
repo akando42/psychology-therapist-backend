@@ -1,0 +1,7 @@
+
+
+export class LocationsComponent {
+    constructor() {
+
+    }
+}

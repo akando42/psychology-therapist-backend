@@ -2,7 +2,7 @@ import { WriterReaderService } from "../../behavior/services/writer-reader-servi
 import { IUser } from "../../models/user";
 import { AbstractUsersRepository } from "./dao/users.repository";
 import { propertiesMatcherUtil } from "../../utils/properties-matcher.util";
-import { IUserService } from "./core/users.service";
+import { IUserService } from "./core/users.service.interface";
 import { MySqlUsersRepository } from "./dao/repositories/my-sql-users.repository";
 import { GenericDao } from "../../behavior/mysql/generic.dao";
 import { MySqlUsersConverterUsersConverterInstance } from "./converters/my-sql/my-sql-users.converter";
