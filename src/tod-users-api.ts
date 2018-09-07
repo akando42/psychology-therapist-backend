@@ -1,5 +1,5 @@
 import { ProviderRouterInstance } from './modules/provider/core/provider.router';
-import { Application } from 'express';
+import { Application, Request } from 'express';
 import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
@@ -10,8 +10,11 @@ import { NotificationsRouterInstance } from './modules/notifications/notificatio
 import "reflect-metadata";
 import { createConnection } from 'typeorm';
 import { TasksRouterInstance } from './modules/tasks/tasks.router';
+import { TODResponse } from './dto/tod-response';
+import { TODAuthenticationModule } from './modules/authentication';
 const fileUpload = require('express-fileupload');
-export class API {
+export class TODUsersApi {
+
 
 	public express: Application;
 
@@ -41,21 +44,26 @@ export class API {
 	}
 
 	private mountRoutes(): void {
-		let adminModule = new AdminModule();
+		let router = express.Router();
 
-		this.express.use('/admin', adminModule.init());
-		this.express.use('/api/v1', TasksRouterInstance.init());
+		router.get('/api/v1/authentication/login',
+			(req, res) => this._res(req, res, TODAuthenticationModule.authenticate));
+		console.log('mounted')
+		this.express.use('/',router);
+	}
 
-		this.express.use('/agent', (req, res) => {
-			console.log(req.headers.host)
-			console.log(req.headers.location)
-			console.log(req.headers['user-agent'])
-		});
 
-		// this.express.use('/api/v1', AuthenticationRouterInstance.init());
-		this.express.use('/api/v1', CabinetAuthRouterInstance.init());
-		this.express.use('/api/v1', NotificationsRouterInstance.init());
-		this.express.use('/api/v1', ProviderRouterInstance.init());
+	private async  _res(req: Request, res: express.Response, handler: { (...args): Promise<any> }) {
+		const body = req.body;
+		console.log('lol')
+		try {
+			const result = await handler(body)
+			res.status(200).json(result);
+		} catch (error) {
+			res.status(200).json(error);
+
+		}
+
 	}
 }
 

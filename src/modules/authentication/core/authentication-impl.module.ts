@@ -118,9 +118,12 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
     authenticate(credentials: { password: string, email: string }): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
+                if (!credentials.email || !credentials.password) {
+                    return reject({ message: 'no credentials provided' });
+                }
+
                 const account: IAccount = await this._accountsComponent.getByEmail(credentials.email);
                 //not match account
-                console.log(account)
                 if (!account) { return reject(new InvalidCredentialsError()); }
                 //unverified account
                 if (!account.emailVerified) { return reject(new UnverifiedAccountError()) }

@@ -10,14 +10,15 @@ import { API } from "./api";
 import { MySqlLocationsRepository } from './modules/users/dao/repositories/my-sql-locations.repository';
 import { GenericDao } from './behavior/mysql/generic.dao';
 import { MySqlLocationsConverter } from './modules/users/converters/my-sql/my-sql-locations.converter';
+import { TODUsersApi } from './tod-users-api';
 
-// const http = require('http');
+const http = require('http');
 
-// const api: API = new API();
+const api: TODUsersApi = new TODUsersApi();
 
-// http.createServer(api.express).listen(port, () => {
-//     console.log(`up and running on under ${port}`)
-// });
+http.createServer(api.express).listen(port, () => {
+    console.log(`up and running on under ${port}`)
+});
 
 
 // setInterval(function () {
@@ -25,10 +26,3 @@ import { MySqlLocationsConverter } from './modules/users/converters/my-sql/my-sq
 //     console.log(`Script : ${Math.round(used * 100) / 100} MB `);
 // }, 1000);
 
-
-// authModule.init();
-
-// console.log(authModule.authenticate({ email: 'info@therapyondemand', password: 'testest' }))
-
-const repo =
-    new MySqlLocationsRepository(GenericDao, MySqlLocationsConverter)

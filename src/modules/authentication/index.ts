@@ -29,4 +29,5 @@ const TODAuthenticationModule =
         invitationsComponent);
 
 export {
+    TODAuthenticationModule
 }
