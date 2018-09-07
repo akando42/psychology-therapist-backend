@@ -1,28 +1,20 @@
 import * as bc from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { IAccount } from '../../models/account';
-import { INewAccountDTO } from '../../dto/new-account.dto';
-import { IUser } from '../../models/user';
-import { UsersRolEnum } from '../../enums/users-rol.enum';
-import { NewAccountVerificationTemplate } from '../../email-templates/new-account-verification.template';
-import { SendGridEmailServiceInstace } from '../communication/email/sendgrid-email.service';
-import { UnverifiedAccountError } from '../../errors/unverfied-account.error';
-import { InvalidCredentialsError } from '../../errors/invalid-credentials.error';
-import { generateResetToken } from './utils/generate-reset-token.func';
-import { IResetPasswordRequest } from '../../models/reset-password-request';
-import { AbstractResetPasswordRequestRepository } from './dao/repositories/reset-passwod-request.repositoty.interface';
-import { AbstractAccountInviteRepository } from './dao/repositories/account-invite.repositoty';
-import { IAccountInvite } from '../../models/account-invite';
-import { AbstractUsersRepository } from '../users/dao/users.repository';
-import { IAuthenticationService } from './core/authentication.service';
-import { AccountsComponent } from './core/accounts/accounts.component';
-import { AbstractAuthenticationModule } from './core/abstract-authentication.module';
-import { InvitationsComponent } from './core/invitations/invitations.components';
-import { TODResponse } from '../../dto/tod-response';
+import { IAccount } from '../../../models/account';
+import { INewAccountDTO } from '../../../dto/new-account.dto';
+import { IUser } from '../../../models/user';
+import { UsersRolEnum } from '../../../enums/users-rol.enum';
+import { NewAccountVerificationTemplate } from '../../../email-templates/new-account-verification.template';
+import { SendGridEmailServiceInstace } from '../../communication/email/sendgrid-email.service';
+import { UnverifiedAccountError } from '../../../errors/unverfied-account.error';
+import { InvalidCredentialsError } from '../../../errors/invalid-credentials.error';
+import { IAccountInvite } from '../../../models/account-invite';
+import { AccountsComponent } from './accounts/accounts.component';
+import { AbstractAuthenticationModule } from './abstract-authentication.module';
+import { InvitationsComponent } from './invitations/invitations.components';
+import { TODResponse } from '../../../dto/tod-response';
 
 export class AuthenticationImplModule extends AbstractAuthenticationModule {
-
-
 
     constructor(
         _accountsComponent?: AccountsComponent,
@@ -33,14 +25,38 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
 
     inviteUser(invitationRequest: { email: string; role: UsersRolEnum; inviterId: number; }): Promise<TODResponse> {
-        throw new Error("Method not implemented.");
+        return new Promise<TODResponse>(async (resolve, reject) => {
+            try {
+
+                const disponibility: boolean = await this._accountsComponent.checkEmailDisponibility(invitationRequest.email);
+
+                if (!disponibility) {
+                    return reject({ message: 'already on use', used: true, success: false });
+                }
+
+                const invitation: IAccountInvite = await this._invitationsComponent.createInvitation(invitationRequest);
+
+                // sent email with notification
+
+                const result: TODResponse = {
+                    message: 'invitation sent',
+                    payload: { success: true },
+                    timestamp: new Date()
+                }
+
+                return resolve(result);
+
+            } catch (error) {
+
+            }
+        })
     }
 
     signup(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
 
-                const disponibility: boolean = await this.checkEmailDisponibility(newAccount.email);
+                const disponibility: boolean = await this._accountsComponent.checkEmailDisponibility(newAccount.email);
 
                 if (!disponibility) {
                     return resolve({ message: 'already on use', used: true, success: false });
@@ -253,34 +269,6 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         })
     }
 
-    checkEmailDisponibility(email: string): Promise<boolean> {
-        return new Promise<boolean>(async (resolve, reject) => {
-            try {
-
-                const exist: IAccount = await this._accountsComponent.getByEmail(email);
-                //handle better
-                if (exist) {
-                    return resolve(false);
-                }
-
-                const invitation: IAccountInvite = await this._accountsComponent.getByEmail(email);
-
-                //still on recerved;
-                if (!invitation) {
-                    return reject({ error: 'invalid invitation token', success: false });
-                }
-
-                if (invitation.expired) {
-                    return reject({ error: 'invitation token expired', success: false });
-                }
-
-                return resolve(true);
-
-            } catch (error) {
-                return reject(error);
-            }
-        });
-    }
 }
 
 

@@ -1,7 +1,7 @@
 
 import { ILoginAttempMySql } from "../../dao/my-sql/models/my-sql-login-attemp";
-import { IDualConverter } from "../../../../../../behavior/converters/converter.interface";
-import { ILoginAttemp } from "../../../../../../models/login-attemp";
+import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { ILoginAttemp } from "../../../../models/login-attemp";
 
 
 export class MySqlLoginAttempsConverter implements IDualConverter<ILoginAttemp, ILoginAttempMySql>{
@@ -13,7 +13,7 @@ export class MySqlLoginAttempsConverter implements IDualConverter<ILoginAttemp, 
     convertDBModelToDomain(raw: ILoginAttempMySql): ILoginAttemp {
         if (!raw) { return null; }
         return {
-            
+
         }
     }
     converManyDomainToDBModel(raw: ILoginAttemp[]): ILoginAttempMySql[] {
@@ -25,3 +25,6 @@ export class MySqlLoginAttempsConverter implements IDualConverter<ILoginAttemp, 
 
 
 }
+
+
+export const MySqlLoginAttempsConverterInstance: MySqlLoginAttempsConverter = new MySqlLoginAttempsConverter();

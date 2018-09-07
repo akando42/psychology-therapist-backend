@@ -1,10 +1,7 @@
 import { IAccount } from "../../../../models/account";
-import { IAccountsService } from "./accounts.service";
-import { AbstractAccountInviteRepository } from "../../dao/repositories/account-invite.repositoty";
+import { IAccountsService } from "./accounts.service.interface";
 import { AbstractAccountsRepository } from "../../dao/repositories/accounts.repository";
-import { MySqlAccountsRepository, MySqlAccountsRepositoryInstance } from "../../dao/my-sql/repositories/my-sql-accounts.repository";
-import { GenericDao } from "../../../../behavior/mysql/generic.dao";
-import { MySqlAccountConverter } from "../../converters/my-sql/my-sql-account.converter";
+import { MySqlAccountsRepositoryInstance } from "../../dao/my-sql/repositories/my-sql-accounts.repository";
 import { IResetPasswordRequest } from "../../../../models/reset-password-request";
 import { AbstractResetPasswordRequestRepository } from "../../dao/repositories/reset-passwod-request.repositoty.interface";
 import { generateResetToken } from "../../utils/generate-reset-token.func";

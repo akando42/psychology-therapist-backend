@@ -1,5 +1,5 @@
 import { ILoginAttemp } from "../../../../models/login-attemp";
-import { ILoginAttempsService } from "./login-attemps.service";
+import { ILoginAttempsService } from "./login-attemps.service.interface";
 import { TODResponse } from "../../../../dto/tod-response";
 
 export abstract class AbstractLoginAttempsComponent {

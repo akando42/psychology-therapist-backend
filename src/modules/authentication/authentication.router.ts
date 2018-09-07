@@ -1,7 +1,7 @@
 import { Router, Request, Response } from "express";
 
 import { HttpResponseCodes } from "../../enums/http-response-codes.enum";
-import { AuthenticationImplModule } from "./authentication-impl.module";
+import { AuthenticationImplModule } from "./core/authentication-impl.module";
 import { AbstractAuthenticationModule } from "./core/abstract-authentication.module";
 
 export class AuthenticationRouter {

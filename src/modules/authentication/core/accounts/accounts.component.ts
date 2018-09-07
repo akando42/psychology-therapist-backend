@@ -1,16 +1,19 @@
 import * as bc from 'bcrypt';
 
 import { IAccount } from "../../../../models/account";
-import { IAccountsService } from "./accounts.service";
+import { IAccountsService } from "./accounts.service.interface";
 import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 import { IResetPasswordRequest } from '../../../../models/reset-password-request';
 import { generateResetToken } from '../../utils/generate-reset-token.func';
+import { IAccountInvite } from '../../../../models/account-invite';
+import { IInvitationService } from '../invitations/invitations.service.interface';
 
 
 export class AccountsComponent {
 
     constructor(
-        private _acountService: IAccountsService) { }
+        private _acountService: IAccountsService,
+        private _invitationsService: IInvitationService) { }
 
     updateAccount(accountId: number, account: IAccount): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
@@ -122,6 +125,37 @@ export class AccountsComponent {
 
     getByEmail(email: string): Promise<IAccount> {
         return this._acountService.getByEmail(email);
+    }
+
+    
+
+    checkEmailDisponibility(email: string): Promise<boolean> {
+        return new Promise<boolean>(async (resolve, reject) => {
+            try {
+
+                const exist: IAccount = await this._acountService.getByEmail(email);
+                //handle better
+                if (exist) {
+                    return resolve(false);
+                }
+
+                const invitation: IAccountInvite = await this._invitationsService.getInvitationByEmail(email);
+
+                //still on recerved;
+                if (!invitation) {
+                    return reject({ error: 'invalid invitation token', success: false });
+                }
+
+                if (invitation.expired) {
+                    return reject({ error: 'invitation token expired', success: false });
+                }
+
+                return resolve(true);
+
+            } catch (error) {
+                return reject(error);
+            }
+        });
     }
 
 }
