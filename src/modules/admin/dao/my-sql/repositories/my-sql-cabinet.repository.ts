@@ -10,6 +10,9 @@ export class MySqlCabinetsRepository extends AbstractCabinetsRepository {
         super(new GenericDao());
     }
 
+    addToCabinet(adminID: number, invitedID: number): Promise<any> {
+        return this.create({ AdminID: adminID, invitedID: invitedID });
+    }
     getAdminCabinetUsers(adminID: string): Promise<IUser[]> {
         return this.getAllBy(new GetCabinetUsersQuery(adminID).toDBQuery());
     }

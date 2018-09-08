@@ -9,5 +9,6 @@ export interface IAccountInvite {
     date?: number;
     email?: string;
     expired?: boolean;
+    cabinetId?: number;
     role?: UsersRolEnum;
 }

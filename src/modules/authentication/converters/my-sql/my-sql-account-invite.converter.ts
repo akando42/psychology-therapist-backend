@@ -14,7 +14,8 @@ export class MySqlAccountInviteConverter implements IDualConverter<IAccountInvit
             AccountInviteInviterID: raw.inviterID,
             AccountInviteRole: raw.role,
             AccountInviteToken: raw.token,
-            AccountInviteExpired: raw.expired
+            AccountInviteExpired: raw.expired,
+            AccountInviteCabinetID: raw.cabinetId
         };
     }
     convertDBModelToDomain(raw: IAccountInviteMySql): IAccountInvite {
@@ -26,7 +27,8 @@ export class MySqlAccountInviteConverter implements IDualConverter<IAccountInvit
             id: raw.AccountInviteID,
             inviterID: raw.AccountInviteInviterID,
             role: raw.AccountInviteRole,
-            token: raw.AccountInviteToken
+            token: raw.AccountInviteToken,
+            cabinetId: raw.AccountInviteCabinetID
         };
     }
     converManyDomainToDBModel(raw: IAccountInvite[]): IAccountInviteMySql[] {

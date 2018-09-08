@@ -4,16 +4,12 @@ import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
 import { MySqlConnection } from './database-connection/db-connection.mysql';
-import { AdminModule } from './modules/admin/admin.module';
-import { NotificationsRouterInstance } from './modules/notifications/notification.router';
 import "reflect-metadata";
 import { createConnection } from 'typeorm';
-import { TasksRouterInstance } from './modules/tasks/tasks.router';
-import { TODResponse } from './dto/tod-response';
 import { TODAuthenticationModule } from './modules/authentication';
 const fileUpload = require('express-fileupload');
-export class TODUsersApi {
 
+export class TODUsersApi {
 
 	public express: Application;
 
@@ -45,17 +41,14 @@ export class TODUsersApi {
 	private mountRoutes(): void {
 		let router = express.Router();
 
-		router.get('/api/v1/authentication/login',
-			(req, res) => this._res(req, res, TODAuthenticationModule.authenticate));
-		console.log('mounted')
-		this.express.use('/', router);
+		router.post('/api/v1/authentication/login', (req, res) => this._res(req, res, TODAuthenticationModule.authenticate));
 	}
 
 
 	private async  _res(req: Request, res: express.Response, handler: { (...args): Promise<any> }) {
-		const body = req.body;
-		console.log('lol')
 		try {
+			const body = req.body;
+			console.log('lol')
 			const result = await handler(body)
 			res.status(200).json(result);
 		} catch (error) {

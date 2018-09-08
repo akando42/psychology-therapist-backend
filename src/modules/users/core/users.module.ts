@@ -16,7 +16,7 @@ export abstract class AbstractUsersModule {
 
     abstract getUserByEmail(id: string): Promise<IUser>;
 
-    abstract getUserById(id: string): Promise<IUser>;
+    abstract getUserById(id: number): Promise<IUser>;
 
     abstract addUserLocation(userId: number, location: ILocation): Promise<ILocation>;
 

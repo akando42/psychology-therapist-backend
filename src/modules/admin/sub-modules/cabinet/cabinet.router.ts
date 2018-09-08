@@ -1,15 +1,12 @@
 import { Router, Response, Request } from "express";
-import { TokenValidationMiddleware } from "../../../../middlewares/token-validation.middleware";
-import { IUser } from "../../../../models/user";
-import { WRAbstractRouter } from "../../../../behavior/routers/w-r-abstract.router";
-import { CabinetController } from "./cabinet.controller";
+
 import { selfResponsabilityMiddleware } from "../../../../middlewares/self-responsability";
 
+import { cabinetComponent } from '../../'
 
 
-export class CabinetAuthRouter {
-    constructor(protected _cabinetController: CabinetController) {
-        // super(_cabinetController);
+export class CabinetsRouter {
+    constructor() {
     }
 
     init(): Router {
@@ -26,8 +23,8 @@ export class CabinetAuthRouter {
     }
 
     getCabinetUsers(req: Request, res: Response): void {
-        console.log(req.params)
-        this._cabinetController.getCabinetUsers(req['userId'])
+
+        cabinetComponent.getCabinetMemberByAdminID(req['userId'])
             .then((result) => {
                 //sent the response.
                 res.status(200).json(result);
@@ -40,7 +37,7 @@ export class CabinetAuthRouter {
     }
 
     requestActionToCabinetUser(req: Request, res: Response): void {
-        this._cabinetController.requestActionToCabinetUser(req.params['member_id'], req.body)
+        cabinetComponent.requestActionToCabinetUser(req.params['member_id'], req.body)
             .then((result) => {
                 //sent the response.
                 res.status(200).json(result);

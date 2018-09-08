@@ -3,10 +3,11 @@ import { Router, Request, Response } from "express";
 import { HttpResponseCodes } from "../../enums/http-response-codes.enum";
 import { AuthenticationImplModule } from "./core/authentication-impl.module";
 import { AbstractAuthenticationModule } from "./core/abstract-authentication.module";
+import { TODAuthenticationModule } from ".";
 
 export class AuthenticationRouter {
 
-    constructor(protected _authComponent: AbstractAuthenticationModule) {
+    constructor() {
     }
 
 
@@ -27,7 +28,7 @@ export class AuthenticationRouter {
     }
 
     authenticate(req: Request, res: Response): void {
-        this._authComponent.authenticate(req.body)
+        TODAuthenticationModule.authenticate(req.body)
             .then((result: any) => {
                 //sent the response.
                 res.status(200).json(result);
@@ -41,7 +42,7 @@ export class AuthenticationRouter {
 
 
     changePassword(req: Request, res: Response): void {
-        // this._authComponent.changePassword(req.body)
+        // TODAuthenticationModule.changePassword(req.body)
         //     .then((result: any) => {
         //         //sent the response.
         //         res.status(200).json(result);
@@ -54,7 +55,7 @@ export class AuthenticationRouter {
     }
 
     signup(req: Request, res: Response): void {
-        this._authComponent.signup(req.body)
+        TODAuthenticationModule.signup(req.body)
             .then((result: any) => {
                 console.log(result);
                 res.status(200).json(result);
@@ -66,7 +67,7 @@ export class AuthenticationRouter {
 
 
     verifyEmail(req: Request, res: Response): void {
-        this._authComponent.verifyEmail(req.query['email'], req.query['hash'])
+        TODAuthenticationModule.verifyEmail(req.query['email'], req.query['hash'])
             .then((result: any) => {
                 res.status(200).json(result);
             }).catch((err) => {
@@ -75,13 +76,14 @@ export class AuthenticationRouter {
     }
 
     signUpWithInvitation(req: Request, res: Response): void {
-        this._authComponent.signUpWithInvitation(req.query['invitation_token'], req.body)
+        TODAuthenticationModule.signUpWithInvitation(req.query['invitation_token'], req.body)
             .then((result: any) => {
                 res.status(200).json(result);
             }).catch((err) => {
                 res.status(400).json(err);
             });
     }
+
 }
 
 

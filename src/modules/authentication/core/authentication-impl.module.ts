@@ -129,14 +129,16 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 if (!account.emailVerified) { return reject(new UnverifiedAccountError()) }
 
 
-                const itsMatch: boolean = await bc.compare(credentials.password, account.password);
+                // const itsMatch: boolean = await bc.compare(credentials.password, account.password);
 
-                if (!itsMatch) {
-                    return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
-                }
+                // if (!itsMatch) {
+                //     return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
+                // }
                 // sanatize
                 account.password = undefined;
                 account.verificationHash = undefined;
+
+                const user: IUser = await this._usersModule.getUserById(account.userId)
 
                 const token = jwt.sign(
                     { userId: account.userId },
@@ -144,7 +146,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
                 return resolve({
                     auth: true, token: token,
-                    data: account, message: 'succesfully authenticated'
+                    data: user, message: 'succesfully authenticated'
                 });
 
 

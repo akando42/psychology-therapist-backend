@@ -3,24 +3,32 @@ import { INewAccountDTO } from "../../../../dto/new-account.dto";
 import { AbstractAuthenticationModule } from "../../../authentication/core/abstract-authentication.module";
 import { TODResponse } from "../../../../dto/tod-response";
 import { IActionRequest } from "../../../../models/action-request";
+import { IUser } from "../../../../models/user";
 
 
 export class CabinetCompont {
     constructor(
-        private _authModule: AbstractAuthenticationModule,
         protected _cabinetService: ICabinetService,
     ) { }
 
-    inviteToCabinet(inviterId: number, newAccount: INewAccountDTO): Promise<any> {
+    addToCabinet(inviterId: number, newMemberID: number): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                const result =
-                    await this._authModule.inviteUser({ email: newAccount.email, inviterId: inviterId, role: newAccount.role })
-
+                return resolve(await this._cabinetService.addToCabinet(inviterId, newMemberID));
             } catch (error) {
-
+                return reject(error);
             }
         });
+    }
+
+    getCabinetMemberByAdminID(adminID: number): Promise<IUser[]> {
+        return new Promise<IUser[]>(async (resolve, reject) => {
+            try {
+                return resolve(await this._cabinetService.getCabinetUsersByAdminID(adminID));
+            } catch (error) {
+                return reject(error);
+            }
+        })
     }
 
 

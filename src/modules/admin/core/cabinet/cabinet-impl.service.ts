@@ -5,42 +5,34 @@ import { IUser } from "../../../../models/user";
 import { AuthService } from "../../feight-clients/auth.service";
 import { ActionRequestsRepoInstance } from "../../dao/repositories/action-request.repository";
 import { IActionRequest } from "../../../../models/action-request";
+import { AbstractCabinetsRepository } from "../../dao/repositories/cabinet.repository";
+import { ICabinetService } from "./cabinet.service.interface";
 
-export class CabinetsService {
-    constructor(private _cabinetRepository: any) {
+export class CabinetsImplService implements ICabinetService {
 
+    constructor(private _cabinetRepository: AbstractCabinetsRepository) { }
+
+    requestActionToCabinetUser(memberId: string, request: IActionRequest) {
+        throw new Error("Method not implemented.");
+    }
+    
+    getCabinetUsersByAdminID(adminID: number): Promise<IUser[]> {
+        return this._cabinetRepository.getAdminCabinetUsers(adminID);
     }
 
-    inviteToCabinet(inviterId: number, newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
+    addToCabinet(inviterID: number, invitedID: number): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
-
-                const rol = newAccount.role;
-                if (rol !== `${UsersRolEnum.hr}` || rol !== `${UsersRolEnum.sales}`) {
-                    reject({ message: 'invalid rol assign' });
-                }
-
-                newAccount.accountStatus = AccountStatusEnum.waiting;
-
-                const result = await AuthService
-                    .invite({
-                        email: newAccount.email,
-                        role: newAccount.role,
-                        inviterId: inviterId
-                    });
+                const result = await this._cabinetRepository.addToCabinet(inviterID, invitedID);
 
                 return resolve(result);
+
             } catch (e) {
-
-                reject(e)
-
+                return reject(e)
             }
         })
     }
 
-    getCabinetUsers(adminId: string): Promise<IUser[]> {
-        return this._cabinetRepository.getAdminCabinetUsers(adminId);
-    }
 
     requestAction(memberId: any, request: IActionRequest): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {

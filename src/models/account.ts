@@ -10,6 +10,6 @@ export interface IAccount {
     accountStatus?: AccountStatusEnum;
     signUpDate: any;
     verificationHash?: string;
-    userId: string;
+    userId: any;
     emailVerified?: boolean;
 }

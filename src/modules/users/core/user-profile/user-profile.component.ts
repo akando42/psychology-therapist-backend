@@ -60,4 +60,16 @@ export class UsersProfileComponent {
             }
         });
     }
+
+    getUserProfileById(id: number): Promise<IUser> {
+        return new Promise<IUser>(async (resolve, reject) => {
+            try {
+                const user = await this._userService.getUserById(id);
+
+                return resolve(user);
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
 }

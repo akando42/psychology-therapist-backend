@@ -7,6 +7,7 @@ import { InvitationsComponent } from "./core/invitations/invitations.components"
 import { InvitationServiceImpl } from "./core/invitations/invitations-impl.service";
 import { AuthenticationImplModule } from "./core/authentication-impl.module";
 import { TODUsersModule } from "../users";
+import { AuthenticationRouter } from "./authentication.router";
 
 
 //repositories
@@ -29,5 +30,6 @@ const TODAuthenticationModule =
         invitationsComponent);
 
 export {
-    TODAuthenticationModule
+    TODAuthenticationModule,
+    AuthenticationRouter
 }

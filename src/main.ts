@@ -10,11 +10,10 @@ import { API } from "./api";
 import { MySqlLocationsRepository } from './modules/users/dao/repositories/my-sql-locations.repository';
 import { GenericDao } from './behavior/mysql/generic.dao';
 import { MySqlLocationsConverter } from './modules/users/converters/my-sql/my-sql-locations.converter';
-import { TODUsersApi } from './tod-users-api';
 
 const http = require('http');
 
-const api: TODUsersApi = new TODUsersApi();
+const api: API = new API();
 
 http.createServer(api.express).listen(port, () => {
     console.log(`up and running on under ${port}`)

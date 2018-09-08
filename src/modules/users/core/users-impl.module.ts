@@ -25,8 +25,8 @@ export class UsersImplModule extends AbstractUsersModule {
         return this._userProfilesComponent.getUserProfileByEmail(email);
     }
 
-    getUserById(id: string): Promise<IUser> {
-        throw new Error("Method not implemented.");
+    getUserById(id: number): Promise<IUser> {
+        return this._userProfilesComponent.getUserProfileById(id);
     }
     addUserLocation(userId: number, location: ILocation): Promise<ILocation> {
         throw new Error("Method not implemented.");

@@ -9,6 +9,8 @@ export abstract class AbstractCabinetsRepository extends AbstractRepository<any>
         super(dao, converter);
     }
 
+    abstract addToCabinet(adminID: number, invitedID: number): Promise<any>;
+
     abstract getAdminCabinetUsers(adminID: any): Promise<IUser[]>;
 
 }

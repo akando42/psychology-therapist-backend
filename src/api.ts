@@ -4,12 +4,12 @@ import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
 import { MySqlConnection } from './database-connection/db-connection.mysql';
-import { AdminModule } from './modules/admin/admin.module';
-import { NotificationsRouterInstance } from './modules/notifications/notification.router';
 import "reflect-metadata";
 import { createConnection } from 'typeorm';
-import { TasksRouterInstance } from './modules/tasks/tasks.router';
+import { AuthenticationRouter } from './modules/authentication';
+import { AdminRouter } from './modules/admin/admin.module';
 const fileUpload = require('express-fileupload');
+
 export class API {
 
 	public express: Application;
@@ -40,10 +40,9 @@ export class API {
 	}
 
 	private mountRoutes(): void {
-		let adminModule = new AdminModule();
 
-		this.express.use('/admin', adminModule.init());
-		this.express.use('/api/v1', TasksRouterInstance.init());
+		this.express.use('/admin', new AdminRouter().init());
+		// this.express.use('/api/v1', TasksRouterInstance.init());
 
 		this.express.use('/agent', (req, res) => {
 			console.log(req.headers.host)
@@ -51,10 +50,16 @@ export class API {
 			console.log(req.headers['user-agent'])
 		});
 
-		// this.express.use('/api/v1', AuthenticationRouterInstance.init());
+		this.express.use('/api/v1', new AuthenticationRouter().init());
 		// this.express.use('/api/v1', CabinetAuthRouterInstance.init());
 		// this.express.use('/api/v1', NotificationsRouterInstance.init());
 		// this.express.use('/api/v1', ProviderRouterInstance.init());
+
+		//tempora;
+		this.express.use('/api/v1/users/:id/profile', (req, res) => {
+			
+		});
+
 	}
 }
 
