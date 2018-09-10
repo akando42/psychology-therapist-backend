@@ -17,7 +17,9 @@ export class AccountsComponent {
     constructor(
         private _acountService: IAccountsService,
         private _invitationsService: IInvitationService,
-        private _userComponent: UsersProfileComponent) { }
+        private _userComponent?: UsersProfileComponent,
+        private _emailService?: any
+    ) { }
 
     updateAccount(accountId: number, account: IAccount): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
@@ -100,8 +102,8 @@ export class AccountsComponent {
         })
     }
 
-    createAccountAndProfile(account: any): Promise<string> {
-        return new Promise<string>(async (resolve, reject) => {
+    createAccountAndProfile(account: any): Promise<IAccount> {
+        return new Promise<IAccount>(async (resolve, reject) => {
             try {
                 //check that email its not already on account.
                 const alreadyOnUse = await this._acountService.getByEmail(account.email);
@@ -115,14 +117,16 @@ export class AccountsComponent {
                     return reject({ error: 'email its reserved' });
                 }
 
+                //create the user.
                 const userCreated: IUser = await this._userComponent.createUserProfile(account.profile);
+                //assign a account to that user.
+                const accountCreated: IAccount = await this.createAccount(userCreated.id, account);
 
-                const accountCreated: IAccount = await this.createAccount(userCreated.id, account)
 
-                return resolve()
+                return resolve(accountCreated)
 
             } catch (error) {
-
+                return reject(error);
             }
         })
     }

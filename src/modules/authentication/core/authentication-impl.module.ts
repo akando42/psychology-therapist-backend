@@ -53,32 +53,11 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         return new Promise(async (resolve, reject) => {
             try {
 
-                const disponibility: boolean = await this._accountsComponent.checkEmailDisponibility(newAccount.email);
+                const accountCreated = await this._accountsComponent.createAccountAndProfile(newAccount);
 
-                if (!disponibility) {
-                    return resolve({ message: 'already on use', used: true, success: false });
-                }
-
-                //create user
-                const newUser: IUser = {
-                    basicInfo: {
-                        firstName: newAccount.firstName,
-                        lastName: newAccount.lastName,
-                        gender: newAccount.gender
-                    },
-                    contactInfo: {
-                        email: newAccount.email,
-                        phoneNumber: newAccount.phoneNumber
-                    },
-                    role: newAccount.role
-                }
-                let userId: any = await this._usersModule.createUser(newUser, null);
-
-                const accountCreated: any = await this._accountsComponent.createAccount(userId, newAccount);
-
-                const fullName: string = `${newAccount.firstName}  ${newAccount.lastName}`;
+                const fullName: string = `${newAccount.profile.firstName}  ${newAccount.profile.lastName}`;
                 const verificatinLink: string =
-                    `http://localhost:3000/api/v1/authentication/verify-email?email=${accountCreated.email}&hash=${accountCreated.verificationHash}'`;
+                    `http://localhost:3000/api/v1/authentication/verify-email?hash=${accountCreated.verificationHash}'`;
 
                 const email = {
 
@@ -86,6 +65,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                     body: new NewAccountVerificationTemplate(fullName, verificatinLink).getHtml()
                 }
 
+                //make comunication service
                 // MailGunEmailServiceInstance.sentToOne(account.email, email)
                 //     .then(console.log)
                 //     .catch((err) => {

@@ -4,9 +4,12 @@ import { GenderEnum } from "../enums/gender.enum";
 import { UsersRolEnum } from "../enums/users-rol.enum";
 
 
-export interface INewAccountDTO extends IAccount {
-    firstName?: string;
-    lastName?: string;
+export interface INewAccountDTO {
+    profile: {
+        firstName?: string,
+        lastName?: string
+    },
+    email: string;
     gender?: GenderEnum;
     phoneNumber: string;
     role?: UsersRolEnum
