@@ -7,13 +7,17 @@ import { IResetPasswordRequest } from '../../../../models/reset-password-request
 import { generateResetToken } from '../../utils/generate-reset-token.func';
 import { IAccountInvite } from '../../../../models/account-invite';
 import { IInvitationService } from '../invitations/invitations.service.interface';
+import { UsersProfileComponent } from '../../../users/core/user-profile/user-profile.component';
+import { IUser } from '../../../../models/user';
+import { TasksHistoryRouter } from '../../../tasks/sub-modules/task-history/tasks-history.router';
 
 
 export class AccountsComponent {
 
     constructor(
         private _acountService: IAccountsService,
-        private _invitationsService: IInvitationService) { }
+        private _invitationsService: IInvitationService,
+        private _userComponent: UsersProfileComponent) { }
 
     updateAccount(accountId: number, account: IAccount): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
@@ -96,6 +100,33 @@ export class AccountsComponent {
         })
     }
 
+    createAccountAndProfile(account: any): Promise<string> {
+        return new Promise<string>(async (resolve, reject) => {
+            try {
+                //check that email its not already on account.
+                const alreadyOnUse = await this._acountService.getByEmail(account.email);
+                if (alreadyOnUse) {
+                    return reject({ error: 'email already on use' });
+                }
+
+                //check if  email its on a reservetion invite state. 
+                const invDispo = await this._invitationsService.checkEmailDisponibility(account.email);
+                if (invDispo) {
+                    return reject({ error: 'email its reserved' });
+                }
+
+                const userCreated: IUser = await this._userComponent.createUserProfile(account.profile);
+
+                const accountCreated: IAccount = await this.createAccount(userCreated.id, account)
+
+                return resolve()
+
+            } catch (error) {
+
+            }
+        })
+    }
+
     createAccount(userId, newAccount: IAccount): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
             try {
@@ -127,7 +158,7 @@ export class AccountsComponent {
         return this._acountService.getByEmail(email);
     }
 
-    
+
 
     checkEmailDisponibility(email: string): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
@@ -136,23 +167,21 @@ export class AccountsComponent {
                 const exist: IAccount = await this._acountService.getByEmail(email);
                 //handle better
                 if (exist) {
-                    return resolve(false);
+                    return reject(false);
                 }
-
                 const invitation: IAccountInvite = await this._invitationsService.getInvitationByEmail(email);
-
                 //still on recerved;
                 if (!invitation) {
-                    return reject({ error: 'invalid invitation token', success: false });
+                    return resolve(true);
                 }
-
                 if (invitation.expired) {
-                    return reject({ error: 'invitation token expired', success: false });
+                    return resolve(true);
                 }
 
                 return resolve(true);
 
             } catch (error) {
+                console.log(error)
                 return reject(error);
             }
         });

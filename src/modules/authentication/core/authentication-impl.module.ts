@@ -14,6 +14,7 @@ import { AbstractAuthenticationModule } from './abstract-authentication.module';
 import { InvitationsComponent } from './invitations/invitations.components';
 import { TODResponse } from '../../../dto/tod-response';
 import { AbstractUsersModule } from '../../users/core/users.module';
+import { MySqlHealthServiceServicesConverter } from '../../health-services/converters/my-sql/my-sql-health-services.converter';
 
 export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
@@ -33,17 +34,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
     inviteUser(invitationRequest: { email: string; role: UsersRolEnum; inviterId: number; }): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
-
-                const disponibility: boolean = await this._accountsComponent.checkEmailDisponibility(invitationRequest.email);
-
-                if (!disponibility) {
-                    return reject({ message: 'already on use', used: true, success: false });
-                }
-
-                const invitation: IAccountInvite = await this._invitationsComponent.createInvitation(invitationRequest);
-
-                // sent email with notification
-
+                const invitation = await this._invitationsComponent.createInvitation(invitationRequest);
                 const result: TODResponse = {
                     message: 'invitation sent',
                     payload: { success: true },
@@ -252,33 +243,6 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         });
     }
 
-    createInvitationToken(invitationRequest: { email: string, role: UsersRolEnum, inviterId: number }): Promise<string> {
-        return new Promise<string>(async (resolve, reject) => {
-            try {
-
-                const exist: IAccount = await this._accountsComponent.getByEmail(invitationRequest.email);
-                //check that its not a email on use.
-                if (exist['accountId']) {
-                    return reject({ message: 'email already on use', success: false });
-                }
-
-                const invitation: IAccountInvite = await this._invitationsComponent.createInvitation
-                    ({
-                        date: new Date().getTime(),
-                        email: invitationRequest.email,
-                        expired: false,
-                        inviterID: invitationRequest.inviterId,
-                        role: invitationRequest.role,
-                        token: ''
-                    });
-
-                return resolve(invitation.token);
-            } catch (error) {
-
-                return reject(error);
-            }
-        })
-    }
 
 }
 

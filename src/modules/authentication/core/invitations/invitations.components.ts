@@ -1,6 +1,7 @@
 import { IAccountInvite } from "../../../../models/account-invite";
 import { IInvitationService } from "./invitations.service.interface";
 import { IAccountsService } from "../accounts/accounts.service.interface";
+import { IAccount } from "../../../../models/account";
 
 
 // Sorry, we are not able to process your request. Please try again later.
@@ -17,6 +18,22 @@ export class InvitationsComponent {
     createInvitation(invitation: IAccountInvite): Promise<IAccountInvite> {
         return new Promise<IAccountInvite>(async (resolve, reject) => {
             try {
+
+                const exist: IAccount = await this._accountsService.getByEmail(invitation.email);
+                //check that its not a email on use.
+                if (exist['accountId']) {
+                    return reject({ message: 'email already on use', success: false });
+                }
+
+                const inv: IAccountInvite = {
+                    date: new Date().getTime(),
+                    email: invitation.email,
+                    expired: false,
+                    inviterID: invitation.inviterID,
+                    role: invitation.role,
+                    token: this._generateInviteToken()
+                }
+
                 const invitationCreated: IAccountInvite = await this._invitationService.createInvitation(invitation);
 
                 return resolve(invitationCreated);
@@ -46,5 +63,9 @@ export class InvitationsComponent {
                 return reject(error);
             }
         })
+    }
+
+    private _generateInviteToken(): string {
+        return '';
     }
 }

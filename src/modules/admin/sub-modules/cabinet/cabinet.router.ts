@@ -3,6 +3,7 @@ import { Router, Response, Request } from "express";
 import { selfResponsabilityMiddleware } from "../../../../middlewares/self-responsability";
 
 import { cabinetComponent } from '../../'
+import { TODAuthenticationModule } from "../../../authentication";
 
 
 export class CabinetsRouter {
@@ -49,7 +50,21 @@ export class CabinetsRouter {
             })
     }
 
-    inviteToCabinet(req: Request, res: Response): void {
+    async inviteToCabinet(req: Request, res: Response): any {
+        try {
+            const { body } = req;
+            const result = await TODAuthenticationModule.inviteUser({
+                email: body.email,
+                inviterId: req['userId'],
+                role: body.role
+            })
+            console.log(result)
+            res.status(200).json(result);
+
+        } catch (error) {
+            res.status(400).json(error)
+
+        }
 
     }
 }
