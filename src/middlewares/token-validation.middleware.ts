@@ -9,7 +9,6 @@ export function TokenValidationMiddleware(req: Request, res: Response | any, nex
     if (token) {
         jwt.verify(token, process.env.SECRET_KEY, (err: any, decoded: any) => {
             if (err) {
-                console.log(err)
                 return res.status(403)
                     .send(new InvalidTokenError());
             }

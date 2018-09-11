@@ -10,6 +10,11 @@ export class MySqlAccountsRepository extends AbstractAccountsRepository {
         super(new GenericDao(), new MySqlAccountConverter());
     }
 
+
+    getByValidationHash(token: string): Promise<IAccount> {
+        return super.getBy(new GetByQuery({ AccountVerificationHash: token }).toDBQuery('ACCOUNTS'));
+    }
+
     getByEmail(email: string): Promise<IAccount> {
         return super.getBy(new GetByQuery({ AccountEmail: email }).toDBQuery('ACCOUNTS'));
     }

@@ -67,7 +67,7 @@ export class AuthenticationRouter {
 
 
     verifyEmail(req: Request, res: Response): void {
-        TODAuthenticationModule.verifyEmail(req.query['email'], req.query['hash'])
+        TODAuthenticationModule.verifyEmail(req.query['hash'])
             .then((result: any) => {
                 res.status(200).json(result);
             }).catch((err) => {

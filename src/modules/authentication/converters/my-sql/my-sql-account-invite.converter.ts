@@ -7,15 +7,15 @@ import { IAccountInviteMySql } from "../../dao/my-sql/models/account-invite-my-s
 export class MySqlAccountInviteConverter implements IDualConverter<IAccountInvite, IAccountInviteMySql> {
     converDomainToDBModel(raw: IAccountInvite): IAccountInviteMySql {
         if (!raw) { return null }
+        console.log('vonverting',raw)
         return {
             AccountInviteDate: raw.date,
             AccountInviteEmail: raw.email,
             AccountInviteID: raw.id,
-            AccountInviteInviterID: raw.inviterID,
+            AccountInviteInviterID: raw.inviterId,
             AccountInviteRole: raw.role,
             AccountInviteToken: raw.token,
-            AccountInviteExpired: raw.expired,
-            AccountInviteCabinetID: raw.cabinetId
+            AccountInviteExpired: raw.expired
         };
     }
     convertDBModelToDomain(raw: IAccountInviteMySql): IAccountInvite {
@@ -25,10 +25,9 @@ export class MySqlAccountInviteConverter implements IDualConverter<IAccountInvit
             email: raw.AccountInviteEmail,
             expired: raw.AccountInviteExpired,
             id: raw.AccountInviteID,
-            inviterID: raw.AccountInviteInviterID,
+            inviterId: raw.AccountInviteInviterID,
             role: raw.AccountInviteRole,
-            token: raw.AccountInviteToken,
-            cabinetId: raw.AccountInviteCabinetID
+            token: raw.AccountInviteToken
         };
     }
     converManyDomainToDBModel(raw: IAccountInvite[]): IAccountInviteMySql[] {

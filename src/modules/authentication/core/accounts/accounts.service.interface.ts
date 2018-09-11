@@ -10,9 +10,11 @@ export interface IAccountsService {
 
     getByEmail(email: string): Promise<IAccount>;
 
+    verifyAccountEmail(verificationToken: string): Promise<any>;
+
     getById(id: string): Promise<IAccount>;
 
-    generatePasswordReset(email:string): Promise<IResetPasswordRequest>;
+    generatePasswordReset(email: string): Promise<IResetPasswordRequest>;
 
     getResetRequestByToken(token: string): Promise<IResetPasswordRequest>;
 

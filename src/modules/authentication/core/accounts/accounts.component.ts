@@ -17,7 +17,7 @@ export class AccountsComponent {
     constructor(
         private _acountService: IAccountsService,
         private _invitationsService: IInvitationService,
-        private _userComponent?: UsersProfileComponent,
+        private _userComponent: UsersProfileComponent,
         private _emailService?: any
     ) { }
 
@@ -162,8 +162,6 @@ export class AccountsComponent {
         return this._acountService.getByEmail(email);
     }
 
-
-
     checkEmailDisponibility(email: string): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
             try {
@@ -191,6 +189,12 @@ export class AccountsComponent {
         });
     }
 
+    verifyAccountEmail(verificationToken: string): Promise<any> {
+        // return new Promise<any>(async (resolve, reject) => {
+
+        // });
+        return this._acountService.verifyAccountEmail(verificationToken);
+    }
 }
 
 

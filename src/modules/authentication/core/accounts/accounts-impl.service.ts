@@ -12,6 +12,7 @@ import { MySqlResetPasswordRequestRepositoryInstance } from "../../dao/my-sql/re
 export class AccountsServiceImpl implements IAccountsService {
 
 
+
     constructor(
         private _accountsRepository: AbstractAccountsRepository,
         private _resetRequestRepository: AbstractResetPasswordRequestRepository) { }
@@ -58,14 +59,33 @@ export class AccountsServiceImpl implements IAccountsService {
     getByEmail(email: string): Promise<IAccount> {
         return this._accountsRepository.getByEmail(email);
     }
+
+    verifyAccountEmail(verificationToken: string): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                if (!verificationToken) {
+                    return reject({ message: 'no email or hascode provided!' })
+                }
+                // const itMatch = bc.
+                const account: IAccount = await this._accountsRepository.getByValidationHash(verificationToken);
+                //verify hashed code;
+                if (account.verificationHash === verificationToken) {
+                    account.emailVerified = true;
+                }
+
+                // console.log('account from service', account.accountId)
+                const updated = await this.updateAccount(account.accountId, account);
+                return resolve({ message: 'verification success' });
+
+            } catch (error) {
+                return reject(error);
+            }
+        });
+    }
+
     getById(id: string): Promise<IAccount> {
         return this._accountsRepository.getById(id);
     }
 }
 
-export const AccountsServiceImpInstance: AccountsServiceImpl =
-    new AccountsServiceImpl(
-        MySqlAccountsRepositoryInstance,
-        MySqlResetPasswordRequestRepositoryInstance
-    );
 

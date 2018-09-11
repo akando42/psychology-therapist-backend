@@ -6,7 +6,7 @@ import { AccountsComponent } from "./core/accounts/accounts.component";
 import { InvitationsComponent } from "./core/invitations/invitations.components";
 import { InvitationServiceImpl } from "./core/invitations/invitations-impl.service";
 import { AuthenticationImplModule } from "./core/authentication-impl.module";
-import { TODUsersModule } from "../users";
+import { TODUsersModule, usersComponent } from "../users";
 import { AuthenticationRouter } from "./authentication.router";
 
 
@@ -19,8 +19,8 @@ const mysqlAccountInviteRepo = new MySqlAccountInviteRepository();
 const accountsService = new AccountsServiceImpl(mysqlAccountsRepo, mysqlResetPasswordRepo);
 const invitationsService = new InvitationServiceImpl(mysqlAccountInviteRepo);
 //components
-const accountsComponent = new AccountsComponent(accountsService, invitationsService);
-const invitationsComponent = new InvitationsComponent(invitationsService);
+const accountsComponent = new AccountsComponent(accountsService, invitationsService,usersComponent);
+const invitationsComponent = new InvitationsComponent(invitationsService,accountsService);
 
 
 const TODAuthenticationModule =

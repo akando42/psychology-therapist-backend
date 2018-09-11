@@ -20,5 +20,6 @@ const TODUsersModule = new UsersImplModule(usersComponent);
 
 
 export {
-    TODUsersModule
+    TODUsersModule,
+    usersComponent
 }

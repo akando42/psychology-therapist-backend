@@ -10,7 +10,7 @@ import { MySqlAccountInviteConverter } from "../../../converters/my-sql/my-sql-a
 
 export class MySqlAccountInviteRepository extends AbstractAccountInviteRepository {
     constructor() {
-        super(new GenericDao(), new MySqlAccountInviteConverter());
+        super(new GenericDao('CABINET_INVITATIONS'), new MySqlAccountInviteConverter());
     }
 
     getByEmail(email: string): Promise<IAccountInvite> {

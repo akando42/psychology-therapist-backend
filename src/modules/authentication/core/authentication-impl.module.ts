@@ -20,8 +20,8 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
     constructor(
         _usersModule: AbstractUsersModule,
-        _accountsComponent?: AccountsComponent,
-        _invitationsComponent?: InvitationsComponent,
+        _accountsComponent: AccountsComponent,
+        _invitationsComponent: InvitationsComponent,
     ) {
         super(
             _usersModule,
@@ -35,6 +35,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
                 const invitation = await this._invitationsComponent.createInvitation(invitationRequest);
+                console.log('module', invitation)
                 const result: TODResponse = {
                     message: 'invitation sent',
                     payload: { success: true },
@@ -44,7 +45,8 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 return resolve(result);
 
             } catch (error) {
-
+                console.log(error);
+                return reject(error)
             }
         })
     }
@@ -152,26 +154,8 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         });
     }
 
-    verifyEmail(email: string, verificationToken: string): Promise<any> {
-        return new Promise<any>(async (resolve, reject) => {
-            if (!email || !verificationToken) {
-                return reject({ message: 'no email or hascode provided!' })
-            }
-
-            // const itMatch = bc.
-            const account: IAccount = await this._accountsComponent.getByEmail(email);
-            //verify hashed code;
-            if (account.verificationHash === verificationToken) {
-                account.emailVerified = true;
-            }
-
-            // console.log('account from service', account.accountId)
-            const updated = await this._accountsComponent.updateAccount(account.accountId, account);
-            console.log('result from account updated', updated)
-            return resolve({ message: 'verification success' });
-
-
-        });
+    verifyEmail(verificationToken: string): Promise<any> {
+        return this._accountsComponent.verifyAccountEmail(verificationToken);
     }
 
     resetPassword(email: string): Promise<TODResponse> {

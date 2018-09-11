@@ -15,6 +15,9 @@ export abstract class AbstractAccountsRepository extends AbstractRepository<IAcc
 
     abstract updateAccount(id: number, data: IAccount): Promise<boolean>;
 
+    abstract getByValidationHash(token: string): Promise<IAccount>;
+
+
 
 }
 

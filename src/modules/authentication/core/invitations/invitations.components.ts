@@ -10,7 +10,7 @@ import { IAccount } from "../../../../models/account";
 export class InvitationsComponent {
     constructor(
         private _invitationService: IInvitationService,
-        private _accountsService?: IAccountsService) {
+        private _accountsService: IAccountsService) {
 
     }
 
@@ -20,8 +20,9 @@ export class InvitationsComponent {
             try {
 
                 const exist: IAccount = await this._accountsService.getByEmail(invitation.email);
+                console.log('exist compoenent invi',exist)
                 //check that its not a email on use.
-                if (exist['accountId']) {
+                if (exist) {
                     return reject({ message: 'email already on use', success: false });
                 }
 
@@ -29,12 +30,12 @@ export class InvitationsComponent {
                     date: new Date().getTime(),
                     email: invitation.email,
                     expired: false,
-                    inviterID: invitation.inviterID,
+                    inviterId: invitation.inviterId,
                     role: invitation.role,
                     token: this._generateInviteToken()
-                }
-
-                const invitationCreated: IAccountInvite = await this._invitationService.createInvitation(invitation);
+                };
+                const invitationCreated: IAccountInvite =
+                 await this._invitationService.createInvitation(inv);
 
                 return resolve(invitationCreated);
 

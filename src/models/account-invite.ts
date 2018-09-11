@@ -4,7 +4,7 @@ import { IContactInfo } from "./extendables/contact-info";
 
 export interface IAccountInvite {
     id?: number;
-    inviterID?: number;
+    inviterId?: number;
     token?: string;
     date?: number;
     email?: string;

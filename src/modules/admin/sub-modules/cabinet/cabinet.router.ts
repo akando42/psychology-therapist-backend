@@ -53,13 +53,16 @@ export class CabinetsRouter {
     async inviteToCabinet(req: Request, res: Response): any {
         try {
             const { body } = req;
-            const result = await TODAuthenticationModule.inviteUser({
+            const invitation = {
                 email: body.email,
                 inviterId: req['userId'],
                 role: body.role
-            })
-            console.log(result)
+            };
+
+            const result = await TODAuthenticationModule.inviteUser(invitation);
+
             res.status(200).json(result);
+
 
         } catch (error) {
             res.status(400).json(error)

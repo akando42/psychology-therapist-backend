@@ -8,7 +8,6 @@ export interface IAccountInviteMySql {
     AccountInviteDate?: number;
     AccountInviteToken?: string;
     AccountInviteInviterID?: number;
-    AccountInviteCabinetID?: number;
     AccountInviteEmail?: string;
     AccountInviteRole?: UsersRolEnum;
     AccountInviteExpired?: boolean;
