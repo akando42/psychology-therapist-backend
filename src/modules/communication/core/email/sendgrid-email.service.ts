@@ -1,8 +1,10 @@
-import { EmailService } from "../../../behavior/services/email.service";
 import * as sendgrid from '@sendgrid/mail';
-import { MailData } from "@sendgrid/helpers/classes/mail";
+import { IEmailService } from './i-email-service';
 
-export class SendGridEmailService implements EmailService {
+// TOO IMPLEMENTAR METODOS DE MANDAR EMAIL EXPORTARLOS EN INDEX
+// USER EL RECORD SERVICE EN EL EMAIL SERVICIO, CREAR EMAIL COMPONENT QUE SE ENCCARGA
+// DE CREAR TEMPLATES Y TODO ESO
+export class SendGridEmailService implements IEmailService {
 
     public email: string;
 
@@ -11,7 +13,7 @@ export class SendGridEmailService implements EmailService {
         sendgrid.setApiKey(config.API_KEY);
     }
 
-    sentToMany(recipents: string[], data: { subject: string, body: string }): Promise<any> {
+    sentMailToMany(recipents: string[], data: { subject: string, body: string }): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
                 //implement
@@ -22,7 +24,7 @@ export class SendGridEmailService implements EmailService {
         });
 
     }
-    sentToOne(recipent: string, email: { subject: string, body: string }): Promise<any> {
+    sentMailToOne(recipent: string, email: { subject: string, body: string }): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             console.log(email)
             try {

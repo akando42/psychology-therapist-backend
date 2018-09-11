@@ -5,16 +5,13 @@ import { INewAccountDTO } from '../../../dto/new-account.dto';
 import { IUser } from '../../../models/user';
 import { UsersRolEnum } from '../../../enums/users-rol.enum';
 import { NewAccountVerificationTemplate } from '../../../email-templates/new-account-verification.template';
-import { SendGridEmailServiceInstace } from '../../communication/email/sendgrid-email.service';
 import { UnverifiedAccountError } from '../../../errors/unverfied-account.error';
 import { InvalidCredentialsError } from '../../../errors/invalid-credentials.error';
-import { IAccountInvite } from '../../../models/account-invite';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AbstractAuthenticationModule } from './abstract-authentication.module';
 import { InvitationsComponent } from './invitations/invitations.components';
 import { TODResponse } from '../../../dto/tod-response';
 import { AbstractUsersModule } from '../../users/core/users.module';
-import { MySqlHealthServiceServicesConverter } from '../../health-services/converters/my-sql/my-sql-health-services.converter';
 
 export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
@@ -22,6 +19,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         _usersModule: AbstractUsersModule,
         _accountsComponent: AccountsComponent,
         _invitationsComponent: InvitationsComponent,
+
     ) {
         super(
             _usersModule,
@@ -72,9 +70,9 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 //     .then(console.log)
                 //     .catch((err) => {
                 //development only should make a variable for this lol.
-                SendGridEmailServiceInstace.sentToOne(accountCreated.email, email)
-                    .then(console.log)
-                    .catch(console.log)
+                // SendGridEmailServiceInstace.sentToOne(accountCreated.email, email)
+                //     .then(console.log)
+                //     .catch(console.log)
                 // })
 
 

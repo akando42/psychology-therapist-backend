@@ -1,11 +1,13 @@
-import { EmailService } from "../../../behavior/services/email.service";
+import { IEmailService } from "./i-email-service";
+
 var mailgun = require('mailgun-js')({
     apiKey: process.env.MAILGUN_API_KEY,
     domain: process.env.MAILGUN_USERNAME
 });
 
 
-export class MailGunEmailService implements EmailService {
+export class MailGunEmailService implements IEmailService {
+
 
     public client: any;
 
@@ -16,7 +18,7 @@ export class MailGunEmailService implements EmailService {
         // })
     }
 
-    sentToMany(recipents: string[], data: any): Promise<any> {
+    sentMailToMany(recipents: string[], data: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
 
@@ -42,7 +44,7 @@ export class MailGunEmailService implements EmailService {
 
     }
 
-    sentToOne(recipent: string, data: { subject: string, body: string }): Promise<any> {
+    sentMailToOne(recipent: string, data: { subject: string, body: string }): Promise<any> {
         return new Promise<any>((resolve, reject) => {
 
             var email = {
