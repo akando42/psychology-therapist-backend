@@ -13,10 +13,16 @@ export class MySqlAccountInviteRepository extends AbstractAccountInviteRepositor
         super(new GenericDao('CABINET_INVITATIONS'), new MySqlAccountInviteConverter());
     }
 
+    getById(id: string): Promise<IAccountInvite> {
+        return super.getBy(new GetByQuery({ AccountInviteID: id })
+            .toDBQuery('CABINET_INVITATIONS'));
+    }
+
     getByEmail(email: string): Promise<IAccountInvite> {
         return super.getBy(new GetByQuery({ AccountInviteEmail: email })
             .toDBQuery('CABINET_INVITATIONS'));
     }
+    
     getInviteByToken(token: string): Promise<IAccountInvite> {
         return super.getBy(new GetByQuery({ AccountInviteToken: token })
             .toDBQuery('CABINET_INVITATIONS'));

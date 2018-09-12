@@ -8,13 +8,13 @@ export class MySqlUsersConverter implements IDualConverter<IUser, IUserMySql> {
         if (!raw) { return null }
         return {
             UserID: raw.id,
-            UserFirstName: raw.basicInfo.firstName,
-            UserLastName: raw.basicInfo.lastName,
+            UserFirstName: raw.firstName,
+            UserLastName: raw.lastName,
             UserRole: raw.role,
-            UserEmail: raw.contactInfo.email,
-            UserGender: raw.basicInfo.gender,
+            UserEmail: raw.email,
+            UserGender: raw.gender,
             UserPhoneNumber: raw.contactInfo.phoneNumber,
-            UserIDVerified: raw.idVerified
+            UserIDVerified: raw.idVerified || false
 
         }
     }
@@ -22,14 +22,13 @@ export class MySqlUsersConverter implements IDualConverter<IUser, IUserMySql> {
         if (!raw) { return null }
         console.log(raw);
         return {
-            basicInfo: {
-                firstName: raw.UserFirstName,
-                lastName: raw.UserLastName,
-                gender: raw.UserGender
-            },
+            firstName: raw.UserFirstName,
+            lastName: raw.UserLastName,
+            gender: raw.UserGender,
+            email: raw.UserEmail,
+
             contactInfo: {
                 phoneNumber: raw.UserPhoneNumber,
-                email: raw.UserEmail
             },
             id: raw.UserID,
             role: raw.UserRole,

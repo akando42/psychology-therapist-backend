@@ -7,10 +7,14 @@ import { UsersRolEnum } from "../enums/users-rol.enum";
 export interface INewAccountDTO {
     profile: {
         firstName?: string,
-        lastName?: string
+        lastName?: string,
+        email: string,
+        gender?: GenderEnum,
+        role?: UsersRolEnum,
+        contactInfo: {
+            phoneNumber: string
+        }
     },
-    email: string;
-    gender?: GenderEnum;
-    phoneNumber: string;
-    role?: UsersRolEnum
+    email: string,
+    password: string,
 }

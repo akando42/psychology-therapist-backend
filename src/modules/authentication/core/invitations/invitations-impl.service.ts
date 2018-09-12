@@ -27,9 +27,6 @@ export class InvitationServiceImpl implements IInvitationService {
 
     }
 
-    
-
-
     getInvitationByToken(token: string): Promise<IAccountInvite> {
         return new Promise<IAccountInvite>(async (resolve, reject) => {
             try {
@@ -51,9 +48,9 @@ export class InvitationServiceImpl implements IInvitationService {
             try {
                 //todo validations here
 
-                const invitationCreated = await this._invitationsRepository.create(invitation);
-
-                return resolve(invitationCreated)
+                const invitationCreated: any = await this._invitationsRepository.create(invitation);
+                //temporaly
+                return resolve(this._invitationsRepository.getById(invitationCreated))
 
             } catch (error) {
                 return reject(error);

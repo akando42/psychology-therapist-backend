@@ -1,11 +1,9 @@
+import * as bc from 'bcrypt';
 import { IAccountInvite } from "../../../../models/account-invite";
 import { IInvitationService } from "./invitations.service.interface";
 import { IAccountsService } from "../accounts/accounts.service.interface";
 import { IAccount } from "../../../../models/account";
-
-
-// Sorry, we are not able to process your request. Please try again later.
-
+import * as crypto from 'crypto';
 
 export class InvitationsComponent {
     constructor(
@@ -30,7 +28,7 @@ export class InvitationsComponent {
                     expired: false,
                     inviterId: invitation.inviterId,
                     role: invitation.role,
-                    token: this._generateInviteToken()
+                    token: this._generateInviteToken(invitation)
                 };
                 const invitationCreated: IAccountInvite =
                     await this._invitationService.createInvitation(inv);
@@ -46,6 +44,9 @@ export class InvitationsComponent {
     validateInvitation(inviteToken: string): Promise<IAccountInvite> {
         return new Promise<IAccountInvite>(async (resolve, reject) => {
             try {
+                if (!inviteToken) {
+                    return reject({ message: 'no invitation token provided' })
+                }
 
                 const invitation: IAccountInvite =
                     await this._invitationService.getInvitationByToken(inviteToken);
@@ -85,12 +86,17 @@ export class InvitationsComponent {
                 return resolve(true);
 
             } catch (error) {
-                console.log(error)
                 return reject(error);
             }
         });
     }
-    private _generateInviteToken(): string {
-        return '';
+
+    //move password for encrypt
+    private _generateInviteToken(inv: IAccountInvite): string {
+        const token = crypto.createHmac('sha256', 'mypassword')
+            .update(JSON.stringify({ email: inv.email, inviter: inv.inviterId }))
+            .digest('hex');
+
+        return token;
     }
 }

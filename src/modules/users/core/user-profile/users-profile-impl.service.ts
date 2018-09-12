@@ -13,7 +13,7 @@ export class UsersProfileServiceImpl implements IUserProfileService {
             try {
                 // validations go here
                 const userCreated: IUser = await this._usersRepository.createUserProfile(newUser);
-
+                console.log('user service',userCreated)
                 return resolve(newUser);
             } catch (error) {
                 return reject(error);

@@ -37,11 +37,13 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
                 const invitation = await this._invitationsComponent.createInvitation(invitationRequest);
-                console.log('module', invitation);
+
+                const link = `http://localhost:4200/invite/${invitation.token}`
+                console.log('link', link);
 
                 this._communicationModule.sendEmailToOne(invitationRequest.email,
                     {
-                        body: new InvitationEmailTemplate(invitation.token).getHtml(),
+                        body: new InvitationEmailTemplate(link).getHtml(),
                         subject: 'verification '
                     });
 
@@ -100,26 +102,11 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
     authenticate(credentials: { password: string, email: string }): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                if (!credentials.email || !credentials.password) {
-                    return reject({ message: 'no credentials provided' });
-                }
 
-                const account: IAccount = await this._accountsComponent.getByEmail(credentials.email);
-                //not match account
-                if (!account) { return reject(new InvalidCredentialsError()); }
-                //unverified account
-                if (!account.emailVerified) { return reject(new UnverifiedAccountError()) }
+                //authenticate
+                const account = await this._accountsComponent.authenticateAccount(credentials);
 
-
-                // const itsMatch: boolean = await bc.compare(credentials.password, account.password);
-
-                // if (!itsMatch) {
-                //     return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
-                // }
-                // sanatize
-                account.password = undefined;
-                account.verificationHash = undefined;
-
+                //get user account
                 const user: IUser = await this._usersModule.getUserById(account.userId)
 
                 const token = jwt.sign(
@@ -191,9 +178,11 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
                 const invitation = await this._invitationsComponent.validateInvitation(inviteToken)
 
-                newAccount.role = invitation.role;
-                const result = await this.signup(newAccount);
-
+                newAccount.profile.role = invitation.role;
+                newAccount.profile.email = invitation.email;
+                //temp
+                newAccount.email = invitation.email;
+                const result = await this._accountsComponent.createAccountAndProfile(newAccount);
                 return resolve(result);
 
             } catch (error) {

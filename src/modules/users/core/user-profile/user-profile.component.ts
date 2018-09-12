@@ -19,7 +19,7 @@ export class UsersProfileComponent {
                 return resolve(user);
 
             } catch (error) {
-                return reject(user);
+                return reject(error);
             }
         });
     }

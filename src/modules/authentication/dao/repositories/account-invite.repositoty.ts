@@ -12,5 +12,6 @@ export abstract class AbstractAccountInviteRepository extends AbstractRepository
     abstract getInviteByToken(token: string): Promise<IAccountInvite>
 
     abstract getByEmail(email: string): Promise<IAccountInvite>
+    abstract getById(id: string): Promise<IAccountInvite>
 
 }

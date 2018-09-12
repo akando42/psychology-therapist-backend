@@ -18,7 +18,6 @@ export abstract class AbstractDao<T> {
                     err['sql'] = null;
                     return reject(err);
                 }
-            
                 resolve(result['insertId']);
             });
         })

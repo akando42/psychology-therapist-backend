@@ -66,6 +66,20 @@ export class AccountsComponent {
         })
     }
 
+    authenticateAccount(credentials: { password: string, email: string }): Promise<IAccount> {
+        return new Promise<IAccount>(async (resolve, reject) => {
+            try {
+                //autenticate account
+                const account: IAccount = await this._acountService.authenticate(credentials);
+                //add result to login history
+                /**aqui va eese codigo */
+                return resolve(account);
+            } catch (error) {
+
+            }
+        })
+    }
+
     resetAccountPassword(email: string): Promise<string> {
         return new Promise<string>(async (resolve, reject) => {
             try {
@@ -102,34 +116,25 @@ export class AccountsComponent {
         })
     }
 
-    createAccountAndProfile(account: any): Promise<IAccount> {
+    createAccountAndProfile(account: any, verified: boolean = false): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
             try {
-                //check that email its not already on account.
-                const alreadyOnUse = await this._acountService.getByEmail(account.email);
-                if (alreadyOnUse) {
-                    return reject({ error: 'email already on use' });
-                }
-                //check if  email its on a reservetion invite state. 
-                const invDispo = await this._invitationsService.checkEmailDisponibility(account.email);
-                if (invDispo) {
-                    return reject({ error: 'email its reserved' });
-                }
 
                 //create the user.
                 const userCreated: IUser = await this._userComponent.createUserProfile(account.profile);
                 //assign a account to that user.
-                const accountCreated: IAccount = await this.createAccount(userCreated.id, account);
+                const accountCreated: IAccount = await this.createAccount(userCreated.id, account, verified);
 
                 return resolve(accountCreated)
 
             } catch (error) {
+                console.log(error)
                 return reject(error);
             }
         })
     }
 
-    createAccount(userId, newAccount: IAccount): Promise<IAccount> {
+    createAccount(userId, newAccount: IAccount, verified: boolean = false): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
             try {
 
@@ -143,20 +148,17 @@ export class AccountsComponent {
                     signUpDate: Math.floor(Date.now() / 1000),
                     verificationHash:
                         bc.hashSync(JSON.stringify({ email: newAccount.email, userId: userId }), 10),
-                    emailVerified: false
+                    emailVerified: verified
                 }
 
 
                 const accountCreated: IAccount = await this._acountService.createAccount(account);
                 return resolve(accountCreated);
             } catch (error) {
+                console.log(error)
                 return reject(error);
             }
         });
-    }
-
-    getByEmail(email: string): Promise<IAccount> {
-        return this._acountService.getByEmail(email);
     }
 
     checkEmailDisponibility(email: string): Promise<boolean> {

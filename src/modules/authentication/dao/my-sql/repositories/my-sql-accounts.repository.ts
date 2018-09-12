@@ -7,7 +7,7 @@ import { MySqlAccountConverter } from "../../../converters/my-sql/my-sql-account
 
 export class MySqlAccountsRepository extends AbstractAccountsRepository {
     constructor() {
-        super(new GenericDao(), new MySqlAccountConverter());
+        super(new GenericDao('ACCOUNTS'), new MySqlAccountConverter());
     }
 
 

@@ -7,11 +7,11 @@ import { AbstractResetPasswordRequestRepository } from "../../dao/repositories/r
 import { generateResetToken } from "../../utils/generate-reset-token.func";
 import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 import { MySqlResetPasswordRequestRepositoryInstance } from "../../dao/my-sql/repositories/my-sql-reset-password-request.repository";
+import { InvalidCredentialsError } from "../../../../errors/invalid-credentials.error";
+import { UnverifiedAccountError } from "../../../../errors/unverfied-account.error";
 
 
 export class AccountsServiceImpl implements IAccountsService {
-
-
 
     constructor(
         private _accountsRepository: AbstractAccountsRepository,
@@ -44,6 +44,39 @@ export class AccountsServiceImpl implements IAccountsService {
             }
         });
     }
+
+
+    authenticate(credentials: { password: string; email: string; }): Promise<IAccount> {
+        return new Promise<IAccount>(async (resolve, reject) => {
+            try {
+                if (!credentials.email || !credentials.password) {
+                    return reject({ message: 'no credentials provided' });
+                }
+
+                const account: IAccount = await this._accountsRepository.getByEmail(credentials.email);
+                //not match account
+                if (!account) { return reject(new InvalidCredentialsError()); }
+                //unverified account
+                if (!account.emailVerified) { return reject(new UnverifiedAccountError()); }
+
+                // const itsMatch: boolean = await bc.compare(credentials.password, account.password);
+
+                // if (!itsMatch) {
+                //     return reject({ auth: false, message: 'invalid credentials', token: null, userAccount: null });
+                // }
+
+                account.password = undefined;
+                account.verificationHash = undefined;
+
+
+                return resolve(account);
+
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
+
 
     getResetRequestByToken(token: string): Promise<IResetPasswordRequest> {
         throw new Error("Method not implemented.");

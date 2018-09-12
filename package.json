@@ -27,7 +27,7 @@
     "@types/cors": "^2.8.4",
     "@types/express": "^4.11.1",
     "@types/mysql": "^2.15.4",
-    "@types/node": "^7.0.69",
+    "@types/node": "^7.0.70",
     "@types/nodemailer": "^4.6.0",
     "@types/sendgrid": "^4.3.0",
     "@types/twilio": "0.0.9",
