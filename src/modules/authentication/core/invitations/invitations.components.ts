@@ -18,12 +18,10 @@ export class InvitationsComponent {
     createInvitation(invitation: IAccountInvite): Promise<IAccountInvite> {
         return new Promise<IAccountInvite>(async (resolve, reject) => {
             try {
-
-                const exist: IAccount = await this._accountsService.getByEmail(invitation.email);
-                console.log('exist compoenent invi',exist)
-                //check that its not a email on use.
-                if (exist) {
-                    return reject({ message: 'email already on use', success: false });
+                //check that email its not already on account.
+                const disponibility = await this.checkEmailDisponibility(invitation.email);
+                if (!disponibility) {
+                    return reject({ error: 'email already on use' });
                 }
 
                 const inv: IAccountInvite = {
@@ -35,7 +33,7 @@ export class InvitationsComponent {
                     token: this._generateInviteToken()
                 };
                 const invitationCreated: IAccountInvite =
-                 await this._invitationService.createInvitation(inv);
+                    await this._invitationService.createInvitation(inv);
 
                 return resolve(invitationCreated);
 
@@ -66,6 +64,32 @@ export class InvitationsComponent {
         })
     }
 
+    checkEmailDisponibility(email: string): Promise<boolean> {
+        return new Promise<boolean>(async (resolve, reject) => {
+            try {
+
+                const exist: IAccount = await this._accountsService.getByEmail(email);
+                //handle better
+                if (exist) {
+                    return resolve(false);
+                }
+                const invitation: IAccountInvite = await this._invitationService.getInvitationByEmail(email);
+                //still on recerved;
+
+                if (invitation) {
+                    return resolve(invitation.expired);
+                }
+
+                // agregar el cc bcc a los correos investigar q es
+
+                return resolve(true);
+
+            } catch (error) {
+                console.log(error)
+                return reject(error);
+            }
+        });
+    }
     private _generateInviteToken(): string {
         return '';
     }

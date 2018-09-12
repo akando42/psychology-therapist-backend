@@ -110,7 +110,6 @@ export class AccountsComponent {
                 if (alreadyOnUse) {
                     return reject({ error: 'email already on use' });
                 }
-
                 //check if  email its on a reservetion invite state. 
                 const invDispo = await this._invitationsService.checkEmailDisponibility(account.email);
                 if (invDispo) {
@@ -121,7 +120,6 @@ export class AccountsComponent {
                 const userCreated: IUser = await this._userComponent.createUserProfile(account.profile);
                 //assign a account to that user.
                 const accountCreated: IAccount = await this.createAccount(userCreated.id, account);
-
 
                 return resolve(accountCreated)
 
@@ -134,7 +132,6 @@ export class AccountsComponent {
     createAccount(userId, newAccount: IAccount): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
             try {
-
 
                 const hashPassword = await bc.hash(newAccount.password, 10);
                 let account: IAccount = {
@@ -190,9 +187,6 @@ export class AccountsComponent {
     }
 
     verifyAccountEmail(verificationToken: string): Promise<any> {
-        // return new Promise<any>(async (resolve, reject) => {
-
-        // });
         return this._acountService.verifyAccountEmail(verificationToken);
     }
 }

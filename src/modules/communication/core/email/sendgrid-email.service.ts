@@ -26,7 +26,6 @@ export class SendGridEmailService implements IEmailService {
     }
     sentMailToOne(recipent: string, email: { subject: string, body: string }): Promise<any> {
         return new Promise<any>((resolve, reject) => {
-            console.log(email)
             try {
                 const msg = {
                     to: recipent,
@@ -36,7 +35,15 @@ export class SendGridEmailService implements IEmailService {
                     html: email.body,
                 };
 
-                return sendgrid.send(msg);
+                sendgrid.send(msg)
+                    .then((result) => {
+                        console.log('sendgrid', result)
+                        return resolve(result);
+                    })
+                    .catch((error) => {
+                        console.log('sendgrid err', error)
+                        return reject(error);
+                    });
 
             } catch (error) {
                 //too handle errors here
@@ -46,10 +53,3 @@ export class SendGridEmailService implements IEmailService {
     }
 };
 
-
-export const SendGridEmailServiceInstace: SendGridEmailService =
-    new SendGridEmailService(
-        {
-            API_KEY: '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',
-            sender: 'Therapy on Demand <postmaster@therapyondemand.xyz>'
-        })

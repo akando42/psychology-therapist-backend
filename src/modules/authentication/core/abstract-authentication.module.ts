@@ -1,19 +1,12 @@
 import { IAccount } from "../../../models/account";
-import * as bc from 'bcrypt';
 import { INewAccountDTO } from "../../../dto/new-account.dto";
-import { IUser } from "../../../models/user";
-import { AccountStatusEnum } from "../../../enums/account-stats.enum";
 import { TODResponse } from "../../../dto/tod-response";
-import { IResetPasswordRequest } from "../../../models/reset-password-request";
 import { EmailService } from "../../../behavior/services/email.service";
-import { NoAccountHolderResetTemplate } from "../../../email-templates/no-account-holder-reset.template";
-import { ResetPasswordTemplate } from "../../../email-templates/reset-password.template";
 import { UsersRolEnum } from "../../../enums/users-rol.enum";
-import { InvitationEmailTemplate } from "../../../email-templates/invitation-email.template";
-import { IAuthenticationService } from "./authentication.service";
 import { AccountsComponent } from "./accounts/accounts.component";
 import { InvitationsComponent } from "./invitations/invitations.components";
 import { AbstractUsersModule } from "../../users/core/users.module";
+import { AbtractCommunicationModule } from "../../communication/core/comunication.module";
 
 
 export abstract class AbstractAuthenticationModule {
@@ -22,7 +15,7 @@ export abstract class AbstractAuthenticationModule {
         protected _usersModule?: AbstractUsersModule,
         protected _accountsComponent?: AccountsComponent,
         protected _invitationsComponent?: InvitationsComponent,
-        private _emailService?: EmailService,
+        protected _communicationModule?: AbtractCommunicationModule
     ) {
     }
 

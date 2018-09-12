@@ -12,6 +12,8 @@ import { AbstractAuthenticationModule } from './abstract-authentication.module';
 import { InvitationsComponent } from './invitations/invitations.components';
 import { TODResponse } from '../../../dto/tod-response';
 import { AbstractUsersModule } from '../../users/core/users.module';
+import { AbtractCommunicationModule } from '../../communication/core/comunication.module';
+import { InvitationEmailTemplate } from '../../../email-templates/invitation-email.template';
 
 export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
@@ -19,12 +21,14 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         _usersModule: AbstractUsersModule,
         _accountsComponent: AccountsComponent,
         _invitationsComponent: InvitationsComponent,
+        _communicationModule: AbtractCommunicationModule
 
     ) {
         super(
             _usersModule,
             _accountsComponent,
             _invitationsComponent,
+            _communicationModule
         );
     }
 
@@ -33,7 +37,14 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
                 const invitation = await this._invitationsComponent.createInvitation(invitationRequest);
-                console.log('module', invitation)
+                console.log('module', invitation);
+
+                this._communicationModule.sendEmailToOne(invitationRequest.email,
+                    {
+                        body: new InvitationEmailTemplate(invitation.token).getHtml(),
+                        subject: 'verification '
+                    });
+
                 const result: TODResponse = {
                     message: 'invitation sent',
                     payload: { success: true },

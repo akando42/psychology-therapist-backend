@@ -50,7 +50,7 @@ export class CabinetsRouter {
             })
     }
 
-    async inviteToCabinet(req: Request, res: Response): any {
+    async inviteToCabinet(req: Request, res: Response) {
         try {
             const { body } = req;
             const invitation = {

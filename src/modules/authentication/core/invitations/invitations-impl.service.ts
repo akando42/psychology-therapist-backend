@@ -9,7 +9,8 @@ export class InvitationServiceImpl implements IInvitationService {
 
     constructor(private _invitationsRepository: AbstractAccountInviteRepository) { }
 
-    async checkEmailDisponibility(email: string): boolean {
+    async checkEmailDisponibility(email: string): Promise<boolean> {
+        // return nre P
         try {
             //todo validate email;     
             const invitation: IAccountInvite = await this._invitationsRepository.getByEmail(email);
@@ -25,6 +26,9 @@ export class InvitationServiceImpl implements IInvitationService {
         }
 
     }
+
+    
+
 
     getInvitationByToken(token: string): Promise<IAccountInvite> {
         return new Promise<IAccountInvite>(async (resolve, reject) => {

@@ -10,5 +10,5 @@ export interface IInvitationService {
 
     getInvitationByToken(token: string): Promise<IAccountInvite>;
 
-    checkEmailDisponibility(email: string): boolean;
+    checkEmailDisponibility(email: string): Promise<boolean>;
 }
