@@ -1,10 +1,9 @@
-import { TaskMySqlDAOInstance } from "../my-sql/task-mysql.dao";
 import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
-import { GetBy } from "../queries/mysql/get-by";
-import { TasksConverterInstance } from "../../converters/my-sql/tasks.converter";
+import { MySqlTaskConverter } from "../../converters/my-sql/my-sql-tasks.converter";
 import { UpdateQuery } from "../../../../query-spec/my-sql/update.query";
 import { GetByQuery } from "../../../../query-spec/my-sql/get-by.query";
 import { ITask } from "../../models/task";
+import { GenericDao } from "../../../../behavior/mysql/generic.dao";
 
 
 function tasksCustomQueryGenerator(fieldsDictionay: any, query: any): string {
@@ -20,9 +19,9 @@ function tasksCustomQueryGenerator(fieldsDictionay: any, query: any): string {
 }
 
 
-export class TasksRepository extends AbstractRepository<ITask>{
+export abstract class AbstractTasksRepository extends AbstractRepository<ITask>{
     constructor() {
-        super(TaskMySqlDAOInstance, TasksConverterInstance);
+        super(new GenericDao(), new MySqlTaskConverter());
     }
 
 
@@ -34,9 +33,9 @@ export class TasksRepository extends AbstractRepository<ITask>{
         return super.getAllBy(customQuery);
     }
 
-    update(id: string, data): Promise<boolean> {
-        return super.update(new UpdateQuery({ TaskID: id }).toDBQuery('TASKS'), data);
-    }
+    // (id: string, data): Promise<boolean> {
+    //     return super.update(new UpdateQuery({ TaskID: id }).toDBQuery('TASKS'), data);
+    // }
 
 
     getAllByAssignedID(query: any): Promise<ITask[]> {
@@ -48,4 +47,3 @@ export class TasksRepository extends AbstractRepository<ITask>{
 
 }
 
-export const TasksRepoInstance: TasksRepository = new TasksRepository();

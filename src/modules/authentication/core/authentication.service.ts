@@ -16,7 +16,6 @@ export interface IAuthenticationService {
 
     resetPassword(email: string): Promise<IResetPasswordRequest>;
 
-    
     signUpWithInvite(inviteToken: string, newAccount: INewAccountDTO): Promise<any>;
 
     validateTokenAndReset(token: string, newPassword: string): Promise<{ message: string, valid: boolean }>;

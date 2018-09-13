@@ -1,11 +1,11 @@
 import { IDualConverter } from "../../../../behavior/converters/converter.interface";
 import { ITask } from "../../../../models/task";
-import { ITaskMySql } from "../../dao/my-sql/models/my-sql/task-my-sql";
+import { ITaskMySql } from "../../dao/my-sql/models/task-my-sql";
 import { ITaskHistory } from "../../models/task-history";
-import { ITaskHistoryMySql } from "../../dao/my-sql/models/my-sql/task-history-my-sql";
+import { ITaskHistoryMySql } from "../../dao/my-sql/models/task-history-my-sql";
 
 
-export class TasksHistoryConverter implements IDualConverter<ITaskHistory, ITaskHistoryMySql> {
+export class MySqlTasksHistoryConverter implements IDualConverter<ITaskHistory, ITaskHistoryMySql> {
     converDomainToDBModel(raw: ITaskHistory): ITaskHistoryMySql {
         if (!raw) { return null }
         return {
@@ -32,5 +32,3 @@ export class TasksHistoryConverter implements IDualConverter<ITaskHistory, ITask
     }
 
 }
-
-export const TasksHistoryConverterInstance: TasksHistoryConverter = new TasksHistoryConverter();

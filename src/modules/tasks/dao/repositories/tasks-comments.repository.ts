@@ -1,22 +1,17 @@
 import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
-import { TasksConverterInstance } from "../../converters/my-sql/tasks.converter";
-import { UpdateQuery } from "../../../../query-spec/my-sql/update.query";
 import { ITaskComment } from "../../models/task-comment";
-import { TaskCommentMySqlDAOInstance } from "../my-sql/task-comments-mysql.dao";
+import { GenericDao } from "../../../../behavior/mysql/generic.dao";
 
 
 
 
-export class TasksCommentsRepository extends AbstractRepository<ITaskComment>{
+export abstract class AbstractTasksCommentsRepository extends AbstractRepository<ITaskComment>{
     constructor() {
-        super(TaskCommentMySqlDAOInstance, TasksConverterInstance);
+        super(new GenericDao('TASKS_COMMENTS'));
     }
 
-    update(id: string, data): Promise<boolean> {
-        return super.update(new UpdateQuery({ TaskID: id }).toDBQuery('TASKSCOMMENTS'), data);
-    }
+    abstract updateTask(id: string, data): Promise<boolean>;
 
 
 }
 
-export const TasksCommentsRepositoryInstance: TasksCommentsRepository = new TasksCommentsRepository();

@@ -1,9 +1,9 @@
 import { IDualConverter } from "../../../../behavior/converters/converter.interface";
 import { ITask } from "../../../../models/task";
-import { ITaskMySql } from "../../dao/my-sql/models/my-sql/task-my-sql";
+import { ITaskMySql } from "../../dao/my-sql/models/task-my-sql";
 
 
-export class TaskConverter implements IDualConverter<ITask, ITaskMySql> {
+export class MySqlTaskConverter implements IDualConverter<ITask, ITaskMySql> {
     converDomainToDBModel(raw: ITask): ITaskMySql {
         if (!raw) { return null }
         return {
@@ -38,5 +38,3 @@ export class TaskConverter implements IDualConverter<ITask, ITaskMySql> {
     }
 
 }
-
-export const TasksConverterInstance: TaskConverter = new TaskConverter();

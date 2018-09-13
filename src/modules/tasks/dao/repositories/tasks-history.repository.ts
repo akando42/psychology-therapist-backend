@@ -1,8 +1,7 @@
 import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
-import { TasksConverterInstance } from "../../converters/my-sql/tasks.converter";
-import { UpdateQuery } from "../../../../query-spec/my-sql/update.query";
-import { TaskHistoryMySqlDAOInstance } from "../my-sql/task-history-mysql.dao";
 import { ITaskHistory } from "../../models/task-history";
+import { GenericDao } from "../../../../behavior/mysql/generic.dao";
+import { MySqlTasksHistoryConverter } from "../../converters/my-sql/my-sql-tasks-history.converter";
 
 
 
@@ -20,7 +19,7 @@ function tasksCustomQueryGenerator(fieldsDictionay: any, query: any): string {
 
 export class TasksHistoryRepository extends AbstractRepository<ITaskHistory>{
     constructor() {
-        super(TaskHistoryMySqlDAOInstance, TasksConverterInstance);
+        super(new GenericDao(), new MySqlTasksHistoryConverter());
     }
 
 

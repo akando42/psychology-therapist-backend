@@ -2,14 +2,11 @@ import * as bc from 'bcrypt';
 
 import { IAccount } from "../../../../models/account";
 import { IAccountsService } from "./accounts.service.interface";
-import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 import { IResetPasswordRequest } from '../../../../models/reset-password-request';
-import { generateResetToken } from '../../utils/generate-reset-token.func';
 import { IAccountInvite } from '../../../../models/account-invite';
 import { IInvitationService } from '../invitations/invitations.service.interface';
 import { UsersProfileComponent } from '../../../users/core/user-profile/user-profile.component';
 import { IUser } from '../../../../models/user';
-import { TasksHistoryRouter } from '../../../tasks/sub-modules/task-history/tasks-history.router';
 
 
 export class AccountsComponent {
