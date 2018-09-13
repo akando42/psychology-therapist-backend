@@ -9,9 +9,9 @@ export interface IUser {
     lastName?: string;
     gender?: GenderEnum;
     email?: string,
-    
+
     idVerified?: boolean;
-    contactInfo: IContactInfo;
+    contactInfo?: IContactInfo;
     role: UsersRolEnum;
 
 

@@ -34,6 +34,8 @@ export abstract class AbstractAuthenticationModule {
     abstract changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any>;
 
     abstract resetPassword(email: string): Promise<TODResponse>;
+    
+    abstract signUpWithInvitation(inviteToken: string, newAccount: INewAccountDTO): Promise<any>;
 
     abstract signUpWithInvitation(invitationToken: string, newAccount: INewAccountDTO): Promise<TODResponse>;
 

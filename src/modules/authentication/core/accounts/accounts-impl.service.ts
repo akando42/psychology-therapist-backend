@@ -1,3 +1,4 @@
+import * as bc from 'bcrypt';
 import { IAccount } from "../../../../models/account";
 import { IAccountsService } from "./accounts.service.interface";
 import { AbstractAccountsRepository } from "../../dao/repositories/accounts.repository";
@@ -9,6 +10,7 @@ import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 import { MySqlResetPasswordRequestRepositoryInstance } from "../../dao/my-sql/repositories/my-sql-reset-password-request.repository";
 import { InvalidCredentialsError } from "../../../../errors/invalid-credentials.error";
 import { UnverifiedAccountError } from "../../../../errors/unverfied-account.error";
+import { propertiesMatcherUtil } from "../../../../utils/properties-matcher.util";
 
 
 export class AccountsServiceImpl implements IAccountsService {
@@ -82,11 +84,59 @@ export class AccountsServiceImpl implements IAccountsService {
         throw new Error("Method not implemented.");
     }
 
-    updateAccount(accountId: number, account: IAccount): Promise<IAccount> {
-        throw new Error("Method not implemented.");
+    updateAccount(accountId: any, account: IAccount): Promise<IAccount> {
+        return new Promise<IAccount>(async (resolve, reject) => {
+            try {
+                console.log('cambios nuevos', account)
+                const stored = await this._accountsRepository.getById(accountId);
+
+                if (!stored) { return reject({ message: 'account dosent exist' }); }
+
+                const toSave = <IAccount>propertiesMatcherUtil(stored, account)
+                //protect sensitive data
+                toSave.accountId = stored.accountId;
+                toSave.verificationHash = stored.verificationHash;
+
+                const saved = await this._accountsRepository.updateAccount(accountId, toSave);
+
+                console.log(saved);
+                return resolve(saved);
+
+            } catch (error) {
+                console.log(error)
+                return reject(error);
+            }
+        })
     }
-    createAccount(account: IAccount): Promise<IAccount> {
-        return this._accountsRepository.create(account);
+    createAccount(userId: any, newAccount: IAccount, verified = false): Promise<IAccount> {
+        return new Promise<IAccount>(async (resolve, reject) => {
+            try {
+                if (!userId) {
+                    return reject({ message: 'no user reference provided' });
+                }
+                const hashPassword = await bc.hash(newAccount.password, 10);
+                let account: IAccount = {
+                    email: newAccount.email,
+                    userId: userId,
+                    accountStatus: AccountStatusEnum.waiting,
+                    //change password of user for encrypted one (we dont save the password plain value ).
+                    password: hashPassword,
+                    signUpDate: Math.floor(Date.now() / 1000),
+                    verificationHash:
+                        bc.hashSync(JSON.stringify({ email: newAccount.email, userId: userId }), 10),
+                    emailVerified: verified
+                }
+
+                const id: any = await this._accountsRepository.create(account);
+
+                const acc = await this._accountsRepository.getById(id);
+                console.log('account reacted by invitation',acc)
+                return resolve(acc);
+            } catch (error) {
+                console.log(error);
+                return reject(error);
+            }
+        })
     }
 
     getByEmail(email: string): Promise<IAccount> {
@@ -108,9 +158,11 @@ export class AccountsServiceImpl implements IAccountsService {
 
                 // console.log('account from service', account.accountId)
                 const updated = await this.updateAccount(account.accountId, account);
+                console.log(updated);
                 return resolve({ message: 'verification success' });
 
             } catch (error) {
+                console.log(error)
                 return reject(error);
             }
         });

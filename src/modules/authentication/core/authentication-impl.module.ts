@@ -172,21 +172,29 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         });
     }
 
+    
     signUpWithInvitation(inviteToken: string, newAccount: INewAccountDTO): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
+                const account: any = await this._invitationsComponent.signupInvited(inviteToken, newAccount);
 
-                const invitation = await this._invitationsComponent.validateInvitation(inviteToken)
+                const result: TODResponse = {
+                    message: 'succefully registered',
+                    payload: { success: true },
+                    timestamp: new Date()
+                };
 
-                newAccount.profile.role = invitation.role;
-                newAccount.profile.email = invitation.email;
-                //temp
-                newAccount.email = invitation.email;
-                const result = await this._accountsComponent.createAccountAndProfile(newAccount);
                 return resolve(result);
 
             } catch (error) {
-                return reject(error);
+
+                const badResult: TODResponse = {
+                    message: 'Something when wrong sorry',
+                    error: error,
+                    timestamp: new Date()
+                };
+
+                return reject(badResult);
             }
         })
     }

@@ -12,6 +12,6 @@ export abstract class AbstractUsersRepository extends AbstractRepository<IUser>{
 
     abstract getById(id: number): Promise<IUser>;
 
-    abstract updateUser(id: any, data): Promise<boolean>;
+    abstract updateUser(id: any, data): Promise<IUser>;
 
 }

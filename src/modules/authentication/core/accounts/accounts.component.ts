@@ -65,7 +65,6 @@ export class AccountsComponent {
             }
         })
     }
-
     authenticateAccount(credentials: { password: string, email: string }): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
             try {
@@ -75,7 +74,8 @@ export class AccountsComponent {
                 /**aqui va eese codigo */
                 return resolve(account);
             } catch (error) {
-
+                console.log(error);
+                return reject(error);
             }
         })
     }
@@ -123,7 +123,11 @@ export class AccountsComponent {
                 //create the user.
                 const userCreated: IUser = await this._userComponent.createUserProfile(account.profile);
                 //assign a account to that user.
+                console.log(userCreated)
                 const accountCreated: IAccount = await this.createAccount(userCreated.id, account, verified);
+                //sanatize
+                delete accountCreated.password;
+                delete accountCreated.verificationHash;
 
                 return resolve(accountCreated)
 
@@ -134,25 +138,13 @@ export class AccountsComponent {
         })
     }
 
-    createAccount(userId, newAccount: IAccount, verified: boolean = false): Promise<IAccount> {
+    createAccount(userId: any, newAccount: IAccount, verified: boolean = false): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
             try {
 
-                const hashPassword = await bc.hash(newAccount.password, 10);
-                let account: IAccount = {
-                    email: newAccount.email,
-                    userId: userId,
-                    accountStatus: AccountStatusEnum.waiting,
-                    //change password of user for encrypted one (we dont save the password plain value ).
-                    password: hashPassword,
-                    signUpDate: Math.floor(Date.now() / 1000),
-                    verificationHash:
-                        bc.hashSync(JSON.stringify({ email: newAccount.email, userId: userId }), 10),
-                    emailVerified: verified
-                }
 
-
-                const accountCreated: IAccount = await this._acountService.createAccount(account);
+                const accountCreated: IAccount = await this._acountService.createAccount(userId, newAccount, verified);
+                // console.log
                 return resolve(accountCreated);
             } catch (error) {
                 console.log(error)

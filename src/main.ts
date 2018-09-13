@@ -7,10 +7,6 @@ const port: any = process.env.PORT || '3000';
 import * as os from 'os';
 // import { authModule } from './modules/authentication';
 import { API } from "./api";
-import { MySqlLocationsRepository } from './modules/users/dao/repositories/my-sql-locations.repository';
-import { GenericDao } from './behavior/mysql/generic.dao';
-import { MySqlLocationsConverter } from './modules/users/converters/my-sql/my-sql-locations.converter';
-
 const http = require('http');
 
 const api: API = new API();

@@ -6,7 +6,7 @@ export interface IAccountsService {
 
     updateAccount(accountId: number, account: IAccount): Promise<IAccount>;
 
-    createAccount(account: IAccount): Promise<IAccount>;
+    createAccount(userId: any, newAccount: IAccount, verified: boolean): Promise<IAccount>;
 
     getByEmail(email: string): Promise<IAccount>;
 

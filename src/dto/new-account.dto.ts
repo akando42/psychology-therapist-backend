@@ -8,11 +8,11 @@ export interface INewAccountDTO {
     profile: {
         firstName?: string,
         lastName?: string,
-        email: string,
+        email?: string,
         gender?: GenderEnum,
-        role?: UsersRolEnum,
-        contactInfo: {
-            phoneNumber: string
+        role: UsersRolEnum,
+        contactInfo?: {
+            phoneNumber?: string
         }
     },
     email: string,

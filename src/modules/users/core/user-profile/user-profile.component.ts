@@ -16,7 +16,10 @@ export class UsersProfileComponent {
         return new Promise<IUser>(async (resolve, reject) => {
             try {
                 const userCreated: IUser = await this._userService.createUserProfile(user);
-                return resolve(user);
+                
+                const userStored: IUser = await this._userService.getUserById(<any>userCreated);
+                console.log('user stored ', userStored);
+                return resolve(userStored);
 
             } catch (error) {
                 return reject(error);

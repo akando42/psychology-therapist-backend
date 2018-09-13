@@ -21,7 +21,7 @@ const accountsService = new AccountsServiceImpl(mysqlAccountsRepo, mysqlResetPas
 const invitationsService = new InvitationServiceImpl(mysqlAccountInviteRepo);
 //components
 const accountsComponent = new AccountsComponent(accountsService, invitationsService, usersComponent);
-const invitationsComponent = new InvitationsComponent(invitationsService, accountsService);
+const invitationsComponent = new InvitationsComponent(invitationsService, accountsService, usersComponent);
 
 
 const TODAuthenticationModule =

@@ -4,14 +4,48 @@ import { IInvitationService } from "./invitations.service.interface";
 import { IAccountsService } from "../accounts/accounts.service.interface";
 import { IAccount } from "../../../../models/account";
 import * as crypto from 'crypto';
+import { INewAccountDTO } from '../../../../dto/new-account.dto';
+import { UsersProfileComponent } from '../../../users/core/user-profile/user-profile.component';
+import { IUser } from '../../../../models/user';
 
 export class InvitationsComponent {
     constructor(
         private _invitationService: IInvitationService,
-        private _accountsService: IAccountsService) {
+        private _accountsService: IAccountsService,
+        private _userComponent: UsersProfileComponent) {
 
     }
 
+    signupInvited(inviteToken: string, newAccount: INewAccountDTO): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                //get invitation
+                const invitation: IAccountInvite =
+                    await this._invitationService.getInvitationByToken(inviteToken);
+
+                //create user;
+                newAccount.profile.role = invitation.role;
+                newAccount.profile.email = invitation.email;
+                const userCreated: IUser =
+                    await this._userComponent.createUserProfile(newAccount.profile)
+
+                //create account
+                const accountDetails: IAccount = { email: invitation.email, password: newAccount.password, }
+                const account: IAccount =
+                    await this._accountsService.createAccount(userCreated.id, accountDetails, true);
+
+                    delete account.password;
+                    delete account.verificationHash;
+
+                return resolve(account);
+            } catch (error) {
+                console.log(error);
+                return reject(error);
+            }
+
+
+        })
+    }
 
     createInvitation(invitation: IAccountInvite): Promise<IAccountInvite> {
         return new Promise<IAccountInvite>(async (resolve, reject) => {

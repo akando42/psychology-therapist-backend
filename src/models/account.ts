@@ -8,8 +8,8 @@ export interface IAccount {
     email?: string;
     password?: string;
     accountStatus?: AccountStatusEnum;
-    signUpDate: any;
+    signUpDate?: any;
     verificationHash?: string;
-    userId: any;
+    userId?: any;
     emailVerified?: boolean;
 }

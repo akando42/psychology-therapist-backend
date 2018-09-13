@@ -23,8 +23,8 @@ export class MySqlAccountsRepository extends AbstractAccountsRepository {
         return super.getBy(new GetByQuery({ AccountID: id }).toDBQuery('ACCOUNTS'));
     }
 
-    updateAccount(id: number, data: IAccount): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    updateAccount(id: number, data: IAccount): Promise<IAccount> {
+        return super.update(id,data)
     }
 }
 

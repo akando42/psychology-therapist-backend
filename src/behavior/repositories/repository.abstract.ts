@@ -46,14 +46,14 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
         });
     }
 
-    update(query, model: K): Promise<boolean> {
-        return new Promise<boolean>(async (resolve, reject) => {
+    update(query, model: K): Promise<K> {
+        return new Promise<K>(async (resolve, reject) => {
 
             const input: K = this._converter ?
                 this._converter.converDomainToDBModel(model) : model;
             console.log('repositoy::', query)
             this._db.findOneAndUpdate(query, input)
-                .then((result: boolean) => {
+                .then((result: any) => {
                     // const item: K = await this.getBy({ _id: result._id });
                     // console.log(item);
                     resolve(result);

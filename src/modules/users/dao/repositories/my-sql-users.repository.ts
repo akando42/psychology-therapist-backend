@@ -22,7 +22,7 @@ export class MySqlUsersRepository extends AbstractUsersRepository {
         return super.getBy(new GetByQuery({ UserID: id }).toDBQuery('USERS'));
     }
 
-    updateUser(id: any, data): Promise<boolean> {
+    updateUser(id: any, data): Promise<IUser> {
         return super.update(new UpdateQuery({ UserID: id }).toDBQuery('USERS'), data);
     }
 }
