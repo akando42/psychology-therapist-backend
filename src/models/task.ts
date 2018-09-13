@@ -1,5 +1,4 @@
 import { TaskStatusEnum } from "../enums/task-status.enum";
-import { IComment } from "./comments";
 
 
 export interface ITask {
@@ -16,6 +15,5 @@ export interface ITask {
     resolutionDate?: number;
     details?: string;
     //why not?
-    estimedTime?: string;
-
+    estimedTime: string;
 }

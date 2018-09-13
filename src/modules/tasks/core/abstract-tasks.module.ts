@@ -1,4 +1,4 @@
-import { ITask } from "../models/task";
+import { ITask } from "../../../models/task";
 import { TODResponse } from "../../../dto/tod-response";
 
 

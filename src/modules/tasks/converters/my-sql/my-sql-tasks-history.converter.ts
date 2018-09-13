@@ -1,7 +1,7 @@
 import { IDualConverter } from "../../../../behavior/converters/converter.interface";
 import { ITask } from "../../../../models/task";
 import { ITaskMySql } from "../../dao/my-sql/models/task-my-sql";
-import { ITaskHistory } from "../../models/task-history";
+import { ITaskHistory } from "../../../../models/task-history";
 import { ITaskHistoryMySql } from "../../dao/my-sql/models/task-history-my-sql";
 
 

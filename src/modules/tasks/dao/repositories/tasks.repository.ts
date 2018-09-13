@@ -2,8 +2,8 @@ import { AbstractRepository } from "../../../../behavior/repositories/repository
 import { MySqlTaskConverter } from "../../converters/my-sql/my-sql-tasks.converter";
 import { UpdateQuery } from "../../../../query-spec/my-sql/update.query";
 import { GetByQuery } from "../../../../query-spec/my-sql/get-by.query";
-import { ITask } from "../../models/task";
 import { GenericDao } from "../../../../behavior/mysql/generic.dao";
+import { ITask } from "../../../../models/task";
 
 
 function tasksCustomQueryGenerator(fieldsDictionay: any, query: any): string {
@@ -24,6 +24,9 @@ export abstract class AbstractTasksRepository extends AbstractRepository<ITask>{
         super(new GenericDao(), new MySqlTaskConverter());
     }
 
+    createTask(task: ITask): Promise<ITask> {
+        return super.create(task);
+    }
 
     getAllBy(query: any): Promise<ITask[]> {
         const customQuery: string = tasksCustomQueryGenerator({
