@@ -1,9 +1,9 @@
 
 
 export interface IDocumentMySql {
-    DocumentID?: number;
-    DocumentUploadDate?: number;
-    DocumentTypeID?: number;
-    DocumentRawRef?: number;
-    DocumentOwnerID?: number;
+    UsersDocumentID?: number;
+    UsersDocumentUploadDate?: number;
+    UsersDocumentTypeID?: number;
+    UsersDocumentRawRef?: number;
+    UsersDocumentOwnerID?: number;
 }

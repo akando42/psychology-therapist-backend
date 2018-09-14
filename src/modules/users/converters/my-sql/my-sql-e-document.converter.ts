@@ -2,28 +2,28 @@ import { IDualConverter } from "../../../../behavior/converters/converter.interf
 import { IEDocument } from "../../../../models/e-document";
 import { IDocumentMySql } from "../../dao/my-sql/models/my-sql-document";
 
-crear tipos de documents y conectar con frontend
-crear modelos en base de datos para poder probar
+// crear tipos de documents y conectar con frontend
+// crear modelos en base de datos para poder probar
 
 export class MySqlEDocumentConverter implements IDualConverter<IEDocument, IDocumentMySql>{
     converDomainToDBModel(raw: IEDocument): IDocumentMySql {
         if (!raw) { return null; }
         return {
-            DocumentID: raw.id,
-            DocumentOwnerID: raw.ownerId,
-            DocumentRawRef: raw.rawReference,
-            DocumentTypeID: raw.typeId,
-            DocumentUploadDate: raw.uploadDate
+            UsersDocumentID: raw.id,
+            UsersDocumentOwnerID: raw.ownerId,
+            UsersDocumentRawRef: raw.rawReference,
+            UsersDocumentTypeID: raw.typeId,
+            UsersDocumentUploadDate: raw.uploadDate
         }
     }
     convertDBModelToDomain(raw: IDocumentMySql): IEDocument {
         if (!raw) { return null; }
         return {
-            id: raw.DocumentID,
-            ownerId: raw.DocumentOwnerID,
-            rawReference: raw.DocumentRawRef,
-            typeId: raw.DocumentTypeID,
-            uploadDate: raw.DocumentUploadDate
+            id: raw.UsersDocumentID,
+            ownerId: raw.UsersDocumentOwnerID,
+            rawReference: raw.UsersDocumentRawRef,
+            typeId: raw.UsersDocumentTypeID,
+            uploadDate: raw.UsersDocumentUploadDate
         }
     }
     converManyDomainToDBModel(raw: IEDocument[]): IDocumentMySql[] {

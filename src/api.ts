@@ -1,4 +1,3 @@
-import { ProviderRouterInstance } from './modules/provider/core/provider.router';
 import { Application } from 'express';
 import * as express from 'express';
 import * as bodyParser from "body-parser";
@@ -8,6 +7,7 @@ import "reflect-metadata";
 import { createConnection } from 'typeorm';
 import { AuthenticationRouter } from './modules/authentication';
 import { AdminRouter } from './modules/admin/admin.module';
+import { DocumentsRouter } from './modules/e-documents/documents.router';
 const fileUpload = require('express-fileupload');
 
 export class API {
@@ -51,6 +51,7 @@ export class API {
 		});
 
 		this.express.use('/api/v1', new AuthenticationRouter().init());
+		this.express.use('/api/v1', new DocumentsRouter().init());
 		// this.express.use('/api/v1', CabinetAuthRouterInstance.init());
 		// this.express.use('/api/v1', NotificationsRouterInstance.init());
 		// this.express.use('/api/v1', ProviderRouterInstance.init());
