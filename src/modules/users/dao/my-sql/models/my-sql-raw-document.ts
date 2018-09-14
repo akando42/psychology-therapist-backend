@@ -1,5 +1,6 @@
 
 
-export interface IRawDocumentMySql{
-    
+export interface IRawDocumentMySql {
+    RawDocumentID?: number;
+    RawDocumentBlob?: any
 }

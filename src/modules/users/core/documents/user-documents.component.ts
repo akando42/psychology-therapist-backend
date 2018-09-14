@@ -8,7 +8,6 @@ export class UserDocumentsComponent {
     constructor(
         private _usersDocumentService?: IUsersDocumentService
     ) {
-
     }
 
 

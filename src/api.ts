@@ -8,6 +8,7 @@ import { createConnection } from 'typeorm';
 import { AuthenticationRouter } from './modules/authentication';
 import { AdminRouter } from './modules/admin/admin.module';
 import { DocumentsRouter } from './modules/e-documents/documents.router';
+import { UsersRouter } from './modules/users/users.router';
 const fileUpload = require('express-fileupload');
 
 export class API {
@@ -52,13 +53,14 @@ export class API {
 
 		this.express.use('/api/v1', new AuthenticationRouter().init());
 		this.express.use('/api/v1', new DocumentsRouter().init());
+		this.express.use('/api/v1', new UsersRouter().init());
 		// this.express.use('/api/v1', CabinetAuthRouterInstance.init());
 		// this.express.use('/api/v1', NotificationsRouterInstance.init());
 		// this.express.use('/api/v1', ProviderRouterInstance.init());
 
 		//tempora;
 		this.express.use('/api/v1/users/:id/profile', (req, res) => {
-			
+
 		});
 
 	}
