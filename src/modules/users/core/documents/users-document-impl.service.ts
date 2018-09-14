@@ -8,7 +8,7 @@ import { IDocumentUploadDTO } from "../../../../dto/document-upload.dto";
 
 
 
-export class UsersDocumentImpl implements IUsersDocumentService {
+export class UsersDocumentServiceImpl implements IUsersDocumentService {
     constructor(
         private _userDocument: AbstractUserDocumentRepository,
         private _rawDocumentRepository: AbstractRawDocumentRepository
