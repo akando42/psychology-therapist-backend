@@ -1,21 +1,35 @@
 import { IDualConverter } from "../../../../behavior/converters/converter.interface";
 import { IEDocument } from "../../../../models/e-document";
-import { IEDocumentMySql } from "../../dao/my-sql/models/my-sql-e-document";
+import { IDocumentMySql } from "../../dao/my-sql/models/my-sql-document";
 
+crear tipos de documents y conectar con frontend
+crear modelos en base de datos para poder probar
 
-export class MySqlEDocumentConverter implements IDualConverter<IEDocument, IEDocumentMySql>{
-    converDomainToDBModel(raw: IEDocument): IEDocumentMySql {
+export class MySqlEDocumentConverter implements IDualConverter<IEDocument, IDocumentMySql>{
+    converDomainToDBModel(raw: IEDocument): IDocumentMySql {
         if (!raw) { return null; }
-        return {}
+        return {
+            DocumentID: raw.id,
+            DocumentOwnerID: raw.ownerId,
+            DocumentRawRef: raw.rawReference,
+            DocumentTypeID: raw.typeId,
+            DocumentUploadDate: raw.uploadDate
+        }
     }
-    convertDBModelToDomain(raw: IEDocumentMySql): IEDocument {
+    convertDBModelToDomain(raw: IDocumentMySql): IEDocument {
         if (!raw) { return null; }
-        return {}
+        return {
+            id: raw.DocumentID,
+            ownerId: raw.DocumentOwnerID,
+            rawReference: raw.DocumentRawRef,
+            typeId: raw.DocumentTypeID,
+            uploadDate: raw.DocumentUploadDate
+        }
     }
-    converManyDomainToDBModel(raw: IEDocument[]): IEDocumentMySql[] {
+    converManyDomainToDBModel(raw: IEDocument[]): IDocumentMySql[] {
         return raw.map((item) => this.converDomainToDBModel(item));
     }
-    convertManyDBModelToDomain(raw: IEDocumentMySql[]): IEDocument[] {
+    convertManyDBModelToDomain(raw: IDocumentMySql[]): IEDocument[] {
         return raw.map((item) => this.convertDBModelToDomain(item));
     }
 

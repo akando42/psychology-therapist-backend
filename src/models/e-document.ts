@@ -5,6 +5,7 @@
 export interface IEDocument {
     id?: number;
     rawReference?: number;
-    name?: string;
-    description?: string;
+    typeId?: number;
+    uploadDate?: number;
+    ownerId?: number;
 }
