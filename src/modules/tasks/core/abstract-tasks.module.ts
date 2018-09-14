@@ -1,11 +1,15 @@
 import { ITask } from "../../../models/task";
 import { TODResponse } from "../../../dto/tod-response";
+import { TasksComponent } from "./tasks/tasks.component";
+import { TasksCommentsComponent } from "./tasks-comments/tasks-comments.component";
 
 
 
 export abstract class AbstractTaskModule {
 
-    constructor() {
+    constructor(
+        protected _taskComponent: TasksComponent,
+        protected _tasksCommentsComponent: TasksCommentsComponent) {
 
     }
 
@@ -13,5 +17,8 @@ export abstract class AbstractTaskModule {
 
     abstract assignTaskTo(assignedId: number, taskid: number): Promise<TODResponse>;
 
+    abstract getTasksComments(taskId): Promise<TODResponse>;
+
+    // abstract 
 
 }

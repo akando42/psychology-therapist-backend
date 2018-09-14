@@ -4,7 +4,7 @@
  */
 export interface IEDocument {
     id?: number;
-    blob?: string;
+    rawReference?: number;
     name?: string;
     description?: string;
 }

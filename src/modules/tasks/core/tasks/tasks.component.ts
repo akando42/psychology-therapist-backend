@@ -25,11 +25,11 @@ export class TasksComponent {
         });
     }
 
-
     assignTaskTo(assigneId: number, taskId: number): Promise<ITask> {
         return new Promise<ITask>(async (resolve, reject) => {
             try {
-
+                //get user
+                const user = await this._userComponent.getUserProfileById(assigneId);
                 //assign
                 const task = await this._taskService.assignTaskTo(assigneId, taskId);
                 //notify probably but this may be on the notification module

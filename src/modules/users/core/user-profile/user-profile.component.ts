@@ -2,13 +2,18 @@ import { IUser } from "../../../../models/user";
 import { IUserProfileService } from "./user-profile.service.interface";
 import { RolesService } from "../roles/roles-impl.service";
 import { IRolesService } from "../roles/roles.service.interface";
+import { IUsersDocumentService } from "../documents/i-users-document.service";
+import { IEDocument } from "../../../../models/e-document";
+import { IDocumentUploadDTO } from "../../../../dto/document-upload.dto";
+import { IRawDocument } from "../../../../models/raw-document";
 
 
 export class UsersProfileComponent {
 
     constructor(
         private _userService: IUserProfileService,
-        private _rolesService?: IRolesService) {
+        private _rolesService?: IRolesService
+    ) {
 
     }
 
@@ -16,7 +21,7 @@ export class UsersProfileComponent {
         return new Promise<IUser>(async (resolve, reject) => {
             try {
                 const userCreated: IUser = await this._userService.createUserProfile(user);
-                
+
                 const userStored: IUser = await this._userService.getUserById(<any>userCreated);
                 console.log('user stored ', userStored);
                 return resolve(userStored);
@@ -75,4 +80,5 @@ export class UsersProfileComponent {
             }
         })
     }
+
 }
