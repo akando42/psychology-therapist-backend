@@ -1,8 +1,8 @@
 
-import { AbstractLocationsRepository } from "../locations.repository";
-import { ILocation } from "../../../../models/location";
-import { GenericDao } from "../../../../behavior/mysql/generic.dao";
-import { MySqlLocationsConverter } from "../../converters/my-sql/my-sql-locations.converter";
+import { AbstractLocationsRepository } from "../../locations.repository";
+import { ILocation } from "../../../../../models/location";
+import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { MySqlLocationsConverter } from "../../../converters/my-sql/my-sql-locations.converter";
 
 
 export class MySqlLocationsRepository extends AbstractLocationsRepository {

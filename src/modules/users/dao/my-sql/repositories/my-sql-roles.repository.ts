@@ -1,7 +1,5 @@
-import { AbstractRolesRepository } from "../roles.repository";
-import { IRole } from "../../../../models/role";
-import { GetByQuery } from "../../../../query-spec/my-sql/get-by.query";
-import { UpdateQuery } from "../../../../query-spec/my-sql/update.query";
+import { AbstractRolesRepository } from "../../roles.repository";
+import { IRole } from "../../../../../models/role";
 
 
 export class MySqlRolesRepository extends AbstractRolesRepository {

@@ -18,6 +18,7 @@ export class UsersDocumentServiceImpl implements IUsersDocumentService {
     uploadDocument(document: IDocumentUploadDTO): Promise<IEDocument> {
         return new Promise<IEDocument>(async (resolve, reject) => {
             try {
+                console.log(document)
                 if (isNullOrUndefined(document)) {
                     return reject({ message: 'no document provided' });
                 }

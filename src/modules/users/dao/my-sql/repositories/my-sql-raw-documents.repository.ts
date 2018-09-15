@@ -1,9 +1,8 @@
 
-import { GenericDao } from "../../../../behavior/mysql/generic.dao";
-import { MySqlLocationsConverter } from "../../converters/my-sql/my-sql-locations.converter";
-import { AbstractRawDocumentRepository } from "../raw-document.repository";
-import { MySqlRawDocumentConverter } from "../../converters/my-sql/my-sql-raw-document.converter";
-import { IRawDocument } from "../../../../models/raw-document";
+import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { AbstractRawDocumentRepository } from "../../raw-document.repository";
+import { MySqlRawDocumentConverter } from "../../../converters/my-sql/my-sql-raw-document.converter";
+import { IRawDocument } from "../../../../../models/raw-document";
 
 
 export class MySqlRawDocumentRepository extends AbstractRawDocumentRepository {

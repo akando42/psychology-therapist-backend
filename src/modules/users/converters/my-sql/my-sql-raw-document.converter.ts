@@ -7,15 +7,17 @@ export class MySqlRawDocumentConverter implements IDualConverter<IRawDocument, I
     converDomainToDBModel(raw: IRawDocument): IRawDocumentMySql {
         if (!raw) { return null; }
         return {
-            RawDocumentBlob:raw.blob,
-            RawDocumentID:raw.id
+            RawDocumentBlob: raw.blob,
+            RawDocumentID: raw.id,
+            RawDocumentMimeType: raw.mimeType
         }
     }
     convertDBModelToDomain(raw: IRawDocumentMySql): IRawDocument {
         if (!raw) { return null; }
         return {
-            blob:raw.RawDocumentBlob,
-            id:raw.RawDocumentID
+            blob: raw.RawDocumentBlob,
+            id: raw.RawDocumentID,
+            mimeType: raw.RawDocumentMimeType
         }
     }
     converManyDomainToDBModel(raw: IRawDocument[]): IRawDocumentMySql[] {

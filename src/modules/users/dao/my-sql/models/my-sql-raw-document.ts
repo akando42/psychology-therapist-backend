@@ -2,5 +2,6 @@
 
 export interface IRawDocumentMySql {
     RawDocumentID?: number;
-    RawDocumentBlob?: any
+    RawDocumentBlob?: any;
+    RawDocumentMimeType?: string;
 }

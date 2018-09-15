@@ -16,7 +16,18 @@ export class UsersRouter {
     }
 
     uploadId(req: Request, res: Response): void {
-        TODUsersModule.uploadIDDocument(req.body)
+
+        const { files, body } = <any>req;
+        const { document } = files;
+        console.log(body)
+
+        TODUsersModule.uploadIDDocument({
+            raw: {
+                mimeType: document.mimetype,
+                blob: document.data
+            },
+            typeId: body.docInfo
+        })
             .then((result) => {
                 res.status(200).send(result);
             })

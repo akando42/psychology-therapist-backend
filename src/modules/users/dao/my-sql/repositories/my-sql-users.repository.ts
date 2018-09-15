@@ -1,9 +1,9 @@
-import { AbstractUsersRepository } from "../users.repository";
-import { GetByQuery } from "../../../../query-spec/my-sql/get-by.query";
-import { UpdateQuery } from "../../../../query-spec/my-sql/update.query";
-import { IUser } from "../../../../models/user";
-import { GenericDao } from "../../../../behavior/mysql/generic.dao";
-import { MySqlUsersConverterInstance } from "../../converters/my-sql/my-sql-users.converter";
+import { AbstractUsersRepository } from "../../users.repository";
+import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
+import { UpdateQuery } from "../../../../../query-spec/my-sql/update.query";
+import { IUser } from "../../../../../models/user";
+import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { MySqlUsersConverterInstance } from "../../../converters/my-sql/my-sql-users.converter";
 
 
 export class MySqlUsersRepository extends AbstractUsersRepository {
