@@ -4,14 +4,12 @@ import { LocationsComponent } from "./locations/locations.component";
 import { UsersProfileComponent } from "./user-profile/user-profile.component";
 import { IDocumentUploadDTO } from "../../../dto/document-upload.dto";
 import { TODResponse } from "../../../dto/tod-response";
-import { UserDocumentsComponent } from "./documents/user-documents.component";
 
 
 export abstract class AbstractUsersModule {
     constructor(
         protected _userProfilesComponent: UsersProfileComponent,
-        protected _locationsComponent: LocationsComponent,
-        protected _userDocumentsComponent:UserDocumentsComponent
+        protected _locationsComponent: LocationsComponent
     ) { }
 
     abstract createUser(user: IUser, roleId: number): Promise<IUser>;

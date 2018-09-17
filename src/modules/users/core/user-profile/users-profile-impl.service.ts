@@ -2,11 +2,15 @@ import { IUserProfileService } from "./user-profile.service.interface";
 import { AbstractUsersRepository } from "../../dao/users.repository";
 import { IUser } from "../../../../models/user";
 import { propertiesMatcherUtil } from "../../../../utils/properties-matcher.util";
+import { IUserIDVerification } from "../../../../models/user-id-verification";
+import { AbstractUsersIDVerificationsRepository } from "../../dao/users-id-verifications.repository";
 
 export class UsersProfileServiceImpl implements IUserProfileService {
 
 
-    constructor(private _usersRepository: AbstractUsersRepository) { }
+    constructor(
+        private _usersRepository: AbstractUsersRepository,
+        private _idVerificationRepo: AbstractUsersIDVerificationsRepository) { }
 
     createUserProfile(newUser: IUser): Promise<IUser> {
         return new Promise<IUser>(async (resolve, reject) => {
@@ -52,6 +56,16 @@ export class UsersProfileServiceImpl implements IUserProfileService {
         });
     }
 
+    createVerificationReport(verifi: IUserIDVerification): Promise<IUserIDVerification> {
+        return new Promise<IUserIDVerification>(async (resolve, reject) => {
+            try {
+                const created = await this._idVerificationRepo.createIDVerification(verifi);
+                return resolve(created);
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
 
     getUserByEmail(email: string): Promise<IUser> {
         //validate email

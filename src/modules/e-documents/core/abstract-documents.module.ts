@@ -34,4 +34,6 @@ export abstract class AbstractDocumentModule {
             }
         })
     }
+
+    abstract uploadDocumentAsBlob(): Promise<TODResponse>;
 }

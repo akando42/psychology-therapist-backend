@@ -1,31 +1,27 @@
-import { MySqlUsersRepository } from "./dao/repositories/my-sql-users.repository";
 import { UsersProfileComponent } from "./core/user-profile/user-profile.component";
 import { UsersProfileServiceImpl } from "./core/user-profile/users-profile-impl.service";
 import { UsersImplModule } from "./core/users-impl.module";
-import { MySqlLocationsRepository } from "./dao/repositories/my-sql-locations.repository";
 import { LocationsComponent } from "./core/locations/locations.component";
-import { UsersDocumentServiceImpl } from "./core/documents/users-document-impl.service";
-import { MySqlUserDocumentsRepository } from "./dao/repositories/my-sql-user-documents.repository";
-import { MySqlRawDocumentRepository } from "./dao/repositories/my-sql-raw-documents.repository";
-import { UserDocumentsComponent } from "./core/documents/user-documents.component";
+import { MySqlUsersRepository } from "./dao/my-sql/repositories/my-sql-users.repository";
+import { MySqlLocationsRepository } from "./dao/my-sql/repositories/my-sql-locations.repository";
+import { MySqlUserDocumentsRepository } from "./dao/my-sql/repositories/my-sql-user-documents.repository";
+import { MySqlUsersIDVerificationsRepository } from "./dao/my-sql/repositories/my-sql-users-id-verifications.repository";
 
 //make repositories;
 const mysqlUsersProfileRepo = new MySqlUsersRepository();
 const mysqlLocationsRepo = new MySqlLocationsRepository();
 const mysqlUserDocumentsRepo = new MySqlUserDocumentsRepository();
-const mysqlRawDocumentsRepo = new MySqlRawDocumentRepository();
+const mysqlIdVerificationRepo = new MySqlUsersIDVerificationsRepository();
 
 //services
-const genericService = new UsersProfileServiceImpl(mysqlUsersProfileRepo);
-const userDocumentService = new UsersDocumentServiceImpl(mysqlUserDocumentsRepo, mysqlRawDocumentsRepo);
+const genericService = new UsersProfileServiceImpl(mysqlUsersProfileRepo, mysqlIdVerificationRepo);
 
 //components
 const usersComponent = new UsersProfileComponent(genericService);
-const usersDocumentsComponent = new UserDocumentsComponent(userDocumentService);
 // const locationsComponent = new LocationsComponent();
 
 
-const TODUsersModule = new UsersImplModule(usersComponent, usersDocumentsComponent);
+const TODUsersModule = new UsersImplModule(usersComponent);
 
 
 export {

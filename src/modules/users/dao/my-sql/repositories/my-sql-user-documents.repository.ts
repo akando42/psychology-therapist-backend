@@ -1,6 +1,6 @@
 
 import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
-import { AbstractUserDocumentRepository } from "../../user-document.repository";
+import { AbstractUserDocumentRepository } from "../../../../e-documents/dao/user-document.repository";
 import { IEDocument } from "../../../../../models/e-document";
 import { MySqlEDocumentConverter } from "../../../converters/my-sql/my-sql-e-document.converter";
 

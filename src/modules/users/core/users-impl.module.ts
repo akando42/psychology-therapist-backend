@@ -5,7 +5,6 @@ import { UsersProfileComponent } from "./user-profile/user-profile.component";
 import { LocationsComponent } from "./locations/locations.component";
 import { IDocumentUploadDTO } from "../../../dto/document-upload.dto";
 import { TODResponse } from "../../../dto/tod-response";
-import { UserDocumentsComponent } from "./documents/user-documents.component";
 import { IEDocument } from "../../../models/e-document";
 import { resolve } from "dns";
 import { reject } from "q";
@@ -15,10 +14,10 @@ export class UsersImplModule extends AbstractUsersModule {
 
     constructor(
         userProfileComponent: UsersProfileComponent,
-        userDocumentsComponent: UserDocumentsComponent,
+        // userDocumentsComponent?: UserDocumentsComponent,
         locationComponent?: LocationsComponent
     ) {
-        super(userProfileComponent, locationComponent, userDocumentsComponent);
+        super(userProfileComponent, locationComponent);
     }
 
     createUser(user: IUser, roleid: number): Promise<IUser> {
@@ -49,16 +48,20 @@ export class UsersImplModule extends AbstractUsersModule {
     uploadIDDocument(document: IDocumentUploadDTO): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
-                const docRef: IEDocument = await this._userDocumentsComponent.uploadDocument(document);
 
-                //after upload document should create a task to document verification.
-                // Tod
-                const response: TODResponse = {
-                    message: 'document upladed',
-                    payload: docRef,
-                    timestamp: new Date()
-                };
-                return resolve(response);
+                //upload document
+                // const docRef: IEDocument = await this._userDocumentsComponent.uploadDocument(document);
+                // //create a verification report
+                // const verification = await this._userProfilesComponent
+                //     .createVerificationReport({ documentRef: docRef.id, status: 'pending' })
+                // //after upload document should create a task to document verification.
+                // // Tod
+                // const response: TODResponse = {
+                //     message: 'document upladed',
+                //     payload: docRef,
+                //     timestamp: new Date()
+                // };
+                // return resolve(response);
 
             } catch (error) {
                 const badResponse: TODResponse = {
@@ -75,14 +78,14 @@ export class UsersImplModule extends AbstractUsersModule {
     getDocumentRaw(documentRawid: number): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
-                const docRaw: IEDocument = await this._userDocumentsComponent.getRawDocument(documentRawid);
+                // const docRaw: IEDocument = await this._userDocumentsComponent.getRawDocument(documentRawid);
 
-                const response: TODResponse = {
-                    message: 'document upladed',
-                    payload: docRaw,
-                    timestamp: new Date()
-                };
-                return resolve(response);
+                // const response: TODResponse = {
+                //     message: 'document upladed',
+                //     payload: docRaw,
+                //     timestamp: new Date()
+                // };
+                // return resolve(response);
 
             } catch (error) {
                 const badResponse: TODResponse = {

@@ -2,7 +2,7 @@ import { IRawDocument } from "../../../../models/raw-document";
 
 
 
-export interface IUsersDocumentService {
+export interface IDocumentService {
 
     uploadDocument(document: any): Promise<any>;
 

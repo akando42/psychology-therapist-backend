@@ -1,4 +1,5 @@
 import { IUser } from "../../../../models/user";
+import { IUserIDVerification } from "../../../../models/user-id-verification";
 
 
 export interface IUserProfileService {
@@ -12,4 +13,6 @@ export interface IUserProfileService {
     getUserById(id: any): Promise<IUser>;
 
     verifiedUserIdentity(id: number): Promise<IUser>;
+
+    createVerificationReport(verifi: IUserIDVerification): Promise<IUserIDVerification>
 }

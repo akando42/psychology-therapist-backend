@@ -1,4 +1,4 @@
-import { IUsersDocumentService } from "./i-users-document.service";
+import { IDocumentService } from "./i-document.service";
 import { IEDocument } from "../../../../models/e-document";
 import { IRawDocument } from "../../../../models/raw-document";
 import { AbstractRawDocumentRepository } from "../../dao/raw-document.repository";
@@ -8,7 +8,7 @@ import { IDocumentUploadDTO } from "../../../../dto/document-upload.dto";
 
 
 
-export class UsersDocumentServiceImpl implements IUsersDocumentService {
+export class DocumentServiceImpl implements IDocumentService {
     constructor(
         private _userDocument: AbstractUserDocumentRepository,
         private _rawDocumentRepository: AbstractRawDocumentRepository

@@ -1,14 +1,13 @@
-
 import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
 import { AbstractRawDocumentRepository } from "../../raw-document.repository";
-import { MySqlRawDocumentConverter } from "../../../converters/my-sql/my-sql-raw-document.converter";
 import { IRawDocument } from "../../../../../models/raw-document";
+import { MySqlRawDocumentConverter } from "../../../converters/my-sql/my-sql-raw-document.converter";
 
 
 export class MySqlRawDocumentRepository extends AbstractRawDocumentRepository {
 
     constructor() {
-        super(new GenericDao('USERS_DOCUMENTS_RAW'), new MySqlRawDocumentConverter());
+        super(new GenericDao('DOCUMENTS_RAW'), new MySqlRawDocumentConverter());
     }
 
     getRawDocument(rawDocumentId: number): Promise<IRawDocument> {

@@ -6,6 +6,7 @@ import { IUsersDocumentService } from "../documents/i-users-document.service";
 import { IEDocument } from "../../../../models/e-document";
 import { IDocumentUploadDTO } from "../../../../dto/document-upload.dto";
 import { IRawDocument } from "../../../../models/raw-document";
+import { IUserIDVerification } from "../../../../models/user-id-verification";
 
 
 export class UsersProfileComponent {
@@ -79,6 +80,10 @@ export class UsersProfileComponent {
                 return reject(error);
             }
         })
+    }
+
+    createVerificationReport(verifi: IUserIDVerification): Promise<IUserIDVerification> {
+        return this._userService.createVerificationReport(verifi);
     }
 
 }
