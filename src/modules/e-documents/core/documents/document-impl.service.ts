@@ -11,7 +11,7 @@ import { AbstractEDocumentRepository } from "../../dao/e-document.repository";
 
 export class DocumentServiceImpl implements IDocumentService {
     constructor(
-        private _userDocument: AbstractEDocumentRepository,
+        private _documentsRefRepository: AbstractEDocumentRepository,
         private _rawDocumentRepository: AbstractRawDocumentRepository
     ) {
 
@@ -31,7 +31,7 @@ export class DocumentServiceImpl implements IDocumentService {
                 document.rawReference = rawDocument
 
                 const documentRef: IEDocument =
-                    await this._userDocument.createDocumentRef(document);
+                    await this._documentsRefRepository.createDocumentRef(document);
 
                 return resolve(documentRef);
             } catch (error) {

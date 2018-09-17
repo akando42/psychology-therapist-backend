@@ -1,9 +1,7 @@
 import { AbstractRepository } from "../../../behavior/repositories/repository.abstract";
-import { IDocumentSign } from "../../../models/e-sign-document";
-import { DocumentSignableStatusEnum } from "../../../enums/document-signable-status.enum";
 import { IEDocument } from "../../../models/e-document";
 
-export abstract class AbstractEDocumentRepository extends AbstractRepository<IDocumentSign>{
+export abstract class AbstractEDocumentRepository extends AbstractRepository<IEDocument>{
     constructor(dao: any, converter: any) {
         super(dao, converter)
     }
