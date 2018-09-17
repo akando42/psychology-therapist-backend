@@ -5,12 +5,13 @@ import { AbstractRawDocumentRepository } from "../../dao/raw-document.repository
 import { isNullOrUndefined } from "util";
 import { AbstractUserDocumentRepository } from "../../dao/user-document.repository";
 import { IDocumentUploadDTO } from "../../../../dto/document-upload.dto";
+import { AbstractEDocumentRepository } from "../../dao/e-document.repository";
 
 
 
 export class DocumentServiceImpl implements IDocumentService {
     constructor(
-        private _userDocument: AbstractUserDocumentRepository,
+        private _userDocument: AbstractEDocumentRepository,
         private _rawDocumentRepository: AbstractRawDocumentRepository
     ) {
 

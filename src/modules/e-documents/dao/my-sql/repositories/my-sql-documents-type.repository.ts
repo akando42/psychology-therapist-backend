@@ -1,9 +1,7 @@
-import { AbstractEDocumentRepository } from "../e-document.repository";
-import { AbstractDocumentsTypeRepository } from "../documents-type.repository";
-import { GenericDao } from "../../../../behavior/mysql/generic.dao";
-import { MySqlDocumentsTypeConverter } from "../../converters/my-sql/my-sql-documents-type.converter";
-import { IDocumentType } from "../../../../models/document-type";
-import { GetByQuery } from "../../../../query-spec/my-sql/get-by.query";
+import { AbstractDocumentsTypeRepository } from "../../documents-type.repository";
+import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { MySqlDocumentsTypeConverter } from "../../../converters/my-sql/my-sql-documents-type.converter";
+import { IDocumentType } from "../../../../../models/document-type";
 
 
 export class MySqlDocumentsTypeRepository extends AbstractDocumentsTypeRepository {

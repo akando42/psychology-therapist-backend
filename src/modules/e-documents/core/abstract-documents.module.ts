@@ -1,13 +1,17 @@
 import { TODResponse } from "../../../dto/tod-response";
-import { DocumentsTypeComponent } from "./documents-type/documents-type.component";
 import { IDocumentType } from "../../../models/document-type";
+import { DocumentsComponent } from "./documents/documents.component";
+import { DocumentsClasificationComponent } from "./documents-type/documents-clasification.component";
 
 
 
 
 
 export abstract class AbstractDocumentModule {
-    constructor(private _documentsTypeComponent: DocumentsTypeComponent) {
+    constructor(
+        protected _documentsComponent: DocumentsComponent,
+        protected _documentsTypeComponent: DocumentsClasificationComponent,
+    ) {
 
     }
 
