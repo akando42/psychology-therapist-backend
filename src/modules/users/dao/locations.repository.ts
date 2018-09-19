@@ -11,6 +11,6 @@ export abstract class AbstractLocationsRepository extends AbstractRepository<ILo
 
     abstract deleteLocation(id: number): Promise<void>;
 
-    abstract getLocationByUserId(userID: number): Promise<ILocation[]>;
+    abstract getLocation(userID: number): Promise<ILocation>;
 
 }
