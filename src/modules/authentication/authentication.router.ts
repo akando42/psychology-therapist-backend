@@ -13,7 +13,7 @@ export class AuthenticationRouter {
 
     init(): Router {
         const router: Router = Router();
-        router.post('/authentication/login', (req, res) => this.authenticate(req, res));
+        router.post('/authentication/login/:role', (req, res) => this.authenticate(req, res));
         // router.post('/authentication/signup', (req, res) => this.signup(req, res));
 
         router.post('/authentication/signup/:invitation_token', (req, res) => this.signUpWithInvitation(req, res));
@@ -28,7 +28,7 @@ export class AuthenticationRouter {
     }
 
     authenticate(req: Request, res: Response): void {
-        TODAuthenticationModule.authenticate(req.body)
+        TODAuthenticationModule.authenticate(req.body,req.params['role'])
             .then((result: any) => {
                 //sent the response.
                 res.status(200).json(result);

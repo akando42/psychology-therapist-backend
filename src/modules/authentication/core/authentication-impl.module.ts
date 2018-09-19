@@ -121,10 +121,11 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                         case 'hr':
                             roleProfile = await this._humanResourcesModule.getHRAgentProfile(user.id);
                             break;
-
-                        default:
-                            console.log('admin')
+                        case 'admin':
                             roleProfile = await this._adminModule.getAdminProfile(user.id);
+                            break;
+                        default:
+                            console.log('no role')
                             break;
                     }
                 }
@@ -139,7 +140,8 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
                 return resolve({
                     auth: true, token: token,
-                    data: { user: user, roleProfile: roleProfile.payload, role: role }, message: 'succesfully authenticated'
+                    data: { user: user, roleProfile: roleProfile.payload, role: role },
+                     message: 'succesfully authenticated'
                 });
 
 
@@ -148,6 +150,8 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
             }
         });
     }
+
+
 
     changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
