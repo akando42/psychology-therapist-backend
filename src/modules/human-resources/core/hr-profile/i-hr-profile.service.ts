@@ -1,10 +1,11 @@
+import { IHRProfile } from "../../../../models/hr-profile";
 
 
 export interface IHRProfileService {
 
 
-    createHRProfile(): Promise<any>;
+    createHRProfile(profile: IHRProfile): Promise<IHRProfile>;
 
-    updateHRProfile(): Promise<any>;
+    updateHRProfile(id: number, changes: IHRProfile): Promise<IHRProfile>;
 
 }

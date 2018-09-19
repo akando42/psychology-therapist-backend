@@ -1,8 +1,7 @@
 
 
 
-export interface IHRProfile {
-
+export interface ISalesProfile {
     id?: number;
     userId?: number;
     status?: any;

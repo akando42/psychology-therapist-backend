@@ -9,7 +9,8 @@ export class MySqlHRProfilesConverter implements IDualConverter<IHRProfile, IHRP
         return {
             HRProfileID: raw.id,
             HRProfileNDASigned: raw.NDASigned,
-            HRProfileStatus: raw.status
+            HRProfileStatus: raw.status,
+            HRProfileCabinetID: raw.cabinetId
         }
     }
     convertDBModelToDomain(raw: IHRProfileMySql): IHRProfile {
@@ -17,7 +18,8 @@ export class MySqlHRProfilesConverter implements IDualConverter<IHRProfile, IHRP
         return {
             id: raw.HRProfileID,
             NDASigned: raw.HRProfileNDASigned,
-            status: raw.HRProfileStatus
+            status: raw.HRProfileStatus,
+            cabinetId: raw.HRProfileCabinetID
         }
     }
     converManyDomainToDBModel(raw: IHRProfile[]): IHRProfileMySql[] {
