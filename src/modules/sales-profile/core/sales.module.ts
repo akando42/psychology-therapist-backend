@@ -1,4 +1,5 @@
 import { SalesProfilesComponent } from "./Sales-profile/Sales-profiles.component";
+import { TODResponse } from "../../../dto/tod-response";
 
 
 export abstract class AbstractSalesModule {
@@ -7,7 +8,7 @@ export abstract class AbstractSalesModule {
 
     }
 
-    abstract createSalesAgentProfile(): Promise<any>;
+    abstract createSalesAgentProfile(usrId:number): Promise<TODResponse>;
 
     abstract changeSalesAgentStatus(): Promise<any>;
 

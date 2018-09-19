@@ -9,7 +9,7 @@ export interface IUserMySql {
     UserFirstName: string;
     UserGender: GenderEnum;
     UserEmail: string;
-    UserRole: UsersRolEnum;
+    // UserRole: UsersRolEnum;
     
     UserIDVerified?: boolean;
 }

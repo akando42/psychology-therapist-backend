@@ -7,6 +7,8 @@ import { AccountsComponent } from "./accounts/accounts.component";
 import { InvitationsComponent } from "./invitations/invitations.components";
 import { AbstractUsersModule } from "../../users/core/users.module";
 import { AbtractCommunicationModule } from "../../communication/core/comunication.module";
+import { AbstractHumanResourcesModule } from "../../human-resources/core/abstract-human-resources.module";
+import { AbstractAdminModule } from "../../admin/core/abstract-admin.module";
 
 
 export abstract class AbstractAuthenticationModule {
@@ -15,7 +17,9 @@ export abstract class AbstractAuthenticationModule {
         protected _usersModule?: AbstractUsersModule,
         protected _accountsComponent?: AccountsComponent,
         protected _invitationsComponent?: InvitationsComponent,
-        protected _communicationModule?: AbtractCommunicationModule
+        protected _communicationModule?: AbtractCommunicationModule,
+        protected _humanResourcesModule?: AbstractHumanResourcesModule,
+        protected _adminModule?: AbstractAdminModule,
     ) {
     }
 
@@ -25,7 +29,7 @@ export abstract class AbstractAuthenticationModule {
     }
 
 
-    abstract authenticate(credentials: { password: string, email: string }): Promise<any>;
+    abstract authenticate(credentials: { password: string, email: string }, role?: string): Promise<any>;
 
     abstract signup(account: INewAccountDTO): Promise<any>;
 
@@ -34,7 +38,7 @@ export abstract class AbstractAuthenticationModule {
     abstract changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<any>;
 
     abstract resetPassword(email: string): Promise<TODResponse>;
-    
+
     abstract signUpWithInvitation(inviteToken: string, newAccount: INewAccountDTO): Promise<any>;
 
     abstract signUpWithInvitation(invitationToken: string, newAccount: INewAccountDTO): Promise<TODResponse>;

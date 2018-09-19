@@ -10,6 +10,18 @@ export class HRProfilesImplService implements IHRProfileService {
 
     }
 
+    getHRProfile(userId: number): Promise<IHRProfile> {
+        return new Promise<IHRProfile>(async (resolve, reject) => {
+            try {
+                //validate here
+                const profile: any = await this._hrProfilesRepo.getHRProfile(userId);
+                return resolve(profile);
+            } catch (error) {
+                return reject(error);
+            }
+        });
+    }
+
     createHRProfile(profile: IHRProfile): Promise<IHRProfile> {
         return new Promise<IHRProfile>(async (resolve, reject) => {
             try {
@@ -21,7 +33,7 @@ export class HRProfilesImplService implements IHRProfileService {
             }
         })
     }
-    
+
     updateHRProfile(id: number, changes: IHRProfile): Promise<IHRProfile> {
         return new Promise<IHRProfile>(async (resolve, reject) => {
             try {

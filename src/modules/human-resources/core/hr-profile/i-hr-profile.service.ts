@@ -8,4 +8,6 @@ export interface IHRProfileService {
 
     updateHRProfile(id: number, changes: IHRProfile): Promise<IHRProfile>;
 
+    getHRProfile(userId: number): Promise<IHRProfile>;
+
 }

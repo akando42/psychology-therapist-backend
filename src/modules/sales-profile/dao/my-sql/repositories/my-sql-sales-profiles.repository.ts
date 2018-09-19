@@ -19,7 +19,7 @@ export class MySqlSalesProfilesRepository extends AbstractSalesProfilesRepositor
 
     getSalesProfile(HRProfileId: number): Promise<ISalesProfile> {
         return super.getBy(new GetByQuery(<ISalesProfileMySql>{ HRProfileID: HRProfileId })
-            .toDBQuery('HRProfileS'))
+            .toDBQuery('SalesProfiles'));
     }
 
 }

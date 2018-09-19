@@ -12,7 +12,7 @@ export interface IUser {
 
     idVerified?: boolean;
     contactInfo?: IContactInfo;
-    role: UsersRolEnum;
+    // role: UsersRolEnum;
 
 
 

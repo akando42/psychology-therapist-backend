@@ -1,19 +1,52 @@
-import { HRProfilesComponent } from "./hr-profile/hr-profiles.component";
+import { AbstractHumanResourcesModule } from "./abstract-human-resources.module";
+import { TODResponse } from "../../../dto/tod-response";
+import { IHRProfile } from "../../../models/hr-profile";
 
 
-export abstract class AbstractModuleResourcesModule {
+export class HumanResourcesModule extends AbstractHumanResourcesModule {
 
-    constructor(protected _hrProfilesComponent: HRProfilesComponent) {
 
+    constructor(profilesComponent) {
+        super(profilesComponent);
     }
 
-    abstract createHRAgentProfile(): Promise<any>;
+    createHRAgentProfile(userId: IHRProfile): Promise<TODResponse> {
+        return new Promise<TODResponse>(async (resolve, reject) => {
+            try {
+                // const profile = await this._hrProfilesComponent.c
+            } catch (error) {
 
-    abstract changeHRAgentStatus(): Promise<any>;
+            }
+        });
+    }
 
-    abstract getHRAgentNDADocument(): Promise<any>;
+    getHRAgentProfile(userId: number): Promise<TODResponse> {
+        return new Promise<TODResponse>(async (resolve, reject) => {
+            try {
+                // const profile
+            } catch (error) {
 
-    abstract signNDADocument(): Promise<any>;
+            }
+        });
+    }
+
+
+    getHRAgentNDADocument(): Promise<TODResponse> {
+        return new Promise<TODResponse>(async (resolve, reject) => {
+            try {
+                // const profile
+            } catch (error) {
+
+            }
+        });
+    }
+
+    signNDADocument(): Promise<any> {
+        throw new Error("Method not implemented.");
+    }
+    changeHRAgentStatus(): Promise<any> {
+        throw new Error("Method not implemented.");
+    }
 
 
 }

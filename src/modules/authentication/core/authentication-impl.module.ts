@@ -14,6 +14,9 @@ import { TODResponse } from '../../../dto/tod-response';
 import { AbstractUsersModule } from '../../users/core/users.module';
 import { AbtractCommunicationModule } from '../../communication/core/comunication.module';
 import { InvitationEmailTemplate } from '../../../email-templates/invitation-email.template';
+import { AbstractHumanResourcesModule } from '../../human-resources/core/abstract-human-resources.module';
+import { isNullOrUndefined } from 'util';
+import { AbstractAdminModule } from '../../admin/core/abstract-admin.module';
 
 export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
@@ -21,14 +24,18 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         _usersModule: AbstractUsersModule,
         _accountsComponent: AccountsComponent,
         _invitationsComponent: InvitationsComponent,
-        _communicationModule: AbtractCommunicationModule
+        _communicationModule: AbtractCommunicationModule,
+        _humanResourcesModule: AbstractHumanResourcesModule,
+        _adminModule: AbstractAdminModule,
 
     ) {
         super(
             _usersModule,
             _accountsComponent,
             _invitationsComponent,
-            _communicationModule
+            _communicationModule,
+            _humanResourcesModule,
+            _adminModule
         );
     }
 
@@ -99,7 +106,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         })
     }
 
-    authenticate(credentials: { password: string, email: string }): Promise<any> {
+    authenticate(credentials: { password: string, email: string }, role: string = "admin"): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
 
@@ -108,6 +115,23 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
                 //get user account
                 const user: IUser = await this._usersModule.getUserById(account.userId)
+                let roleProfile = null;
+                if (role) {
+                    switch (role) {
+                        case 'hr':
+                            roleProfile = await this._humanResourcesModule.getHRAgentProfile(user.id);
+                            break;
+
+                        default:
+                            console.log('admin')
+                            roleProfile = await this._adminModule.getAdminProfile(user.id);
+                            break;
+                    }
+                }
+
+                if (isNullOrUndefined(roleProfile)) {
+                    return reject({ error: 'you have no such a role on the platform' });
+                }
 
                 const token = jwt.sign(
                     { userId: account.userId },
@@ -115,7 +139,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
                 return resolve({
                     auth: true, token: token,
-                    data: user, message: 'succesfully authenticated'
+                    data: { user: user, roleProfile: roleProfile.payload, role: role }, message: 'succesfully authenticated'
                 });
 
 
@@ -172,7 +196,6 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         });
     }
 
-    
     signUpWithInvitation(inviteToken: string, newAccount: INewAccountDTO): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {

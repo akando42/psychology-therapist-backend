@@ -24,7 +24,6 @@ export class InvitationsComponent {
                     await this._invitationService.getInvitationByToken(inviteToken);
 
                 //create user;
-                newAccount.profile.role = invitation.role;
                 newAccount.profile.email = invitation.email;
                 const userCreated: IUser =
                     await this._userComponent.createUserProfile(newAccount.profile)

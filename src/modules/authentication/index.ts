@@ -9,6 +9,8 @@ import { AuthenticationImplModule } from "./core/authentication-impl.module";
 import { TODUsersModule, usersComponent } from "../users";
 import { AuthenticationRouter } from "./authentication.router";
 import { TODCommunicationModuleInstance } from "../communication";
+import { TODAdminModule } from "../admin";
+import { TODHumanResourcesModule } from "../human-resources";
 
 
 //repositories
@@ -29,7 +31,9 @@ const TODAuthenticationModule =
         TODUsersModule,
         accountsComponent,
         invitationsComponent,
-        TODCommunicationModuleInstance);
+        TODCommunicationModuleInstance,
+        TODHumanResourcesModule,
+        TODAdminModule);
 
 export {
     TODAuthenticationModule,

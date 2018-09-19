@@ -10,7 +10,7 @@ export class MySqlUsersConverter implements IDualConverter<IUser, IUserMySql> {
             UserID: raw.id,
             UserFirstName: raw.firstName,
             UserLastName: raw.lastName,
-            UserRole: raw.role,
+            // UserRole: raw.role,
             UserEmail: raw.email,
             UserGender: raw.gender,
             UserPhoneNumber: raw.contactInfo.phoneNumber,
@@ -31,7 +31,7 @@ export class MySqlUsersConverter implements IDualConverter<IUser, IUserMySql> {
                 phoneNumber: raw.UserPhoneNumber,
             },
             id: raw.UserID,
-            role: raw.UserRole,
+            // role: raw.UserRole,
             idVerified: raw.UserIDVerified,
 
         }
