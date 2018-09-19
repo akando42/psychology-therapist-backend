@@ -11,8 +11,11 @@ export class MySqlUserIDVerificationConverter implements IDualConverter<IUserIDV
         return {
             UserIdVerificationDocumentRef: raw.documentRef,
             UserIdVerificationID: raw.id,
-            UserIdVerificationReporterID: raw.responsableId,
-            UserIdVerificationStatus: raw.status
+            UserIdVerificationResponsableID: raw.responsableId,
+            UserIdVerificationStatus: raw.status,
+            UserIdVerificationSecondPicRef: raw.secondPicRef,
+            UserIdVerificationIdentificationID:raw.indentificationID,
+            UserIdVerificationUser:raw.userId
         }
     }
     convertDBModelToDomain(raw: IUserIDVerificationMySql): IUserIDVerification {
@@ -20,8 +23,11 @@ export class MySqlUserIDVerificationConverter implements IDualConverter<IUserIDV
         return {
             documentRef: raw.UserIdVerificationDocumentRef,
             id: raw.UserIdVerificationID,
-            responsableId: raw.UserIdVerificationReporterID,
-            status: raw.UserIdVerificationStatus
+            responsableId: raw.UserIdVerificationResponsableID,
+            status: raw.UserIdVerificationStatus,
+            secondPicRef: raw.UserIdVerificationSecondPicRef,
+            indentificationID:raw.UserIdVerificationIdentificationID,
+            userId:raw.UserIdVerificationUser
         }
     }
     converManyDomainToDBModel(raw: IUserIDVerification[]): IUserIDVerificationMySql[] {

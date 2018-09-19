@@ -1,11 +1,6 @@
 import { IUser } from "../../../../models/user";
 import { IUserProfileService } from "./user-profile.service.interface";
-import { RolesService } from "../roles/roles-impl.service";
 import { IRolesService } from "../roles/roles.service.interface";
-import { IUsersDocumentService } from "../documents/i-users-document.service";
-import { IEDocument } from "../../../../models/e-document";
-import { IDocumentUploadDTO } from "../../../../dto/document-upload.dto";
-import { IRawDocument } from "../../../../models/raw-document";
 import { IUserIDVerification } from "../../../../models/user-id-verification";
 
 
@@ -83,7 +78,12 @@ export class UsersProfileComponent {
     }
 
     createVerificationReport(verifi: IUserIDVerification): Promise<IUserIDVerification> {
+        //here probably validate that document exist or not couse already go it from the module.
         return this._userService.createVerificationReport(verifi);
+    }
+
+    pushSecondPictureToVerificationReport(picId: number, reporId: number): Promise<IUserIDVerification> {
+        return this._userService.pushSecondPicVerificationReport(picId, reporId)
     }
 
 }

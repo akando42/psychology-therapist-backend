@@ -29,4 +29,9 @@ const documentsTypesService = new DocumentsTypeImplService(mysqlTypesRepo)
 const documentsComponent = new DocumentsComponent(documentService);
 const documentsClasificationComponent = new DocumentsClasificationComponent(documentsTypesService, documentsCategoriesService)
 
-const TODDocumentsModule = new DocumentModuleImpl(documentsComponent,documentsClasificationComponent);
+const TODDocumentsModule = new DocumentModuleImpl(documentsComponent, documentsClasificationComponent);
+
+
+export {
+    TODDocumentsModule
+}

@@ -4,6 +4,7 @@ import { IUser } from "../../../../models/user";
 import { propertiesMatcherUtil } from "../../../../utils/properties-matcher.util";
 import { IUserIDVerification } from "../../../../models/user-id-verification";
 import { AbstractUsersIDVerificationsRepository } from "../../dao/users-id-verifications.repository";
+import { isNullOrUndefined } from "util";
 
 export class UsersProfileServiceImpl implements IUserProfileService {
 
@@ -59,8 +60,29 @@ export class UsersProfileServiceImpl implements IUserProfileService {
     createVerificationReport(verifi: IUserIDVerification): Promise<IUserIDVerification> {
         return new Promise<IUserIDVerification>(async (resolve, reject) => {
             try {
+                console.log('attempting to create verify', verifi)
+                //verification here but need to roollback to the file upload.
                 const created = await this._idVerificationRepo.createIDVerification(verifi);
                 return resolve(created);
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
+
+    pushSecondPicVerificationReport(picId: number, userid: number): Promise<IUserIDVerification> {
+        return new Promise<IUserIDVerification>(async (resolve, reject) => {
+            try {
+
+                if (isNullOrUndefined(picId)) { return reject({ message: 'no picture reference provided!' }); }
+                const stored: IUserIDVerification = await this._idVerificationRepo.getReportByUserId(userid);
+
+
+                if (isNullOrUndefined(stored)) { return reject({ message: 'no report found for that user' }); }
+                stored.secondPicRef = picId;
+                const updated: IUserIDVerification = await this._idVerificationRepo.updateIDVerification(stored.id, stored);
+
+                return resolve(stored);
             } catch (error) {
                 return reject(error);
             }

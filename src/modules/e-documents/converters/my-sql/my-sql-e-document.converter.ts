@@ -9,21 +9,19 @@ export class MySqlEDocumentConverter implements IDualConverter<IEDocument, IDocu
     converDomainToDBModel(raw: IEDocument): IDocumentMySql {
         if (!raw) { return null; }
         return {
-            UsersDocumentID: raw.id,
-            UsersDocumentOwnerID: raw.ownerId,
-            UsersDocumentRawRef: raw.rawReference,
-            UsersDocumentTypeID: raw.typeId,
-            UsersDocumentUploadDate: raw.uploadDate
+            DocumentID: raw.id,
+            DocumentRawRef: raw.rawReference,
+            DocumentTypeID: raw.typeId,
+            DocumentUploadDate: raw.uploadDate
         }
     }
     convertDBModelToDomain(raw: IDocumentMySql): IEDocument {
         if (!raw) { return null; }
         return {
-            id: raw.UsersDocumentID,
-            ownerId: raw.UsersDocumentOwnerID,
-            rawReference: raw.UsersDocumentRawRef,
-            typeId: raw.UsersDocumentTypeID,
-            uploadDate: raw.UsersDocumentUploadDate
+            id: raw.DocumentID,
+            rawReference: raw.DocumentRawRef,
+            typeId: raw.DocumentTypeID,
+            uploadDate: raw.DocumentUploadDate
         }
     }
     converManyDomainToDBModel(raw: IEDocument[]): IDocumentMySql[] {

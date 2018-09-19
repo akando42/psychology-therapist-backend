@@ -14,5 +14,7 @@ export interface IUserProfileService {
 
     verifiedUserIdentity(id: number): Promise<IUser>;
 
-    createVerificationReport(verifi: IUserIDVerification): Promise<IUserIDVerification>
+    createVerificationReport(verifi: IUserIDVerification): Promise<IUserIDVerification>;
+
+    pushSecondPicVerificationReport(picId: number, reportId: number): Promise<IUserIDVerification>;
 }

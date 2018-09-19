@@ -6,6 +6,7 @@ import { MySqlUsersRepository } from "./dao/my-sql/repositories/my-sql-users.rep
 import { MySqlLocationsRepository } from "./dao/my-sql/repositories/my-sql-locations.repository";
 import { MySqlUserDocumentsRepository } from "./dao/my-sql/repositories/my-sql-user-documents.repository";
 import { MySqlUsersIDVerificationsRepository } from "./dao/my-sql/repositories/my-sql-users-id-verifications.repository";
+import { TODDocumentsModule } from "../e-documents";
 
 //make repositories;
 const mysqlUsersProfileRepo = new MySqlUsersRepository();
@@ -21,7 +22,7 @@ const usersComponent = new UsersProfileComponent(genericService);
 // const locationsComponent = new LocationsComponent();
 
 
-const TODUsersModule = new UsersImplModule(usersComponent);
+const TODUsersModule = new UsersImplModule(usersComponent,null,TODDocumentsModule);
 
 
 export {

@@ -4,12 +4,14 @@ import { LocationsComponent } from "./locations/locations.component";
 import { UsersProfileComponent } from "./user-profile/user-profile.component";
 import { IDocumentUploadDTO } from "../../../dto/document-upload.dto";
 import { TODResponse } from "../../../dto/tod-response";
+import { AbstractDocumentModule } from "../../e-documents/core/abstract-documents.module";
 
 
 export abstract class AbstractUsersModule {
     constructor(
         protected _userProfilesComponent: UsersProfileComponent,
-        protected _locationsComponent: LocationsComponent
+        protected _locationsComponent: LocationsComponent,
+        protected _documentsModule: AbstractDocumentModule
     ) { }
 
     abstract createUser(user: IUser, roleId: number): Promise<IUser>;
@@ -28,7 +30,8 @@ export abstract class AbstractUsersModule {
 
     abstract uploadIDDocument(document: IDocumentUploadDTO): Promise<TODResponse>;
 
-    abstract getDocumentRaw(documentRawid: number): Promise<TODResponse>;
+    abstract uploadSecondIdVerificationPic(document: IDocumentUploadDTO, userId: number): Promise<TODResponse>;
+
 
 
 } 

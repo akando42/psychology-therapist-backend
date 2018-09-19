@@ -9,7 +9,7 @@ export abstract class AbstractDao<T> {
 
     create(newObj: T): Promise<string> {
         return new Promise(async (resolve, reject) => {
-            console.log('attempting to create', newObj);
+            // console.log('attempting to create', newObj);
 
             const query: string = `INSERT INTO ${this.table} SET ?`;
 
@@ -25,11 +25,12 @@ export abstract class AbstractDao<T> {
     deleteOne(id: { _id: string }): Promise<{ id: string; success: boolean; }> {
         return new Promise(async (resolve, reject) => {
 
-        })
+        });
     }
+
     findOneAndUpdate(query, model: T): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
-
+            console.log(query)
             MySqlConnection.pool.query(query, [model], (err, result) => {
                 if (err) {
                     console.log('findOneAndUpdate', err['code'])

@@ -4,6 +4,6 @@ export interface ILocationMySql {
     LocationCountry?: string;
     LocationState?: string;
     LocationStringAdress?: string;
-    LocationLat?: number
-    LocationLng?: number
+    LocationLatitude?: number
+    LocationLongitude?: number
 }

@@ -9,8 +9,8 @@ export class MySqlLocationsConverter implements IDualConverter<ILocation, ILocat
         return {
             LocationCountry: raw.stringAdress,
             LocationID: raw.id,
-            LocationLat: raw.lat,
-            LocationLng: raw.lng,
+            LocationLatitude: raw.lat,
+            LocationLongitude: raw.lng,
             LocationState: raw.state,
             LocationStringAdress: raw.stringAdress
         }
@@ -21,8 +21,8 @@ export class MySqlLocationsConverter implements IDualConverter<ILocation, ILocat
         return {
             country: raw.LocationCountry,
             id: raw.LocationID,
-            lat: raw.LocationLat,
-            lng: raw.LocationLng,
+            lat: raw.LocationLatitude,
+            lng: raw.LocationLongitude,
             state: raw.LocationState,
             stringAdress: raw.LocationStringAdress
         }

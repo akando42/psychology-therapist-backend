@@ -18,9 +18,11 @@ export class DocumentModuleImpl extends AbstractDocumentModule {
     uploadDocumentAsBlob(document: IDocumentUploadDTO): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
-                const uploadRef = this._documentsComponent.uploadDocument(document);
+                const uploadRef = await this._documentsComponent.uploadDocument(document);
+                console.log('upload result', uploadRef)
+                return resolve({ payload: uploadRef, timestamp: new Date() })
             } catch (error) {
-
+                return reject({ error: error })
             }
         });
     }

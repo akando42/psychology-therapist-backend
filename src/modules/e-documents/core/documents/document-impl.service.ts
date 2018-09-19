@@ -19,7 +19,7 @@ export class DocumentServiceImpl implements IDocumentService {
     uploadDocument(document: IDocumentUploadDTO): Promise<IEDocument> {
         return new Promise<IEDocument>(async (resolve, reject) => {
             try {
-                console.log(document)
+                console.log('SERVICE', document)
                 if (isNullOrUndefined(document)) {
                     return reject({ message: 'no document provided' });
                 }
@@ -29,12 +29,16 @@ export class DocumentServiceImpl implements IDocumentService {
                     await this._rawDocumentRepository.saveRawDocument(document.raw);
 
                 document.rawReference = rawDocument
+                document.uploadDate = new Date().getTime();
 
                 const documentRef: IEDocument =
                     await this._documentsRefRepository.createDocumentRef(document);
 
                 return resolve(documentRef);
             } catch (error) {
+                //rollback traansaction here deliting everithing created 
+                //then validation should  be before trying to save any part.
+                console.log(error)
                 return reject(error);
             }
         });

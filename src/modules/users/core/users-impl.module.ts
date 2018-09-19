@@ -8,6 +8,8 @@ import { TODResponse } from "../../../dto/tod-response";
 import { IEDocument } from "../../../models/e-document";
 import { resolve } from "dns";
 import { reject } from "q";
+import { AbstractDocumentModule } from "../../e-documents/core/abstract-documents.module";
+import { isNullOrUndefined } from "util";
 
 
 export class UsersImplModule extends AbstractUsersModule {
@@ -15,9 +17,10 @@ export class UsersImplModule extends AbstractUsersModule {
     constructor(
         userProfileComponent: UsersProfileComponent,
         // userDocumentsComponent?: UserDocumentsComponent,
-        locationComponent?: LocationsComponent
+        locationComponent?: LocationsComponent,
+        documentsModule?: AbstractDocumentModule
     ) {
-        super(userProfileComponent, locationComponent);
+        super(userProfileComponent, locationComponent, documentsModule);
     }
 
     createUser(user: IUser, roleid: number): Promise<IUser> {
@@ -49,19 +52,30 @@ export class UsersImplModule extends AbstractUsersModule {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
 
-                //upload document
-                // const docRef: IEDocument = await this._userDocumentsComponent.uploadDocument(document);
-                // //create a verification report
-                // const verification = await this._userProfilesComponent
-                //     .createVerificationReport({ documentRef: docRef.id, status: 'pending' })
-                // //after upload document should create a task to document verification.
-                // // Tod
-                // const response: TODResponse = {
-                //     message: 'document upladed',
-                //     payload: docRef,
-                //     timestamp: new Date()
-                // };
-                // return resolve(response);
+                if (isNullOrUndefined(document.indentificationID)) {
+                    return reject({ message: 'no document id provided' })
+                }
+
+                const { payload } = await this._documentsModule.uploadDocumentAsBlob(document);
+                //create a verification report
+                const verification = await this._userProfilesComponent
+                    .createVerificationReport({
+                        indentificationID: document.indentificationID,
+                        expirationDate: document.expirationDate,
+                        documentRef: payload,
+                        status: 'pending',
+                        userId: document.userId
+                    })
+                //after upload document should create a task to document verification. on asinc way
+                //but need to find a way to handle a bad, so probably make a asigned task on verification
+
+                // Tod
+                const response: TODResponse = {
+                    message: 'Id verification uploaded succesfully ',
+                    payload: { success: true },
+                    timestamp: new Date()
+                };
+                return resolve(response);
 
             } catch (error) {
                 const badResponse: TODResponse = {
@@ -73,6 +87,27 @@ export class UsersImplModule extends AbstractUsersModule {
                 return reject(badResponse);
             }
         });
+    }
+
+    uploadSecondIdVerificationPic(document: IDocumentUploadDTO, userid: number): Promise<TODResponse> {
+        return new Promise<TODResponse>(async (resolve, reject) => {
+            try {
+                //upload the file and get the id of the document.
+                document.typeId = 4;//todo reservar uno para el tipo de documento de que se usap ara grabar algo.
+                const { payload } = await this._documentsModule.uploadDocumentAsBlob(document);
+
+                const result = await this._userProfilesComponent
+                    .pushSecondPictureToVerificationReport(payload, userid);
+
+
+                
+
+                return resolve({ timestamp: new Date(), message: 'second picture updated', payload: { success: true } });
+
+            } catch (error) {
+                return reject({ error: error });
+            }
+        })
     }
 
     getDocumentRaw(documentRawid: number): Promise<TODResponse> {

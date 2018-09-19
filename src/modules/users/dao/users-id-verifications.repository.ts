@@ -11,5 +11,7 @@ export abstract class AbstractUsersIDVerificationsRepository extends AbstractRep
 
     abstract updateIDVerification(id: number, updated: IUserIDVerification): Promise<any>;
 
-
+    abstract getReportByID(id: number): Promise<IUserIDVerification>;
+    
+    abstract getReportByUserId(id: number): Promise<IUserIDVerification>;
 }

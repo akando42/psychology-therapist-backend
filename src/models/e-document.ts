@@ -7,5 +7,4 @@ export interface IEDocument {
     rawReference?: number;
     typeId?: number;
     uploadDate?: number;
-    ownerId?: number;
 }

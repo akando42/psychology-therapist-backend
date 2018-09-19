@@ -2,30 +2,25 @@ import { Router, Request, Response } from "express";
 import { TODDocumentsModule } from ".";
 
 
-export class DocumentsRouter {
 
+
+export class DocumentsRouter {
     constructor() { }
 
     init(): Router {
-        const router: Router = Router();
-
-        router.get('/documents/types', (req, res) => this.getAllDocuments(req, res));
-
+        let router = Router();
+        router.get('/documents/types', this.getDocumentsTypes.bind(this));
         return router;
-
     }
 
-    getAllDocuments(req: Request, res: Response): void {
+
+    getDocumentsTypes(req: Request, res: Response): void {
         TODDocumentsModule.getAllDocumentsType()
-            .then((result: any) => {
-                //sent the response.
-                res.status(200).json(result);
-            }).catch((err) => {
-                //handler error propertly
-                res.status(500).json(err)
-                console.log(err)
-            });
+            .then((response) => {
+                res.status(200).send(response);
+            })
+            .catch((error) => {
+                res.status(400).send(error);
+            })
     }
-
-
 }

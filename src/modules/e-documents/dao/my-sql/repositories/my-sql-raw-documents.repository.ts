@@ -7,13 +7,13 @@ import { MySqlRawDocumentConverter } from "../../../converters/my-sql/my-sql-raw
 export class MySqlRawDocumentRepository extends AbstractRawDocumentRepository {
 
     constructor() {
-        super(new GenericDao('DOCUMENTS_RAW'), new MySqlRawDocumentConverter());
+        super(new GenericDao('RAW_DOCUMENTS'), new MySqlRawDocumentConverter());
     }
 
     getRawDocument(rawDocumentId: number): Promise<IRawDocument> {
         throw new Error("Method not implemented.");
     }
-    saveRawDocument(rawDocumentId: IRawDocument): Promise<number> {
-        throw new Error("Method not implemented.");
+    saveRawDocument(rawDocument: IRawDocument): Promise<any> {
+        return super.create(rawDocument)
     }
 }
