@@ -40,6 +40,30 @@ export abstract class AbstractDocumentModule {
         })
     }
 
+    getAllDocumentsCategories(): Promise<TODResponse> {
+        return new Promise<TODResponse>(async (resolve, reject) => {
+            try {
+                const types: IDocumentCategory[] = await this._documentsClasificationComponent.getAllDocumentsCategories();
+
+                const result: TODResponse = {
+                    message: 'success request',
+                    payload: types,
+                    timestamp: new Date()
+                }
+                return resolve(result)
+
+            } catch (error) {
+
+                const badResult: TODResponse = {
+                    message: 'Sorry!,something went wrong',
+                    error: error,
+                    timestamp: new Date()
+                }
+                return reject(badResult)
+            }
+        })
+    }
+
     abstract uploadDocumentAsBlob(doc): Promise<TODResponse>;
 
     //basic crud for types and categories

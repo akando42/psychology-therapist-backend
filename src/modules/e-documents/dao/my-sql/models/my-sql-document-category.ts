@@ -1,7 +1,7 @@
 
 
 export interface IDocumentsCategoryMySql {
-    DocumentsCategoryID?: number;
-    DocumentsCategoryName?: string;
-    DocumentsCategoryDescription?: string;
+    DocumentCategoryID?: number;
+    DocumentCategoryName?: string;
+    DocumentCategoryDescription?: string;
 }

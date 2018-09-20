@@ -15,7 +15,11 @@ export class DocumentsClasificationComponent {
             return resolve(await this._documentsTypeService.getAllDocumentsType());
         });
     }
-
+    getAllDocumentsCategories(): Promise<IDocumentCategory[]> {
+        return new Promise<IDocumentType[]>(async (resolve, reject) => {
+            return resolve(await this._documentsCategoriesService.getAllDocumentsCategories());
+        });
+    }
     createCategory(category: IDocumentCategory): Promise<any> {
         return this._documentsCategoriesService.createCategory(category);
     }

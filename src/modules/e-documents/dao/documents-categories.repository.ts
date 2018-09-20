@@ -6,5 +6,8 @@ export abstract class AbstractDocumentsCategoriesRepository extends AbstractRepo
         super(dao, converter)
     }
 
+    abstract getAllDocumentsCategories(): Promise<IDocumentCategory[]>;
+    
+    abstract getCategoryById(id): Promise<IDocumentCategory>;
 
 }

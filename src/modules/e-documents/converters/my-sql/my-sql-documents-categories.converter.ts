@@ -7,17 +7,17 @@ export class MySqlDocumentsCategoriesConverter implements IDualConverter<IDocume
     converDomainToDBModel(raw: IDocumentCategory): IDocumentsCategoryMySql {
         if (!raw) { return null; }
         return {
-            DocumentsCategoryDescription: raw.description,
-            DocumentsCategoryID: raw.id,
-            DocumentsCategoryName: raw.name
+            DocumentCategoryDescription: raw.description,
+            DocumentCategoryID: raw.id,
+            DocumentCategoryName: raw.name
         }
     }
     convertDBModelToDomain(raw: IDocumentsCategoryMySql): IDocumentCategory {
         if (!raw) { return null; }
         return {
-            description: raw.DocumentsCategoryDescription,
-            id: raw.DocumentsCategoryID,
-            name: raw.DocumentsCategoryName
+            description: raw.DocumentCategoryDescription,
+            id: raw.DocumentCategoryID,
+            name: raw.DocumentCategoryName
         }
     }
     converManyDomainToDBModel(raw: IDocumentCategory[]): IDocumentsCategoryMySql[] {
