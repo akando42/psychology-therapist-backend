@@ -23,6 +23,9 @@ export class DocumentsClasificationComponent {
     createCategory(category: IDocumentCategory): Promise<any> {
         return this._documentsCategoriesService.createCategory(category);
     }
+    deleteCategory(categoryId: any): Promise<any> {
+        return this._documentsCategoriesService.deleteCategory(categoryId);
+    }
 
     createDocType(type: IDocumentType): Promise<any> {
         return this._documentsTypeService.createDocType(type);

@@ -27,13 +27,25 @@ export class DocumentsCategoriesImplService implements IDocumentsCategoriesServi
             } catch (error) {
                 return reject(error);
             }
-        })
+        });
     }
     updateCategory(categoryId: number, category: IDocumentCategory): Promise<number> {
         throw new Error("Method not implemented.");
     }
     deleteCategory(categoryId: number): Promise<number> {
-        throw new Error("Method not implemented.");
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                if (isNullOrUndefined(categoryId)) {
+                    return reject({ message: 'no id provided provided' });
+                }
+                const deleted = await this._documentCategoriesRepository.deleteDocumentCategory(categoryId);
+                return resolve(true);
+
+            } catch (error) {
+                console.log(error)
+                return reject(error);
+            }
+        });
     }
 
 }

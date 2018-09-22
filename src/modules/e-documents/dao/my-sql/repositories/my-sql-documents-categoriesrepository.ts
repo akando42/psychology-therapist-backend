@@ -4,6 +4,7 @@ import { MySqlDocumentsCategoriesConverter } from "../../../converters/my-sql/my
 import { IDocumentCategory } from "../../../../../models/document-category";
 import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
 import { IDocumentsCategoryMySql } from "../models/my-sql-document-category";
+import { DeleteQuery } from "../../../../../query-spec/my-sql/delete-query";
 
 
 export class MySqlDocumentsCategoriesRepository extends AbstractDocumentsCategoriesRepository {
@@ -17,6 +18,11 @@ export class MySqlDocumentsCategoriesRepository extends AbstractDocumentsCategor
     }
     getAllDocumentsCategories(): Promise<IDocumentCategory[]> {
         return super.getAllBy('SELECT * FROM DOCUMENTS_CATEGORIES');
+    }
+
+    deleteDocumentCategory(id: any): Promise<any> {
+        return super.delete(new DeleteQuery(<IDocumentsCategoryMySql>{ DocumentCategoryID: id })
+            .toDBQuery('DOCUMENTS_CATEGORIES'));
     }
 }
 

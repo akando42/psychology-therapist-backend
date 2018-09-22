@@ -14,6 +14,7 @@ export class DocumentsRouter {
         //categories
         router.get('/documents/categories', this.getDocumentsCategories.bind(this));
         router.post('/documents/categories', this.createDocumentCategory.bind(this));
+        router.delete('/documents/categories/:id', this.deleteDocumentCategory.bind(this));
         return router;
     }
 
@@ -41,6 +42,16 @@ export class DocumentsRouter {
 
     createDocumentCategory(req: Request, res: Response): void {
         TODDocumentsModule.createCategory(req.body)
+            .then((response) => {
+                res.status(200).send(response);
+            })
+            .catch((error) => {
+                res.status(400).send(error);
+            });
+    }
+
+    deleteDocumentCategory(req: Request, res: Response): void {
+        TODDocumentsModule.deleteCategory(req.params['id'])
             .then((response) => {
                 res.status(200).send(response);
             })

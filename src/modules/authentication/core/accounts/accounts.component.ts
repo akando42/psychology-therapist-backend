@@ -3,8 +3,7 @@ import * as bc from 'bcrypt';
 import { IAccount } from "../../../../models/account";
 import { IAccountsService } from "./accounts.service.interface";
 import { IResetPasswordRequest } from '../../../../models/reset-password-request';
-import { IAccountInvite } from '../../../../models/account-invite';
-import { IInvitationService } from '../invitations/invitations.service.interface';
+import { ICabinetInvitation } from '../../../../models/cabinet-invitation';
 import { UsersProfileComponent } from '../../../users/core/user-profile/user-profile.component';
 import { IUser } from '../../../../models/user';
 
@@ -13,7 +12,6 @@ export class AccountsComponent {
 
     constructor(
         private _acountService: IAccountsService,
-        private _invitationsService: IInvitationService,
         private _userComponent: UsersProfileComponent,
         private _emailService?: any
     ) { }
@@ -159,15 +157,7 @@ export class AccountsComponent {
                 if (exist) {
                     return reject(false);
                 }
-                const invitation: IAccountInvite = await this._invitationsService.getInvitationByEmail(email);
-                //still on recerved;
-                if (!invitation) {
-                    return resolve(true);
-                }
-                if (invitation.expired) {
-                    return resolve(true);
-                }
-
+           
                 return resolve(true);
 
             } catch (error) {

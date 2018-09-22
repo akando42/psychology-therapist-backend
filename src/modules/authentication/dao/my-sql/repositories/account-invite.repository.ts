@@ -2,29 +2,29 @@ import { IResetPasswordRequest } from "../../../../../models/reset-password-requ
 import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
 import { ResetPasswordRequestsConverterInstance } from "../../../converters/my-sql/reset-password-request.converter";
 import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
-import { AbstractAccountInviteRepository } from "../../repositories/account-invite.repositoty";
-import { IAccountInvite } from "../../../../../models/account-invite";
-import { MySqlAccountInviteConverter } from "../../../converters/my-sql/my-sql-account-invite.converter";
+import { AbstractCabinetInvitationRepository } from "../../../../admin/dao/repositories/cabinet-invitation.repositoty";
+import { ICabinetInvitation } from "../../../../../models/cabinet-invitation";
+import { MySqlCabinetInvitationConverter } from "../../../converters/my-sql/my-sql-account-invite.converter";
 
 
 
-export class MySqlAccountInviteRepository extends AbstractAccountInviteRepository {
+export class MySqlCabinetInvitationRepository extends AbstractCabinetInvitationRepository {
     constructor() {
-        super(new GenericDao('CABINET_INVITATIONS'), new MySqlAccountInviteConverter());
+        super(new GenericDao('CABINET_INVITATIONS'), new MySqlCabinetInvitationConverter());
     }
 
-    getById(id: string): Promise<IAccountInvite> {
-        return super.getBy(new GetByQuery({ AccountInviteID: id })
+    getById(id: string): Promise<ICabinetInvitation> {
+        return super.getBy(new GetByQuery({ CabinetInvitationID: id })
             .toDBQuery('CABINET_INVITATIONS'));
     }
 
-    getByEmail(email: string): Promise<IAccountInvite> {
-        return super.getBy(new GetByQuery({ AccountInviteEmail: email })
+    getByEmail(email: string): Promise<ICabinetInvitation> {
+        return super.getBy(new GetByQuery({ CabinetInvitationEmail: email })
             .toDBQuery('CABINET_INVITATIONS'));
     }
     
-    getInviteByToken(token: string): Promise<IAccountInvite> {
-        return super.getBy(new GetByQuery({ AccountInviteToken: token })
+    getInviteByToken(token: string): Promise<ICabinetInvitation> {
+        return super.getBy(new GetByQuery({ CabinetInvitationToken: token })
             .toDBQuery('CABINET_INVITATIONS'));
     }
 }

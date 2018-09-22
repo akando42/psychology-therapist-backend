@@ -1,39 +1,39 @@
 import { IAccount } from "../../../../models/account";
 import { IDualConverter } from "../../../../behavior/converters/converter.interface";
-import { IAccountInvite } from "../../../../models/account-invite";
-import { IAccountInviteMySql } from "../../dao/my-sql/models/account-invite-my-sql";
+import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
+import { ICabinetInvitationMySql } from "../../../admin/dao/my-sql/models/cabinet-invitation-my-sql";
 
 
-export class MySqlAccountInviteConverter implements IDualConverter<IAccountInvite, IAccountInviteMySql> {
-    converDomainToDBModel(raw: IAccountInvite): IAccountInviteMySql {
+export class MySqlCabinetInvitationConverter implements IDualConverter<ICabinetInvitation, ICabinetInvitationMySql> {
+    converDomainToDBModel(raw: ICabinetInvitation): ICabinetInvitationMySql {
         if (!raw) { return null }
         console.log('vonverting',raw)
         return {
-            AccountInviteDate: raw.date,
-            AccountInviteEmail: raw.email,
-            AccountInviteID: raw.id,
-            AccountInviteInviterID: raw.inviterId,
-            AccountInviteRole: raw.role,
-            AccountInviteToken: raw.token,
-            AccountInviteExpired: raw.expired
+            CabinetInvitationDate: raw.date,
+            CabinetInvitationEmail: raw.email,
+            CabinetInvitationID: raw.id,
+            CabinetInvitationInviterID: raw.inviterId,
+            CabinetInvitationRole: raw.role,
+            CabinetInvitationToken: raw.token,
+            CabinetInvitationExpired: raw.expired
         };
     }
-    convertDBModelToDomain(raw: IAccountInviteMySql): IAccountInvite {
+    convertDBModelToDomain(raw: ICabinetInvitationMySql): ICabinetInvitation {
         if (!raw) { return null }
         return {
-            date: raw.AccountInviteDate,
-            email: raw.AccountInviteEmail,
-            expired: raw.AccountInviteExpired,
-            id: raw.AccountInviteID,
-            inviterId: raw.AccountInviteInviterID,
-            role: raw.AccountInviteRole,
-            token: raw.AccountInviteToken
+            date: raw.CabinetInvitationDate,
+            email: raw.CabinetInvitationEmail,
+            expired: raw.CabinetInvitationExpired,
+            id: raw.CabinetInvitationID,
+            inviterId: raw.CabinetInvitationInviterID,
+            role: raw.CabinetInvitationRole,
+            token: raw.CabinetInvitationToken
         };
     }
-    converManyDomainToDBModel(raw: IAccountInvite[]): IAccountInviteMySql[] {
+    converManyDomainToDBModel(raw: ICabinetInvitation[]): ICabinetInvitationMySql[] {
         return raw.map((item) => this.converDomainToDBModel(item));
     }
-    convertManyDBModelToDomain(raw: IAccountInviteMySql[]): IAccountInvite[] {
+    convertManyDBModelToDomain(raw: ICabinetInvitationMySql[]): ICabinetInvitation[] {
         return raw.map((item) => this.convertDBModelToDomain(item));
     }
 

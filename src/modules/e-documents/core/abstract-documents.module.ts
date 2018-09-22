@@ -82,7 +82,11 @@ export abstract class AbstractDocumentModule {
     deleteCategory(id: number): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
+                console.log('deliting',id)
+                const created = await this._documentsClasificationComponent.deleteCategory(id);
+                return resolve(this._createTODDTO(created, null));
             } catch (error) {
+                return reject(this._createTODDTO(null, error));
 
             }
         });

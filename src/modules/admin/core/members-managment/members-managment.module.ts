@@ -1,7 +1,6 @@
 import { AbstractAuthenticationModule } from "../../../authentication/core/abstract-authentication.module";
 import { INewAccountDTO } from "../../../../dto/new-account.dto";
 import { TODResponse } from "../../../../dto/tod-response";
-import { MailGunEmailServiceInstance } from "../../../communication/email/mailgun-email.service";
 import { IUser } from "../../../../models/user";
 import { IActionRequest } from "../../../../models/action-request";
 import { ICabinetService } from "../cabinet/cabinet.service.interface";

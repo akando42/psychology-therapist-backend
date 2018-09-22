@@ -4,7 +4,6 @@ import { TODResponse } from "../../../dto/tod-response";
 import { EmailService } from "../../../behavior/services/email.service";
 import { UsersRolEnum } from "../../../enums/users-rol.enum";
 import { AccountsComponent } from "./accounts/accounts.component";
-import { InvitationsComponent } from "./invitations/invitations.components";
 import { AbstractUsersModule } from "../../users/core/users.module";
 import { AbtractCommunicationModule } from "../../communication/core/comunication.module";
 import { AbstractHumanResourcesModule } from "../../human-resources/core/abstract-human-resources.module";
@@ -16,7 +15,6 @@ export abstract class AbstractAuthenticationModule {
     constructor(
         protected _usersModule?: AbstractUsersModule,
         protected _accountsComponent?: AccountsComponent,
-        protected _invitationsComponent?: InvitationsComponent,
         protected _communicationModule?: AbtractCommunicationModule,
         protected _humanResourcesModule?: AbstractHumanResourcesModule,
         protected _adminModule?: AbstractAdminModule,

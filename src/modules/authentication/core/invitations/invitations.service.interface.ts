@@ -1,14 +1,13 @@
-import { IAccountInvite } from "../../../../models/account-invite";
 
 
 
 export interface IInvitationService {
 
-    createInvitation(invitation: IAccountInvite): Promise<IAccountInvite>;
+    createInvitation(invitation: ICabinetInvitation): Promise<ICabinetInvitation>;
 
-    getInvitationByEmail(token: string): Promise<IAccountInvite>;
+    getInvitationByEmail(token: string): Promise<ICabinetInvitation>;
 
-    getInvitationByToken(token: string): Promise<IAccountInvite>;
+    getInvitationByToken(token: string): Promise<ICabinetInvitation>;
 
     checkEmailDisponibility(email: string): Promise<boolean>;
 }

@@ -6,9 +6,9 @@ import { MySqlConnection } from './database-connection/db-connection.mysql';
 import "reflect-metadata";
 import { createConnection } from 'typeorm';
 import { AuthenticationRouter } from './modules/authentication';
-import { AdminRouter } from './modules/admin/admin.module';
 import { DocumentsRouter } from './modules/e-documents/documents.router';
 import { UsersRouter } from './modules/users/users.router';
+import { AdminRouter } from './modules/admin/admin.router';
 const fileUpload = require('express-fileupload');
 
 export class API {

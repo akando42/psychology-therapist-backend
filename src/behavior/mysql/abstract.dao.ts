@@ -6,6 +6,18 @@ import { MySqlConnection } from "../../database-connection/db-connection.mysql";
 export abstract class AbstractDao<T> {
 
     constructor(protected table?: string) { };
+    query(query): Promise<any> {
+        return new Promise<any>(async (resolve, reject) => {
+
+            MySqlConnection.pool.query(query, (err, result) => {
+                if (err) {
+                    err['sql'] = null;
+                    return reject(err);
+                }
+                resolve(result);
+            });
+        });
+    }
 
     create(newObj: T): Promise<string> {
         return new Promise(async (resolve, reject) => {

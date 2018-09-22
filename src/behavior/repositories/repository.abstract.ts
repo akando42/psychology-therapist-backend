@@ -62,16 +62,22 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
         });
     }
 
-    delete(modelId: any): Promise<{ id: string, success: boolean }> {
+    delete(query: any): Promise<{ id: string, success: boolean }> {
         return new Promise<{ id: string, success: boolean }>((resolve, reject) => {
-            this._db.deleteOne({ _id: modelId })
+            console.log('repo')
+            console.log(query)
+            this._db.query(query)
                 .then((result: any) => {
-                    resolve({ id: modelId, success: result.ok === 1 ? true : false })
+                    console.log(result)
+                    resolve({ id: result, success: result.ok === 1 ? true : false })
                 })
-                .catch(reject);
+                .catch((err) => {
+                    console.log(err);
+                    reject(err)
+                });
         });
     }
-
+    // query spec approach to queries
     getBy(query: any): Promise<K> {
         console.log('Repository::attempting to query', query)
         return new Promise<K>((resolve, reject) => {

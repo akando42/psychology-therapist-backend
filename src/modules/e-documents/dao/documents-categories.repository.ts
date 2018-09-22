@@ -7,7 +7,10 @@ export abstract class AbstractDocumentsCategoriesRepository extends AbstractRepo
     }
 
     abstract getAllDocumentsCategories(): Promise<IDocumentCategory[]>;
-    
+
     abstract getCategoryById(id): Promise<IDocumentCategory>;
+
+
+    abstract deleteDocumentCategory(id: any): Promise<any>;
 
 }

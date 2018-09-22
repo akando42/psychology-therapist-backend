@@ -4,11 +4,13 @@ import { AbstractAuthenticationModule } from "../../../authentication/core/abstr
 import { TODResponse } from "../../../../dto/tod-response";
 import { IActionRequest } from "../../../../models/action-request";
 import { IUser } from "../../../../models/user";
+import { ICabinet } from "../../../../models/cabinet";
 
 
-export class CabinetCompont {
+export class CabinetComponent {
     constructor(
         protected _cabinetService: ICabinetService,
+        
     ) { }
 
     addToCabinet(inviterId: number, newMemberID: number): Promise<any> {
@@ -31,6 +33,16 @@ export class CabinetCompont {
         })
     }
 
+    createCabinet(cabinet: ICabinet): Promise<ICabinet> {
+        return new Promise<ICabinet>(async (resolve, reject) => {
+            try {
+                const cabinetCreated = await this._cabinetService.createCabinet(cabinet);
+                
+            } catch (error) {
+                return reject(error);
+            }
+        })
+    }
 
     requestActionToCabinetUser(memberId: string, request: IActionRequest): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {

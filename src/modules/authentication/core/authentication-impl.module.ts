@@ -9,7 +9,6 @@ import { UnverifiedAccountError } from '../../../errors/unverfied-account.error'
 import { InvalidCredentialsError } from '../../../errors/invalid-credentials.error';
 import { AccountsComponent } from './accounts/accounts.component';
 import { AbstractAuthenticationModule } from './abstract-authentication.module';
-import { InvitationsComponent } from './invitations/invitations.components';
 import { TODResponse } from '../../../dto/tod-response';
 import { AbstractUsersModule } from '../../users/core/users.module';
 import { AbtractCommunicationModule } from '../../communication/core/comunication.module';
@@ -23,7 +22,6 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
     constructor(
         _usersModule: AbstractUsersModule,
         _accountsComponent: AccountsComponent,
-        _invitationsComponent: InvitationsComponent,
         _communicationModule: AbtractCommunicationModule,
         _humanResourcesModule: AbstractHumanResourcesModule,
         _adminModule: AbstractAdminModule,
@@ -32,7 +30,6 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         super(
             _usersModule,
             _accountsComponent,
-            _invitationsComponent,
             _communicationModule,
             _humanResourcesModule,
             _adminModule
@@ -41,32 +38,33 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
 
     inviteUser(invitationRequest: { email: string; role: UsersRolEnum; inviterId: number; }): Promise<TODResponse> {
-        return new Promise<TODResponse>(async (resolve, reject) => {
-            try {
-                const invitation = await this._invitationsComponent.createInvitation(invitationRequest);
+        // return new Promise<TODResponse>(async (resolve, reject) => {
+        //     try {
+        //         const invitation = await this._invitationsComponent.createInvitation(invitationRequest);
 
-                const link = `http://localhost:4200/invite/${invitation.token}`
-                console.log('link', link);
+        //         const link = `http://localhost:4200/invite/${invitation.token}`
+        //         console.log('link', link);
 
-                this._communicationModule.sendEmailToOne(invitationRequest.email,
-                    {
-                        body: new InvitationEmailTemplate(link).getHtml(),
-                        subject: 'verification '
-                    });
+        //         this._communicationModule.sendEmailToOne(invitationRequest.email,
+        //             {
+        //                 body: new InvitationEmailTemplate(link).getHtml(),
+        //                 subject: 'verification '
+        //             });
 
-                const result: TODResponse = {
-                    message: 'invitation sent',
-                    payload: { success: true },
-                    timestamp: new Date()
-                }
+        //         const result: TODResponse = {
+        //             message: 'invitation sent',
+        //             payload: { success: true },
+        //             timestamp: new Date()
+        //         }
 
-                return resolve(result);
+        //         return resolve(result);
 
-            } catch (error) {
-                console.log(error);
-                return reject(error)
-            }
-        })
+        //     } catch (error) {
+        //         console.log(error);
+        //         return reject(error)
+        //     }
+        // })
+        return null;
     }
 
     signup(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
@@ -141,7 +139,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 return resolve({
                     auth: true, token: token,
                     data: { user: user, roleProfile: roleProfile.payload, role: role },
-                     message: 'succesfully authenticated'
+                    message: 'succesfully authenticated'
                 });
 
 
@@ -201,29 +199,30 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
     }
 
     signUpWithInvitation(inviteToken: string, newAccount: INewAccountDTO): Promise<any> {
-        return new Promise<any>(async (resolve, reject) => {
-            try {
-                const account: any = await this._invitationsComponent.signupInvited(inviteToken, newAccount);
+        // return new Promise<any>(async (resolve, reject) => {
+        //     try {
+        //         const account: any = await this._invitationsComponent.signupInvited(inviteToken, newAccount);
 
-                const result: TODResponse = {
-                    message: 'succefully registered',
-                    payload: { success: true },
-                    timestamp: new Date()
-                };
+        //         const result: TODResponse = {
+        //             message: 'succefully registered',
+        //             payload: { success: true },
+        //             timestamp: new Date()
+        //         };
 
-                return resolve(result);
+        //         return resolve(result);
 
-            } catch (error) {
+        //     } catch (error) {
 
-                const badResult: TODResponse = {
-                    message: 'Something when wrong sorry',
-                    error: error,
-                    timestamp: new Date()
-                };
+        //         const badResult: TODResponse = {
+        //             message: 'Something when wrong sorry',
+        //             error: error,
+        //             timestamp: new Date()
+        //         };
 
-                return reject(badResult);
-            }
-        })
+        //         return reject(badResult);
+        //     }
+        // })
+        return null;
     }
 
     validateTokenAndReset(token: string, newPassword: string): Promise<{ message: string, valid: boolean }> {
