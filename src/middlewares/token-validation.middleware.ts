@@ -14,6 +14,7 @@ export function TokenValidationMiddleware(req: Request, res: Response | any, nex
             }
             console.log(decoded)
             req['userId'] = decoded['userId'];
+            req['roleId'] = decoded['roleId'];
             next();
         });
 

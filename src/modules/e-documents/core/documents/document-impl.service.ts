@@ -19,10 +19,10 @@ export class DocumentServiceImpl implements IDocumentService {
     uploadDocument(document: IDocumentUploadDTO): Promise<IEDocument> {
         return new Promise<IEDocument>(async (resolve, reject) => {
             try {
-                console.log('SERVICE', document)
                 if (isNullOrUndefined(document)) {
                     return reject({ message: 'no document provided' });
                 }
+
 
                 // uploadDocument
                 const rawDocument: number =

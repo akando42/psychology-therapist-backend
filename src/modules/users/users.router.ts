@@ -51,7 +51,6 @@ export class UsersRouter {
 
         const { files, body } = <any>req;
         const { document } = files;
-        console.log(body)
 
         TODUsersModule.uploadSecondIdVerificationPic({
             raw: {

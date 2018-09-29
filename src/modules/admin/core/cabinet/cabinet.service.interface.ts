@@ -7,6 +7,9 @@ import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
 
 export interface ICabinetService {
 
+
+    getCabinetByAdminID(userId: number): Promise<ICabinet>;
+
     createCabinet(cabinet: ICabinet): Promise<ICabinet>;
 
     getCabinetUsersByAdminID(adminID: number): Promise<IUser[]>

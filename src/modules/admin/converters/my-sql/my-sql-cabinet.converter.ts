@@ -3,11 +3,11 @@ import { ICabinet } from "../../../../models/cabinet";
 import { ICabinetMySql } from "../../dao/my-sql/models/cabinet-my-sql";
 
 
-export class ActionRequestConverter implements IDualConverter<ICabinet, ICabinetMySql> {
+export class MySqlCabinetConverter implements IDualConverter<ICabinet, ICabinetMySql> {
     converDomainToDBModel(raw: ICabinet): ICabinetMySql {
         if (!raw) { return null }
         return {
-            CabinetAdminProfileID: raw.id,
+            CabinetAdminProfileID: raw.adminId,
             CabinetID: raw.id,
             CabinetName: raw.name
         }

@@ -1,11 +1,11 @@
 
 //todo move to global
 export class GetByQuery {
-    constructor(public query: any) {
+    constructor(public query: any, public table?: string) {
 
     }
 
-    toDBQuery(table:string): any {
+    toDBQuery(table?: string): any {
         let query = ''
         for (const key in this.query) {
             if (this.query.hasOwnProperty(key)) {
@@ -13,7 +13,7 @@ export class GetByQuery {
 
             }
         }
-        let q = `SELECT * FROM ${table} WHERE ${query.slice(0,query.length-4)}`
+        let q = `SELECT * FROM ${table || this.table} WHERE ${query.slice(0, query.length - 4)}`
         return q;
     }
 }

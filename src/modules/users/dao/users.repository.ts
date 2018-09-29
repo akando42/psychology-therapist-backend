@@ -1,17 +1,14 @@
 import { AbstractRepository } from "../../../behavior/repositories/repository.abstract";
 import { IUser } from "../../../models/user";
 
-export abstract class AbstractUsersRepository extends AbstractRepository<IUser>{
-    constructor(dbAccess, converter) {
-        super(dbAccess, converter);
-    }
+export interface AbstractUsersRepository {
+    
+     createUserProfile(user: IUser): Promise<IUser>;
 
-    abstract createUserProfile(user: IUser): Promise<IUser>;
+     getByEmail(email: string): Promise<IUser>;
 
-    abstract getByEmail(email: string): Promise<IUser>;
+     getById(id: number): Promise<IUser>;
 
-    abstract getById(id: number): Promise<IUser>;
-
-    abstract updateUser(id: any, data): Promise<IUser>;
+     updateUser(id: any, data): Promise<IUser>;
 
 }

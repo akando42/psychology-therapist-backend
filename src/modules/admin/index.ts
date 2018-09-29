@@ -5,21 +5,33 @@ import { MySqlAdminProfilesRepository } from "./dao/my-sql/repositories/my-sql-a
 import { AdminProfilesImplService } from "./core/admin-profile/admin-profiles-impl";
 import { AdminProfilesComponent } from "./core/admin-profile/admin-profiles.component";
 import { AdminModuleImpl } from "./core/admin-impl.module";
+import { CabinetInvitationsImplService } from "./core/cabinet/cabinet-invitation-impl.service";
+import { MySqlCabinetInvitationsRepository } from "./dao/my-sql/repositories/my-sql-cabinet-invitations.repository";
+import { TODCommunicationModule } from "../communication/core/tod-communication.module";
+import { TODCommunicationModuleInstance } from "../communication";
+import { TODUsersModule } from "../users";
 
 //cabinet
 //repositories
 const mySqlcabinetRepo = new MySqlCabinetsRepository();
 const mysqlAdminProfileRepo = new MySqlAdminProfilesRepository();
+const mysqlInvitationRepo = new MySqlCabinetInvitationsRepository();
 // services
 const cabinetService = new CabinetsImplService(mySqlcabinetRepo);
 const adminProfileService = new AdminProfilesImplService(mysqlAdminProfileRepo);
+const cabinetInvitatonService = new CabinetInvitationsImplService(mysqlInvitationRepo);
 
 // component
-const cabinetComponent = new CabinetComponent(cabinetService);
+const cabinetComponent = new CabinetComponent(cabinetService, cabinetInvitatonService);
 const adminProfileComponent = new AdminProfilesComponent(adminProfileService);
 
 //module
-const TODAdminModule = new AdminModuleImpl(adminProfileComponent, cabinetComponent);
+const TODAdminModule = new AdminModuleImpl(
+    adminProfileComponent,
+    cabinetComponent,
+    TODCommunicationModuleInstance,
+    TODUsersModule
+);
 
 export {
     cabinetComponent,

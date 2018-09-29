@@ -3,6 +3,8 @@ import { IDocumentType } from "../../../models/document-type";
 import { DocumentsComponent } from "./documents/documents.component";
 import { DocumentsClasificationComponent } from "./documents-type/documents-clasification.component";
 import { IDocumentCategory } from "../../../models/document-category";
+import { SystemDocumentsComponent } from "./system-documents/system-documents.component";
+import { UsersRolEnum } from "../../../enums/users-rol.enum";
 
 
 
@@ -12,6 +14,7 @@ export abstract class AbstractDocumentModule {
     constructor(
         protected _documentsComponent: DocumentsComponent,
         protected _documentsClasificationComponent: DocumentsClasificationComponent,
+        protected _systemDocumentsComponent: SystemDocumentsComponent,
     ) {
 
     }
@@ -20,6 +23,32 @@ export abstract class AbstractDocumentModule {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
                 const types: IDocumentType[] = await this._documentsClasificationComponent.getAllDocumentsType();
+
+                const result: TODResponse = {
+                    message: 'success request',
+                    payload: types,
+                    timestamp: new Date()
+                }
+                return resolve(result)
+
+            } catch (error) {
+
+                const badResult: TODResponse = {
+                    message: 'Sorry!,something went wrong',
+                    error: error,
+                    timestamp: new Date()
+                }
+                return reject(badResult)
+            }
+        })
+    }
+
+
+    getAllDocumentsTypeByCategory(category: any): Promise<TODResponse> {
+        return new Promise<TODResponse>(async (resolve, reject) => {
+            try {
+                const types: IDocumentType[] =
+                    await this._documentsClasificationComponent.getAllDocumentsType();
 
                 const result: TODResponse = {
                     message: 'success request',
@@ -66,6 +95,8 @@ export abstract class AbstractDocumentModule {
 
     abstract uploadDocumentAsBlob(doc): Promise<TODResponse>;
 
+    abstract uploadDocumentToFS(doc): Promise<TODResponse>;
+
     //basic crud for types and categories
 
     createCategory(category: IDocumentCategory): Promise<TODResponse> {
@@ -82,7 +113,7 @@ export abstract class AbstractDocumentModule {
     deleteCategory(id: number): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
-                console.log('deliting',id)
+                console.log('deliting', id)
                 const created = await this._documentsClasificationComponent.deleteCategory(id);
                 return resolve(this._createTODDTO(created, null));
             } catch (error) {
@@ -113,6 +144,37 @@ export abstract class AbstractDocumentModule {
         });
     }
 
+    async getSystemDocuments(): Promise<TODResponse> {
+        try {
+            const documents = await this._systemDocumentsComponent.getSystemDocuments();
+            return this._createTODDTO(documents, null);
+        } catch (error) {
+            return this._createTODDTO(null, error);
+        }
+
+    }
+
+    
+    async uploadSystemDocuments(doc): Promise<TODResponse> {
+        try {
+            const documents = await this._systemDocumentsComponent.uploadSystemDocument(doc);
+            return this._createTODDTO(documents, null);
+        } catch (error) {
+            return this._createTODDTO(null, error);
+        }
+
+    }
+
+    async getRequiredDocumentsByRole(role:UsersRolEnum): Promise<TODResponse> {
+        try {
+            const documents = await this._systemDocumentsComponent.getRequiredDocumentsByRole(role);
+            return this._createTODDTO(documents, null);
+        } catch (error) {
+            return this._createTODDTO(null, error);
+        }
+
+    }
+
 
     protected _createTODDTO(payload: any, error?: any): TODResponse {
         return {
@@ -122,4 +184,6 @@ export abstract class AbstractDocumentModule {
             payload: payload || null
         }
     }
+
+
 }

@@ -6,7 +6,7 @@ export class UpdateQuery {
 
     }
 
-    toDBQuery(table: string): any {
+    toDBQuery(table?: string): any {
         let query = ''
         for (const key in this.query) {
             if (this.query.hasOwnProperty(key)) {

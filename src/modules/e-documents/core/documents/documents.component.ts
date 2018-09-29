@@ -12,7 +12,7 @@ export class DocumentsComponent {
 
 
 
-    uploadDocument(document: IDocumentUploadDTO): Promise<IEDocument> {
+    uploadDocument(document: any): Promise<IEDocument> {
         return new Promise<IEDocument>(async (resolve, reject) => {
             try {
                 const savedRef: IEDocument = await this._documentService.uploadDocument(document);

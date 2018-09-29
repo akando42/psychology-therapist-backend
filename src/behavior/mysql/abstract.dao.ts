@@ -14,7 +14,7 @@ export abstract class AbstractDao<T> {
                     err['sql'] = null;
                     return reject(err);
                 }
-                resolve(result);
+                return resolve(result);
             });
         });
     }
@@ -24,7 +24,7 @@ export abstract class AbstractDao<T> {
             // console.log('attempting to create', newObj);
 
             const query: string = `INSERT INTO ${this.table} SET ?`;
-
+            console.log('creation', newObj)
             MySqlConnection.pool.query(query, newObj, (err, result) => {
                 if (err) {
                     err['sql'] = null;

@@ -18,7 +18,7 @@ export abstract class AbstractUsersModule {
 
     abstract updateUser(id: any, model: IUser): Promise<IUser>;
 
-    abstract getUserByEmail(id: string): Promise<IUser>;
+    abstract getUserByEmail(email: string): Promise<IUser>;
 
     abstract getUserById(id: number): Promise<IUser>;
 

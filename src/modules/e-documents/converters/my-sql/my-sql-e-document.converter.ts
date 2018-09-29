@@ -10,7 +10,7 @@ export class MySqlEDocumentConverter implements IDualConverter<IEDocument, IDocu
         if (!raw) { return null; }
         return {
             DocumentID: raw.id,
-            DocumentRawRef: raw.rawReference,
+            RawDocumentID: raw.rawReference,
             DocumentTypeID: raw.typeId,
             DocumentUploadDate: raw.uploadDate
         }
@@ -19,7 +19,7 @@ export class MySqlEDocumentConverter implements IDualConverter<IEDocument, IDocu
         if (!raw) { return null; }
         return {
             id: raw.DocumentID,
-            rawReference: raw.DocumentRawRef,
+            rawReference: raw.RawDocumentID,
             typeId: raw.DocumentTypeID,
             uploadDate: raw.DocumentUploadDate
         }

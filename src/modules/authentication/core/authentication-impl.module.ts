@@ -133,7 +133,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 }
 
                 const token = jwt.sign(
-                    { userId: account.userId },
+                    { userId: account.userId, roleId: roleProfile.payload.id },
                     process.env.SECRET_KEY, { expiresIn: 60000 });
 
                 return resolve({

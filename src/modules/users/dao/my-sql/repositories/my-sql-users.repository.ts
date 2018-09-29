@@ -1,28 +1,38 @@
 import { AbstractUsersRepository } from "../../users.repository";
-import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
 import { UpdateQuery } from "../../../../../query-spec/my-sql/update.query";
 import { IUser } from "../../../../../models/user";
 import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
 import { MySqlUsersConverterInstance } from "../../../converters/my-sql/my-sql-users.converter";
+import { Convert } from "../../../../../behavior/converters/converter.notation";
+import { GetByQuery as GetByQueryNot } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
+import { IUserMySql } from "../models/user-my-sql.model";
+import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
+import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
 
+@Repository('USERS')
+export class MySqlUsersRepository implements AbstractUsersRepository {
 
-export class MySqlUsersRepository extends AbstractUsersRepository {
     constructor() {
-        super(new GenericDao('USERS'), MySqlUsersConverterInstance);
     }
 
+    @CreateQuery({ return: true, primary: 'UserID' })
     createUserProfile(user: IUser): Promise<IUser> {
-        return super.create(user);
+        // return super.create(user);
+        return null;
     }
-    getByEmail(email: string): Promise<IUser> {
-        return super.getBy(new GetByQuery({ UserEmail: email }).toDBQuery('USERS'));
-    }
+    @Convert({
+        firstName: 'UserFirstName', lastName: 'UserLastName',
+        gender: 'UserGender', email: 'UserEmail', id: 'UserID', idVerified: 'UserIDVerified',
+    })
+    @GetByQueryNot({ 'UserEmail': 0 }, 'USERS')
+    getByEmail(email: string): Promise<IUser> { return null; }
 
-    getById(id: any): Promise<IUser> {
-        return super.getBy(new GetByQuery({ UserID: id }).toDBQuery('USERS'));
-    }
+    @Convert({
+        firstName: 'UserFirstName', lastName: 'UserLastName',
+        gender: 'UserGender', email: 'UserEmail', id: 'UserID', idVerified: 'UserIDVerified',
+    })
+    @GetByQueryNot({ 'UserID': 0 }, 'USERS')
+    getById(id: any): Promise<IUser> { return null; }
 
-    updateUser(id: any, data): Promise<IUser> {
-        return super.update(new UpdateQuery({ UserID: id }).toDBQuery('USERS'), data);
-    }
+    updateUser(id: any): Promise<IUser> { return null; }
 }

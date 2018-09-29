@@ -11,11 +11,20 @@ import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
 export class CabinetsImplService implements ICabinetService {
 
 
+
     constructor(private _cabinetRepository: AbstractCabinetsRepository) { }
+
+    async getCabinetByAdminID(userId: number): Promise<ICabinet> {
+        if (isNullOrUndefined(userId)) {
+            throw new Error('no admin id provided');
+        }
+        return this._cabinetRepository.getCabinetByAdminID(userId);
+    }
 
     requestActionToCabinetUser(memberId: string, request: IActionRequest) {
         throw new Error("Method not implemented.");
     }
+    
     inviteToCabinet(cabinetInvi: ICabinetInvitation): Promise<ICabinetInvitation> {
         return new Promise<ICabinetInvitation>(async (resolve, reject) => {
             try {
@@ -23,7 +32,7 @@ export class CabinetsImplService implements ICabinetService {
                     return reject({ message: 'no invitation provided' });
                 }
 
-
+                // const invitation
 
 
             } catch (error) {
@@ -32,19 +41,15 @@ export class CabinetsImplService implements ICabinetService {
         })
     }
 
-    createCabinet(cabinet: ICabinet): Promise<ICabinet> {
-        return new Promise<ICabinet>(async (resolve, reject) => {
-            try {
-                if (isNullOrUndefined(cabinet)) {
-                    return reject({ message: 'no cabinet provided.' });
-                }
+    async createCabinet(cabinet: ICabinet): Promise<ICabinet> {
 
-                const created: any = await this._cabinetRepository.createCabinet(cabinet);
+        if (isNullOrUndefined(cabinet)) {
+            throw { message: 'no cabinet provided.' };
+        }
 
-            } catch (error) {
-                return reject(error);
-            }
-        })
+        const created: any = await this._cabinetRepository.createCabinet(cabinet);
+        return created;
+
     }
 
     getCabinetUsersByAdminID(adminID: number): Promise<IUser[]> {

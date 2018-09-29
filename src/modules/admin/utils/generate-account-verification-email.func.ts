@@ -4,7 +4,7 @@ import { NewAccountVerificationTemplate } from "../../../email-templates/new-acc
 
 
 export function generateAccountVerificationEmail(user: IUser, account: IAccount): { subject: string, body: any } {
-    const fullName: string = `${user.basicInfo.firstName}  ${user.basicInfo.lastName}`;
+    const fullName: string = `${user.firstName}  ${user.lastName}`;
     const verificatinLink: string =
         `http://localhost:3000/api/v1/authentication/verify-email?email=${account.email}&hash=${account.verificationHash}'`;
 

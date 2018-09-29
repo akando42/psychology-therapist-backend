@@ -8,6 +8,10 @@ export abstract class AbstractDocumentsTypeRepository extends AbstractRepository
         super(dao, converter)
     }
 
+    abstract getById(typeId: number): Promise<IDocumentType[]>;
+
     abstract getAllDocumentTypes(): Promise<IDocumentType[]>;
+
+    abstract getAllDocumentTypesByCategory(category: any): Promise<IDocumentType[]>;
 
 }

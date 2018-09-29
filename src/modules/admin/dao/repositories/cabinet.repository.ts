@@ -5,15 +5,15 @@ import { IUser } from "../../../../models/user";
 import { ICabinet } from "../../../../models/cabinet";
 
 
-export abstract class AbstractCabinetsRepository extends AbstractRepository<any>{
-    constructor(dao, converter?) {
-        super(dao, converter);
-    }
+export interface AbstractCabinetsRepository {
 
-    abstract createCabinet(cabinet: ICabinet): Promise<any>;
 
-    abstract addToCabinet(adminID: number, invitedID: number): Promise<any>;
+    createCabinet(cabinet: ICabinet): Promise<any>;
 
-    abstract getAdminCabinetUsers(adminID: any): Promise<IUser[]>;
+    addToCabinet(adminID: number, invitedID: number): Promise<any>;
+
+    getCabinetByAdminID(adminID: number): Promise<any>;
+
+    getAdminCabinetUsers(adminID: any): Promise<IUser[]>;
 
 }

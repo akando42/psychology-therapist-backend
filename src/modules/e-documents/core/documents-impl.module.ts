@@ -5,10 +5,17 @@ import { IDocumentUploadDTO } from "../../../dto/document-upload.dto";
 
 export class DocumentModuleImpl extends AbstractDocumentModule {
 
-    constructor(documentsComponent, documentsTypeComponent) {
+    constructor(
+        documentsComponent,
+        documentsTypeComponent,
+        systemDocumentsComponent) {
         super(
             documentsComponent,
-            documentsTypeComponent);
+            documentsTypeComponent,
+            systemDocumentsComponent);
+    }
+    uploadDocumentToFS(doc: any): Promise<TODResponse> {
+        throw new Error("Method not implemented.");
     }
 
     uploadDocument(): Promise<TODResponse> {
@@ -27,5 +34,5 @@ export class DocumentModuleImpl extends AbstractDocumentModule {
         });
     }
 
-    
+
 }

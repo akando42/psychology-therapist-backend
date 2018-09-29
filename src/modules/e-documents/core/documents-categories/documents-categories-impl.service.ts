@@ -14,20 +14,15 @@ export class DocumentsCategoriesImplService implements IDocumentsCategoriesServi
         return this._documentCategoriesRepository.getAllDocumentsCategories();
     }
 
-    createCategory(category: IDocumentCategory): Promise<number> {
-        return new Promise<any>(async (resolve, reject) => {
-            try {
-                if (isNullOrUndefined(category)) {
-                    return reject({ message: 'no category provide' });
-                }
+    async createCategory(category: IDocumentCategory): Promise<any> {
 
-                const created = await this._documentCategoriesRepository.create(category);
-                return resolve(await this._documentCategoriesRepository.getCategoryById(created));
+        if (isNullOrUndefined(category)) {
+            throw new Error('no category provide');
+        }
+        console.log('service',category)
+        const created = await this._documentCategoriesRepository.create(category);
+        return await this._documentCategoriesRepository.getCategoryById(created);
 
-            } catch (error) {
-                return reject(error);
-            }
-        });
     }
     updateCategory(categoryId: number, category: IDocumentCategory): Promise<number> {
         throw new Error("Method not implemented.");

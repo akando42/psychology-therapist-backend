@@ -8,7 +8,7 @@ export class MySqlAdminProfilesConverter implements IDualConverter<IAdminProfile
         if (!raw) { return null }
         return {
             AdminProfileID: raw.id,
-            AdminProfileUserID: raw.userId,
+            UserID: raw.userId,
             AdminProfileStatus: raw.status
 
         }
@@ -19,7 +19,7 @@ export class MySqlAdminProfilesConverter implements IDualConverter<IAdminProfile
         return {
             id: raw.AdminProfileID,
             status: raw.AdminProfileStatus,
-            userId: raw.AdminProfileUserID
+            userId: raw.UserID
         }
     }
     converManyDomainToDBModel(raw: IAdminProfile[]): IAdminProfileMySql[] {

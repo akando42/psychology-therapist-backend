@@ -5,13 +5,22 @@ import { TODResponse } from "../../../../dto/tod-response";
 import { IActionRequest } from "../../../../models/action-request";
 import { IUser } from "../../../../models/user";
 import { ICabinet } from "../../../../models/cabinet";
+import { ICabinetInvitationService } from "./i-cabinet-invitation.service";
+import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
+import { isNullOrUndefined } from "util";
 
 
 export class CabinetComponent {
     constructor(
         protected _cabinetService: ICabinetService,
-        
+        protected _cabinetInvitationService: ICabinetInvitationService,
+
+
     ) { }
+
+    async getCabinetByAdminID(userId: number): Promise<ICabinet> {
+        return this._cabinetService.getCabinetByAdminID(userId)
+    }
 
     addToCabinet(inviterId: number, newMemberID: number): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
@@ -21,6 +30,17 @@ export class CabinetComponent {
                 return reject(error);
             }
         });
+    }
+
+    async inviteToCabinet(invitation: ICabinetInvitation): Promise<any> {
+        const cabinet = await this._cabinetService.getCabinetByAdminID(invitation.inviterId);
+        if (isNullOrUndefined(cabinet)) {
+            throw { message: 'cabinet dosent exist for that user' }
+        }
+        invitation.cabinetId = cabinet.id;
+        let invitationCreated = await this._cabinetInvitationService.createInvitation(invitation);
+        return await this._cabinetInvitationService.getInvitationById(invitationCreated) ;
+
     }
 
     getCabinetMemberByAdminID(adminID: number): Promise<IUser[]> {
@@ -33,15 +53,13 @@ export class CabinetComponent {
         })
     }
 
-    createCabinet(cabinet: ICabinet): Promise<ICabinet> {
-        return new Promise<ICabinet>(async (resolve, reject) => {
-            try {
-                const cabinetCreated = await this._cabinetService.createCabinet(cabinet);
-                
-            } catch (error) {
-                return reject(error);
-            }
-        })
+    async createCabinet(cabinet: ICabinet): Promise<ICabinet> {
+        const cabinetCreated = await this._cabinetService.createCabinet(cabinet);
+        return cabinetCreated;
+    }
+
+    async getCabinetInvitation(cabinetId: any): Promise<ICabinetInvitation[]> {
+        return this._cabinetInvitationService.getCabinetInvitations(cabinetId);
     }
 
     requestActionToCabinetUser(memberId: string, request: IActionRequest): Promise<TODResponse> {

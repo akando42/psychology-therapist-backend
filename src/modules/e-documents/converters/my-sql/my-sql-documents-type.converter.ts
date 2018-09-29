@@ -9,7 +9,8 @@ export class MySqlDocumentsTypeConverter implements IDualConverter<IDocumentType
         return {
             DocumentTypeDescription: raw.description,
             DocumentTypeID: raw.id,
-            DocumentTypeName: raw.name
+            DocumentTypeName: raw.name,
+            CategoryID:raw.categoryId
         }
     }
     convertDBModelToDomain(raw: IDocumentsTypeMySql): IDocumentType {
@@ -17,7 +18,8 @@ export class MySqlDocumentsTypeConverter implements IDualConverter<IDocumentType
         return {
             description: raw.DocumentTypeDescription,
             id: raw.DocumentTypeID,
-            name: raw.DocumentTypeName
+            name: raw.DocumentTypeName,
+            categoryId:raw.CategoryID
         }
     }
     converManyDomainToDBModel(raw: IDocumentType[]): IDocumentsTypeMySql[] {

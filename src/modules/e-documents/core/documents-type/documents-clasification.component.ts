@@ -10,9 +10,9 @@ export class DocumentsClasificationComponent {
         private _documentsCategoriesService: IDocumentsCategoriesService
     ) { }
 
-    getAllDocumentsType(): Promise<IDocumentType[]> {
+    getAllDocumentsType(query?:any): Promise<IDocumentType[]> {
         return new Promise<IDocumentType[]>(async (resolve, reject) => {
-            return resolve(await this._documentsTypeService.getAllDocumentsType());
+            return resolve(await this._documentsTypeService.getAllDocumentsType(query));
         });
     }
     getAllDocumentsCategories(): Promise<IDocumentCategory[]> {

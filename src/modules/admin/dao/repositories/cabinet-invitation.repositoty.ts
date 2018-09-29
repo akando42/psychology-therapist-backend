@@ -9,6 +9,7 @@ export abstract class AbstractCabinetInvitationRepository extends AbstractReposi
         super(dao, converter);
     }
 
+    abstract getByCabinetId(cabinetId: any): Promise<ICabinetInvitation[]>
     abstract getInviteByToken(token: string): Promise<ICabinetInvitation>
 
     abstract getByEmail(email: string): Promise<ICabinetInvitation>

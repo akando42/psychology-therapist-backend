@@ -7,4 +7,5 @@ export interface IEDocument {
     rawReference?: number;
     typeId?: number;
     uploadDate?: number;
+    path?: string;
 }

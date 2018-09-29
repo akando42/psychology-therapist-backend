@@ -16,8 +16,8 @@ export class MySqlAdminProfilesRepository extends AbstractAdminProfilesRepositor
         return super.delete(id);
     }
 
-    getAdminProfile(AdminProfileId: number): Promise<IAdminProfile> {
-        return super.getBy(new GetByQuery(<IAdminProfileMySql>{ AdminProfileID: AdminProfileId })
+    getAdminProfile(userId: number): Promise<IAdminProfile> {
+        return super.getBy(new GetByQuery(<IAdminProfileMySql>{ UserID: userId })
             .toDBQuery('ADMIN_PROFILES'))
     }
 

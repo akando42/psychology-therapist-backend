@@ -11,5 +11,5 @@ export interface ICabinetInvitationMySql {
     CabinetInvitationEmail?: string;
     CabinetInvitationRole?: UsersRolEnum;
     CabinetInvitationExpired?: boolean;
-
+    CabinetID?:number;
 }

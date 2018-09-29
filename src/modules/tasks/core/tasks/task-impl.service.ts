@@ -9,20 +9,13 @@ export class TaskImplService implements ITasksService {
 
     constructor(private _tasksRepository: AbstractTasksRepository) { }
 
-    createTask(task: ITask): Promise<ITask> {
-        return new Promise<ITask>(async (resolve, reject) => {
-            try {
-                if (isNullOrUndefined(task)) {
-                    return reject({ message: 'no task provided' });
-                }
+    async createTask(task: ITask): Promise<ITask> {
+        if (isNullOrUndefined(task)) {
+            throw { message: 'no task provided' };
+        }
 
-                const taskCreated: ITask = await this._tasksRepository.createTask(task);
-
-
-            } catch (error) {
-                return reject(error)
-            }
-        });
+        const taskCreated: ITask = await this._tasksRepository.createTask(task);
+        return taskCreated;
     }
     updateTask(task: ITask): Promise<ITask> {
         throw new Error("Method not implemented.");
