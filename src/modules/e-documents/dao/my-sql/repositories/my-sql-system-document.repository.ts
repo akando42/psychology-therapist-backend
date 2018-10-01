@@ -16,9 +16,10 @@ export class MySqlSystemDocumentRepository extends AbstractSystemDocumentReposit
     }
 
     createSystemDocument(systemDoc: ISystemDocument): Promise<number> {
-        let result = <Promise<number>>super.create(systemDoc);
+        let result = <Promise<any>>super.create(systemDoc);
         return result;
     }
+    
     @Convert({
         id: 'SystemDocumentID', path: 'DocumentPath', rawReference: 'RawDocumentID',
         documentId: 'DocumentID', uploadDate: 'DocumentUploadDate', typeId: 'DocumentTypeID'
@@ -37,7 +38,7 @@ export class MySqlSystemDocumentRepository extends AbstractSystemDocumentReposit
 
     @Convert({
         id: 'SystemDocumentID', path: 'DocumentPath', rawReference: 'RawDocumentID',
-        documentId: 'DocumentID', uploadDate: 'DocumentUploadDate', typeId: 'DocumentTypeID'
+        documentId: 'DocumentID', uploadDate: 'DocumentUploadDate', typeId: 'DocumentTypeID', name: 'DocumentName'
     })
     async getSystemDocument(): Promise<IEDocument[]> {
         return await super.queryAll(new JoinQuery({
@@ -45,7 +46,7 @@ export class MySqlSystemDocumentRepository extends AbstractSystemDocumentReposit
             joinTables: [
                 {
                     matchProp: 'DocumentID',
-                    properties: ['DocumentTypeID', 'DocumentPath', 'RawDocumentID', 'DocumentUploadDate'], table: 'DOCUMENTS'
+                    properties: ['DocumentTypeID', 'DocumentPath', 'RawDocumentID', 'DocumentUploadDate', 'DocumentName'], table: 'DOCUMENTS'
                 }
             ]
         }));

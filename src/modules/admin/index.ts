@@ -22,18 +22,18 @@ const adminProfileService = new AdminProfilesImplService(mysqlAdminProfileRepo);
 const cabinetInvitatonService = new CabinetInvitationsImplService(mysqlInvitationRepo);
 
 // component
-const cabinetComponent = new CabinetComponent(cabinetService, cabinetInvitatonService);
+const TODCabinetComponent = new CabinetComponent(cabinetService, cabinetInvitatonService);
 const adminProfileComponent = new AdminProfilesComponent(adminProfileService);
 
 //module
 const TODAdminModule = new AdminModuleImpl(
     adminProfileComponent,
-    cabinetComponent,
+    TODCabinetComponent,
     TODCommunicationModuleInstance,
     TODUsersModule
 );
 
 export {
-    cabinetComponent,
+    TODCabinetComponent,
     TODAdminModule
 }

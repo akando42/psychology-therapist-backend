@@ -8,11 +8,13 @@ export class DocumentModuleImpl extends AbstractDocumentModule {
     constructor(
         documentsComponent,
         documentsTypeComponent,
-        systemDocumentsComponent) {
+        systemDocumentsComponent,
+        requiredDocumentsReportComponent) {
         super(
             documentsComponent,
             documentsTypeComponent,
-            systemDocumentsComponent);
+            systemDocumentsComponent,
+            requiredDocumentsReportComponent);
     }
     uploadDocumentToFS(doc: any): Promise<TODResponse> {
         throw new Error("Method not implemented.");

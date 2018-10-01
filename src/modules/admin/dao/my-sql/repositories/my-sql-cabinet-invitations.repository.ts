@@ -17,7 +17,7 @@ export class MySqlCabinetInvitationsRepository extends AbstractCabinetInvitation
                 .toDBQuery('CABINET_INVITATIONS'))
     }
 
-    getInviteByToken(token: string): Promise<ICabinetInvitation> {
+    getInvitationByToken(token: string): Promise<ICabinetInvitation> {
         throw new Error("Method not implemented.");
     }
     getByEmail(email: string): Promise<ICabinetInvitation> {

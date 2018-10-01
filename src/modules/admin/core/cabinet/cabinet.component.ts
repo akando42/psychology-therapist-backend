@@ -39,7 +39,7 @@ export class CabinetComponent {
         }
         invitation.cabinetId = cabinet.id;
         let invitationCreated = await this._cabinetInvitationService.createInvitation(invitation);
-        return await this._cabinetInvitationService.getInvitationById(invitationCreated) ;
+        return await this._cabinetInvitationService.getInvitationById(invitationCreated);
 
     }
 
@@ -60,6 +60,11 @@ export class CabinetComponent {
 
     async getCabinetInvitation(cabinetId: any): Promise<ICabinetInvitation[]> {
         return this._cabinetInvitationService.getCabinetInvitations(cabinetId);
+    }
+    async getCabinetInvitationByToken(token: string): Promise<ICabinetInvitation> {
+        const invitation = await this._cabinetInvitationService.getInvitationByToken(token);
+
+        return invitation;
     }
 
     requestActionToCabinetUser(memberId: string, request: IActionRequest): Promise<TODResponse> {

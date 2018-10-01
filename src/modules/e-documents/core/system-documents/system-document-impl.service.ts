@@ -4,6 +4,7 @@ import { ISystemDocument } from "../../../../models/system.document";
 import { AbstractSystemDocumentRepository } from "../../dao/system-document.repository";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 import { AbstractRequiredDocumentsRepository } from "../../dao/required-document.repository";
+import { IRequiredDocument } from "../../../../models/required-document";
 
 
 
@@ -40,21 +41,16 @@ export class SystemDocumentService implements ISystemDocumentsService {
 
         return documentsRequired;
     }
-    async pushDocumentRequestToRole(systemDocId: any, role: any): Promise<any> {
-        if (!role) {
+    async pushDocumentRequestToRole(systemDoc: IRequiredDocument): Promise<any> {
+        if (!systemDoc.role) {
             throw { message: 'no role provided!' };
         }
-        const doc = await this.systemDocumentRepo.getSystemDocumentById(systemDocId);
+        const doc = await this.systemDocumentRepo.getSystemDocumentById(systemDoc.systemDocumentId);
         if (!doc) {
             throw { message: 'document do not exist, or was recently removed' }
         }
 
-        const saved = await this._requiredDocumentsRepo.saveDocumentsRequiredToRole({
-            documentId: doc.documentId,
-            systemDocumentId: doc.id,
-            role: role,
-            active: true
-        });
+        const saved = await this._requiredDocumentsRepo.saveDocumentsRequiredToRole(systemDoc);
         return saved;
     }
 }

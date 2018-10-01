@@ -1,24 +1,24 @@
 import { AbstractHRProfilesRepository } from "../../hr-profile.repository";
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
 import { IHRProfile } from "../../../../../models/hr-profile";
-import { IHRProfileMySql } from "../models/my-sql-hr-profile";
-import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
-import { MySqlHRProfilesConverter } from "../../../converters/my-sql/my-sql-hr-profiles.converter";
+import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
+import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
+import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
+import { Convert } from "../../../../../behavior/converters/converter.notation";
 
-export class MySqlHRProfilesRepository extends AbstractHRProfilesRepository {
-    constructor() {
-        super(new GenericDao('HRProfiles'), new MySqlHRProfilesConverter());
-    }
-    createHRProfile(HRProfile: IHRProfile): Promise<IHRProfile> {
-        return super.create(HRProfile)
-    }
+
+@Repository('HR_Profiles')
+export class MySqlHRProfilesRepository implements AbstractHRProfilesRepository {
+
+    @CreateQuery({ return: true, primary: 'HRProfileID' },
+        { id: 'HRProfileID', status: 'HRProfileStatus', userId: 'UserID', cabinetId: 'CabinetID' })
+    createHRProfile(HRProfile: IHRProfile): Promise<IHRProfile> { return null; }
+
     deleteHRProfile(id: number): Promise<any> {
-        return super.delete(id);
+        return null;
     }
 
-    getHRProfile(HRProfileId: number): Promise<IHRProfile> {
-        return super.getBy(new GetByQuery(<IHRProfileMySql>{ HRProfileID: HRProfileId })
-            .toDBQuery('HRProfileS'))
-    }
+    @Convert({ userId: 'UserID', status: 'HRProfileStatus', id: 'HRProfileID' })
+    @GetByQuery({ UserID: 0 })
+    getHRProfile(userId: number): Promise<IHRProfile> { return null; }
 
 }

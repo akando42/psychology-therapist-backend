@@ -20,9 +20,16 @@ export class GenericDao extends AbstractDao<any>{
     }
 
 
-    static async INSERT(query, data): Promise<any> {
-        console.log('dao::', query)
-        let value = await new Promise<any>((resolve, reject) => {
+    static async INSERT(query, data) {
+        let result = await GenericDao.db(query, data);
+        console.log('dao', result);
+        return result
+    }
+
+
+    static db(query, data) {
+        return new Promise<any>(async (resolve, reject) => {
+
             MySqlConnection.pool.query(query, data, (err, result) => {
                 if (err) {
                     err['sql'] = null;
@@ -31,6 +38,5 @@ export class GenericDao extends AbstractDao<any>{
                 return resolve(result);
             });
         });
-        return value;
     }
 }

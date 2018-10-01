@@ -12,6 +12,7 @@ export class CabinetInvitationsImplService implements ICabinetInvitationService 
 
 
 
+
     constructor(private _cabinetInvitationsRepo: AbstractCabinetInvitationRepository) { }
 
 
@@ -45,6 +46,15 @@ export class CabinetInvitationsImplService implements ICabinetInvitationService 
     }
     cancelInvitation(invitationId: any): Promise<boolean> {
         throw new Error("Method not implemented.");
+    }
+
+    async getInvitationByToken(token: any): Promise<ICabinetInvitation> {
+        if (!token) {
+            throw { message: 'no token provided' }
+        }
+        const invitation = await this._cabinetInvitationsRepo.getInvitationByToken(token);
+
+        return invitation;
     }
 
 }

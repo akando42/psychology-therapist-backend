@@ -2,17 +2,16 @@ import { GetByQuery as q } from "../../../query-spec/my-sql/get-by.query";
 
 
 
-export function GetByQuery(searchParam, table?) {
+export function GetByQuery(searchParam, tableName?, ...queriesExtends) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const originalMethod = descriptor.value;
 
-
-        descriptor.value = function () {
-            
+        descriptor.value = function (...args) {
+            let table: string = target.table || tableName
             let sp = generateParam(searchParam, arguments)
 
             let query = new q(sp, table);
-            let r = target.query(query)
+            let r = target.query(query.toDBQuery())
             return r;
 
 
@@ -27,7 +26,10 @@ export function GetByQuery(searchParam, table?) {
  * @param args 
  */
 function generateParam(searchParam, args) {
+
+
     let query = {}
+
     for (const prop in searchParam) {
         if (searchParam.hasOwnProperty(prop)) {
             let index = searchParam[prop];

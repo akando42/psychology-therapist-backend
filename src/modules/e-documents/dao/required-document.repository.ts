@@ -5,14 +5,12 @@ import { UsersRolEnum } from "../../../enums/users-rol.enum";
 
 
 
-export abstract class AbstractRequiredDocumentsRepository extends AbstractRepository<IRequiredDocument> {
-    constructor(dao: any, converter: any) {
-        super(dao, converter);
-    }
+export interface AbstractRequiredDocumentsRepository {
 
 
-    abstract saveDocumentsRequiredToRole(role:IRequiredDocument):Promise<IRequiredDocument>;
-    
-    abstract getDocumentsRequiredByRole(role:UsersRolEnum):Promise<IRequiredDocument[]>;
+
+    saveDocumentsRequiredToRole(role: IRequiredDocument): Promise<IRequiredDocument>;
+
+    getDocumentsRequiredByRole(role: UsersRolEnum): Promise<IRequiredDocument[]>;
 
 }

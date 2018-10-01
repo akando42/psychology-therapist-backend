@@ -15,17 +15,18 @@ const mysqlUserDocumentsRepo = new MySqlUserDocumentsRepository();
 const mysqlIdVerificationRepo = new MySqlUsersIDVerificationsRepository();
 
 //services
-const genericService = new UsersProfileServiceImpl(mysqlUsersProfileRepo, mysqlIdVerificationRepo);
+const TODUserProfileService = new UsersProfileServiceImpl(mysqlUsersProfileRepo, mysqlIdVerificationRepo);
 
 //components
-const usersComponent = new UsersProfileComponent(genericService);
+const usersComponent = new UsersProfileComponent(TODUserProfileService);
 // const locationsComponent = new LocationsComponent();
 
 
-const TODUsersModule = new UsersImplModule(usersComponent,null,TODDocumentsModule);
+const TODUsersModule = new UsersImplModule(usersComponent, null, TODDocumentsModule);
 
 
 export {
     TODUsersModule,
+    TODUserProfileService,
     usersComponent
 }

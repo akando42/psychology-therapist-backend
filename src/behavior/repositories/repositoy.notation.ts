@@ -7,11 +7,12 @@ export function Repository(table) {
         constructor.prototype.table = table;
 
         constructor.prototype.query = async (q) => {
-            return await GenericDao.QUERY(q.toDBQuery());
+            return await GenericDao.QUERY(q);
         }
 
         constructor.prototype.insert = async (q, data) => {
-            return await GenericDao.INSERT(q, data);
+            let result = await GenericDao.INSERT(q, data);
+            return result;
         }
 
     }

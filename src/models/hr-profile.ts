@@ -1,3 +1,4 @@
+import { HRProfileStatusEnum } from "../enums/hr-profile-status";
 
 
 
@@ -5,7 +6,6 @@ export interface IHRProfile {
 
     id?: number;
     userId?: number;
-    status?: any;
-    NDASigned?: any;
+    status?: HRProfileStatusEnum;
     cabinetId?: number;
 }

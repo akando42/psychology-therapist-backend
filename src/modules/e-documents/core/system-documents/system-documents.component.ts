@@ -7,6 +7,8 @@ import { nullPropValidator } from "../../../../validators/null-prop.validator";
 import { ISystemDocUpload } from "../../../../dto/system-doc-upload.dto";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 import { IRequiredDocument } from "../../../../models/required-document";
+import { IEDocument } from "../../../../models/e-document";
+import { Validate } from "../../../../behavior/validations/validate.notation";
 
 
 export class SystemDocumentsComponent {
@@ -16,17 +18,17 @@ export class SystemDocumentsComponent {
 
     }
 
+
     async uploadSystemDocument(document: ISystemDocUpload): Promise<any> {
-        const validationResult = nullPropValidator(document, ['typeId'])
+        const validationResult = nullPropValidator(document, ['typeId', 'name'])
         if (!validationResult.valid) {
             throw { message: 'fields cannot be null', fields: validationResult.missingField }
         }
 
-        // document.userId = null;
-        //upload document itselsf
-        const documentId: any = await this._documentComponent.uploadDocument(document);
+        const documentCreated: IEDocument = await this._documentComponent.uploadDocument(document);
         //update system stack
-        let systemDocument = await this._systemDocumentService.uploadDocument({ documentId: documentId });
+        let systemDocument =
+            await this._systemDocumentService.uploadDocument({ documentId: documentCreated.id });
 
         return systemDocument;
     }
@@ -36,8 +38,13 @@ export class SystemDocumentsComponent {
         return documents;
     }
 
-    async getRequiredDocumentsByRole(role:UsersRolEnum):Promise<IRequiredDocument[]>{
+    async getRequiredDocumentsByRole(role: UsersRolEnum): Promise<IRequiredDocument[]> {
         let documents = await this._systemDocumentService.getDocumentsRequiredByRole(role);
+        return documents;
+    }
+
+    async pushDocumentRequestToRole(requireDoc: IRequiredDocument): Promise<any> {
+        let documents = await this._systemDocumentService.pushDocumentRequestToRole(requireDoc);
         return documents;
     }
 }

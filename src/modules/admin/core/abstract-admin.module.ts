@@ -25,6 +25,8 @@ export abstract class AbstractAdminModule {
     abstract createAdminProfile(profile: IAdminProfile): Promise<any>;
 
     abstract createAdminCabinet(cabinet: ICabinet): Promise<any>;
-    
+
+    // abstract joinCabinetWith
+
 
 }

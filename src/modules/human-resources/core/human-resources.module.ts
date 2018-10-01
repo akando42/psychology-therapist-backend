@@ -10,10 +10,10 @@ export class HumanResourcesModule extends AbstractHumanResourcesModule {
         super(profilesComponent);
     }
 
-    createHRAgentProfile(userId: IHRProfile): Promise<TODResponse> {
+    createHRAgentProfile(profile: IHRProfile): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
-                // const profile = await this._hrProfilesComponent.c
+                const profileCreated = await this._hrProfilesComponent.createProfile(profile);
             } catch (error) {
 
             }

@@ -13,9 +13,7 @@ import { Convert } from "../../../../../behavior/converters/converter.notation";
 
 @Repository('CABINET')
 export class MySqlCabinetsRepository implements AbstractCabinetsRepository {
-    constructor() {
-
-    }
+    
     @Convert({ id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'CabinetName' })
     @GetByQuery({ 'CabinetAdminProfileID': 0 })
     getCabinetByAdminID(adminID: number): Promise<any> {

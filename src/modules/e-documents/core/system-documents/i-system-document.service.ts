@@ -1,6 +1,7 @@
 import { IEDocument } from "../../../../models/e-document";
 import { ISystemDocument } from "../../../../models/system.document";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
+import { IRequiredDocument } from "../../../../models/required-document";
 
 /**
  * this documents may be stored on filesystem becouse they dont have any realation with
@@ -29,5 +30,11 @@ export interface ISystemDocumentsService {
     /**
      * return the documents attached to a role in specficic
      */
-    getDocumentsRequiredByRole(role:UsersRolEnum):Promise<any>
+    getDocumentsRequiredByRole(role: UsersRolEnum): Promise<any>
+
+    /**
+     * Set a document to a specific role
+     */
+    pushDocumentRequestToRole(systemDocId: IRequiredDocument): Promise<any>;
+
 }

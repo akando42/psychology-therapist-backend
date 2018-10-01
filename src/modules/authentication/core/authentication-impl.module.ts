@@ -16,23 +16,28 @@ import { InvitationEmailTemplate } from '../../../email-templates/invitation-ema
 import { AbstractHumanResourcesModule } from '../../human-resources/core/abstract-human-resources.module';
 import { isNullOrUndefined } from 'util';
 import { AbstractAdminModule } from '../../admin/core/abstract-admin.module';
+import { CabinetComponent } from '../../admin/core/cabinet/cabinet.component';
+import { ICabinetInvitation } from '../../../models/cabinet-invitation';
+import { TODHumanResourcesModule } from '../../human-resources';
 
 export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
     constructor(
-        _usersModule: AbstractUsersModule,
-        _accountsComponent: AccountsComponent,
-        _communicationModule: AbtractCommunicationModule,
-        _humanResourcesModule: AbstractHumanResourcesModule,
-        _adminModule: AbstractAdminModule,
+        usersModule: AbstractUsersModule,
+        accountsComponent: AccountsComponent,
+        cabinetComponent: CabinetComponent,
+        communicationModule: AbtractCommunicationModule,
+        humanResourcesModule: AbstractHumanResourcesModule,
+        adminModule: AbstractAdminModule,
 
     ) {
         super(
-            _usersModule,
-            _accountsComponent,
-            _communicationModule,
-            _humanResourcesModule,
-            _adminModule
+            usersModule,
+            accountsComponent,
+            cabinetComponent,
+            communicationModule,
+            humanResourcesModule,
+            adminModule
         );
     }
 
@@ -71,31 +76,21 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         return new Promise(async (resolve, reject) => {
             try {
 
-                const accountCreated = await this._accountsComponent.createAccountAndProfile(newAccount);
+                const { account, user } = await this._accountsComponent.createAccountAndProfile(newAccount);
 
-                const fullName: string = `${newAccount.profile.firstName}  ${newAccount.profile.lastName}`;
+                const fullName: string = `${user.firstName}  ${user.lastName}`;
                 const verificatinLink: string =
-                    `http://localhost:3000/api/v1/authentication/verify-email?hash=${accountCreated.verificationHash}'`;
+                    `http://localhost:3000/api/v1/authentication/verify-email?hash=${account.verificationHash}'`;
 
                 const email = {
-
                     subject: 'Verification Mail | Massage On Demand',
                     body: new NewAccountVerificationTemplate(fullName, verificatinLink).getHtml()
-                }
+                };
 
-                //make comunication service
-                // MailGunEmailServiceInstance.sentToOne(account.email, email)
-                //     .then(console.log)
-                //     .catch((err) => {
-                //development only should make a variable for this lol.
-                // SendGridEmailServiceInstace.sentToOne(accountCreated.email, email)
-                //     .then(console.log)
-                //     .catch(console.log)
-                // })
-
+                this._communicationModule.sendEmailToOne(user.email, email);
 
                 //success resolve.
-                resolve({ success: true, message: 'Account registed', used: false });
+                return resolve({ success: true, message: 'Account registed', used: false });
             } catch (e) {
                 console.log(e)
                 return reject(e)
@@ -149,8 +144,6 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         });
     }
 
-
-
     changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
@@ -199,29 +192,40 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
     }
 
     signUpWithInvitation(inviteToken: string, newAccount: INewAccountDTO): Promise<any> {
-        // return new Promise<any>(async (resolve, reject) => {
-        //     try {
-        //         const account: any = await this._invitationsComponent.signupInvited(inviteToken, newAccount);
+        return new Promise<any>(async (resolve, reject) => {
+            try {
+                //get the invitation
+                const invitation: ICabinetInvitation = await this._cabinetComponent.getCabinetInvitationByToken(inviteToken);
+                //create the user and the account
+                const { account, user } = await this._accountsComponent.createAccountAndProfile(newAccount, true);
+                switch (invitation.role) {
+                    case UsersRolEnum.hr:
+                        this._humanResourcesModule.createHRAgentProfile({ userId: user.id })
+                        break;
 
-        //         const result: TODResponse = {
-        //             message: 'succefully registered',
-        //             payload: { success: true },
-        //             timestamp: new Date()
-        //         };
+                    default:
+                        break;
+                }
 
-        //         return resolve(result);
+                const result: TODResponse = {
+                    message: 'succefully registered',
+                    payload: { success: true },
+                    timestamp: new Date()
+                };
 
-        //     } catch (error) {
+                return resolve(result);
 
-        //         const badResult: TODResponse = {
-        //             message: 'Something when wrong sorry',
-        //             error: error,
-        //             timestamp: new Date()
-        //         };
+            } catch (error) {
 
-        //         return reject(badResult);
-        //     }
-        // })
+                const badResult: TODResponse = {
+                    message: 'Something when wrong sorry',
+                    error: error,
+                    timestamp: new Date()
+                };
+
+                return reject(badResult);
+            }
+        })
         return null;
     }
 

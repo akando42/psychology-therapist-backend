@@ -8,4 +8,5 @@ export interface IEDocument {
     typeId?: number;
     uploadDate?: number;
     path?: string;
+    name?: string;
 }

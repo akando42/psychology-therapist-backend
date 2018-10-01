@@ -12,7 +12,8 @@ export class DocumentsRouter {
     init(): Router {
         let router = Router();
         //required documents
-        router.get('/documents/required', this.getRequiredDocuments.bind(this));
+        router.get('/documents/required/:role', this.getRequiredDocuments.bind(this));
+        router.post('/documents/required', this.pushDocumentRequiredToRole.bind(this));
 
         //system documents
         router.get('/documents/system', this.getSystemDocuments.bind(this));
@@ -33,6 +34,16 @@ export class DocumentsRouter {
     async createDocumentsType(req: Request, res: Response) {
         try {
             let response = await TODDocumentsModule.createTypes(req.body);
+            res.status(200).send(response);
+        } catch (error) {
+            res.status(400).send(error);
+
+        }
+    }
+
+    async pushDocumentRequiredToRole(req: Request, res: Response) {
+        try {
+            let response = await TODDocumentsModule.pushToDocumentRequiredByRole(req.body);
             res.status(200).send(response);
         } catch (error) {
             res.status(400).send(error);
@@ -67,11 +78,12 @@ export class DocumentsRouter {
 
     async getRequiredDocuments(req: Request, res: Response) {
         try {
-            const { role } = req.query;
+            const { role } = req.params;
             console.log(role)
             let response = await TODDocumentsModule.getRequiredDocumentsByRole(role);
             res.status(200).send(response);
         } catch (error) {
+            console.log(error)
             res.status(400).send(error);
         }
     }
@@ -90,10 +102,11 @@ export class DocumentsRouter {
                 typeId: docInfo.typeId,
                 name: docInfo.name
             }
-          
+
             let response = await TODDocumentsModule.uploadSystemDocuments(obj);
             res.status(200).send(response);
         } catch (error) {
+            console.log(error)
             res.status(400).send(error);
         }
     }

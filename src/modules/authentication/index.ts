@@ -6,7 +6,7 @@ import { AuthenticationImplModule } from "./core/authentication-impl.module";
 import { TODUsersModule, usersComponent } from "../users";
 import { AuthenticationRouter } from "./authentication.router";
 import { TODCommunicationModuleInstance } from "../communication";
-import { TODAdminModule } from "../admin";
+import { TODAdminModule, TODCabinetComponent } from "../admin";
 import { TODHumanResourcesModule } from "../human-resources";
 
 
@@ -24,6 +24,7 @@ const TODAuthenticationModule =
     new AuthenticationImplModule(
         TODUsersModule,
         accountsComponent,
+        TODCabinetComponent,
         TODCommunicationModuleInstance,
         TODHumanResourcesModule,
         TODAdminModule);

@@ -10,4 +10,6 @@ export interface ICabinetInvitationService {
     cancelInvitation(invitationId: any): Promise<boolean>;
 
     getInvitationById(invitationId: any): Promise<ICabinetInvitation>;
+
+    getInvitationByToken(token: any): Promise<ICabinetInvitation>;
 }

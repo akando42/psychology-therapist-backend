@@ -2,27 +2,29 @@ import { AbstractDocumentsCategoriesRepository } from "../../documents-Categorie
 import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
 import { MySqlDocumentsCategoriesConverter } from "../../../converters/my-sql/my-sql-documents-Categories.converter";
 import { IDocumentCategory } from "../../../../../models/document-category";
-import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
 import { IDocumentsCategoryMySql } from "../models/my-sql-document-category";
 import { DeleteQuery } from "../../../../../query-spec/my-sql/delete-query";
+import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
+import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
+import { Convert } from "../../../../../behavior/converters/converter.notation";
 
+const propsMap = {
+    description: 'DocumentCategoryDescription',
+    id: 'DocumentCategoryID',
+    name: 'DocumentCategoryName'
+}
 
-export class MySqlDocumentsCategoriesRepository extends AbstractDocumentsCategoriesRepository {
-    constructor() {
-        super(new GenericDao('DOCUMENTS_CATEGORIES'), new MySqlDocumentsCategoriesConverter());
-    }
+@Repository('DOCUMENTS_CATEGORIES')
+export class MySqlDocumentsCategoriesRepository implements AbstractDocumentsCategoriesRepository {
+    
+    @Convert(propsMap)
+    @GetByQuery({ DocumentCategoryID: 0 })
+    getCategoryById(id: any): Promise<IDocumentCategory> { return null; }
+    
+    @Convert(propsMap)
+    @GetByQuery({})
+    getAllDocumentsCategories(data?): Promise<IDocumentCategory[]> { return data; }
 
-    getCategoryById(id: any): Promise<IDocumentCategory> {
-        return super.getBy(new GetByQuery(<IDocumentsCategoryMySql>{ DocumentCategoryID: id })
-            .toDBQuery('DOCUMENTS_CATEGORIES'));
-    }
-    getAllDocumentsCategories(): Promise<IDocumentCategory[]> {
-        return super.getAllBy('SELECT * FROM DOCUMENTS_CATEGORIES');
-    }
-
-    deleteDocumentCategory(id: any): Promise<any> {
-        return super.delete(new DeleteQuery(<IDocumentsCategoryMySql>{ DocumentCategoryID: id })
-            .toDBQuery('DOCUMENTS_CATEGORIES'));
-    }
+    deleteDocumentCategory(id: any): Promise<any> { return null; }
 }
 

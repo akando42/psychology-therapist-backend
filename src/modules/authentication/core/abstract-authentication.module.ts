@@ -8,6 +8,7 @@ import { AbstractUsersModule } from "../../users/core/users.module";
 import { AbtractCommunicationModule } from "../../communication/core/comunication.module";
 import { AbstractHumanResourcesModule } from "../../human-resources/core/abstract-human-resources.module";
 import { AbstractAdminModule } from "../../admin/core/abstract-admin.module";
+import { CabinetComponent } from "../../admin/core/cabinet/cabinet.component";
 
 
 export abstract class AbstractAuthenticationModule {
@@ -15,6 +16,7 @@ export abstract class AbstractAuthenticationModule {
     constructor(
         protected _usersModule?: AbstractUsersModule,
         protected _accountsComponent?: AccountsComponent,
+        protected _cabinetComponent?: CabinetComponent,
         protected _communicationModule?: AbtractCommunicationModule,
         protected _humanResourcesModule?: AbstractHumanResourcesModule,
         protected _adminModule?: AbstractAdminModule,

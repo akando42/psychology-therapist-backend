@@ -5,6 +5,8 @@ import { DocumentsClasificationComponent } from "./documents-type/documents-clas
 import { IDocumentCategory } from "../../../models/document-category";
 import { SystemDocumentsComponent } from "./system-documents/system-documents.component";
 import { UsersRolEnum } from "../../../enums/users-rol.enum";
+import { IRequiredDocument } from "../../../models/required-document";
+import { DocumentsReportComponent } from "./documents-reports/documents-report.component";
 
 
 
@@ -15,6 +17,7 @@ export abstract class AbstractDocumentModule {
         protected _documentsComponent: DocumentsComponent,
         protected _documentsClasificationComponent: DocumentsClasificationComponent,
         protected _systemDocumentsComponent: SystemDocumentsComponent,
+        protected _documentsReportsComponent: DocumentsReportComponent,
     ) {
 
     }
@@ -154,10 +157,21 @@ export abstract class AbstractDocumentModule {
 
     }
 
-    
+
     async uploadSystemDocuments(doc): Promise<TODResponse> {
         try {
             const documents = await this._systemDocumentsComponent.uploadSystemDocument(doc);
+            return this._createTODDTO(documents, null);
+        } catch (error) {
+            console.log(error)
+            return this._createTODDTO(null, error);
+        }
+
+    }
+
+    async pushToDocumentRequiredByRole(doc: IRequiredDocument): Promise<TODResponse> {
+        try {
+            const documents = await this._systemDocumentsComponent.pushDocumentRequestToRole(doc);
             return this._createTODDTO(documents, null);
         } catch (error) {
             return this._createTODDTO(null, error);
@@ -165,11 +179,12 @@ export abstract class AbstractDocumentModule {
 
     }
 
-    async getRequiredDocumentsByRole(role:UsersRolEnum): Promise<TODResponse> {
+    async getRequiredDocumentsByRole(role: UsersRolEnum): Promise<TODResponse> {
         try {
             const documents = await this._systemDocumentsComponent.getRequiredDocumentsByRole(role);
             return this._createTODDTO(documents, null);
         } catch (error) {
+            console.log(error)
             return this._createTODDTO(null, error);
         }
 

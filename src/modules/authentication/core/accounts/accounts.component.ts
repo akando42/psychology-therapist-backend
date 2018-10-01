@@ -111,8 +111,8 @@ export class AccountsComponent {
         })
     }
 
-    createAccountAndProfile(account: any, verified: boolean = false): Promise<IAccount> {
-        return new Promise<IAccount>(async (resolve, reject) => {
+    createAccountAndProfile(account: any, verified: boolean = false): Promise<{ user: IUser, account: IAccount }> {
+        return new Promise<{ user: IUser, account: IAccount }>(async (resolve, reject) => {
             try {
 
                 //create the user.
@@ -124,7 +124,7 @@ export class AccountsComponent {
                 delete accountCreated.password;
                 delete accountCreated.verificationHash;
 
-                return resolve(accountCreated)
+                return resolve({ account: accountCreated, user: userCreated })
 
             } catch (error) {
                 console.log(error)
@@ -157,7 +157,7 @@ export class AccountsComponent {
                 if (exist) {
                     return reject(false);
                 }
-           
+
                 return resolve(true);
 
             } catch (error) {

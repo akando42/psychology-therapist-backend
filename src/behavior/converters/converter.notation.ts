@@ -14,16 +14,16 @@ export function Convert(propMapping: any, model?: string) {
         let converterInstace = new GenericConverter(propMapping);
 
 
-        descriptor.value = function () {
-
+        descriptor.value = function (...args: any[]) {
+            console.log('arguments',args)
+            
             let data = originalMethod.apply(this, [arguments])
             let hack = async function () {
 
-                let resolve = data
+                let resolve = await data
                 // let resolve = await data
-                console.log('raw', resolve)
                 if (resolve.length == 1) {
-                    return converterInstace.convertDBModelToDomain(resolve[0])
+                    return [converterInstace.convertDBModelToDomain(resolve[0])]
                 } else {
                     return converterInstace.convertManyDBModelToDomain(resolve)
                 }

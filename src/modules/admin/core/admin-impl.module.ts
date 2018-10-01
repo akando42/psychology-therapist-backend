@@ -12,12 +12,10 @@ import { NewRoleInvitationTemplate } from "../../../email-templates/new-role-inv
 
 
 export class AdminModuleImpl extends AbstractAdminModule {
+
     async getCabinetMembers(cabinetId: number, role: any): Promise<any> {
 
     }
-
-
-
 
     constructor(
         adminProfileComponent: AdminProfilesComponent,
@@ -41,7 +39,6 @@ export class AdminModuleImpl extends AbstractAdminModule {
             }
         });
     }
-
 
     getAdminCabinet(userId: number): Promise<any> {
         return new Promise<TODResponse>(async (resolve, reject) => {
