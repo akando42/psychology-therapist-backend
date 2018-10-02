@@ -4,6 +4,7 @@ import { IDocumentsTypeMySql } from "../models/my-sql-documents-type";
 import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
 import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
 import { Convert } from "../../../../../behavior/converters/converter.notation";
+import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
 
 
 const propsMap = {
@@ -22,7 +23,7 @@ export class MySqlDocumentsTypeRepository implements AbstractDocumentsTypeReposi
         return null;
     }
 
-    @Convert(propsMap)
+    @Convert(propsMap,true)
     @GetByQuery({})
     getAllDocumentTypes(): Promise<IDocumentType[]> {
         return null;
@@ -33,5 +34,9 @@ export class MySqlDocumentsTypeRepository implements AbstractDocumentsTypeReposi
     getAllDocumentTypesByCategory(categoryId: any): Promise<IDocumentType[]> {
         return null;
     }
+
+    @CreateQuery({return:true,primary:'DocumentTypeID'},propsMap)
+    createType(id: any): Promise<IDocumentType> {return null;}
+
 }
 

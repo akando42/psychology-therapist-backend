@@ -9,4 +9,6 @@ export interface AbstractDocumentsTypeRepository {
 
     getAllDocumentTypesByCategory(category: any): Promise<IDocumentType[]>;
 
+    createType(type: IDocumentType): Promise<IDocumentType>;
+
 }

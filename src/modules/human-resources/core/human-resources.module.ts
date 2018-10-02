@@ -14,8 +14,10 @@ export class HumanResourcesModule extends AbstractHumanResourcesModule {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
                 const profileCreated = await this._hrProfilesComponent.createProfile(profile);
+                return resolve(profileCreated);
             } catch (error) {
-
+                console.log(error)
+                return reject(error);
             }
         });
     }

@@ -44,6 +44,7 @@ export class SystemDocumentsComponent {
     }
 
     async pushDocumentRequestToRole(requireDoc: IRequiredDocument): Promise<any> {
+       
         let documents = await this._systemDocumentService.pushDocumentRequestToRole(requireDoc);
         return documents;
     }

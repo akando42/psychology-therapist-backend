@@ -4,14 +4,12 @@ import { ISystemDocument } from "../../../models/system.document";
 
 
 
-export abstract class AbstractSystemDocumentRepository extends AbstractRepository<ISystemDocument> {
-    constructor(dao: any, converter: any) {
-        super(dao, converter);
-    }
+export interface AbstractSystemDocumentRepository {
 
-    abstract createSystemDocument(systemDoc: ISystemDocument): Promise<number>;
 
-    abstract getSystemDocumentById(systemDoc: any): Promise<ISystemDocument>;
+    createSystemDocument(systemDoc: ISystemDocument): Promise<number>;
 
-    abstract getSystemDocument(): Promise<ISystemDocument[]>;
+    getSystemDocumentById(systemDoc: any): Promise<ISystemDocument>;
+
+    getSystemDocument(): Promise<ISystemDocument[]>;
 }

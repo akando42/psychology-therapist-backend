@@ -11,6 +11,7 @@ export function GetByQuery(searchParam, tableName?, ...queriesExtends) {
             let sp = generateParam(searchParam, arguments)
 
             let query = new q(sp, table);
+            console.log(query.toDBQuery())
             let r = target.query(query.toDBQuery())
             return r;
 
@@ -25,7 +26,7 @@ export function GetByQuery(searchParam, tableName?, ...queriesExtends) {
  * @param searchParam 
  * @param args 
  */
-function generateParam(searchParam, args) {
+export function generateParam(searchParam, args) {
 
 
     let query = {}

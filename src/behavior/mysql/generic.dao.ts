@@ -6,7 +6,7 @@ export class GenericDao extends AbstractDao<any>{
     constructor(protected table?: string) { super(table); }
 
     static async QUERY(query): Promise<any> {
-        console.log('dao::', query)
+     
         let value = await new Promise<any>((resolve, reject) => {
             MySqlConnection.pool.query(query, (err, result) => {
                 if (err) {
@@ -22,7 +22,7 @@ export class GenericDao extends AbstractDao<any>{
 
     static async INSERT(query, data) {
         let result = await GenericDao.db(query, data);
-        console.log('dao', result);
+      
         return result
     }
 

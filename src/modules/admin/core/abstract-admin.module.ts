@@ -26,6 +26,8 @@ export abstract class AbstractAdminModule {
 
     abstract createAdminCabinet(cabinet: ICabinet): Promise<any>;
 
+    abstract cancelInvitation(invitationID:number): Promise<any>;
+
     // abstract joinCabinetWith
 
 

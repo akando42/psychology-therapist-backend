@@ -6,13 +6,18 @@ import { IResetPasswordRequest } from '../../../../models/reset-password-request
 import { ICabinetInvitation } from '../../../../models/cabinet-invitation';
 import { UsersProfileComponent } from '../../../users/core/user-profile/user-profile.component';
 import { IUser } from '../../../../models/user';
+import { IUserProfileService } from '../../../users/core/user-profile/user-profile.service.interface';
+import { isNullOrUndefined } from 'util';
+import { INewAccountDTO } from '../../../../dto/new-account.dto';
+import { ComposeValidation } from '../../../../behavior/validations/validate.notation';
+import { validatePassword } from '../../../../behavior/validations/validation.function';
 
 
 export class AccountsComponent {
 
     constructor(
         private _acountService: IAccountsService,
-        private _userComponent: UsersProfileComponent,
+        private _userProfileService: IUserProfileService,
         private _emailService?: any
     ) { }
 
@@ -111,26 +116,31 @@ export class AccountsComponent {
         })
     }
 
-    createAccountAndProfile(account: any, verified: boolean = false): Promise<{ user: IUser, account: IAccount }> {
-        return new Promise<{ user: IUser, account: IAccount }>(async (resolve, reject) => {
-            try {
+    @ComposeValidation([{ index: 0, validators: [{ paramName: 'password', cb: validatePassword }] }])
+    async  createAccountAndProfile(account: INewAccountDTO, verified: boolean = false): Promise<{ user: IUser, account: IAccount }> {
+        try {
 
-                //create the user.
-                const userCreated: IUser = await this._userComponent.createUserProfile(account.profile);
-                //assign a account to that user.
-                console.log(userCreated)
-                const accountCreated: IAccount = await this.createAccount(userCreated.id, account, verified);
-                //sanatize
-                delete accountCreated.password;
-                delete accountCreated.verificationHash;
-
-                return resolve({ account: accountCreated, user: userCreated })
-
-            } catch (error) {
-                console.log(error)
-                return reject(error);
+            const exist = await this._userProfileService.getUserByEmail(account.email);
+            if (!isNullOrUndefined(exist)) {
+                throw { message: 'email already on use' };
             }
-        })
+
+            //create the user.
+            const userCreated: IUser = await this._userProfileService.createUserProfile(account.profile);
+            //assign a account to that user.
+            const accountCreated: IAccount = await this._acountService.createAccount(userCreated.id, account, verified);
+            //sanatize
+            delete accountCreated.password;
+            delete accountCreated.verificationHash;
+
+            return { account: accountCreated, user: userCreated }
+        }
+        catch (error) {
+            //rollback if error;
+
+            throw error;
+        }
+
     }
 
     createAccount(userId: any, newAccount: IAccount, verified: boolean = false): Promise<IAccount> {

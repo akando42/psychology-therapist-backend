@@ -114,6 +114,7 @@ export class AccountsServiceImpl implements IAccountsService {
                 if (!userId) {
                     return reject({ message: 'no user reference provided' });
                 }
+                console.log(newAccount)
                 const hashPassword = await bc.hash(newAccount.password, 10);
                 let account: IAccount = {
                     email: newAccount.email,

@@ -13,16 +13,11 @@ export class UsersProfileServiceImpl implements IUserProfileService {
         private _usersRepository: AbstractUsersRepository,
         private _idVerificationRepo: AbstractUsersIDVerificationsRepository) { }
 
-    createUserProfile(newUser: IUser): Promise<IUser> {
-        return new Promise<IUser>(async (resolve, reject) => {
-            try {
-                // validations go here
-                const userCreated: IUser = await this._usersRepository.createUserProfile(newUser);
-                return resolve(userCreated);
-            } catch (error) {
-                return reject(error);
-            }
-        })
+    async createUserProfile(newUser: IUser): Promise<IUser> {
+        newUser.idVerified = false;
+        const userCreated: IUser = await this._usersRepository.createUserProfile(newUser);
+        return userCreated;
+
     }
 
     updateUserProfile(id: any, model: IUser): Promise<IUser> {

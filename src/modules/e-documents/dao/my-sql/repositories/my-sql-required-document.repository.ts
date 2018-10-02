@@ -13,20 +13,21 @@ import { Repository } from "../../../../../behavior/repositories/repositoy.notat
 @Repository('Document_required')
 export class MySqlRequiredDocumentsRepository implements AbstractRequiredDocumentsRepository {
 
-    @CreateQuery({ return: false, primary: 'RequiredDocumentID' },
-        { id: 'RequiredDocumentID', active: 'RequiredDocumentActive', 
+    @CreateQuery({ return: true, primary: 'DocumentRequiredID' },
+        { id: 'DocumentRequiredID', active: 'DocumentRequiredActive', 
+        role:'DocumentRequiredRole',
         documentId: 'DocumentID', systemDocumentId: 'SystemDocumentID' })
     saveDocumentsRequiredToRole(doc: IRequiredDocument): Promise<IRequiredDocument> {
         return null
     }
 
-    @Convert({ id: 'DocumentRequiredID' })
+    @Convert({ id: 'DocumentRequiredID',name:'DocumentName' },true)
     @CustomQuery(new JoinQuery({
         mainTable: 'Document_required', mainProps: ['DocumentRequiredID'],
         joinTables: [
             {
                 matchProp: 'DocumentID',
-                properties: ['DocumentTypeID', 'DocumentPath','DocumentName', 'RawDocumentID', 'DocumentUploadDate'], table: 'DOCUMENTS'
+                properties: ['DOCUMENTS.DocumentID','DocumentTypeID', 'DocumentPath','DocumentName', 'RawDocumentID', 'DocumentUploadDate'], table: 'DOCUMENTS'
             }
         ]
     },''))

@@ -44,8 +44,8 @@ export class DocumentsTypeImplService implements IDocumentsTypeService {
         if (isNullOrUndefined(docType)) {
             throw { message: 'no type provided' };
         }
-        const typeId: any = await this._documentsTypeRepo.create(docType);
-        return await this._documentsTypeRepo.getById(typeId);
+        const type: any = await this._documentsTypeRepo.createType(docType);
+        return type;
     }
 
 }

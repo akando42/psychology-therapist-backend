@@ -13,25 +13,21 @@ import { Convert } from "../../../../../behavior/converters/converter.notation";
 
 @Repository('CABINET')
 export class MySqlCabinetsRepository implements AbstractCabinetsRepository {
-    
+
     @Convert({ id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'CabinetName' })
     @GetByQuery({ 'CabinetAdminProfileID': 0 })
     getCabinetByAdminID(adminID: number): Promise<any> {
-        // return super.getBy(new GetByQuery(<ICabinetMySql>{ CabinetAdminProfileID: adminID })
-        //     .toDBQuery('CABINET'));
         return null;
     }
 
     @CreateQuery({ return: false, primary: 'CabinetID' },
-    { id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'CabinetName' })
+        { id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'CabinetName' })
     createCabinet(cabinet: ICabinet): Promise<any> { return <any>cabinet; }
 
     addToCabinet(adminID: number, invitedID: number): Promise<any> {
         return null;
-        // return this.create({ AdminID: adminID, invitedID: invitedID });
     }
     getAdminCabinetUsers(adminID: string): Promise<IUser[]> {
-        // return this.getAllBy(new GetCabinetUsersQuery(adminID).toDBQuery());
         return null;
     }
 

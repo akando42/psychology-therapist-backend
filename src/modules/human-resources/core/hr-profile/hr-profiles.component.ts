@@ -21,43 +21,46 @@ export class HRProfilesComponent {
 
     async createProfile(profile: IHRProfile): Promise<any> {
         // create the profile
-        let user = await this._userService.getUserById(profile.id);
+        let user = await this._userService.getUserById(profile.userId);
         if (!user) {
-            throw { message: `user with ID=${profile.id} do not exist.` };
+            throw { message: `user with ID=${profile.userId} do not exist.` };
         }
 
         //create the profile.
-        const profileCreated = await this._hrProfilesService.createHRProfile(profile);
-
+        let profileCreated = await this._hrProfilesService.createHRProfile(profile);
+        console.log(profileCreated)
         //after user create check if that role have documents required
         let docsRequired: IRequiredDocument[] = await this._systemDocumentsService.getDocumentsRequiredByRole(UsersRolEnum.hr);
         //if documents required create reports for users
         if (docsRequired.length > 0) {
             let reports: IRequiredDocumentReport[] = [];
-            docsRequired.forEach((doc) => {
-                reports.push({
+            for (const doc of docsRequired) {
+                //create one by one, no bulk almost not performance issue here actually.
+                let created = await this._reportDocsService.createDocumentReport({
                     userId: profile.userId,
                     role: UsersRolEnum.hr,
                     status: DocumentReportStatusEnum.MISSING,
-                    documentId:doc.id
+                    documentId: doc.id
                 });
-            });
-            // insert many
+                reports.push(created);
+            }
+            console.log(reports)
         }
 
         return profileCreated;
 
     }
 
-    getProfile(userId: number): Promise<IHRProfile> {
-        return new Promise<IHRProfile>(async (resolve, reject) => {
-            try {
-                const profile = await this._hrProfilesService.getHRProfile(userId);
-                return resolve(profile);
-            } catch (error) {
-                return reject(error);
+    async getProfile(userId: number): Promise<IHRProfile> {
+        try {
 
-            }
-        })
+            const profile = await this._hrProfilesService.getHRProfile(userId);
+            return profile;
+
+        } catch (error) {
+            return error;
+
+        }
+
     }
 }

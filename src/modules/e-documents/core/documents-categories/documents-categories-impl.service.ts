@@ -19,9 +19,8 @@ export class DocumentsCategoriesImplService implements IDocumentsCategoriesServi
         if (isNullOrUndefined(category)) {
             throw new Error('no category provide');
         }
-        console.log('service',category)
-        const created = await this._documentCategoriesRepository.create(category);
-        return await this._documentCategoriesRepository.getCategoryById(created);
+        const created = await this._documentCategoriesRepository.createCategory(category);
+        return created
 
     }
     updateCategory(categoryId: number, category: IDocumentCategory): Promise<number> {

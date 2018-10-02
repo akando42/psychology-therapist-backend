@@ -53,7 +53,6 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
 
             const input: K = this._converter ?
                 this._converter.converDomainToDBModel(model) : model;
-            console.log('repositoy::', query)
             this._db.findOneAndUpdate(query, input)
                 .then((result: any) => {
                     // const item: K = await this.getBy({ _id: result._id });
@@ -80,7 +79,6 @@ export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {
     }
     // query spec approach to queries
     getBy(query: any): Promise<K> {
-        console.log('Repository::attempting to query', query)
         return new Promise<K>((resolve, reject) => {
             this._db.findOne(query)
                 .then((result: any) => {

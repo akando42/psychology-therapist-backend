@@ -19,6 +19,8 @@ import { AbstractAdminModule } from '../../admin/core/abstract-admin.module';
 import { CabinetComponent } from '../../admin/core/cabinet/cabinet.component';
 import { ICabinetInvitation } from '../../../models/cabinet-invitation';
 import { TODHumanResourcesModule } from '../../human-resources';
+import { HRProfileStatusEnum } from '../../../enums/hr-profile-status';
+import { HRProfilesComponent } from '../../human-resources/core/hr-profile/hr-profiles.component';
 
 export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
@@ -27,7 +29,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         accountsComponent: AccountsComponent,
         cabinetComponent: CabinetComponent,
         communicationModule: AbtractCommunicationModule,
-        humanResourcesModule: AbstractHumanResourcesModule,
+        humanResourcesModule: HRProfilesComponent,
         adminModule: AbstractAdminModule,
 
     ) {
@@ -102,17 +104,17 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
     authenticate(credentials: { password: string, email: string }, role: string = "admin"): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-
+                
                 //authenticate
                 const account = await this._accountsComponent.authenticateAccount(credentials);
-
                 //get user account
-                const user: IUser = await this._usersModule.getUserById(account.userId)
+                const user: IUser = await this._usersModule.getUserById(account.userId);
                 let roleProfile = null;
+                
                 if (role) {
                     switch (role) {
                         case 'hr':
-                            roleProfile = await this._humanResourcesModule.getHRAgentProfile(user.id);
+                            roleProfile = await this._hrProfileComponent.getProfile(user.id);
                             break;
                         case 'admin':
                             roleProfile = await this._adminModule.getAdminProfile(user.id);
@@ -126,19 +128,19 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 if (isNullOrUndefined(roleProfile)) {
                     return reject({ error: 'you have no such a role on the platform' });
                 }
-
                 const token = jwt.sign(
-                    { userId: account.userId, roleId: roleProfile.payload.id },
+                    { userId: account.userId, roleId: roleProfile.id },
                     process.env.SECRET_KEY, { expiresIn: 60000 });
 
                 return resolve({
                     auth: true, token: token,
-                    data: { user: user, roleProfile: roleProfile.payload, role: role },
+                    data: { user: user, roleProfile: roleProfile, role: role },
                     message: 'succesfully authenticated'
                 });
 
 
             } catch (error) {
+                console.log(error)
                 reject(error);
             }
         });
@@ -197,10 +199,18 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 //get the invitation
                 const invitation: ICabinetInvitation = await this._cabinetComponent.getCabinetInvitationByToken(inviteToken);
                 //create the user and the account
-                const { account, user } = await this._accountsComponent.createAccountAndProfile(newAccount, true);
+
+                newAccount.email = invitation.email;
+                newAccount.profile.email = invitation.email;
+                const { user } = await this._accountsComponent.createAccountAndProfile(newAccount, true);
+
                 switch (invitation.role) {
                     case UsersRolEnum.hr:
-                        this._humanResourcesModule.createHRAgentProfile({ userId: user.id })
+                        this._hrProfileComponent.createProfile({
+                            userId: user.id,
+                            cabinetId: invitation.cabinetId,
+                            status: HRProfileStatusEnum.WAITING_APPROVAL
+                        })
                         break;
 
                     default:
@@ -216,7 +226,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 return resolve(result);
 
             } catch (error) {
-
+                console.log(error)
                 const badResult: TODResponse = {
                     message: 'Something when wrong sorry',
                     error: error,
@@ -245,6 +255,5 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
 
 }
-
 
 

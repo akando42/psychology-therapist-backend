@@ -7,6 +7,7 @@ import { SystemDocumentsComponent } from "./system-documents/system-documents.co
 import { UsersRolEnum } from "../../../enums/users-rol.enum";
 import { IRequiredDocument } from "../../../models/required-document";
 import { DocumentsReportComponent } from "./documents-reports/documents-report.component";
+import { DocumentReportStatusEnum } from "../../../enums/document-report-status.enum";
 
 
 
@@ -18,9 +19,11 @@ export abstract class AbstractDocumentModule {
         protected _documentsClasificationComponent: DocumentsClasificationComponent,
         protected _systemDocumentsComponent: SystemDocumentsComponent,
         protected _documentsReportsComponent: DocumentsReportComponent,
-    ) {
-
-    }
+    ) {}
+  
+    abstract uploadDocumentAsBlob(doc): Promise<TODResponse>;
+    abstract uploadDocumentToFS(doc): Promise<TODResponse>;
+    abstract getDocumentsReportByUserAndRole(userId: number, userRole: UsersRolEnum, status?: DocumentReportStatusEnum): Promise<TODResponse>;
 
     getAllDocumentsType(): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
@@ -96,9 +99,6 @@ export abstract class AbstractDocumentModule {
         })
     }
 
-    abstract uploadDocumentAsBlob(doc): Promise<TODResponse>;
-
-    abstract uploadDocumentToFS(doc): Promise<TODResponse>;
 
     //basic crud for types and categories
 
@@ -108,6 +108,7 @@ export abstract class AbstractDocumentModule {
                 const created = await this._documentsClasificationComponent.createCategory(category);
                 return resolve(this._createTODDTO(created, null));
             } catch (error) {
+                console.log(error)
                 return reject(this._createTODDTO(null, error));
             }
         });
@@ -174,6 +175,7 @@ export abstract class AbstractDocumentModule {
             const documents = await this._systemDocumentsComponent.pushDocumentRequestToRole(doc);
             return this._createTODDTO(documents, null);
         } catch (error) {
+            console.log(error)
             return this._createTODDTO(null, error);
         }
 
@@ -190,6 +192,7 @@ export abstract class AbstractDocumentModule {
 
     }
 
+    
 
     protected _createTODDTO(payload: any, error?: any): TODResponse {
         return {

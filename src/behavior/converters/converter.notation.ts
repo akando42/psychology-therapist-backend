@@ -7,7 +7,7 @@ import { GenericConverter } from "./generic-converter";
  * MOVE THE METHOD CALL FROM HERE
  */
 
-export function Convert(propMapping: any, model?: string) {
+export function Convert(propMapping: any, toArray?: boolean) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
 
         var originalMethod = descriptor.value;
@@ -15,17 +15,22 @@ export function Convert(propMapping: any, model?: string) {
 
 
         descriptor.value = function (...args: any[]) {
-            console.log('arguments',args)
-            
+
             let data = originalMethod.apply(this, [arguments])
             let hack = async function () {
 
                 let resolve = await data
-                // let resolve = await data
                 if (resolve.length == 1) {
-                    return [converterInstace.convertDBModelToDomain(resolve[0])]
-                } else {
-                    return converterInstace.convertManyDBModelToDomain(resolve)
+                    let value = converterInstace.convertDBModelToDomain(resolve[0]);
+
+                    if (toArray) { return [value] }
+
+                    return value;
+                } else if (resolve.length == 0) {
+                    return null;
+                }
+                else {
+                    return converterInstace.convertManyDBModelToDomain(resolve);
                 }
 
             };

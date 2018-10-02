@@ -13,13 +13,6 @@ export class JoinQuery {
     },private condition?) {
 
     }
-    // SELECT AdminID, 
-    // tod.users.UserID,UserFirstName,
-    // UserLastName,UserGender,
-    //  UserRole,UserEmail
-    // FROM tod.admin_cabinet_users JOIN tod.users
-    //   ON tod.admin_cabinet_users.UserID = tod.users.UserID
-    //   WHERE tod.admin_cabinet_users.AdminID = ${this.cabinet}`
     toDBQuery(): string {
 
         const { mainProps } = this._querySpec;
@@ -42,7 +35,7 @@ export class JoinQuery {
                  = ${this._querySpec.joinTables[0].table}.${this._querySpec.joinTables[0].matchProp}`;
 
         if (this.condition) {
-            q += this.condition
+            q += ' ' + this.condition
         }
         
         return q;

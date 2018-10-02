@@ -4,7 +4,6 @@ import * as bodyParser from "body-parser";
 import * as cors from 'cors';
 import { MySqlConnection } from './database-connection/db-connection.mysql';
 import "reflect-metadata";
-import { createConnection } from 'typeorm';
 import { AuthenticationRouter } from './modules/authentication';
 import { DocumentsRouter } from './modules/e-documents/documents.router';
 import { UsersRouter } from './modules/users/users.router';
@@ -22,7 +21,6 @@ export class API {
 		this.express = express();
 		this.middleware();
 		this.mountRoutes();
-		createConnection();
 		MySqlConnection.connect({
 			"server": "localhost",
 			"user": "root",

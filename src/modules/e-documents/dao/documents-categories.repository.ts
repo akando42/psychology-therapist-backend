@@ -8,6 +8,8 @@ export interface AbstractDocumentsCategoriesRepository {
 
     getCategoryById(id): Promise<IDocumentCategory>;
 
+    createCategory(id): Promise<IDocumentCategory>;
+
     deleteDocumentCategory(id: any): Promise<any>;
 
 }

@@ -15,15 +15,14 @@ export class SystemDocumentService implements ISystemDocumentsService {
         private _requiredDocumentsRepo: AbstractRequiredDocumentsRepository) { }
 
     async uploadDocument(document: ISystemDocument): Promise<number> {
-        console.log('attempting to query', document)
         // const validation =  
         let id = await this.systemDocumentRepo.createSystemDocument(document);
-        console.log('system repo result', id)
 
         return id;
     }
     async getSystemDocuments(): Promise<ISystemDocument[]> {
         let documents = await this.systemDocumentRepo.getSystemDocument();
+        console.log(documents)
         return documents;
     }
 
@@ -33,12 +32,12 @@ export class SystemDocumentService implements ISystemDocumentsService {
             case UsersRolEnum.hr:
                 documentsRequired = await this._requiredDocumentsRepo.getDocumentsRequiredByRole(role);
                 break;
-
-            default:
+                
+                default:
                 throw { message: 'no valid role' }
-
-        }
-
+                
+            }
+            
         return documentsRequired;
     }
     async pushDocumentRequestToRole(systemDoc: IRequiredDocument): Promise<any> {
@@ -49,7 +48,10 @@ export class SystemDocumentService implements ISystemDocumentsService {
         if (!doc) {
             throw { message: 'document do not exist, or was recently removed' }
         }
-
+       
+        systemDoc.documentId = doc.documentId;
+      
+        
         const saved = await this._requiredDocumentsRepo.saveDocumentsRequiredToRole(systemDoc);
         return saved;
     }

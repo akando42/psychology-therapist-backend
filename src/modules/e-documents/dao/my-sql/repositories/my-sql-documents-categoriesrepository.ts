@@ -7,6 +7,7 @@ import { DeleteQuery } from "../../../../../query-spec/my-sql/delete-query";
 import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
 import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
 import { Convert } from "../../../../../behavior/converters/converter.notation";
+import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
 
 const propsMap = {
     description: 'DocumentCategoryDescription',
@@ -16,14 +17,18 @@ const propsMap = {
 
 @Repository('DOCUMENTS_CATEGORIES')
 export class MySqlDocumentsCategoriesRepository implements AbstractDocumentsCategoriesRepository {
-    
+
+
     @Convert(propsMap)
     @GetByQuery({ DocumentCategoryID: 0 })
     getCategoryById(id: any): Promise<IDocumentCategory> { return null; }
-    
-    @Convert(propsMap)
+
+    @Convert(propsMap, true)
     @GetByQuery({})
     getAllDocumentsCategories(data?): Promise<IDocumentCategory[]> { return data; }
+
+    @CreateQuery({ return: true, primary: 'DocumentCategoryID' }, propsMap)
+    createCategory(id: any): Promise<IDocumentCategory> { return null; }
 
     deleteDocumentCategory(id: any): Promise<any> { return null; }
 }

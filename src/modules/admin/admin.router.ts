@@ -19,6 +19,7 @@ export class AdminRouter {
 
         router.get('/cabinets/:cabinet_id/invitations', TokenValidationMiddleware, this.getCabinetInvitations.bind(this));
         router.post('/cabinets/invitations', TokenValidationMiddleware, this.createCabinetInvitation.bind(this));
+        router.delete('/cabinets/invitations/:invitation_id', TokenValidationMiddleware, this.cancelCabinetInvitation.bind(this));
         return router;
     }
 
@@ -68,8 +69,16 @@ export class AdminRouter {
 
 
     getCabinetMembers(req: Request, res: Response): void {
-
         TODAdminModule.getCabinetMembers(req.params['cabinet_id'], req.params['role'])
+            .then((result) => {
+                res.status(200).json(result);
+            }).catch((err) => {
+                res.status(400).json(err);
+            });
+    }
+
+    cancelCabinetInvitation(req: Request, res: Response): void {
+        TODAdminModule.cancelInvitation(req.params['invitation_id'])
             .then((result) => {
                 res.status(200).json(result);
             }).catch((err) => {

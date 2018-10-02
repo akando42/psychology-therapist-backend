@@ -1,33 +1,50 @@
 import { AbstractCabinetInvitationRepository } from "../../repositories/cabinet-invitation.repositoty";
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
 import { ICabinetInvitation } from "../../../../../models/cabinet-invitation";
-import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
-import { ICabinetInvitationMySql } from "../models/cabinet-invitation-my-sql";
-import { MySqlCabinetInvitationsConverter } from "../../../converters/my-sql/my-sql-cabinet-invitation.converter";
+import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
+import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
+import { Convert } from "../../../../../behavior/converters/converter.notation";
+import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
+import { DeleteQuery } from "../../../../../behavior/queries/my-sql/delete-query.notation";
+
+const propsMap = {
+    cabinetId: 'CabinetID',
+    date: 'CabinetInvitationDate',
+    email: 'CabinetInvitationEmail',
+    expired: 'CabinetInvitationExpired',
+    id: 'CabinetInvitationID',
+    inviterId: 'CabinetInvitationInviterID',
+    role: 'CabinetInvitationRole',
+    token: 'CabinetInvitationToken'
+
+}
+
+@Repository('CABINET_INVITATIONS')
+export class MySqlCabinetInvitationsRepository implements AbstractCabinetInvitationRepository {
 
 
-export class MySqlCabinetInvitationsRepository extends AbstractCabinetInvitationRepository {
-    constructor() {
-        super(new GenericDao('CABINET_INVITATIONS'), new MySqlCabinetInvitationsConverter());
-    }
+    @Convert(propsMap, true)
+    @GetByQuery({ CabinetID: 0 })
+    getByCabinetId(cabinetId: number): Promise<ICabinetInvitation[]> { return null; }
 
-    getByCabinetId(cabinetId: number): Promise<ICabinetInvitation[]> {
-        return super.getAllBy(
-            new GetByQuery(<ICabinetInvitationMySql>{ CabinetID: cabinetId })
-                .toDBQuery('CABINET_INVITATIONS'))
-    }
+    @Convert(propsMap)
+    @GetByQuery({ CabinetInvitationToken: 0 })
+    getInvitationByToken(token: string): Promise<ICabinetInvitation> { return null; }
 
-    getInvitationByToken(token: string): Promise<ICabinetInvitation> {
-        throw new Error("Method not implemented.");
-    }
-    getByEmail(email: string): Promise<ICabinetInvitation> {
-        throw new Error("Method not implemented.");
-    }
-    getById(id: any): Promise<ICabinetInvitation> {
-        return super.getBy(
-            new GetByQuery(<ICabinetInvitationMySql>{ CabinetInvitationID: id })
-                .toDBQuery('CABINET_INVITATIONS'))
-    }
+    @Convert(propsMap)
+    @GetByQuery({ CabinetInvitationEmail: 0 })
+    getByEmail(email: string): Promise<ICabinetInvitation> { return null; }
 
+    @Convert(propsMap)
+    @GetByQuery({ CabinetInvitationID: 0 })
+    getById(id: any): Promise<ICabinetInvitation> { return null; }
 
+    @Convert(propsMap)
+    @GetByQuery({ CabinetInvitationEmail: 0, CabinetInvitationRole: 1, CabinetID: 2 })
+    getByEmailAndRoleAndCabinet(email: any, role: any, cabinetId: any): Promise<ICabinetInvitation> { return null; }
+
+    @CreateQuery({ return: true, primary: 'CabinetInvitationID' }, propsMap)
+    createInvitation(invitation: ICabinetInvitation): Promise<ICabinetInvitation> { return null; }
+
+    @DeleteQuery({CabinetInvitationID:0})
+    deleteInvitation(invitationID: number): Promise<any> { return null; }
 }

@@ -3,15 +3,13 @@ import { ICabinetInvitationService } from "./i-cabinet-invitation.service";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
 import { AbstractCabinetInvitationRepository } from "../../dao/repositories/cabinet-invitation.repositoty";
 import { isNullOrUndefined } from "util";
+import { ComposeValidation } from "../../../../behavior/validations/validate.notation";
+import { validateEmail } from "../../../../behavior/validations/validation.function";
 
 function generateInvitationToken(invitation: ICabinetInvitation): string {
     return `${invitation.email}-token`
 }
 export class CabinetInvitationsImplService implements ICabinetInvitationService {
-
-
-
-
 
     constructor(private _cabinetInvitationsRepo: AbstractCabinetInvitationRepository) { }
 
@@ -20,32 +18,38 @@ export class CabinetInvitationsImplService implements ICabinetInvitationService 
         if (isNullOrUndefined(cabinetId)) {
             throw { message: 'no cabinet id' }
         }
-        console.log('atemptim to get cabinet', cabinetId)
+
         return await this._cabinetInvitationsRepo.getByCabinetId(cabinetId)
     }
 
+    @ComposeValidation([
+        { index: 0, validators: [{ paramName: 'email', cb: validateEmail }] }])
     async createInvitation(invitation: ICabinetInvitation): Promise<ICabinetInvitation> {
-        try {
-            if (isNullOrUndefined(invitation)) {
-                throw new Error('no invitation provided');
-            }
+        if (isNullOrUndefined(invitation)) {
+            throw new Error('no invitation provided');
+        }
+        let exist = await
+            this._cabinetInvitationsRepo
+                .getByEmailAndRoleAndCabinet(invitation.email, invitation.role, invitation.cabinetId)
 
-            invitation.date = new Date().getTime();
-            invitation.token = generateInvitationToken(invitation);
-            invitation.expired = false;
-            return await this._cabinetInvitationsRepo.create(invitation);
 
-        } catch (error) {
-            throw error;
+        if (!isNullOrUndefined(exist)) {
+            throw { message: 'email already under invitation for this cabinet and role.' };
         }
 
+        invitation.date = new Date().getTime();
+        invitation.token = generateInvitationToken(invitation);
+        invitation.expired = false;
+        let invitationCreated = await this._cabinetInvitationsRepo.createInvitation(invitation);
+        return invitationCreated;
     }
 
     getInvitationById(invitationId: any): Promise<ICabinetInvitation> {
         return this._cabinetInvitationsRepo.getById(invitationId)
     }
-    cancelInvitation(invitationId: any): Promise<boolean> {
-        throw new Error("Method not implemented.");
+
+    cancelInvitation(invitationId: number): Promise<boolean> {
+        return this._cabinetInvitationsRepo.deleteInvitation(invitationId)
     }
 
     async getInvitationByToken(token: any): Promise<ICabinetInvitation> {

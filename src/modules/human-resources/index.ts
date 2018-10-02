@@ -13,16 +13,17 @@ const mysqlHrProfilesRepo = new MySqlHRProfilesRepository();
 const profilesService = new HRProfilesImplService(mysqlHrProfilesRepo);
 
 //components
-const profilesComponent = new HRProfilesComponent(
+const TODHRprofilesComponent = new HRProfilesComponent(
     profilesService,
     TODUserProfileService,
     TODSystemDocService,
     TODRequiredDocumentReportService);
 
 
-const TODHumanResourcesModule = new HumanResourcesModule(profilesComponent);
+const TODHumanResourcesModule = new HumanResourcesModule(TODHRprofilesComponent);
 
 export {
+    TODHRprofilesComponent,
     TODHumanResourcesModule
 }
 

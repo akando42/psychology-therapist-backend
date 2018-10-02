@@ -1,6 +1,5 @@
 import { IUser } from "../../../../models/user";
 import { IUserProfileService } from "./user-profile.service.interface";
-import { IRolesService } from "../roles/roles.service.interface";
 import { IUserIDVerification } from "../../../../models/user-id-verification";
 
 
@@ -8,24 +7,16 @@ export class UsersProfileComponent {
 
     constructor(
         private _userService: IUserProfileService,
-        private _rolesService?: IRolesService
     ) {
 
     }
 
-    createUserProfile(user: IUser): Promise<IUser> {
-        return new Promise<IUser>(async (resolve, reject) => {
-            try {
-                const userCreated: IUser = await this._userService.createUserProfile(user);
+    async   createUserProfile(user: IUser): Promise<IUser> {
+        user.idVerified = false;
+        const userCreated: IUser = await this._userService.createUserProfile(user);
 
-                const userStored: IUser = await this._userService.getUserById(<any>userCreated);
-                console.log('user stored ', userStored);
-                return resolve(userStored);
+        return userCreated;
 
-            } catch (error) {
-                return reject(error);
-            }
-        });
     }
 
     updateUserProfile(id: any, model: IUser): Promise<IUser> {

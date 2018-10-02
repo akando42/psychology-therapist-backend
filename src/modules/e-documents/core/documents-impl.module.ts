@@ -1,6 +1,8 @@
 import { AbstractDocumentModule } from "./abstract-documents.module";
 import { TODResponse } from "../../../dto/tod-response";
 import { IDocumentUploadDTO } from "../../../dto/document-upload.dto";
+import { UsersRolEnum } from "../../../enums/users-rol.enum";
+import { DocumentReportStatusEnum } from "../../../enums/document-report-status.enum";
 
 
 export class DocumentModuleImpl extends AbstractDocumentModule {
@@ -36,5 +38,15 @@ export class DocumentModuleImpl extends AbstractDocumentModule {
         });
     }
 
-
+    async getDocumentsReportByUserAndRole(userId: number, userRole: UsersRolEnum, status?: DocumentReportStatusEnum): Promise<TODResponse> {
+        try {
+            const reports = await this._documentsReportsComponent.getDocumentsReportByUserAndRole(
+                userId,
+                userRole,
+                status);
+            return this._createTODDTO(reports, null);
+        } catch (error) {
+            return this._createTODDTO(null, error);
+        }
+    }
 }

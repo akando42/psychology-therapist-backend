@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import { TODDocumentsModule } from ".";
 import { IDocumentCategory } from "../../models/document-category";
 import { IDocumentType } from "../../models/document-type";
+import { TokenValidationMiddleware } from "../../middlewares/token-validation.middleware";
 
 
 
@@ -11,6 +12,9 @@ export class DocumentsRouter {
 
     init(): Router {
         let router = Router();
+        //reports
+        router.get('/documents/reports',TokenValidationMiddleware, this.getRequiredDocumentsReports.bind(this));
+
         //required documents
         router.get('/documents/required/:role', this.getRequiredDocuments.bind(this));
         router.post('/documents/required', this.pushDocumentRequiredToRole.bind(this));
@@ -30,6 +34,20 @@ export class DocumentsRouter {
         return router;
     }
 
+    async getRequiredDocumentsReports(req: Request, res: Response) {
+        try {
+
+            const { role, status } = req.query
+            console.log(req.query)
+            let response = await TODDocumentsModule
+                .getDocumentsReportByUserAndRole(req['userId'], role, status);
+            res.status(200).send(response);
+        } catch (error) {
+            
+            res.status(400).send(error);
+        }
+    }
+
 
     async createDocumentsType(req: Request, res: Response) {
         try {
@@ -37,7 +55,6 @@ export class DocumentsRouter {
             res.status(200).send(response);
         } catch (error) {
             res.status(400).send(error);
-
         }
     }
 

@@ -12,7 +12,7 @@ export interface IDocumentsReportsService {
      * @param userRole role
      * @param status status of the report.
      */
-    getDocumentsReportByUserRole(userId: number, userRole: UsersRolEnum, status: DocumentReportStatusEnum): Promise<IRequiredDocumentReport[]>
+    getDocumentsReportByUserAndRole(userId: number, userRole: UsersRolEnum, status: DocumentReportStatusEnum): Promise<IRequiredDocumentReport[]>
 
     /**
      * Create a document required report, ej: when a user its required to sign a document

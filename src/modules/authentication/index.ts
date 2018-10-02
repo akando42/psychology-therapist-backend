@@ -3,11 +3,11 @@ import { AccountsServiceImpl } from "./core/accounts/accounts-impl.service";
 import { MySqlResetPasswordRequestRepository } from "./dao/my-sql/repositories/my-sql-reset-password-request.repository";
 import { AccountsComponent } from "./core/accounts/accounts.component";
 import { AuthenticationImplModule } from "./core/authentication-impl.module";
-import { TODUsersModule, usersComponent } from "../users";
+import { TODUsersModule, usersComponent, TODUserProfileService } from "../users";
 import { AuthenticationRouter } from "./authentication.router";
 import { TODCommunicationModuleInstance } from "../communication";
 import { TODAdminModule, TODCabinetComponent } from "../admin";
-import { TODHumanResourcesModule } from "../human-resources";
+import { TODHumanResourcesModule, TODHRprofilesComponent } from "../human-resources";
 
 
 //repositories
@@ -17,7 +17,7 @@ const mysqlResetPasswordRepo = new MySqlResetPasswordRequestRepository();
 //services
 const accountsService = new AccountsServiceImpl(mysqlAccountsRepo, mysqlResetPasswordRepo);
 //components
-const accountsComponent = new AccountsComponent(accountsService, usersComponent);
+const accountsComponent = new AccountsComponent(accountsService, TODUserProfileService);
 
 
 const TODAuthenticationModule =
@@ -26,7 +26,7 @@ const TODAuthenticationModule =
         accountsComponent,
         TODCabinetComponent,
         TODCommunicationModuleInstance,
-        TODHumanResourcesModule,
+        TODHRprofilesComponent,
         TODAdminModule);
 
 export {

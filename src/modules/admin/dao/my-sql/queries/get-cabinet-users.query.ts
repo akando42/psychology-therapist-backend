@@ -3,7 +3,6 @@
 
 export class GetCabinetUsersQuery {
     constructor(public cabinet: any, role: string) {
-        console.log(this)
     }
 
     /**

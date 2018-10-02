@@ -4,11 +4,7 @@ process.env.MAILGUN_API_KEY = '759a41ec453b708bcb16e0769be3e864-b892f62e-d75c1e6
 process.env.MAILGUN_USERNAME = 'therapyondemand.xyz';
 const port: any = process.env.PORT || '3000';
 
-import * as os from 'os';
-// import { authModule } from './modules/authentication';
 import { API } from "./api";
-import { IDocumentRequired } from './models/document-required';
-import { MySqlUserDocumentsRepository } from './modules/users/dao/my-sql/repositories/my-sql-user-documents.repository';
 const http = require('http');
 
 const api: API = new API();

@@ -37,9 +37,10 @@ export class CabinetComponent {
         if (isNullOrUndefined(cabinet)) {
             throw { message: 'cabinet dosent exist for that user' }
         }
+
         invitation.cabinetId = cabinet.id;
         let invitationCreated = await this._cabinetInvitationService.createInvitation(invitation);
-        return await this._cabinetInvitationService.getInvitationById(invitationCreated);
+        return invitationCreated;
 
     }
 
@@ -63,10 +64,11 @@ export class CabinetComponent {
     }
     async getCabinetInvitationByToken(token: string): Promise<ICabinetInvitation> {
         const invitation = await this._cabinetInvitationService.getInvitationByToken(token);
-
         return invitation;
     }
-
+    async cancelInvitation(invitationId: number): Promise<any> {
+        return await this._cabinetInvitationService.cancelInvitation(invitationId);
+    }
     requestActionToCabinetUser(memberId: string, request: IActionRequest): Promise<TODResponse> {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {

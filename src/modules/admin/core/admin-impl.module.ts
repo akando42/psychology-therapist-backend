@@ -13,6 +13,7 @@ import { NewRoleInvitationTemplate } from "../../../email-templates/new-role-inv
 
 export class AdminModuleImpl extends AbstractAdminModule {
 
+
     async getCabinetMembers(cabinetId: number, role: any): Promise<any> {
 
     }
@@ -78,7 +79,6 @@ export class AdminModuleImpl extends AbstractAdminModule {
         return new Promise<TODResponse>(async (resolve, reject) => {
             try {
                 const created = await <ICabinetInvitation>this.cabinetComponent.inviteToCabinet(invitation);
-
                 //check if usre already have and account 
                 const user = await this._usersModule.getUserByEmail(created.email)
                 let template = null;
@@ -91,11 +91,14 @@ export class AdminModuleImpl extends AbstractAdminModule {
                     body: template,
                     subject: 'verification '
                 })
-                    .then(console.log)
-                    .catch(console.log);
+                    .then((res) => {
+                        // console.log(res['body'])
+                    })
+                // .catch(console.log);
 
                 return resolve(this._createTODDTO(created, null));
             } catch (error) {
+                console.log(error)
                 return reject(this._createTODDTO(null, error));
             }
         });
@@ -110,6 +113,19 @@ export class AdminModuleImpl extends AbstractAdminModule {
                 return reject({ error: error })
             }
         })
+    }
+
+    cancelInvitation(invitationID: number): Promise<any> {
+        return new Promise<TODResponse>(async (resolve, reject) => {
+            try {
+                const result = await this.cabinetComponent.cancelInvitation(invitationID);
+                console.log(result)
+                return resolve(this._createTODDTO(result, null));
+            } catch (error) {
+                console.log(error)
+                return reject(this._createTODDTO(null, error));
+            }
+        });
     }
 
     protected _createTODDTO(payload: any, error?: any): TODResponse {
