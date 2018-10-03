@@ -1,12 +1,18 @@
 import { IUser } from "../../../../models/user";
 import { IUserProfileService } from "./user-profile.service.interface";
 import { IUserIDVerification } from "../../../../models/user-id-verification";
-
+import { ILocationsRepository } from "../../dao/locations.repository";
+import { ILocationsService } from "../locations/locations.service.interface";
+import { IPhoneNumberService } from "../phone-number/i-phone-number.service";
 
 export class UsersProfileComponent {
 
+    protected userLocations: ILocationsRepository
+
     constructor(
         private _userService: IUserProfileService,
+        private _userLocations: ILocationsService,
+        private _phoneNumberService:IPhoneNumberService
     ) {
 
     }
@@ -19,17 +25,14 @@ export class UsersProfileComponent {
 
     }
 
-    updateUserProfile(id: any, model: IUser): Promise<IUser> {
-        return new Promise<IUser>(async (resolve, reject) => {
-            try {
-                const edited: IUser = await this._userService.updateUserProfile(id, model);
+    async updateUserProfile(id: any, model: IUser): Promise<IUser> {
+        try {
+            const edited: IUser = await this._userService.updateUserProfile(id, model);
 
-                return resolve(edited);
-            } catch (error) {
-                return resolve(error);
-            }
-        });
-
+            return edited;
+        } catch (error) {
+            throw error;
+        }
     }
 
     getUserProfileByEmail(email: string): Promise<IUser> {

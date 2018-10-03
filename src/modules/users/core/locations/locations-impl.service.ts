@@ -1,9 +1,10 @@
 import { ILocationsService } from "./locations.service.interface";
 import { ILocation } from "../../../../models/location";
+import { ILocationsRepository } from "../../dao/locations.repository";
 
 
-export class LocationsComponent {
-    constructor(private _locations: ILocationsService) {
+export class LocationsImplService implements ILocationsService {
+    constructor(private _locationsRepo: ILocationsRepository) {
 
     }
 

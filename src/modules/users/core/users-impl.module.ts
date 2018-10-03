@@ -2,12 +2,8 @@ import { AbstractUsersModule } from "./users.module";
 import { IUser } from '../../../models/user';
 import { ILocation } from '../../../models/location';
 import { UsersProfileComponent } from "./user-profile/user-profile.component";
-import { LocationsComponent } from "./locations/locations.component";
 import { IDocumentUploadDTO } from "../../../dto/document-upload.dto";
 import { TODResponse } from "../../../dto/tod-response";
-import { IEDocument } from "../../../models/e-document";
-import { resolve } from "dns";
-import { reject } from "q";
 import { AbstractDocumentModule } from "../../e-documents/core/abstract-documents.module";
 import { isNullOrUndefined } from "util";
 
@@ -16,11 +12,9 @@ export class UsersImplModule extends AbstractUsersModule {
 
     constructor(
         userProfileComponent: UsersProfileComponent,
-        // userDocumentsComponent?: UserDocumentsComponent,
-        locationComponent?: LocationsComponent,
         documentsModule?: AbstractDocumentModule
     ) {
-        super(userProfileComponent, locationComponent, documentsModule);
+        super(userProfileComponent, documentsModule);
     }
 
     createUser(user: IUser, roleid: number): Promise<IUser> {
@@ -100,7 +94,7 @@ export class UsersImplModule extends AbstractUsersModule {
                     .pushSecondPictureToVerificationReport(payload, userid);
 
 
-                
+
 
                 return resolve({ timestamp: new Date(), message: 'second picture updated', payload: { success: true } });
 

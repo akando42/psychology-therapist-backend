@@ -1,4 +1,4 @@
-import { AbstractUsersRepository } from "../../users.repository";
+import {  IUsersRepository } from "../../users.repository";
 import { IUser } from "../../../../../models/user";
 import { Convert } from "../../../../../behavior/converters/converter.notation";
 import { GetByQuery as GetByQueryNot } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
@@ -16,7 +16,7 @@ const propsMap = {
 }
 
 @Repository('USERS')
-export class MySqlUsersRepository implements AbstractUsersRepository {
+export class MySqlUsersRepository implements IUsersRepository {
 
     constructor() {
     }
@@ -34,5 +34,5 @@ export class MySqlUsersRepository implements AbstractUsersRepository {
     @GetByQueryNot({ 'UserID': 0 }, 'USERS')
     getById(id: any): Promise<IUser> { return null; }
 
-    updateUser(id: any): Promise<IUser> { return null; }
+    updateUser(id: any,model): Promise<IUser> { return null; }
 }

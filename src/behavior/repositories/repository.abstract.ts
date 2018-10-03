@@ -1,7 +1,7 @@
 import { IConverter, IDualConverter } from "../converters/converter.interface";
 import { IWriteReadRepository } from "./write-read-repository.interface";
 import { MetadataArgsStorage } from "typeorm/metadata-args/MetadataArgsStorage";
-import { AbstractUsersRepository } from "../../modules/users/dao/users.repository";
+import { IUsersRepository } from "../../modules/users/dao/users.repository";
 
 
 export abstract class AbstractRepository<K> implements IWriteReadRepository<K> {

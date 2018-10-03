@@ -1,6 +1,5 @@
 import { IUser } from "../../../models/user";
 import { ILocation } from "../../../models/location";
-import { LocationsComponent } from "./locations/locations.component";
 import { UsersProfileComponent } from "./user-profile/user-profile.component";
 import { IDocumentUploadDTO } from "../../../dto/document-upload.dto";
 import { TODResponse } from "../../../dto/tod-response";
@@ -10,7 +9,6 @@ import { AbstractDocumentModule } from "../../e-documents/core/abstract-document
 export abstract class AbstractUsersModule {
     constructor(
         protected _userProfilesComponent: UsersProfileComponent,
-        protected _locationsComponent: LocationsComponent,
         protected _documentsModule: AbstractDocumentModule
     ) { }
 

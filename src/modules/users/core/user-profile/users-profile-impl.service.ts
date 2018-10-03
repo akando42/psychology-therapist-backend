@@ -1,5 +1,5 @@
 import { IUserProfileService } from "./user-profile.service.interface";
-import { AbstractUsersRepository } from "../../dao/users.repository";
+import { IUsersRepository } from "../../dao/users.repository";
 import { IUser } from "../../../../models/user";
 import { propertiesMatcherUtil } from "../../../../utils/properties-matcher.util";
 import { IUserIDVerification } from "../../../../models/user-id-verification";
@@ -10,7 +10,7 @@ export class UsersProfileServiceImpl implements IUserProfileService {
 
 
     constructor(
-        private _usersRepository: AbstractUsersRepository,
+        private _usersRepository: IUsersRepository,
         private _idVerificationRepo: AbstractUsersIDVerificationsRepository) { }
 
     async createUserProfile(newUser: IUser): Promise<IUser> {

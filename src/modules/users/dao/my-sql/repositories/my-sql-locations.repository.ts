@@ -1,26 +1,39 @@
 
-import { AbstractLocationsRepository } from "../../locations.repository";
+import { ILocationsRepository } from "../../locations.repository";
 import { ILocation } from "../../../../../models/location";
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
-import { MySqlLocationsConverter } from "../../../converters/my-sql/my-sql-locations.converter";
-import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
-import { ILocationMySql } from "../models/my-sql-location";
+import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
+import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
+import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
+import { Convert } from "../../../../../behavior/converters/converter.notation";
+
+const propsMap = {
+    id: 'LocationID',
+    userId: 'UserID',
+    stringAddress: 'LocationStringAddress',
+    lat: 'LocationLatitude',
+    lng: 'LocationLongitude',
+    contry: 'LocationContry',
+    state: 'LocationState'
+}
+
+@Repository('Location')
+export class MySqlLocationsRepository implements ILocationsRepository {
 
 
-export class MySqlLocationsRepository extends AbstractLocationsRepository {
-    constructor() {
-        super(new GenericDao('LOCATIONS'), new MySqlLocationsConverter());
-    }
-    createLocation(location: ILocation): Promise<ILocation> {
-        return super.create(location)
-    }
-    deleteLocation(id: number): Promise<any> {
-        return super.delete(id);
-    }
+    @CreateQuery({ return: true, primary: 'LocationID' }, propsMap)
+    createLocation(location: ILocation): Promise<ILocation> { return null; }
 
-    getLocation(locationId: number): Promise<ILocation> {
-        return super.getBy(new GetByQuery(<ILocationMySql>{ LocationID: locationId })
-            .toDBQuery('LOCATIONS'))
-    }
 
+    deleteLocation(id: number): Promise<any> { return null; }
+
+    @Convert(propsMap)
+    @GetByQuery({ LocationID: 0 })
+    getLocationById(locationId: number): Promise<ILocation> {
+        return null;
+    }
+    @Convert(propsMap)
+    @GetByQuery({ UserID: 0 })
+    getLocationByUserId(userId: number): Promise<ILocation> {
+        return null;
+    }
 }

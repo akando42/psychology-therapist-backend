@@ -7,4 +7,5 @@ export interface ILocation {
     lng?: number;
     country?: string;
     state?: string;
+    postalCode?: string;
 }
