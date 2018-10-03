@@ -1,18 +1,16 @@
 import { IUser } from "../../../../models/user";
 import { IUserProfileService } from "./user-profile.service.interface";
 import { IUserIDVerification } from "../../../../models/user-id-verification";
-import { ILocationsRepository } from "../../dao/locations.repository";
 import { ILocationsService } from "../locations/locations.service.interface";
 import { IPhoneNumberService } from "../phone-number/i-phone-number.service";
+import { ILocation } from "../../../../models/location";
 
 export class UsersProfileComponent {
-
-    protected userLocations: ILocationsRepository
 
     constructor(
         private _userService: IUserProfileService,
         private _userLocations: ILocationsService,
-        private _phoneNumberService:IPhoneNumberService
+        private _phoneNumberService: IPhoneNumberService
     ) {
 
     }
@@ -80,4 +78,12 @@ export class UsersProfileComponent {
         return this._userService.pushSecondPicVerificationReport(picId, reporId)
     }
 
+    async createUserLocation(location: ILocation): Promise<ILocation> {
+        try {
+            const locationCreated = await this._userLocations.createLocation(location);
+            return locationCreated;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

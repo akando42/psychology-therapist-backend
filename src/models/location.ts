@@ -8,4 +8,6 @@ export interface ILocation {
     country?: string;
     state?: string;
     postalCode?: string;
+    userId?:number;
+    verified?:boolean;
 }

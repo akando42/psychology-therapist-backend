@@ -13,7 +13,8 @@ const propsMap = {
     lat: 'LocationLatitude',
     lng: 'LocationLongitude',
     contry: 'LocationContry',
-    state: 'LocationState'
+    state: 'LocationState',
+    verified:'LocationVerified'
 }
 
 @Repository('Location')
