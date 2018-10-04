@@ -6,9 +6,11 @@ import { IDocumentUploadDTO } from "../../../dto/document-upload.dto";
 import { TODResponse } from "../../../dto/tod-response";
 import { AbstractDocumentModule } from "../../e-documents/core/abstract-documents.module";
 import { isNullOrUndefined } from "util";
+import { IPhoneNumber } from "../../../models/phone-number";
 
 
 export class UsersImplModule extends AbstractUsersModule {
+
 
     constructor(
         userProfileComponent: UsersProfileComponent,
@@ -19,6 +21,24 @@ export class UsersImplModule extends AbstractUsersModule {
 
     createUser(user: IUser, roleid: number): Promise<IUser> {
         return this._userProfilesComponent.createUserProfile(user);
+    }
+
+    async addUserPhoneNumber(phoneNumber: IPhoneNumber): Promise<TODResponse> {
+        try {
+            const ph = await this._userProfilesComponent.createPhoneNumber(phoneNumber);
+            return this._createTODDTO(ph, null);
+        } catch (error) {
+            return this._createTODDTO(null, error);
+        }
+    }
+
+    async getUserPhoneNumber(userId: number): Promise<TODResponse> {
+        try {
+            const ph = await this._userProfilesComponent.getUserPhoneNumber(userId);
+            return this._createTODDTO(ph, null);
+        } catch (error) {
+            return this._createTODDTO(null, error);
+        }
     }
 
     updateUser(id: string, model: IUser): Promise<IUser> {
@@ -32,9 +52,24 @@ export class UsersImplModule extends AbstractUsersModule {
     getUserById(id: number): Promise<IUser> {
         return this._userProfilesComponent.getUserProfileById(id);
     }
-    addUserLocation(userId: number, location: ILocation): Promise<ILocation> {
-        throw new Error("Method not implemented.");
+    async addUserLocation(location: ILocation): Promise<TODResponse> {
+        try {
+            const loc = await this._userProfilesComponent.createUserLocation(location);
+            return this._createTODDTO(loc, null);
+        } catch (error) {
+            return this._createTODDTO(null, error);
+        }
     }
+
+    async getUserLocation(userId: any): Promise<TODResponse> {
+        try {
+            const loc = await this._userProfilesComponent.getUserLocation(userId);
+            return this._createTODDTO(loc, null);
+        } catch (error) {
+            return this._createTODDTO(null, error);
+        }
+    }
+
     validateUserLocation(locationID: number): Promise<ILocation> {
         throw new Error("Method not implemented.");
     }
@@ -93,9 +128,6 @@ export class UsersImplModule extends AbstractUsersModule {
                 const result = await this._userProfilesComponent
                     .pushSecondPictureToVerificationReport(payload, userid);
 
-
-
-
                 return resolve({ timestamp: new Date(), message: 'second picture updated', payload: { success: true } });
 
             } catch (error) {
@@ -103,29 +135,13 @@ export class UsersImplModule extends AbstractUsersModule {
             }
         })
     }
-
-    getDocumentRaw(documentRawid: number): Promise<TODResponse> {
-        return new Promise<TODResponse>(async (resolve, reject) => {
-            try {
-                // const docRaw: IEDocument = await this._userDocumentsComponent.getRawDocument(documentRawid);
-
-                // const response: TODResponse = {
-                //     message: 'document upladed',
-                //     payload: docRaw,
-                //     timestamp: new Date()
-                // };
-                // return resolve(response);
-
-            } catch (error) {
-                const badResponse: TODResponse = {
-                    message: 'Sorry!,document upladed failed',
-                    error: error,
-                    timestamp: new Date()
-                };
-
-                return reject(badResponse);
-            }
-        });
+    protected _createTODDTO(payload: any, error?: any): TODResponse {
+        return {
+            error: error || null,
+            message: 'succefully',
+            timestamp: new Date(),
+            payload: payload || null
+        }
     }
 
 }

@@ -23,7 +23,7 @@ export class CabinetInvitationsImplService implements ICabinetInvitationService 
     }
 
     @ComposeValidation([
-        { index: 0, validators: [{ paramName: 'email', cb: validateEmail }] }])
+        { index: 0, validators: [{ name: 'email', cb: validateEmail }] }])
     async createInvitation(invitation: ICabinetInvitation): Promise<ICabinetInvitation> {
         if (isNullOrUndefined(invitation)) {
             throw new Error('no invitation provided');

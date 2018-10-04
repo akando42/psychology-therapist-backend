@@ -8,10 +8,11 @@ export function GetByQuery(searchParam, tableName?, ...queriesExtends) {
 
         descriptor.value = function (...args) {
             let table: string = target.table || tableName
+
             let sp = generateParam(searchParam, arguments)
 
             let query = new q(sp, table);
-            console.log(query.toDBQuery())
+
             let r = target.query(query.toDBQuery())
             return r;
 

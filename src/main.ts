@@ -9,13 +9,15 @@ const http = require('http');
 
 const api: API = new API();
 
+
 http.createServer(api.express).listen(port, () => {
     console.log(`up and running on under ${port}`)
 });
-
 
 // setInterval(function () {
 //     var used = process.memoryUsage().heapUsed / 1024 / 1024;
 //     console.log(`Script : ${Math.round(used * 100) / 100} MB `);
 // }, 1000);
+
+
 

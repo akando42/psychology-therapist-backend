@@ -3,6 +3,7 @@ import { TODAdminModule } from ".";
 import { TokenValidationMiddleware } from "../../middlewares/token-validation.middleware";
 import { ICabinet } from "../../models/cabinet";
 import { ICabinetInvitation } from "../../models/cabinet-invitation";
+import { UsersRolEnum } from "../../enums/users-rol.enum";
 
 
 
@@ -12,6 +13,7 @@ export class AdminRouter {
     init(): Router {
         let router = Router();
 
+        router.get('/cabinets/test', this.getMembers.bind(this));
         router.get('/cabinets', TokenValidationMiddleware, this.getAdminCabinet.bind(this));
         router.post('/cabinets', TokenValidationMiddleware, this.createCabinet.bind(this));
 
@@ -42,6 +44,16 @@ export class AdminRouter {
                 res.status(400).json(err);
             });
     }
+    getMembers(req: Request, res: Response): void {
+
+        TODAdminModule.getCabinetMembersByRole(1, UsersRolEnum.hr)
+            .then((result) => {
+                res.status(200).json(result);
+            }).catch((err) => {
+                res.status(400).json(err);
+            });
+    }
+
 
     getCabinetInvitations(req: Request, res: Response): void {
         TODAdminModule.getCabinetInvitations(req.params['cabinet_id'])

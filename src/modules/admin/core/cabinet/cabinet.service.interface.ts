@@ -3,6 +3,7 @@ import { IActionRequest } from "../../../../models/action-request";
 import { IUser } from "../../../../models/user";
 import { ICabinet } from "../../../../models/cabinet";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
+import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 
 
 export interface ICabinetService {
@@ -19,4 +20,6 @@ export interface ICabinetService {
     requestActionToCabinetUser(memberId: string, request: IActionRequest);
 
     inviteToCabinet(cabinet: ICabinetInvitation): Promise<ICabinetInvitation>;
+
+    getHRCabinetMembers(cabinetId: any): Promise<any[]>;
 }

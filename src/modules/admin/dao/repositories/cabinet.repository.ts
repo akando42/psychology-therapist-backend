@@ -5,7 +5,7 @@ import { IUser } from "../../../../models/user";
 import { ICabinet } from "../../../../models/cabinet";
 
 
-export interface AbstractCabinetsRepository {
+export interface ICabinetsRepository {
 
 
     createCabinet(cabinet: ICabinet): Promise<any>;
@@ -15,5 +15,7 @@ export interface AbstractCabinetsRepository {
     getCabinetByAdminID(adminID: number): Promise<any>;
 
     getAdminCabinetUsers(adminID: any): Promise<IUser[]>;
+
+    getAdminCabinetHRMembers(cabinetId: any): Promise<IUser[]>;
 
 }

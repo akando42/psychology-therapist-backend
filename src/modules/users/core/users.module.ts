@@ -20,7 +20,11 @@ export abstract class AbstractUsersModule {
 
     abstract getUserById(id: number): Promise<IUser>;
 
-    abstract addUserLocation(userId: number, location: ILocation): Promise<ILocation>;
+    //////////////////////////////////////////////////////////////
+    //USER LOCATIONS FUNCTIONS
+    ////////////////////////////////////////////////////////////////
+    abstract addUserLocation(location: ILocation): Promise<TODResponse>;
+    abstract getUserLocation(userId: any): Promise<TODResponse>;
 
     abstract validateUserLocation(locationID: number): Promise<ILocation>;
 

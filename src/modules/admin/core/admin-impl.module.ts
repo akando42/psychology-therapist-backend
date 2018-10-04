@@ -9,6 +9,7 @@ import { AbtractCommunicationModule } from "../../communication/core/comunicatio
 import { InvitationEmailTemplate } from "../../../email-templates/invitation-email.template";
 import { AbstractUsersModule } from "../../users/core/users.module";
 import { NewRoleInvitationTemplate } from "../../../email-templates/new-role-invitation-email.template";
+import { UsersRolEnum } from "../../../enums/users-rol.enum";
 
 
 export class AdminModuleImpl extends AbstractAdminModule {
@@ -59,6 +60,9 @@ export class AdminModuleImpl extends AbstractAdminModule {
             return this._createTODDTO(invitations, null);
         } catch (error) {
             console.log(error)
+            if (error['sqlState']) {
+                error = { message: 'unexpexted  error' };
+            }
             return this._createTODDTO(null, error);
         }
 
@@ -126,6 +130,19 @@ export class AdminModuleImpl extends AbstractAdminModule {
                 return reject(this._createTODDTO(null, error));
             }
         });
+    }
+
+    async getCabinetMembersByRole(cabinetId: any, role: UsersRolEnum): Promise<TODResponse> {
+        try {
+            const members = await this.cabinetComponent.getMembersByRole(cabinetId, role);
+            return this._createTODDTO(members, null);
+        } catch (error) {
+            console.log(error['sqlMessage'] || error['message'])
+            if (error['sqlState']) {
+                error = { message: 'unexpexted  error' };
+            }
+            return this._createTODDTO(null, error);
+        }
     }
 
     protected _createTODDTO(payload: any, error?: any): TODResponse {

@@ -2,17 +2,19 @@
 import { IUser } from "../../../../models/user";
 import { ActionRequestsRepoInstance } from "../../dao/repositories/action-request.repository";
 import { IActionRequest } from "../../../../models/action-request";
-import { AbstractCabinetsRepository } from "../../dao/repositories/cabinet.repository";
+import { ICabinetsRepository } from "../../dao/repositories/cabinet.repository";
 import { ICabinetService } from "./cabinet.service.interface";
 import { ICabinet } from "../../../../models/cabinet";
 import { isNullOrUndefined } from "util";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
+import { Validate } from "../../../../behavior/validations/validate.notation";
+import { Required } from "../../../../behavior/validations/validation.function";
 
 export class CabinetsImplService implements ICabinetService {
 
 
 
-    constructor(private _cabinetRepository: AbstractCabinetsRepository) { }
+    constructor(private _cabinetRepository: ICabinetsRepository) { }
 
     async getCabinetByAdminID(userId: number): Promise<ICabinet> {
         if (isNullOrUndefined(userId)) {
@@ -24,7 +26,7 @@ export class CabinetsImplService implements ICabinetService {
     requestActionToCabinetUser(memberId: string, request: IActionRequest) {
         throw new Error("Method not implemented.");
     }
-    
+
     inviteToCabinet(cabinetInvi: ICabinetInvitation): Promise<ICabinetInvitation> {
         return new Promise<ICabinetInvitation>(async (resolve, reject) => {
             try {
@@ -81,6 +83,13 @@ export class CabinetsImplService implements ICabinetService {
                 return reject(error);
             }
         })
+    }
+
+
+    @Validate([{ name: 'Cabiner ID', parameterIndex: 0, cb: Required }])
+    async getHRCabinetMembers(cabinetId: any): Promise<any[]> {
+        let members = await this._cabinetRepository.getAdminCabinetHRMembers(cabinetId);
+        return members;
     }
 
 }

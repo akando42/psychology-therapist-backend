@@ -2,8 +2,11 @@ import { IUser } from "../../../../models/user";
 import { IUserProfileService } from "./user-profile.service.interface";
 import { IUserIDVerification } from "../../../../models/user-id-verification";
 import { ILocationsService } from "../locations/locations.service.interface";
-import { IPhoneNumberService } from "../phone-number/i-phone-number.service";
 import { ILocation } from "../../../../models/location";
+import { IPhoneNumber } from "../../../../models/phone-number";
+import { IPhoneNumberService } from "../phone-number/i-phone-number.service";
+import { isNullOrUndefined } from "util";
+
 
 export class UsersProfileComponent {
 
@@ -33,15 +36,13 @@ export class UsersProfileComponent {
         }
     }
 
-    getUserProfileByEmail(email: string): Promise<IUser> {
-        return new Promise<IUser>(async (resolve, reject) => {
-            try {
-                const user: IUser = await this._userService.getUserByEmail(email);
-                return resolve(user);
-            } catch (error) {
-                return reject(error);
-            }
-        })
+    async getUserProfileByEmail(email: string): Promise<IUser> {
+        try {
+            const user: IUser = await this._userService.getUserByEmail(email);
+            return user;
+        } catch (error) {
+            throw error;
+        }
     }
 
     verifiedUserIdentity(id: number): Promise<IUser> {
@@ -82,6 +83,44 @@ export class UsersProfileComponent {
         try {
             const locationCreated = await this._userLocations.createLocation(location);
             return locationCreated;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getUserLocation(userId: any): Promise<ILocation> {
+        try {
+            const userExist = await this._userService.getUserById(userId);
+            if (isNullOrUndefined(userExist)) {
+                throw { message: `There its no such a user with that id` };
+            }
+            const location = await this._userLocations.getLocationByUserId(userId);
+            return location;
+        } catch (error) {
+            throw error;
+        }
+
+    }
+
+    async createPhoneNumber(phoneNumber: IPhoneNumber): Promise<IPhoneNumber> {
+        try {
+
+            const phoneNumberCreated = await this._phoneNumberService.createPhoneNumber(phoneNumber);
+            return phoneNumberCreated;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async getUserPhoneNumber(userId: any): Promise<IPhoneNumber> {
+        try {
+            const userExist = await this._userService.getUserById(userId);
+            if (isNullOrUndefined(userExist)) {
+                throw { message: `There its no such a user with that id` };
+            }
+
+            const phoneNumber = await this._phoneNumberService.getPhoneNumberByUserId(userId);
+            return phoneNumber;
+
         } catch (error) {
             throw error;
         }

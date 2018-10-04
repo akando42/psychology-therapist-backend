@@ -30,7 +30,7 @@ export class MySqlRequiredDocumentsRepository implements AbstractRequiredDocumen
                 properties: ['DOCUMENTS.DocumentID','DocumentTypeID', 'DocumentPath','DocumentName', 'RawDocumentID', 'DocumentUploadDate'], table: 'DOCUMENTS'
             }
         ]
-    },''))
+    }))
     getDocumentsRequiredByRole(role: UsersRolEnum): Promise<IRequiredDocument[]> {
         return null;
     }

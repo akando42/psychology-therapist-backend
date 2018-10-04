@@ -1,7 +1,7 @@
 
 import { IUser } from "../../../../../models/user";
 import { GetCabinetUsersQuery } from "../queries/get-cabinet-users.query";
-import { AbstractCabinetsRepository } from "../../repositories/cabinet.repository";
+import { ICabinetsRepository } from "../../repositories/cabinet.repository";
 import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
 import { ICabinet } from "../../../../../models/cabinet";
 import { ICabinetMySql } from "../models/cabinet-my-sql";
@@ -10,9 +10,11 @@ import { Repository } from "../../../../../behavior/repositories/repositoy.notat
 import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
 import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
 import { Convert } from "../../../../../behavior/converters/converter.notation";
+import { JoinQuery, Join } from "../../../../../behavior/queries/my-sql/join-query.notation";
 
 @Repository('CABINET')
-export class MySqlCabinetsRepository implements AbstractCabinetsRepository {
+export class MySqlCabinetsRepository implements ICabinetsRepository {
+
 
     @Convert({ id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'CabinetName' })
     @GetByQuery({ 'CabinetAdminProfileID': 0 })
@@ -27,9 +29,18 @@ export class MySqlCabinetsRepository implements AbstractCabinetsRepository {
     addToCabinet(adminID: number, invitedID: number): Promise<any> {
         return null;
     }
+
     getAdminCabinetUsers(adminID: string): Promise<IUser[]> {
         return null;
     }
+
+
+    @Convert({ id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'CabinetName' }, true)
+    @JoinQuery({ 'CabinetID': 0 }, [
+        new Join('HR_Profiles', 'CabinetID', ['HRProfileStatus']),
+        new Join('Users', 'UserID', ['UserLastName', 'UserFirstName'], 'HR_Profiles'),
+    ])
+    getAdminCabinetHRMembers(cabinetId: any): Promise<IUser[]> { return null; }
 
 }
 

@@ -40,14 +40,11 @@ export class API {
 
 	private mountRoutes(): void {
 
+
 		this.express.use('/admin', new AdminRouter().init());
 		// this.express.use('/api/v1', TasksRouterInstance.init());
 
-		this.express.use('/agent', (req, res) => {
-			console.log(req.headers.host)
-			console.log(req.headers.location)
-			console.log(req.headers['user-agent'])
-		});
+
 
 		this.express.use('/api/v1', new AuthenticationRouter().init());
 		this.express.use('/api/v1', new DocumentsRouter().init());
@@ -56,10 +53,7 @@ export class API {
 		// this.express.use('/api/v1', NotificationsRouterInstance.init());
 		// this.express.use('/api/v1', ProviderRouterInstance.init());
 
-		//tempora;
-		this.express.use('/api/v1/users/:id/profile', (req, res) => {
-
-		});
+	
 
 	}
 }

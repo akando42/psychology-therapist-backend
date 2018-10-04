@@ -8,6 +8,7 @@ import { ICabinet } from "../../../../models/cabinet";
 import { ICabinetInvitationService } from "./i-cabinet-invitation.service";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
 import { isNullOrUndefined } from "util";
+import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 
 
 export class CabinetComponent {
@@ -101,5 +102,18 @@ export class CabinetComponent {
                 return reject(badResult);
             }
         });
+    }
+
+    async getMembersByRole(cabinetId: any, role: UsersRolEnum): Promise<any> {
+        let members: any[] = [];
+        switch (role) {
+            case UsersRolEnum.hr:
+                members = await this._cabinetService.getHRCabinetMembers(cabinetId);
+                break;
+            default:
+                break;
+        }
+
+        return members;
     }
 }

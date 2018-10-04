@@ -1,11 +1,12 @@
 import { ILocationsService } from "./locations.service.interface";
 import { ILocation } from "../../../../models/location";
 import { ILocationsRepository } from "../../dao/locations.repository";
-import { ComposeValidation } from "../../../../behavior/validations/validate.notation";
+import { ComposeValidation, Validate } from "../../../../behavior/validations/validate.notation";
 import { Required } from "../../../../behavior/validations/validation.function";
 
 
 export class LocationsImplService implements ILocationsService {
+
     constructor(private _locationsRepo: ILocationsRepository) { }
 
 
@@ -29,6 +30,12 @@ export class LocationsImplService implements ILocationsService {
 
     validateLocation(location: ILocation): Promise<ILocation> {
         return null
+    }
+
+    @Validate([{ parameterIndex: 0, name: 'user id', cb: Required }])
+    async getLocationByUserId(userId: any): Promise<ILocation> {
+        let lc = await this._locationsRepo.getLocationByUserId(userId);
+        return lc;
     }
 
 }
