@@ -23,17 +23,18 @@ const cabinetInvitatonService = new CabinetInvitationsImplService(mysqlInvitatio
 
 // component
 const TODCabinetComponent = new CabinetComponent(cabinetService, cabinetInvitatonService);
-const adminProfileComponent = new AdminProfilesComponent(adminProfileService);
+const TODAdminProfileComponent = new AdminProfilesComponent(adminProfileService);
 
 //module
 const TODAdminModule = new AdminModuleImpl(
-    adminProfileComponent,
+    TODAdminProfileComponent,
     TODCabinetComponent,
     TODCommunicationModuleInstance,
     TODUsersModule
 );
 
 export {
+    TODAdminProfileComponent,
     TODCabinetComponent,
     TODAdminModule
 }

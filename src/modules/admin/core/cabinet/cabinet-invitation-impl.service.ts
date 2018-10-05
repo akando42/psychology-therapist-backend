@@ -32,7 +32,6 @@ export class CabinetInvitationsImplService implements ICabinetInvitationService 
             this._cabinetInvitationsRepo
                 .getByEmailAndRoleAndCabinet(invitation.email, invitation.role, invitation.cabinetId)
 
-
         if (!isNullOrUndefined(exist)) {
             throw { message: 'email already under invitation for this cabinet and role.' };
         }

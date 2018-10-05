@@ -16,15 +16,16 @@ import { JoinQuery, Join } from "../../../../../behavior/queries/my-sql/join-que
 export class MySqlCabinetsRepository implements ICabinetsRepository {
 
 
-    @Convert({ id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'CabinetName' })
-    @GetByQuery({ 'CabinetAdminProfileID': 0 })
+
+    @Convert({ id: 'CabinetID', adminId: 'AdminProfileID', name: 'CabinetName' })
+    @GetByQuery({ 'AdminProfileID': 0 })
     getCabinetByAdminID(adminID: number): Promise<any> {
         return null;
     }
 
-    @CreateQuery({ return: false, primary: 'CabinetID' },
-        { id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'CabinetName' })
-    createCabinet(cabinet: ICabinet): Promise<any> { return <any>cabinet; }
+    @CreateQuery({ return: true, primary: 'CabinetID' },
+        { id: 'CabinetID', adminId: 'AdminProfileID', name: 'CabinetName' })
+    createCabinet(cabinet: ICabinet): Promise<any> { return null; }
 
     addToCabinet(adminID: number, invitedID: number): Promise<any> {
         return null;
@@ -41,6 +42,13 @@ export class MySqlCabinetsRepository implements ICabinetsRepository {
         new Join('Users', 'UserID', ['UserLastName', 'UserFirstName'], 'HR_Profiles'),
     ])
     getAdminCabinetHRMembers(cabinetId: any): Promise<IUser[]> { return null; }
+
+    @Convert({ id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'CabinetName' }, true)
+    @JoinQuery({ 'CabinetID': 0 }, [
+        new Join('Sales_Profiles', 'CabinetID', ['Sales_Profiles']),
+        new Join('Users', 'UserID', ['UserLastName', 'UserFirstName'], 'Sales_Profiles'),
+    ])
+    getAdminCabinetSalesMembers(cabinetId: any): Promise<IUser[]> { return null; }
 
 }
 

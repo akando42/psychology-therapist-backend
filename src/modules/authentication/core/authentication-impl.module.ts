@@ -21,6 +21,7 @@ import { ICabinetInvitation } from '../../../models/cabinet-invitation';
 import { TODHumanResourcesModule } from '../../human-resources';
 import { HRProfileStatusEnum } from '../../../enums/hr-profile-status';
 import { HRProfilesComponent } from '../../human-resources/core/hr-profile/hr-profiles.component';
+import { AdminProfilesComponent } from '../../admin/core/admin-profile/admin-profiles.component';
 
 export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
@@ -31,6 +32,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         communicationModule: AbtractCommunicationModule,
         humanResourcesModule: HRProfilesComponent,
         adminModule: AbstractAdminModule,
+        adminComponent: AdminProfilesComponent,
 
     ) {
         super(
@@ -39,7 +41,8 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
             cabinetComponent,
             communicationModule,
             humanResourcesModule,
-            adminModule
+            adminModule,
+            adminComponent
         );
     }
 
@@ -117,11 +120,10 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                             roleProfile = await this._hrProfileComponent.getProfile(user.id);
                             break;
                         case 'admin':
-                            roleProfile = await this._adminModule.getAdminProfile(user.id);
+                            roleProfile = await this._adminComponent.getProfile(user.id);
                             break;
                         default:
-                            console.log('no role')
-                            break;
+                        break;
                     }
                 }
 

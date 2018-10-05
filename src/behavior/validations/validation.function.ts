@@ -25,6 +25,7 @@ export function validateEmail(email: string): { message: string, valid: boolean 
 export function validatePassword(password: string): { message: string, valid: boolean } {
     let message: string = null;
     let valid: boolean = true;
+
     if (isNullOrUndefined(password)) {
         message = 'password its required';
         valid = false;
@@ -43,12 +44,12 @@ export function validatePassword(password: string): { message: string, valid: bo
 }
 
 
-export function Required(item: any): { message: string, valid: boolean } {
+export function Required(item: any, name?: string): { message: string, valid: boolean } {
     let message: string = null;
     let valid: boolean = true;
     if (isNullOrUndefined(item)) {
         valid = false;
-        message = 'required';
+        message = `${name} its Required`;
     }
 
     return {

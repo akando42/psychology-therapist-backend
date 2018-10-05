@@ -1,6 +1,6 @@
 interface IParamValidator {
     parameterIndex?: number, name?: string,
-    cb: (x: any) => { message: string, valid: boolean }
+    cb: (...args) => { message: string, valid: boolean }
 }
 
 /**
@@ -21,7 +21,7 @@ export function ComposeValidation(config: { index: number, validators: IParamVal
                 valConf.validators.forEach((val) => {
 
                     //execute validation overthe property
-                    const validationResult = val.cb(obj[val.name]);
+                    const validationResult = val.cb(obj[val.name],val.name);
                     //see if its valid, if it no it will pushed to the error stack
                     if (!validationResult.valid) { errors.push(validationResult) }
                 });
@@ -50,8 +50,7 @@ export function Validate(validations: { parameterIndex: number, name?: string, c
         //overload with validation.
         descriptor.value = function (...args: any[]) {
             let errors: any[] = [];
-            console.log(key)
-            console.log(args)
+  
             validations.forEach((validation) => {
                 let valResult = validation.cb(args[validation.parameterIndex]);
                 if (!valResult.valid) {

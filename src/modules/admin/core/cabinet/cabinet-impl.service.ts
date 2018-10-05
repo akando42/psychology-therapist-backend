@@ -7,7 +7,7 @@ import { ICabinetService } from "./cabinet.service.interface";
 import { ICabinet } from "../../../../models/cabinet";
 import { isNullOrUndefined } from "util";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
-import { Validate } from "../../../../behavior/validations/validate.notation";
+import { Validate, ComposeValidation } from "../../../../behavior/validations/validate.notation";
 import { Required } from "../../../../behavior/validations/validation.function";
 
 export class CabinetsImplService implements ICabinetService {
@@ -43,8 +43,8 @@ export class CabinetsImplService implements ICabinetService {
         })
     }
 
+    @ComposeValidation([{ index: 0, validators: [{ name: 'adminId', cb: Required }] }])
     async createCabinet(cabinet: ICabinet): Promise<ICabinet> {
-
         if (isNullOrUndefined(cabinet)) {
             throw { message: 'no cabinet provided.' };
         }
@@ -86,12 +86,18 @@ export class CabinetsImplService implements ICabinetService {
     }
 
 
-    @Validate([{ name: 'Cabiner ID', parameterIndex: 0, cb: Required }])
+    @Validate([{ name: 'Cabinet ID', parameterIndex: 0, cb: Required }])
     async getHRCabinetMembers(cabinetId: any): Promise<any[]> {
         let members = await this._cabinetRepository.getAdminCabinetHRMembers(cabinetId);
         return members;
     }
 
+
+    @Validate([{ name: 'Cabinet ID', parameterIndex: 0, cb: Required }])
+    async getSalesCabinetMembers(cabinetId: any): Promise<any[]> {
+        let members = await this._cabinetRepository.getAdminCabinetSalesMembers(cabinetId);
+        return members;
+    }
 }
 
 

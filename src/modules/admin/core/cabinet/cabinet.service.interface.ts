@@ -22,4 +22,6 @@ export interface ICabinetService {
     inviteToCabinet(cabinet: ICabinetInvitation): Promise<ICabinetInvitation>;
 
     getHRCabinetMembers(cabinetId: any): Promise<any[]>;
+
+    getSalesCabinetMembers(cabinetId: any): Promise<any[]>;
 }

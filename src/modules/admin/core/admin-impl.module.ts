@@ -91,6 +91,7 @@ export class AdminModuleImpl extends AbstractAdminModule {
                 } else {
                     template = new InvitationEmailTemplate(created).getHtml()
                 }
+                console.log(template)
                 this._comunicationModule.sendEmailToOne(created.email, {
                     body: template,
                     subject: 'verification '

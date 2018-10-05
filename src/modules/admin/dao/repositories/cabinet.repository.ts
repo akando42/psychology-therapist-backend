@@ -18,4 +18,6 @@ export interface ICabinetsRepository {
 
     getAdminCabinetHRMembers(cabinetId: any): Promise<IUser[]>;
 
+    getAdminCabinetSalesMembers(cabinetId: any): Promise<IUser[]>;
+
 }

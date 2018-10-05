@@ -74,6 +74,7 @@ export class AuthenticationRouter {
     }
 
     signUpWithInvitation(req: Request, res: Response): void {
+        console.log(req.body);
         TODAuthenticationModule.signUpWithInvitation(req.params['invitation_token'], req.body)
             .then((result: any) => {
                 res.status(200).json(result);

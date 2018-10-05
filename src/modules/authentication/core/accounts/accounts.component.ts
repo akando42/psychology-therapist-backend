@@ -116,7 +116,7 @@ export class AccountsComponent {
         })
     }
 
-    @ComposeValidation([{ index: 0, validators: [{ paramName: 'password', cb: validatePassword }] }])
+    @ComposeValidation([{ index: 0, validators: [{ name: 'password', cb: validatePassword }] }])
     async  createAccountAndProfile(account: INewAccountDTO, verified: boolean = false): Promise<{ user: IUser, account: IAccount }> {
         try {
 

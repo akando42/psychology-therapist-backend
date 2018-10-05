@@ -7,10 +7,17 @@ import { GenericConverter } from "./generic-converter";
  * MOVE THE METHOD CALL FROM HERE
  */
 
+//TODO
+
+/**
+ * WHEN USER CREATE
+ */
+
 export function Convert(propMapping: any, toArray?: boolean) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
 
         var originalMethod = descriptor.value;
+
         let converterInstace = new GenericConverter(propMapping);
 
 
@@ -26,7 +33,7 @@ export function Convert(propMapping: any, toArray?: boolean) {
                     if (toArray) { return [value] }
 
                     return value;
-                } else if (resolve.length == 0) {
+                } else if (resolve.length == 0 && !toArray) {
                     return null;
                 }
                 else {

@@ -28,10 +28,12 @@ export class HRProfilesComponent {
 
         //create the profile.
         let profileCreated = await this._hrProfilesService.createHRProfile(profile);
-        console.log(profileCreated)
+     
         //after user create check if that role have documents required
-        let docsRequired: IRequiredDocument[] = await this._systemDocumentsService.getDocumentsRequiredByRole(UsersRolEnum.hr);
-        //if documents required create reports for users
+        let docsRequired: IRequiredDocument[] =
+         await this._systemDocumentsService.getDocumentsRequiredByRole(UsersRolEnum.hr);
+     
+         //if documents required create reports for users
         if (docsRequired.length > 0) {
             let reports: IRequiredDocumentReport[] = [];
             for (const doc of docsRequired) {

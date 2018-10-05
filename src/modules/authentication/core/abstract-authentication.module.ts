@@ -10,6 +10,7 @@ import { AbstractHumanResourcesModule } from "../../human-resources/core/abstrac
 import { AbstractAdminModule } from "../../admin/core/abstract-admin.module";
 import { CabinetComponent } from "../../admin/core/cabinet/cabinet.component";
 import { HRProfilesComponent } from "../../human-resources/core/hr-profile/hr-profiles.component";
+import { AdminProfilesComponent } from "../../admin/core/admin-profile/admin-profiles.component";
 
 
 export abstract class AbstractAuthenticationModule {
@@ -21,6 +22,7 @@ export abstract class AbstractAuthenticationModule {
         protected _communicationModule?: AbtractCommunicationModule,
         protected _hrProfileComponent?: HRProfilesComponent,
         protected _adminModule?: AbstractAdminModule,
+        protected _adminComponent?: AdminProfilesComponent,
     ) {
     }
 

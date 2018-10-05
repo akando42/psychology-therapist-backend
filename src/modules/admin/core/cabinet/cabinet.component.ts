@@ -9,6 +9,7 @@ import { ICabinetInvitationService } from "./i-cabinet-invitation.service";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
 import { isNullOrUndefined } from "util";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
+import { Validate } from "../../../../behavior/validations/validate.notation";
 
 
 export class CabinetComponent {
@@ -104,14 +105,19 @@ export class CabinetComponent {
         });
     }
 
+
     async getMembersByRole(cabinetId: any, role: UsersRolEnum): Promise<any> {
         let members: any[] = [];
         switch (role) {
             case UsersRolEnum.hr:
                 members = await this._cabinetService.getHRCabinetMembers(cabinetId);
                 break;
-            default:
+            case UsersRolEnum.sales:
+                members = await this._cabinetService.getSalesCabinetMembers(cabinetId);
                 break;
+            default:
+                throw { message: 'invalid role' };
+
         }
 
         return members;
