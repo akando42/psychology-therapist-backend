@@ -4,8 +4,8 @@ import { DocumentReportStatusEnum } from "../../../../enums/document-report-stat
 import { IRequiredDocumentReport } from "../../../../models/required-document-report";
 import { IRequiredDocumentsReportsRepository } from "../../dao/required-documents-reports.repository";
 import { isNullOrUndefined } from "util";
-import { Validate } from "../../../../behavior/validations/validate.notation";
-import { Required } from "../../../../behavior/validations/validation.function";
+import { Validate } from "../../../../core/validations/validate.notation";
+import { Required } from "../../../../core/validations/validation.function";
 
 
 

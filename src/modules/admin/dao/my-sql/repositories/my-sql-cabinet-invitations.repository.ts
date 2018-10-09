@@ -1,10 +1,10 @@
 import { AbstractCabinetInvitationRepository } from "../../repositories/cabinet-invitation.repositoty";
 import { ICabinetInvitation } from "../../../../../models/cabinet-invitation";
-import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
-import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
-import { Convert } from "../../../../../behavior/converters/converter.notation";
-import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
-import { DeleteQuery } from "../../../../../behavior/queries/my-sql/delete-query.notation";
+import { Repository } from "../../../../../core/repositories/repositoy.notation";
+import { GetByQuery } from "../../../../../core/queries/my-sql/get-by-query.notation";
+import { Convert } from "../../../../../core/converters/converter.notation";
+import { CreateQuery } from "../../../../../core/queries/my-sql/create-query.notation";
+import { DeleteQuery } from "../../../../../core/queries/my-sql/delete-query.notation";
 
 const propsMap = {
     cabinetId: 'CabinetID',

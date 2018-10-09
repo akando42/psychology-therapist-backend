@@ -1,14 +1,14 @@
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { GenericDao } from "../../../../../core/mysql/generic.dao";
 import { JoinQuery } from "../../../../../query-spec/my-sql/join.query";
 import { MySqlSystemDocumentsConverter } from "../../../converters/my-sql/my-sql-system-documents.converter";
 import { AbstractRequiredDocumentsRepository } from "../../required-document.repository";
 import { IRequiredDocument } from "../../../../../models/required-document";
 import { UsersRolEnum } from "../../../../../enums/users-rol.enum";
-import { Convert } from "../../../../../behavior/converters/converter.notation";
-import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
+import { Convert } from "../../../../../core/converters/converter.notation";
+import { CreateQuery } from "../../../../../core/queries/my-sql/create-query.notation";
 import { IDocumentRequired } from "../../../../../models/document-required";
-import { CustomQuery } from "../../../../../behavior/queries/my-sql/custom-query";
-import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
+import { CustomQuery } from "../../../../../core/queries/my-sql/custom-query";
+import { Repository } from "../../../../../core/repositories/repositoy.notation";
 
 @Repository('Document_required')
 export class MySqlRequiredDocumentsRepository implements AbstractRequiredDocumentsRepository {

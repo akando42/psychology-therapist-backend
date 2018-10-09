@@ -1,9 +1,9 @@
 import { IUsersRepository } from "../../users.repository";
 import { IUser } from "../../../../../models/user";
-import { Convert } from "../../../../../behavior/converters/converter.notation";
-import { GetByQuery as GetByQueryNot } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
-import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
-import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
+import { Convert } from "../../../../../core/converters/converter.notation";
+import { GetByQuery as GetByQueryNot } from "../../../../../core/queries/my-sql/get-by-query.notation";
+import { Repository } from "../../../../../core/repositories/repositoy.notation";
+import { CreateQuery } from "../../../../../core/queries/my-sql/create-query.notation";
 
 const propsMap = {
     id: 'UserID',

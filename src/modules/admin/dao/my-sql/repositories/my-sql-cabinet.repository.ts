@@ -1,16 +1,12 @@
 
 import { IUser } from "../../../../../models/user";
-import { GetCabinetUsersQuery } from "../queries/get-cabinet-users.query";
 import { ICabinetsRepository } from "../../repositories/cabinet.repository";
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
 import { ICabinet } from "../../../../../models/cabinet";
-import { ICabinetMySql } from "../models/cabinet-my-sql";
-import { MySqlCabinetConverter } from "../../../converters/my-sql/my-sql-cabinet.converter";
-import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
-import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
-import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
-import { Convert } from "../../../../../behavior/converters/converter.notation";
-import { JoinQuery, Join } from "../../../../../behavior/queries/my-sql/join-query.notation";
+import { Repository } from "../../../../../core/repositories/repositoy.notation";
+import { CreateQuery } from "../../../../../core/queries/my-sql/create-query.notation";
+import { GetByQuery } from "../../../../../core/queries/my-sql/get-by-query.notation";
+import { Convert } from "../../../../../core/converters/converter.notation";
+import { JoinQuery, Join } from "../../../../../core/queries/my-sql/join-query.notation";
 
 @Repository('CABINET')
 export class MySqlCabinetsRepository implements ICabinetsRepository {

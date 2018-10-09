@@ -3,8 +3,8 @@ import { ICabinetInvitationService } from "./i-cabinet-invitation.service";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
 import { AbstractCabinetInvitationRepository } from "../../dao/repositories/cabinet-invitation.repositoty";
 import { isNullOrUndefined } from "util";
-import { ComposeValidation } from "../../../../behavior/validations/validate.notation";
-import { validateEmail } from "../../../../behavior/validations/validation.function";
+import { ComposeValidation, Validate } from "../../../../core/validations/validate.notation";
+import { validateEmail, Required } from "../../../../core/validations/validation.function";
 
 function generateInvitationToken(invitation: ICabinetInvitation): string {
     return `${invitation.email}-token`
@@ -51,10 +51,9 @@ export class CabinetInvitationsImplService implements ICabinetInvitationService 
         return this._cabinetInvitationsRepo.deleteInvitation(invitationId)
     }
 
+    @Validate([{ parameterIndex: 0, name: 'token', cb: Required }])
     async getInvitationByToken(token: any): Promise<ICabinetInvitation> {
-        if (!token) {
-            throw { message: 'no token provided' }
-        }
+
         const invitation = await this._cabinetInvitationsRepo.getInvitationByToken(token);
 
         return invitation;

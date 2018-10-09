@@ -1,6 +1,6 @@
 import { IAccount } from "../../../../models/account";
 import { IAccountMySql } from "../../dao/my-sql/models/account-my-sql";
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 
 
 export class MySqlAccountConverter implements IDualConverter<IAccount, IAccountMySql> {

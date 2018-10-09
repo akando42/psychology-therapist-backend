@@ -1,4 +1,4 @@
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { GenericDao } from "../../../../../core/mysql/generic.dao";
 import { AbstractRawDocumentRepository } from "../../raw-document.repository";
 import { IRawDocument } from "../../../../../models/raw-document";
 import { MySqlRawDocumentConverter } from "../../../converters/my-sql/my-sql-raw-document.converter";

@@ -1,4 +1,4 @@
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { IHealthService } from "../../../../models/health-service";
 import { IHealthServiceMySql } from "../../dao/my-sql/models/my-sql-health-service";
 

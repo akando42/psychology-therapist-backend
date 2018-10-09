@@ -1,6 +1,6 @@
 
 import { ILoginAttempMySql } from "../../dao/my-sql/models/my-sql-login-attemp";
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { ILoginAttemp } from "../../../../models/login-attemp";
 
 

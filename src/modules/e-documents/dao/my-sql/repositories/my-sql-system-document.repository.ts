@@ -2,10 +2,10 @@ import { AbstractSystemDocumentRepository } from "../../system-document.reposito
 import { IEDocument } from "../../../../../models/e-document";
 import { ISystemDocument } from "../../../../../models/system.document";
 import { JoinQuery } from "../../../../../query-spec/my-sql/join.query";
-import { Convert } from "../../../../../behavior/converters/converter.notation";
-import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
-import { CustomQuery } from "../../../../../behavior/queries/my-sql/custom-query";
-import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
+import { Convert } from "../../../../../core/converters/converter.notation";
+import { CreateQuery } from "../../../../../core/queries/my-sql/create-query.notation";
+import { CustomQuery } from "../../../../../core/queries/my-sql/custom-query";
+import { Repository } from "../../../../../core/repositories/repositoy.notation";
 
 const propsMap = {
     id: 'SystemDocumentID', path: 'DocumentPath', rawReference: 'RawDocumentID',

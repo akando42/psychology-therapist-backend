@@ -1,24 +1,31 @@
-import { AbstractAdminProfilesRepository } from "../../repositories/admin-profile.repository";
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { IAdminProfilesRepository } from "../../repositories/admin-profile.repository";
 import { IAdminProfile } from "../../../../../models/admin-profile";
-import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
-import { MySqlAdminProfilesConverter } from "../../../converters/my-sql/my-sql-admin-profile.converter";
-import { IAdminProfileMySql } from "../models/admin-profile-my-sql";
+import { ByNameRepository } from "../../../../../core/repositories/by-name-repository.notation";
 
-export class MySqlAdminProfilesRepository extends AbstractAdminProfilesRepository {
-    constructor() {
-        super(new GenericDao('ADMIN_PROFILES'), new MySqlAdminProfilesConverter());
+const propsMatch = {
+    id: 'AdminProfileID',
+    userId: 'UserID',
+    status: 'AdminProfileStatus'
+
+}
+@ByNameRepository('ADMIN_PROFILEs', {
+    resourceName: 'AdminProfile',
+    primaryKey: 'AdminProfileID',
+    converterProps: propsMatch
+})
+export class MySqlAdminProfilesRepository implements IAdminProfilesRepository {
+    getAdminProfileByUserId(userID: number): Promise<IAdminProfile> {
+        return null;
     }
     createAdminProfile(AdminProfile: IAdminProfile): Promise<IAdminProfile> {
-        return super.create(AdminProfile)
+        return null;
     }
-    deleteAdminProfile(id: number): Promise<any> {
-        return super.delete(id);
+    deleteAdminProfile(id: number): Promise<void> {
+        return null;
+    }
+    updateAdminProfile(adminId: number, changes: IAdminProfile): Promise<IAdminProfile> {
+        return null;
     }
 
-    getAdminProfile(userId: number): Promise<IAdminProfile> {
-        return super.getBy(new GetByQuery(<IAdminProfileMySql>{ UserID: userId })
-            .toDBQuery('ADMIN_PROFILES'))
-    }
 
 }

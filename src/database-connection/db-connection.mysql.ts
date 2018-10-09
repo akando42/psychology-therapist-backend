@@ -14,7 +14,7 @@ export class MySqlConnection {
                         console.log("Error:", err);
                     else {
                         console.log("Connection successfully....");
-
+                        resolve()
                     }
                 });
             } catch (error) {

@@ -1,4 +1,4 @@
-import { AbstractRepository } from "../../../behavior/repositories/repository.abstract";
+import { AbstractRepository } from "../../../core/repositories/repository.abstract";
 import { IDocumentType } from "../../../models/document-type";
 
 export interface AbstractDocumentsTypeRepository {

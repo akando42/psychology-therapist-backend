@@ -1,7 +1,7 @@
 // import { Router, Request, Response } from "express";
 
 // import { TasksControllerInstance, TasksController } from "./tasks.controller";
-// import { WRAbstractRouter } from "../../behavior/routers/w-r-abstract.router";
+// import { WRAbstractRouter } from "../../core/routers/w-r-abstract.router";
 // import { TokenValidationMiddleware } from "../../middlewares/token-validation.middleware";
 // import { ITask } from "../../models/task";
 // import { TasksCommentsRouterInstance } from "./sub-modules/task-comments/tasks-comments.router";

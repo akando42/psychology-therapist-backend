@@ -9,7 +9,7 @@ import { ICabinetInvitationService } from "./i-cabinet-invitation.service";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
 import { isNullOrUndefined } from "util";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
-import { Validate } from "../../../../behavior/validations/validate.notation";
+import { Validate } from "../../../../core/validations/validate.notation";
 
 
 export class CabinetComponent {

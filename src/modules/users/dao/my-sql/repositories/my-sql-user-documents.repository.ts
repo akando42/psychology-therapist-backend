@@ -1,5 +1,5 @@
 
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { GenericDao } from "../../../../../core/mysql/generic.dao";
 import { AbstractUserDocumentRepository } from "../../../../e-documents/dao/user-document.repository";
 import { IEDocument } from "../../../../../models/e-document";
 

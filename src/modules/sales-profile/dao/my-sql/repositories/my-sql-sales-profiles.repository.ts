@@ -1,4 +1,4 @@
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { GenericDao } from "../../../../../core/mysql/generic.dao";
 
 import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
 import { AbstractSalesProfilesRepository } from "../../sales-profile.repository";

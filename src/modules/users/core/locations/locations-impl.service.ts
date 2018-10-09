@@ -1,8 +1,8 @@
 import { ILocationsService } from "./locations.service.interface";
 import { ILocation } from "../../../../models/location";
 import { ILocationsRepository } from "../../dao/locations.repository";
-import { ComposeValidation, Validate } from "../../../../behavior/validations/validate.notation";
-import { Required } from "../../../../behavior/validations/validation.function";
+import { ComposeValidation, Validate } from "../../../../core/validations/validate.notation";
+import { Required } from "../../../../core/validations/validation.function";
 
 
 export class LocationsImplService implements ILocationsService {

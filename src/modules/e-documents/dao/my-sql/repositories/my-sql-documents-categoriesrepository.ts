@@ -1,13 +1,13 @@
 import { AbstractDocumentsCategoriesRepository } from "../../documents-Categories.repository";
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { GenericDao } from "../../../../../core/mysql/generic.dao";
 import { MySqlDocumentsCategoriesConverter } from "../../../converters/my-sql/my-sql-documents-Categories.converter";
 import { IDocumentCategory } from "../../../../../models/document-category";
 import { IDocumentsCategoryMySql } from "../models/my-sql-document-category";
 import { DeleteQuery } from "../../../../../query-spec/my-sql/delete-query";
-import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
-import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
-import { Convert } from "../../../../../behavior/converters/converter.notation";
-import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
+import { Repository } from "../../../../../core/repositories/repositoy.notation";
+import { GetByQuery } from "../../../../../core/queries/my-sql/get-by-query.notation";
+import { Convert } from "../../../../../core/converters/converter.notation";
+import { CreateQuery } from "../../../../../core/queries/my-sql/create-query.notation";
 
 const propsMap = {
     description: 'DocumentCategoryDescription',

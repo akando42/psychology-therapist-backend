@@ -1,13 +1,13 @@
 import { IAdminProfileService } from "./i-admin-profile.service";
 import { IAdminProfile } from "../../../../models/Admin-profile";
-import { AbstractAdminProfilesRepository } from "../../dao/repositories/admin-profile.repository";
+import { IAdminProfilesRepository } from "../../dao/repositories/admin-profile.repository";
 import { isNullOrUndefined } from "util";
 
 
 
 export class AdminProfilesImplService implements IAdminProfileService {
 
-    constructor(private _AdminProfilesRepo: AbstractAdminProfilesRepository) {
+    constructor(private _AdminProfilesRepo: IAdminProfilesRepository) {
 
     }
 
@@ -15,7 +15,7 @@ export class AdminProfilesImplService implements IAdminProfileService {
         return new Promise<IAdminProfile>(async (resolve, reject) => {
             try {
                 //validate here
-                const profile: any = await this._AdminProfilesRepo.getAdminProfile(userId);
+                const profile: any = await this._AdminProfilesRepo.getAdminProfileByUserId(userId);
                 if(isNullOrUndefined(profile)){
                     return reject({message:'no admin profile found for user'})
                 }
@@ -42,8 +42,8 @@ export class AdminProfilesImplService implements IAdminProfileService {
         return new Promise<IAdminProfile>(async (resolve, reject) => {
             try {
                 //validate here
-                const profile: any = await this._AdminProfilesRepo.update(id, changes);
-                return resolve(profile);
+                // const profile: any = await this._AdminProfilesRepo.(id, changes);
+                // return resolve(profile);
             } catch (error) {
                 return reject(error);
             }

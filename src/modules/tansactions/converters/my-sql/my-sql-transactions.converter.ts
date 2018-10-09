@@ -1,4 +1,4 @@
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { ITransaction } from "../../../../models/transaction";
 import { ITransactionMySql } from "../../dao/my-sql/models/my-sql-transaction";
 

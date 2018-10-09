@@ -1,7 +1,7 @@
-import { AbstractRepository } from "../../../behavior/repositories/repository.abstract";
+import { AbstractRepository } from "../../../core/repositories/repository.abstract";
 import { IHealthService } from "../../../models/health-service";
-import { GenericDao as MySqlGenericDao } from "../../../behavior/mysql/generic.dao";
-import { IDualConverter } from "../../../behavior/converters/converter.interface";
+import { GenericDao as MySqlGenericDao } from "../../../core/mysql/generic.dao";
+import { IDualConverter } from "../../../core/converters/converter.interface";
 
 
 export abstract class AbstractHealthServiceRepository extends AbstractRepository<IHealthService>{

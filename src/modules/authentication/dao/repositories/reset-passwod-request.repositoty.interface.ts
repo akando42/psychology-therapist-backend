@@ -1,6 +1,6 @@
 
 import { IResetPasswordRequest } from "../../../../models/reset-password-request";
-import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
+import { AbstractRepository } from "../../../../core/repositories/repository.abstract";
 
 
 export abstract class AbstractResetPasswordRequestRepository extends AbstractRepository<IResetPasswordRequest> {

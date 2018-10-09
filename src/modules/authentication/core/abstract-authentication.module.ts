@@ -1,7 +1,7 @@
 import { IAccount } from "../../../models/account";
 import { INewAccountDTO } from "../../../dto/new-account.dto";
 import { TODResponse } from "../../../dto/tod-response";
-import { EmailService } from "../../../behavior/services/email.service";
+import { EmailService } from "../../../core/services/email.service";
 import { UsersRolEnum } from "../../../enums/users-rol.enum";
 import { AccountsComponent } from "./accounts/accounts.component";
 import { AbstractUsersModule } from "../../users/core/users.module";

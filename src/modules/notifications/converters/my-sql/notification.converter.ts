@@ -1,4 +1,4 @@
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { INotificationMySql } from "../../dao/my-sql/models/my-sql/notification-my-sql";
 import { INotification } from "../../../../models/notification";
 

@@ -1,4 +1,4 @@
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { IRawDocument } from "../../../../models/raw-document";
 import { IRawDocumentMySql } from "../../dao/my-sql/models/my-sql-raw-document";
 

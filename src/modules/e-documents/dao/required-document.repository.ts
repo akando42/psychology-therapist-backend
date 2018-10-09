@@ -1,4 +1,4 @@
-import { AbstractRepository } from "../../../behavior/repositories/repository.abstract";
+import { AbstractRepository } from "../../../core/repositories/repository.abstract";
 
 import { IRequiredDocument } from "../../../models/required-document";
 import { UsersRolEnum } from "../../../enums/users-rol.enum";

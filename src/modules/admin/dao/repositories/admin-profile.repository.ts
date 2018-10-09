@@ -1,15 +1,14 @@
-import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
+import { AbstractRepository } from "../../../../core/repositories/repository.abstract";
 import { IAdminProfile } from "../../../../models/admin-profile";
 
-export abstract class AbstractAdminProfilesRepository extends AbstractRepository<IAdminProfile>{
-    constructor(dbAccess, converter) {
-        super(dbAccess, converter);
-    }
+export interface IAdminProfilesRepository {
 
-    abstract createAdminProfile(AdminProfile: IAdminProfile): Promise<IAdminProfile>;
+    createAdminProfile(AdminProfile: IAdminProfile): Promise<IAdminProfile>;
 
-    abstract deleteAdminProfile(id: number): Promise<void>;
+    deleteAdminProfile(id: number): Promise<void>;
 
-    abstract getAdminProfile(userID: number): Promise<IAdminProfile>;
+    getAdminProfileByUserId(userID: number): Promise<IAdminProfile>;
+
+    updateAdminProfile(adminId: number, changes: IAdminProfile): Promise<IAdminProfile>;
 
 }

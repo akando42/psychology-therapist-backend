@@ -1,4 +1,4 @@
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { IAppointmentMySql } from "../../dao/my-sql/models/my-sql-appointment";
 import { IAppointment } from "../../../../models/appointment";
 

@@ -1,5 +1,5 @@
 import { AbstractLoginAttempssRepository } from "../../repositories/login-attemps.repository";
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { GenericDao } from "../../../../../core/mysql/generic.dao";
 import { MySqlLoginAttempsConverterInstance } from "../../../converters/my-sql/my-sql-login-attemps.converter";
 
 

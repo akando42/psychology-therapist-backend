@@ -8,7 +8,7 @@ import { ISystemDocUpload } from "../../../../dto/system-doc-upload.dto";
 import { UsersRolEnum } from "../../../../enums/users-rol.enum";
 import { IRequiredDocument } from "../../../../models/required-document";
 import { IEDocument } from "../../../../models/e-document";
-import { Validate } from "../../../../behavior/validations/validate.notation";
+import { Validate } from "../../../../core/validations/validate.notation";
 
 
 export class SystemDocumentsComponent {

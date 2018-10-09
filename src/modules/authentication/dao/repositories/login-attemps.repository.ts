@@ -1,4 +1,4 @@
-import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
+import { AbstractRepository } from "../../../../core/repositories/repository.abstract";
 import { ILoginAttemp } from "../../../../models/login-attemp";
 
 export abstract class AbstractLoginAttempssRepository extends AbstractRepository<ILoginAttemp>{

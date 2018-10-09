@@ -1,4 +1,4 @@
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { IProviderExperience } from "../../../../models/provider-experience";
 import { IProviderExperienceMySql } from "../../dao/models/my-sql/provider-experience-my-sql";
 

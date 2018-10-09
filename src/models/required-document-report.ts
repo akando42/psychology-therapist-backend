@@ -7,5 +7,6 @@ export interface IRequiredDocumentReport {
     status: DocumentReportStatusEnum;
     id?: number;
     role: UsersRolEnum;
-    documentId:number;
+    documentId: number;
+    documentRequiredId: number;
 }

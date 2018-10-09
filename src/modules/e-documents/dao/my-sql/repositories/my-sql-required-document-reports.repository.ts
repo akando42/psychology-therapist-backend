@@ -2,17 +2,18 @@ import { UsersRolEnum } from "../../../../../enums/users-rol.enum";
 import { IRequiredDocumentsReportsRepository } from "../../required-documents-reports.repository";
 import { IRequiredDocumentReport } from "../../../../../models/required-document-report";
 import { DocumentReportStatusEnum } from "../../../../../enums/document-report-status.enum";
-import { CreateQuery } from "../../../../../behavior/queries/my-sql/create-query.notation";
-import { Repository } from "../../../../../behavior/repositories/repositoy.notation";
-import { GetByQuery } from "../../../../../behavior/queries/my-sql/get-by-query.notation";
-import { Convert } from "../../../../../behavior/converters/converter.notation";
+import { CreateQuery } from "../../../../../core/queries/my-sql/create-query.notation";
+import { Repository } from "../../../../../core/repositories/repositoy.notation";
+import { GetByQuery } from "../../../../../core/queries/my-sql/get-by-query.notation";
+import { Convert } from "../../../../../core/converters/converter.notation";
 
 /**
  * mapping between domain model and database model.
  */
 const propMap = {
     status: 'DocumentRequiredReportStatus', role: 'DocumentRequiredReportRole',
-    id: 'DocumentRequiredReportID', userId: 'UserID', documentId: 'DocumentID'
+    id: 'DocumentRequiredReportID', userId: 'UserID', documentId: 'DocumentID',
+    documentRequiredId: 'DocumentRequiredID'
 }
 
 @Repository('Document_Required_Report')

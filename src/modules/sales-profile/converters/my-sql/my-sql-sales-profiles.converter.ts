@@ -1,5 +1,5 @@
 
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { ISalesProfile } from "../../../../models/Sales-profile";
 import { ISalesProfileMySql } from "../../dao/my-sql/models/my-sql-sales-profile";
 

@@ -1,7 +1,7 @@
 import { IPhoneNumberService } from "./i-phone-number.service";
 import { IPhoneNumbersRepository } from "../../dao/phone-numbers.repository";
-import { ComposeValidation, Validate } from "../../../../behavior/validations/validate.notation";
-import { Required } from "../../../../behavior/validations/validation.function";
+import { ComposeValidation, Validate } from "../../../../core/validations/validate.notation";
+import { Required } from "../../../../core/validations/validation.function";
 import { IPhoneNumber } from "../../../../models/phone-number";
 
 

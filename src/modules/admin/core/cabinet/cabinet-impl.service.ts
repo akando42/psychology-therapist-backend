@@ -1,14 +1,13 @@
 
 import { IUser } from "../../../../models/user";
-import { ActionRequestsRepoInstance } from "../../dao/repositories/action-request.repository";
 import { IActionRequest } from "../../../../models/action-request";
 import { ICabinetsRepository } from "../../dao/repositories/cabinet.repository";
 import { ICabinetService } from "./cabinet.service.interface";
 import { ICabinet } from "../../../../models/cabinet";
 import { isNullOrUndefined } from "util";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
-import { Validate, ComposeValidation } from "../../../../behavior/validations/validate.notation";
-import { Required } from "../../../../behavior/validations/validation.function";
+import { Validate, ComposeValidation } from "../../../../core/validations/validate.notation";
+import { Required } from "../../../../core/validations/validation.function";
 
 export class CabinetsImplService implements ICabinetService {
 
@@ -18,7 +17,7 @@ export class CabinetsImplService implements ICabinetService {
 
     async getCabinetByAdminID(userId: number): Promise<ICabinet> {
         if (isNullOrUndefined(userId)) {
-            throw new Error('no admin id provided');
+            throw { message: 'no admin id provided' };
         }
         return this._cabinetRepository.getCabinetByAdminID(userId);
     }
@@ -75,10 +74,10 @@ export class CabinetsImplService implements ICabinetService {
     requestAction(memberId: any, request: IActionRequest): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                request.requestDate = new Date().getTime();
-                request.targetId = memberId;
-                const saveResult: any = await ActionRequestsRepoInstance.create(request);
-                return resolve(saveResult);
+                // request.requestDate = new Date().getTime();
+                // request.targetId = memberId;
+                // const saveResult: any = await ActionRequestsRepoInstance.create(request);
+                // return resolve(saveResult);
             } catch (error) {
                 return reject(error);
             }

@@ -1,6 +1,6 @@
 
-import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
-import { GenericDao } from "../../../../behavior/mysql/generic.dao";
+import { AbstractRepository } from "../../../../core/repositories/repository.abstract";
+import { GenericDao } from "../../../../core/mysql/generic.dao";
 import { IUser } from "../../../../models/user";
 import { ICabinet } from "../../../../models/cabinet";
 

@@ -1,4 +1,4 @@
-import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
+import { AbstractRepository } from "../../../../core/repositories/repository.abstract";
 import { INotification } from "../../../../models/notification";
 import { NotificationsConverterInstance } from "../../converters/my-sql/notification.converter";
 import { NotificationMySqlDAOInstance } from "../my-sql/notification-mysql.dao";

@@ -1,4 +1,4 @@
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { IResetPasswordRequest } from "../../../../models/reset-password-request";
 import { IResetPasswordRequestMySql } from "../../dao/my-sql/models/reset-password-request-my-sql";
 

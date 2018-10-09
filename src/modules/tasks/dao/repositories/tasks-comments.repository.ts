@@ -1,6 +1,6 @@
-import { AbstractRepository } from "../../../../behavior/repositories/repository.abstract";
+import { AbstractRepository } from "../../../../core/repositories/repository.abstract";
 import { ITaskComment } from "../../../../models/task-comment";
-import { GenericDao } from "../../../../behavior/mysql/generic.dao";
+import { GenericDao } from "../../../../core/mysql/generic.dao";
 
 
 

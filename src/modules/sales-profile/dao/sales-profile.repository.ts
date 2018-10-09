@@ -1,4 +1,4 @@
-import { AbstractRepository } from "../../../behavior/repositories/repository.abstract";
+import { AbstractRepository } from "../../../core/repositories/repository.abstract";
 import { ISalesProfile } from "../../../models/sales-profile";
 
 export abstract class AbstractSalesProfilesRepository extends AbstractRepository<ISalesProfile>{

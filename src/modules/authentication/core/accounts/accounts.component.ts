@@ -9,8 +9,8 @@ import { IUser } from '../../../../models/user';
 import { IUserProfileService } from '../../../users/core/user-profile/user-profile.service.interface';
 import { isNullOrUndefined } from 'util';
 import { INewAccountDTO } from '../../../../dto/new-account.dto';
-import { ComposeValidation } from '../../../../behavior/validations/validate.notation';
-import { validatePassword } from '../../../../behavior/validations/validation.function';
+import { ComposeValidation } from '../../../../core/validations/validate.notation';
+import { validatePassword } from '../../../../core/validations/validation.function';
 
 
 export class AccountsComponent {

@@ -1,5 +1,5 @@
 import { IAccount } from "../../../../models/account";
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
 import { ICabinetInvitationMySql } from "../../../admin/dao/my-sql/models/cabinet-invitation-my-sql";
 

@@ -8,6 +8,7 @@ import { AuthenticationRouter } from './modules/authentication';
 import { DocumentsRouter } from './modules/e-documents/documents.router';
 import { UsersRouter } from './modules/users/users.router';
 import { AdminRouter } from './modules/admin/admin.router';
+import { MySqlAdminProfilesRepository } from './modules/admin/dao/my-sql/repositories/my-sql-admin-profiles.repository';
 const fileUpload = require('express-fileupload');
 
 export class API {
@@ -53,7 +54,7 @@ export class API {
 		// this.express.use('/api/v1', NotificationsRouterInstance.init());
 		// this.express.use('/api/v1', ProviderRouterInstance.init());
 
-	
+
 
 	}
 }

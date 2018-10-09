@@ -1,7 +1,7 @@
 import { AbstractAccountsRepository } from "../../repositories/accounts.repository";
 import { IAccount } from "../../../../../models/account";
 import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { GenericDao } from "../../../../../core/mysql/generic.dao";
 import { MySqlAccountConverter } from "../../../converters/my-sql/my-sql-account.converter";
 
 

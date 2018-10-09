@@ -24,7 +24,7 @@ const cabinetInvitatonService = new CabinetInvitationsImplService(mysqlInvitatio
 // component
 const TODCabinetComponent = new CabinetComponent(cabinetService, cabinetInvitatonService);
 const TODAdminProfileComponent = new AdminProfilesComponent(adminProfileService);
-
+// console.log(mysqlAdminProfileRepo)
 //module
 const TODAdminModule = new AdminModuleImpl(
     TODAdminProfileComponent,

@@ -1,4 +1,4 @@
-import { IDualConverter } from "../../../../behavior/converters/converter.interface";
+import { IDualConverter } from "../../../../core/converters/converter.interface";
 import { ISystemDocument } from "../../../../models/system.document";
 import { ISystemDocumentMySql } from "../../dao/my-sql/models/my-sql-system-document";
 

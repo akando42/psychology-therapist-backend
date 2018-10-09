@@ -1,5 +1,5 @@
 import { IResetPasswordRequest } from "../../../../../models/reset-password-request";
-import { GenericDao } from "../../../../../behavior/mysql/generic.dao";
+import { GenericDao } from "../../../../../core/mysql/generic.dao";
 import { ResetPasswordRequestsConverterInstance } from "../../../converters/my-sql/reset-password-request.converter";
 import { AbstractResetPasswordRequestRepository } from "../../repositories/reset-passwod-request.repositoty.interface";
 import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
