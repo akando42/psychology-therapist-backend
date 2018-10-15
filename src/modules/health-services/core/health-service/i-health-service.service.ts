@@ -9,5 +9,6 @@ export interface IHealthServiceService {
 
     updateService(id: number | string, updatedEntity: IHealthService): Promise<IHealthService>;
 
+ 
     getServiceById(id): Promise<IHealthService>;
 }

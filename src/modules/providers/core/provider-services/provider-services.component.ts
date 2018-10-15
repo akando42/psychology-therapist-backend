@@ -3,6 +3,7 @@ import { IHealthServiceService } from "../../../health-services/core/health-serv
 import { IProviderService } from "../../../../models/provider-service";
 import { Validate } from "../../../../core/validations/validate.notation";
 import { Required } from "../../../../core/validations/validation.function";
+import { IHealthService } from "../../../../models/health-service";
 
 
 export class ProviderServicesComponent {
@@ -29,4 +30,9 @@ export class ProviderServicesComponent {
         return serviceAdded;
     }
 
+   
+    async getProviderServices(providerProfileId: any): Promise<IProviderService[]> {
+        const services = await this._providerServicesService.getAllProviderHealthService(providerProfileId);
+        return services;
+    }
 }

@@ -8,5 +8,7 @@ export interface IProviderDisponibilityService {
     updateProviderDisponibility(disponibilityConfig: any): Promise<any>;
 
     disableProviderDisponibility(data): Promise<any>;
+    
+    setProviderDisponibility(data): Promise<any>;
 }
 

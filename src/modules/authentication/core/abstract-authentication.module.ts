@@ -31,7 +31,7 @@ export abstract class AbstractAuthenticationModule {
     }
 
     init(): AbstractAuthenticationModule {
-        console.log(this)
+       
         return this;
     }
 

@@ -122,7 +122,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
 
             } catch (error) {
-                console.log(error)
+               
                 reject(error);
             }
         });
@@ -206,7 +206,6 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 return resolve(result);
 
             } catch (error) {
-                console.log(error)
                 const badResult: TODResponse = {
                     message: 'Something when wrong sorry',
                     error: error,

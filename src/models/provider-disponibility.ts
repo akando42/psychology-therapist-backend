@@ -6,4 +6,5 @@ export interface IProviderDisponibility {
     day: any;
     from: number;
     to: number;
+    enable: boolean;
 }

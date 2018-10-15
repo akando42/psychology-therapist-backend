@@ -12,25 +12,14 @@ export class ProviderProfileComponent {
         private _providerDisponibilityService: IProviderDisponibilityService
     ) { }
 
-    @ComposeValidation([{ index: 0, validators: [{ cb: Required, name: 'userId' }] }])
     async createProviderProfile(providerProfile: IProviderProfile): Promise<IProviderProfile> {
         const profileCreated = await this._providerProfileService.createProviderProfile(providerProfile);
         return profileCreated;
     }
 
-    @ComposeValidation([{
-        index: 0, validators: [
-            { cb: Required, name: 'providerId' },
-            { cb: Required, name: 'day' },
-            { cb: Required, name: 'from' },
-            { cb: Required, name: 'to' },
-        ]
-    }])
     async setDisponibility(disponibility: IProviderDisponibility): Promise<IProviderDisponibility> {
-
-        
-
-        return null;
+        const disponibilityCreted = await this._providerDisponibilityService.setProviderDisponibility(disponibility);
+        return disponibility;
     }
 
 }

@@ -3,7 +3,12 @@ import { IProviderDisponibility } from "../../../../models/provider-disponibilit
 
 export interface IProviderDisponibilityRepository {
 
+
     createProviderDisponibility(id: IProviderDisponibility): Promise<IProviderDisponibility>;
+
+    getProviderDisponibilityByProviderProfileIdAndDay(id: any, weekday: any): Promise<IProviderDisponibility>;
+    
+    getProviderDisponibilityByProviderProfileIdAndEnable(id: any, enable: boolean): Promise<IProviderDisponibility>;
 
     getProviderDisponibilityByProviderProfileId(id: any): Promise<IProviderDisponibility[]>;
 
