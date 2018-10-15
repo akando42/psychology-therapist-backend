@@ -9,7 +9,7 @@ export interface IRepositoryConfiguration {
     primaryKey: string,
     converterProps: any,
     getters?: string[][],
-    create?: { return: boolean },
+    create?: { return: boolean, primaryKey?: string },
     update?: boolean,
     delete?: boolean
 }
@@ -20,7 +20,7 @@ export function Repository(table: string, configuration?: IRepositoryConfigurati
 
 
         C.prototype.table = table;
-
+        C.prototype._reserved = [];
         C.prototype.query = async (q) => {
             return await GenericDao.QUERY(q);
         }
@@ -40,11 +40,11 @@ export function Repository(table: string, configuration?: IRepositoryConfigurati
 export function ExpRepository(table: string, configuration?: IRepositoryConfiguration) {
     return <T extends Constructor>(C: T) => {
 
+
         class E extends C {
 
             public converter = new GenericConverter(configuration.converterProps);
             public table = table;
-
             constructor(...args) {
                 super(args);
 
@@ -101,8 +101,10 @@ export function customGetFunctionFactory(repo: { query: Function, converter: any
         getConfig.forEach((prop, i) => {
             params[prop] = args[i];
         });
+        console.log(getConfig)
         let query = new GetByQuery(params, table);
         // const query = null
+        console.log(query.toDBQuery())
         let r = await repo.query(query.toDBQuery())
         if (r.length == 1) {
             let value = repo.converter.convertDBModelToDomain(r[0]);
@@ -143,6 +145,44 @@ export function functionCustomCreateFunctionFactory(converter, table, configurat
 
         if (configuration.return) {
             let q2 = `SELECT * FROM ${target.table} WHERE ${configuration.primary}=${result.insertId}`;
+            let result2 = await target.query(q2);
+
+            let domainModel = null;
+            if (data.length > 1) {
+                domainModel = converter.convertDBModelToDomain(result2);
+            } else {
+                domainModel = converter.convertDBModelToDomain(result2[0]);
+            }
+
+            return domainModel;
+
+            return result;
+        }
+    }
+}
+
+
+
+export function createFunctionFactory(converter, table, configuration, target) {
+
+    return async (...args) => {
+
+        let data = args[0];
+        let dbModel = null;
+
+        if (data.length > 1) {
+            dbModel = converter.converManyDomainToDBModel(data);
+        } else {
+            dbModel = converter.converDomainToDBModel(data);
+        }
+
+        let q = `INSERT INTO ${table || target.table} SET ?`;
+
+
+        let result = await target.insert(q, dbModel);
+
+        if (configuration.create.return) {
+            let q2 = `SELECT * FROM ${target.table} WHERE ${configuration.primaryKey}=${result.insertId}`;
             let result2 = await target.query(q2);
 
             let domainModel = null;

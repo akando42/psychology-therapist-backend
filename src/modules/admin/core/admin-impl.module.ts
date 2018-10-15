@@ -10,6 +10,7 @@ import { InvitationEmailTemplate } from "../../../email-templates/invitation-ema
 import { AbstractUsersModule } from "../../users/core/users.module";
 import { NewRoleInvitationTemplate } from "../../../email-templates/new-role-invitation-email.template";
 import { UsersRolEnum } from "../../../enums/users-rol.enum";
+import { AdminInvitationComponent } from "./admin-invitations/admin-invitations.component";
 
 
 export class AdminModuleImpl extends AbstractAdminModule {
@@ -22,12 +23,14 @@ export class AdminModuleImpl extends AbstractAdminModule {
     constructor(
         adminProfileComponent: AdminProfilesComponent,
         cabinetComponent: CabinetComponent,
+        adminInvitationComponent: AdminInvitationComponent,
         comunicationModule: AbtractCommunicationModule,
         usersModule: AbstractUsersModule
     ) {
         super(
             adminProfileComponent,
             cabinetComponent,
+            adminInvitationComponent,
             comunicationModule,
             usersModule)
     }
@@ -54,6 +57,25 @@ export class AdminModuleImpl extends AbstractAdminModule {
         });
     }
 
+    async createAdminInvitation(invitation): Promise<TODResponse> {
+        try {
+            const invitationC = await this._adminInvitationComponent.createInvitation(invitation)
+            return this._createTODDTO(true, null);
+        } catch (error) {
+            console.log(error)
+            return this._createTODDTO(null, error);
+
+        }
+    }
+    async getSystemADmins(): Promise<TODResponse> {
+        try {
+            const admins = await this._adminProfileComponent.getAllAdminsProfiles()
+            return this._createTODDTO(admins, null);
+        } catch (error) {
+            return this._createTODDTO(null, error);
+
+        }
+    }
     async getCabinetInvitations(cabinetId: number): Promise<any> {
         try {
             const invitations = await this.cabinetComponent.getCabinetInvitation(cabinetId);
@@ -94,7 +116,7 @@ export class AdminModuleImpl extends AbstractAdminModule {
 
                 this._comunicationModule.sendEmailToOne(created.email, {
                     body: template,
-                    subject: 'verification '
+                    subject: 'Invitation '
                 })
                     .then((res) => {
                         // console.log(res['body'])

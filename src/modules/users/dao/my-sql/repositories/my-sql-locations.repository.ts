@@ -12,7 +12,7 @@ const propsMap = {
     stringAddress: 'LocationStringAddress',
     lat: 'LocationLatitude',
     lng: 'LocationLongitude',
-    contry: 'LocationContry',
+    country: 'LocationCountry',
     state: 'LocationState',
     verified:'LocationVerified'
 }

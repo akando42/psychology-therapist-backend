@@ -25,7 +25,6 @@ export function Convert(propMapping: any, toArray?: boolean) {
 
             let data = originalMethod.apply(this, [arguments])
             let hack = async function () {
-
                 let resolve = await data
                 if (resolve.length == 1) {
                     let value = converterInstace.convertDBModelToDomain(resolve[0]);

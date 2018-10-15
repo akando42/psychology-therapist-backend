@@ -1,22 +1,22 @@
 import { IResetPasswordRequest } from "../../../../../models/reset-password-request";
-import { GenericDao } from "../../../../../core/mysql/generic.dao";
-import { ResetPasswordRequestsConverterInstance } from "../../../converters/my-sql/reset-password-request.converter";
-import { AbstractResetPasswordRequestRepository } from "../../repositories/reset-passwod-request.repositoty.interface";
-import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
+import { IResetPasswordRequestRepository } from "../../repositories/reset-passwod-request.repositoty.interface";
+import { ByNameRepository } from "../../../../../core/repositories/by-name-repository.notation";
 
+const propsMatch = {}
 
-
-export class MySqlResetPasswordRequestRepository extends AbstractResetPasswordRequestRepository {
-    constructor() {
-        super(new GenericDao('RESET_PASSWORD_REQUEST'), ResetPasswordRequestsConverterInstance);
+@ByNameRepository('', {
+    converterProps: propsMatch,
+    primaryKey: 'ResetPasswordRequest',
+    resourceName: 'ResetPasswordRequest'
+})
+export class MySqlResetPasswordRequestRepository implements IResetPasswordRequestRepository {
+    createResetRequest(request: IResetPasswordRequest): Promise<IResetPasswordRequest> {
+        return null;
     }
 
     getRequestByToken(token: string): Promise<IResetPasswordRequest> {
-        return super.getBy(new GetByQuery({ ResetPasswordRequestToken: token })
-            .toDBQuery('RESET_PASSWORD_REQUEST'));
+        return null;
     }
+
+
 }
-
-
-export const MySqlResetPasswordRequestRepositoryInstance: MySqlResetPasswordRequestRepository
-    = new MySqlResetPasswordRequestRepository();

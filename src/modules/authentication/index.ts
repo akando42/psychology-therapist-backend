@@ -3,11 +3,11 @@ import { AccountsServiceImpl } from "./core/accounts/accounts-impl.service";
 import { MySqlResetPasswordRequestRepository } from "./dao/my-sql/repositories/my-sql-reset-password-request.repository";
 import { AccountsComponent } from "./core/accounts/accounts.component";
 import { AuthenticationImplModule } from "./core/authentication-impl.module";
-import { TODUsersModule, usersComponent, TODUserProfileService } from "../users";
+import { TODUsersModule, TODUserProfileService } from "../users";
 import { AuthenticationRouter } from "./authentication.router";
 import { TODCommunicationModuleInstance } from "../communication";
 import { TODAdminModule, TODCabinetComponent, TODAdminProfileComponent } from "../admin";
-import { TODHumanResourcesModule, TODHRprofilesComponent } from "../human-resources";
+import { TODHRprofilesComponent } from "../human-resources";
 
 
 //repositories

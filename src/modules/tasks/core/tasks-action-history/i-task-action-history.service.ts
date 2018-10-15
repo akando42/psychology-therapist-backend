@@ -2,7 +2,7 @@ import { ITaskHistory } from "../../../../models/task-history";
 
 
 
-export interface ITaskActionHistory {
+export interface ITasksHistory {
 
     /**
      * push a history to the current history list.

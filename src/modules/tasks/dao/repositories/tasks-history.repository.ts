@@ -7,7 +7,9 @@ import { GenericDao } from "../../../../core/mysql/generic.dao";
 
 export interface ITasksHistoryRepository {
 
-    getAllBy(query: any): Promise<ITaskHistory[]>;
+    createHistoryRecord(history: ITaskHistory): Promise<ITaskHistory>;
+
+    getAllByTaskId(query: any): Promise<ITaskHistory[]>;
 
 
 

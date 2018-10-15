@@ -34,7 +34,7 @@ export class MySqlRequiredDocumentsReportsRepository implements IRequiredDocumen
         return null;
     }
 
-    @Convert(propMap)
+    @Convert(propMap,true)
     @GetByQuery({ UserID: 0, DocumentRequiredReportRole: 1, DocumentRequiredReportStatus: 2 })
     getUserReportsByRoleAndStatus(userId: number, role: UsersRolEnum, status: DocumentReportStatusEnum): Promise<IRequiredDocumentReport[]> {
         return null;

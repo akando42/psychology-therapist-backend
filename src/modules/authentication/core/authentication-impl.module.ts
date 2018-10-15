@@ -22,6 +22,9 @@ import { TODHumanResourcesModule } from '../../human-resources';
 import { HRProfileStatusEnum } from '../../../enums/hr-profile-status';
 import { HRProfilesComponent } from '../../human-resources/core/hr-profile/hr-profiles.component';
 import { AdminProfilesComponent } from '../../admin/core/admin-profile/admin-profiles.component';
+import { IAdminInvitation } from '../../../models/admin-invitation';
+import { ProviderProfileComponent } from '../../providers/core/provider-profile/provider.profile.component';
+import { AdminInvitationComponent } from '../../admin/core/admin-invitations/admin-invitations.component';
 
 export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
@@ -33,6 +36,8 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         humanResourcesModule: HRProfilesComponent,
         adminModule: AbstractAdminModule,
         adminComponent: AdminProfilesComponent,
+        adminInvitationComponent: AdminInvitationComponent,
+        providerProfileComponent: ProviderProfileComponent
 
     ) {
         super(
@@ -42,40 +47,14 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
             communicationModule,
             humanResourcesModule,
             adminModule,
-            adminComponent
+            adminComponent,
+            adminInvitationComponent,
+            providerProfileComponent
+
         );
     }
 
 
-    inviteUser(invitationRequest: { email: string; role: UsersRolEnum; inviterId: number; }): Promise<TODResponse> {
-        // return new Promise<TODResponse>(async (resolve, reject) => {
-        //     try {
-        //         const invitation = await this._invitationsComponent.createInvitation(invitationRequest);
-
-        //         const link = `http://localhost:4200/invite/${invitation.token}`
-        //         console.log('link', link);
-
-        //         this._communicationModule.sendEmailToOne(invitationRequest.email,
-        //             {
-        //                 body: new InvitationEmailTemplate(link).getHtml(),
-        //                 subject: 'verification '
-        //             });
-
-        //         const result: TODResponse = {
-        //             message: 'invitation sent',
-        //             payload: { success: true },
-        //             timestamp: new Date()
-        //         }
-
-        //         return resolve(result);
-
-        //     } catch (error) {
-        //         console.log(error);
-        //         return reject(error)
-        //     }
-        // })
-        return null;
-    }
 
     signup(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
@@ -104,16 +83,13 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         })
     }
 
-    authenticate(credentials: { password: string, email: string }, role: string = "admin"): Promise<any> {
+    authenticate(credentials: { password: string, email: string }, role: string): Promise<any> {
         return new Promise(async (resolve, reject) => {
             try {
-                
                 //authenticate
-                const account = await this._accountsComponent.authenticateAccount(credentials);
-                //get user account
-                const user: IUser = await this._usersModule.getUserById(account.userId);
+                const { account, user } = await this._accountsComponent.authenticateAccount(credentials);
                 let roleProfile = null;
-                
+
                 if (role) {
                     switch (role) {
                         case 'hr':
@@ -122,8 +98,12 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                         case 'admin':
                             roleProfile = await this._adminComponent.getProfile(user.id);
                             break;
+                        case 'master':
+                            console.log('requestin')
+                            roleProfile = await this._adminComponent.getMasterAdmin(user.id);
+                            break;
                         default:
-                        break;
+                            break;
                     }
                 }
 
@@ -148,29 +128,25 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
         });
     }
 
-    changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<TODResponse> {
-        return new Promise<TODResponse>(async (resolve, reject) => {
-            try {
-                const changeResult: any = await this._accountsComponent.changeAccountPassword(email, changeRequest);
-
-                if (changeResult.success) {
-                    // notify user by email or phone that password was changed
-                }
-                const result: TODResponse = {
-                    message: 'password changed!',
-                    payload: { success: true },
-                    timestamp: new Date()
-                }
-                return resolve(result);
-
-            } catch (error) {
-                return reject({
-                    message: 'password changed',
-                    error: true,
-                    timestamp: new Date().getTime()
-                });
+    async changePassword(email: string, changeRequest: { newPassword: string, oldPassword: string }): Promise<TODResponse> {
+        try {
+            const changeResult: any = await this._accountsComponent.changeAccountPassword(email, changeRequest);
+            const result: TODResponse = {
+                message: 'password changed!',
+                payload: { success: true },
+                timestamp: new Date()
             }
-        });
+            return result;
+
+        } catch (error) {
+            let badResult = {
+                message: 'password changed',
+                error: { message: 'Sorry we cudnt change your password' },
+                timestamp: new Date().getTime()
+            };
+            return error;
+        }
+
     }
 
     verifyEmail(verificationToken: string): Promise<any> {
@@ -214,7 +190,9 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                             status: HRProfileStatusEnum.WAITING_APPROVAL
                         })
                         break;
-
+                    case UsersRolEnum.provider:
+                        this._providerProfileComponent.createProviderProfile({ userId: user.id })
+                        break;
                     default:
                         break;
                 }
@@ -238,7 +216,42 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 return reject(badResult);
             }
         })
-        return null;
+
+    }
+
+
+    async signUpAdmin(inviteToken: string, newAccount: INewAccountDTO): Promise<any> {
+        try {
+            //get the invitation
+            const invitation: IAdminInvitation = await this._adminInvitationComponent.verifyAdminInvitation(inviteToken);
+            //create the user and the account
+
+            newAccount.email = invitation.email;
+            newAccount.profile.email = invitation.email;
+            const { user } = await this._accountsComponent.createAccountAndProfile(newAccount, true);
+
+            const profile = await this._adminComponent.createProfile({
+                userId: user.id,
+                status: 'pending'
+            })
+
+            const result: TODResponse = {
+                message: 'succefully registered',
+                payload: { success: true },
+                timestamp: new Date()
+            };
+
+            return result;
+
+        } catch (error) {
+            const badResult: TODResponse = {
+                message: 'Something when wrong sorry',
+                error: error,
+                timestamp: new Date()
+            };
+            return badResult;
+        }
+
     }
 
     validateTokenAndReset(token: string, newPassword: string): Promise<{ message: string, valid: boolean }> {

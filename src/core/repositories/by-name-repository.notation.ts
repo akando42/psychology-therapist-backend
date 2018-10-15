@@ -1,4 +1,4 @@
-import { Constructor, functionCustomCreateFunctionFactory, customGetFunctionFactory, IRepositoryConfiguration } from "./repositoy.notation";
+import { Constructor, functionCustomCreateFunctionFactory, customGetFunctionFactory, IRepositoryConfiguration, createFunctionFactory } from "./repositoy.notation";
 import { GenericConverter } from "../converters/generic-converter";
 import { GenericDao } from "../mysql/generic.dao";
 
@@ -8,17 +8,21 @@ import { GenericDao } from "../mysql/generic.dao";
 
 export function ByNameRepository(table: string, configuration?: IRepositoryConfiguration) {
     return <T extends Constructor>(C: T) => {
+        //compatibility with method directive
+        C.prototype.query = async (q) => {
+            return await GenericDao.QUERY(q);
+        }
 
         class E extends C {
 
             public converter = new GenericConverter(configuration.converterProps);
             public table = table;
-
             constructor(...args) {
                 super(args);
 
+                this['query'] = C.prototype.query
+                this.build();
 
-                this.build()
             }
 
             async query(q) {
@@ -39,19 +43,19 @@ export function ByNameRepository(table: string, configuration?: IRepositoryConfi
                 const method: string[] = Object.keys(C.prototype);
 
                 method.forEach((methodName: string) => {
-                    let methodVerb: string = methodName.split(/(?<=[a-z])(?=[A-Z])/)[0];
+                    if (methodName.startsWith('c_')) { return; }
 
+                    let methodVerb: string = methodName.split(/(?<=[a-z])(?=[A-Z])/)[0];
                     switch (methodVerb) {
                         case 'create':
                             // here goes the create
-                            this[methodName] = functionCustomCreateFunctionFactory(this['converter'], table,
-                                configuration.create, this)
+                            this[methodName] = createFunctionFactory(this['converter'], table,
+                                configuration, this)
                             break;
                         case 'get':
                             let paramsStart: number = (methodName.indexOf('By'));
                             let params = [];
-                            if (paramsStart > 5) {
-
+                            if (paramsStart >= 3) {
                                 params = methodName
                                     .slice(paramsStart + 2)
                                     .split('And')

@@ -84,13 +84,12 @@ export class UsersProfileServiceImpl implements IUserProfileService {
         })
     }
 
+
     getUserByEmail(email: string): Promise<IUser> {
-        //validate email
         return this._usersRepository.getByEmail(email);
     }
 
     getUserById(id: any): Promise<IUser> {
-        //validate id email
         return this._usersRepository.getById(id);
     }
 }

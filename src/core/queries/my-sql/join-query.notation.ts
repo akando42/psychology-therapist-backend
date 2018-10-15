@@ -6,23 +6,28 @@
  * @param joins 
  * @param relations 
  */
-export function JoinQuery(searchParam, joins: Join[], relations?: { from: number, to: number }[]) {
+export function JoinQuery(searchParam, joins: Join[], table?) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         const originalMethod = descriptor.value;
 
         descriptor.value = function (...args) {
             //get tabla from repository. (class owner of the method using the directive).
-            let table: string = target.table
+            let t: string = target.table || table;
 
             //create the condition a simple 'WHERE'
-            let condition = `WHERE `;
-            Object.keys(searchParam).forEach(
-                (key, i) => {
-                    condition += `${table}.${key} = ${args[0][searchParam[key]]} `
-                })
+            let condition = ` `;
+            let params = Object.keys(searchParam);
+            if (searchParam.length > 0) {
+
+                params.forEach(
+                    (key, i) => {
+                        condition += `${t}.${key} = ${args[0][searchParam[key]]} `
+                    });
+            }
 
             //query creation   
-            const query = createQuery(table, joins, condition)
+            const query = createQuery(t, joins, condition)
+
             //passing query object (string), to the repository with DAO    
             let r = target.query(query)
 

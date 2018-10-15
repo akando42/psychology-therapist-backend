@@ -11,4 +11,5 @@ export interface IAdminProfilesRepository {
 
     updateAdminProfile(adminId: number, changes: IAdminProfile): Promise<IAdminProfile>;
 
+    c_getAllAdminProfile(): Promise<any[]>
 }

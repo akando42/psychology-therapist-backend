@@ -16,11 +16,13 @@ export class UsersRouter {
         router.post('/users/upload-id', TokenValidationMiddleware, this.uploadId.bind(this));
         router.post('/users/upload-id-second', TokenValidationMiddleware, this.pushVerificationIDPic.bind(this));
 
-        router.post('/user/location', TokenValidationMiddleware, this.getUserLocation.bind(this));
-        router.get('/user/location', TokenValidationMiddleware, this.getUserLocation.bind(this));
+        router.post('/users/location', TokenValidationMiddleware, this.createLocation.bind(this));
+        router.get('/users/location', TokenValidationMiddleware, this.getUserLocation.bind(this));
 
-        router.post('/user/phone_number', TokenValidationMiddleware, this.createPhoneNumber.bind(this));
-        router.get('/user/phone_number', TokenValidationMiddleware, this.getUserPhoneNumber.bind(this));
+        router.post('/users/phone_number', TokenValidationMiddleware, this.createPhoneNumber.bind(this));
+        router.get('/users/phone_number', TokenValidationMiddleware, this.getUserPhoneNumber.bind(this));
+
+        router.get('/users/details', TokenValidationMiddleware, this.getUserDetials.bind(this));
         return router;
     }
 
@@ -86,6 +88,7 @@ export class UsersRouter {
     createLocation(req: Request, res: Response): void {
         let location: ILocation = req.body;
         location.userId = req['userId'];
+        console.log(location)
         TODUsersModule.addUserLocation(location)
             .then((result) => {
                 res.status(200).send(result);
@@ -114,4 +117,14 @@ export class UsersRouter {
                 res.status(400).send(err);
             });
     }
+    getUserDetials(req: Request, res: Response): void {
+        TODUsersModule.getUserDetails(req['userId'])
+            .then((result) => {
+                res.status(200).send(result);
+            })
+            .catch((err) => {
+                res.status(400).send(err);
+            });
+    }
+
 }

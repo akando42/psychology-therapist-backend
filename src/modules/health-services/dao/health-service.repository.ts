@@ -1,20 +1,13 @@
-import { AbstractRepository } from "../../../core/repositories/repository.abstract";
 import { IHealthService } from "../../../models/health-service";
-import { GenericDao as MySqlGenericDao } from "../../../core/mysql/generic.dao";
-import { IDualConverter } from "../../../core/converters/converter.interface";
 
+export interface IHealthServiceRepository {
 
-export abstract class AbstractHealthServiceRepository extends AbstractRepository<IHealthService>{
-    constructor(dao: any, converter: any) {
-        super(dao, converter)
-    }
+    createHealthService(service: IHealthService): Promise<IHealthService>;
 
-    abstract createService(service: IHealthService): Promise<IHealthService>;
+    deleteHealthService(id: number | string): Promise<boolean>;
 
-    abstract deleteService(id: number | string): Promise<boolean>;
+    updateHealthService(id: number | string, updatedEntity: IHealthService): Promise<IHealthService>
 
-    abstract updateService(id: number | string, updatedEntity: IHealthService): Promise<IHealthService>
-
-    
+    getHealthServiceById(id: any): Promise<IHealthService>;
 
 }

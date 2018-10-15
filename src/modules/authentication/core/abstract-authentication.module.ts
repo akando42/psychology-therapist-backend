@@ -11,6 +11,8 @@ import { AbstractAdminModule } from "../../admin/core/abstract-admin.module";
 import { CabinetComponent } from "../../admin/core/cabinet/cabinet.component";
 import { HRProfilesComponent } from "../../human-resources/core/hr-profile/hr-profiles.component";
 import { AdminProfilesComponent } from "../../admin/core/admin-profile/admin-profiles.component";
+import { AdminInvitationComponent } from "../../admin/core/admin-invitations/admin-invitations.component";
+import { ProviderProfileComponent } from "../../providers/core/provider-profile/provider.profile.component";
 
 
 export abstract class AbstractAuthenticationModule {
@@ -23,6 +25,8 @@ export abstract class AbstractAuthenticationModule {
         protected _hrProfileComponent?: HRProfilesComponent,
         protected _adminModule?: AbstractAdminModule,
         protected _adminComponent?: AdminProfilesComponent,
+        protected _adminInvitationComponent?: AdminInvitationComponent,
+        protected _providerProfileComponent?: ProviderProfileComponent
     ) {
     }
 
@@ -46,5 +50,4 @@ export abstract class AbstractAuthenticationModule {
 
     abstract signUpWithInvitation(invitationToken: string, newAccount: INewAccountDTO): Promise<TODResponse>;
 
-    abstract inviteUser(invitationRequest: { email: string, role: UsersRolEnum, inviterId: number }): Promise<TODResponse>;
 }

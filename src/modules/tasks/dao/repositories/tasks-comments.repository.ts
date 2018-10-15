@@ -5,12 +5,11 @@ import { GenericDao } from "../../../../core/mysql/generic.dao";
 
 
 
-export abstract class AbstractTasksCommentsRepository extends AbstractRepository<ITaskComment>{
-    constructor() {
-        super(new GenericDao('TASKS_COMMENTS'));
-    }
+export interface ITasksCommentsRepository {
 
-    abstract updateTask(id: string, data): Promise<boolean>;
+    createTaskComment(comment: ITaskComment): Promise<ITaskComment>;
+
+
 
 
 }

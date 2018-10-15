@@ -10,14 +10,17 @@ export class AdminProfilesImplService implements IAdminProfileService {
     constructor(private _AdminProfilesRepo: IAdminProfilesRepository) {
 
     }
-
+    async getAllAdmins(): Promise<any[]> {
+        let admins = await this._AdminProfilesRepo.c_getAllAdminProfile();
+        return admins;
+    }
     getAdminProfile(userId: number): Promise<IAdminProfile> {
         return new Promise<IAdminProfile>(async (resolve, reject) => {
             try {
                 //validate here
                 const profile: any = await this._AdminProfilesRepo.getAdminProfileByUserId(userId);
-                if(isNullOrUndefined(profile)){
-                    return reject({message:'no admin profile found for user'})
+                if (isNullOrUndefined(profile)) {
+                    return reject({ message: 'no admin profile found for user' })
                 }
                 return resolve(profile);
             } catch (error) {

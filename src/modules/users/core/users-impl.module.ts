@@ -31,6 +31,14 @@ export class UsersImplModule extends AbstractUsersModule {
             return this._createTODDTO(null, error);
         }
     }
+    async getUserDetails(userId: any): Promise<TODResponse> {
+        try {
+            const details= await this._userProfilesComponent.getDetails(userId);
+            return this._createTODDTO(details, null);
+        } catch (error) {
+            return this._createTODDTO(null, error);
+        }
+    }
 
     async getUserPhoneNumber(userId: number): Promise<TODResponse> {
         try {

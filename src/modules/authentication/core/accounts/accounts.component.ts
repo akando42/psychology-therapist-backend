@@ -65,19 +65,12 @@ export class AccountsComponent {
             }
         })
     }
-    authenticateAccount(credentials: { password: string, email: string }): Promise<IAccount> {
-        return new Promise<IAccount>(async (resolve, reject) => {
-            try {
-                //autenticate account
-                const account: IAccount = await this._acountService.authenticate(credentials);
-                //add result to login history
-                /**aqui va eese codigo */
-                return resolve(account);
-            } catch (error) {
-                console.log(error);
-                return reject(error);
-            }
-        })
+    async authenticateAccount(credentials: { password: string, email: string }): Promise<{ account: IAccount, user: IUser }> {
+        //autenticate account
+        const account: IAccount = await this._acountService.authenticate(credentials);
+
+        const user: IUser = await this._userProfileService.getUserById(account.userId);
+        return { account: account, user: user };
     }
 
     resetAccountPassword(email: string): Promise<string> {

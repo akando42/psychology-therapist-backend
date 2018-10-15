@@ -1,15 +1,13 @@
 import { ITask } from "../../../models/task";
 import { TODResponse } from "../../../dto/tod-response";
 import { TasksComponent } from "./tasks/tasks.component";
-import { TasksCommentsComponent } from "./tasks-comments/tasks-comments.component";
 
 
 
 export abstract class AbstractTaskModule {
 
     constructor(
-        protected _taskComponent: TasksComponent,
-        protected _tasksCommentsComponent: TasksCommentsComponent) {
+        protected _taskComponent: TasksComponent) {
 
     }
 

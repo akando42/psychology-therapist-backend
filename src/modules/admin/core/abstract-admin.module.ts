@@ -4,6 +4,7 @@ import { ICabinet } from "../../../models/cabinet";
 import { CabinetComponent } from "./cabinet/cabinet.component";
 import { AbtractCommunicationModule } from "../../communication/core/comunication.module";
 import { AbstractUsersModule } from "../../users/core/users.module";
+import { AdminInvitationComponent } from "./admin-invitations/admin-invitations.component";
 
 
 export abstract class AbstractAdminModule {
@@ -11,6 +12,7 @@ export abstract class AbstractAdminModule {
     constructor(
         protected _adminProfileComponent: AdminProfilesComponent,
         protected cabinetComponent: CabinetComponent,
+        protected _adminInvitationComponent: AdminInvitationComponent,
         protected _comunicationModule: AbtractCommunicationModule,
         protected _usersModule: AbstractUsersModule,
     ) { }
@@ -26,7 +28,7 @@ export abstract class AbstractAdminModule {
 
     abstract createAdminCabinet(cabinet: ICabinet): Promise<any>;
 
-    abstract cancelInvitation(invitationID:number): Promise<any>;
+    abstract cancelInvitation(invitationID: number): Promise<any>;
 
     // abstract joinCabinetWith
 

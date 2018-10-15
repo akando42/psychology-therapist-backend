@@ -35,7 +35,7 @@ export class HRProfilesComponent {
 
         //if documents required create reports for users
         if (docsRequired.length > 0) {
-            let reports: IRequiredDocumentReport[] = [];
+          
             for (const doc of docsRequired) {
                 //create one by one, no bulk almost not performance issue here actually.
                 let created = await this._reportDocsService.createDocumentReport({
@@ -46,9 +46,8 @@ export class HRProfilesComponent {
                     documentId: null,
                     documentRequiredId:doc.id
                 });
-                reports.push(created);
+               
             }
-            console.log(reports)
         }
 
         return profileCreated;

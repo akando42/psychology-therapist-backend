@@ -17,5 +17,6 @@ const TODCommunicationModuleInstance = new TODCommunicationModule(emailGatewayCo
 
 
 export {
+    emailGatewayComponent,
     TODCommunicationModuleInstance
 }

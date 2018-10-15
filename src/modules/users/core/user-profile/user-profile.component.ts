@@ -104,7 +104,7 @@ export class UsersProfileComponent {
 
     async createPhoneNumber(phoneNumber: IPhoneNumber): Promise<IPhoneNumber> {
         try {
-
+            phoneNumber.verified = false;
             const phoneNumberCreated = await this._phoneNumberService.createPhoneNumber(phoneNumber);
             return phoneNumberCreated;
         } catch (error) {
@@ -124,5 +124,13 @@ export class UsersProfileComponent {
         } catch (error) {
             throw error;
         }
+    }
+
+    async getDetails(userId): Promise<any> {
+        let result = await Promise.all([
+            this.getUserPhoneNumber(userId),
+            this.getUserLocation(userId)
+        ]);
+        return { phoneNumber: result[0], location: result[1] };
     }
 }

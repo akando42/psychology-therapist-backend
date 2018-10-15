@@ -2,7 +2,8 @@ import { IAdminProfile } from "../../../../models/admin-profile";
 
 
 export interface IAdminProfileService {
-
+    
+    getAllAdmins(): Promise<any[]>;
 
     createAdminProfile(profile: IAdminProfile): Promise<IAdminProfile>;
 

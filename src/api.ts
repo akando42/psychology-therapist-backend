@@ -42,7 +42,7 @@ export class API {
 	private mountRoutes(): void {
 
 
-		this.express.use('/admin', new AdminRouter().init());
+		this.express.use('/api/v1/admin', new AdminRouter().init());
 		// this.express.use('/api/v1', TasksRouterInstance.init());
 
 

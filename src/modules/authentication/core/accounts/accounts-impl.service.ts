@@ -1,13 +1,11 @@
 import * as bc from 'bcrypt';
 import { IAccount } from "../../../../models/account";
 import { IAccountsService } from "./accounts.service.interface";
-import { AbstractAccountsRepository } from "../../dao/repositories/accounts.repository";
-import { MySqlAccountsRepositoryInstance } from "../../dao/my-sql/repositories/my-sql-accounts.repository";
+import { IAccountsRepository } from "../../dao/repositories/accounts.repository";
 import { IResetPasswordRequest } from "../../../../models/reset-password-request";
-import { AbstractResetPasswordRequestRepository } from "../../dao/repositories/reset-passwod-request.repositoty.interface";
+import { IResetPasswordRequestRepository } from "../../dao/repositories/reset-passwod-request.repositoty.interface";
 import { generateResetToken } from "../../utils/generate-reset-token.func";
 import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
-import { MySqlResetPasswordRequestRepositoryInstance } from "../../dao/my-sql/repositories/my-sql-reset-password-request.repository";
 import { InvalidCredentialsError } from "../../../../errors/invalid-credentials.error";
 import { UnverifiedAccountError } from "../../../../errors/unverfied-account.error";
 import { propertiesMatcherUtil } from "../../../../utils/properties-matcher.util";
@@ -16,8 +14,8 @@ import { propertiesMatcherUtil } from "../../../../utils/properties-matcher.util
 export class AccountsServiceImpl implements IAccountsService {
 
     constructor(
-        private _accountsRepository: AbstractAccountsRepository,
-        private _resetRequestRepository: AbstractResetPasswordRequestRepository) { }
+        private _accountsRepository: IAccountsRepository,
+        private _resetRequestRepository: IResetPasswordRequestRepository) { }
 
     generatePasswordReset(email): Promise<IResetPasswordRequest> {
         return new Promise<IResetPasswordRequest>(async (resolve, reject) => {
@@ -30,7 +28,7 @@ export class AccountsServiceImpl implements IAccountsService {
                 const resetToken: string = generateResetToken(account);
                 //save new password
                 const request: IResetPasswordRequest = await this._resetRequestRepository
-                    .create({
+                    .createResetRequest({
                         requestToken: resetToken,
                         expired: false,
                         requestDate: new Date().getTime(),
@@ -56,6 +54,7 @@ export class AccountsServiceImpl implements IAccountsService {
                 }
 
                 const account: IAccount = await this._accountsRepository.getByEmail(credentials.email);
+                console.log(account)
                 //not match account
                 if (!account) { return reject(new InvalidCredentialsError()); }
                 //unverified account
@@ -128,10 +127,10 @@ export class AccountsServiceImpl implements IAccountsService {
                     emailVerified: verified
                 }
 
-                const id: any = await this._accountsRepository.create(account);
+                const id: any = await this._accountsRepository.createAccount(account);
 
                 const acc = await this._accountsRepository.getById(id);
-                console.log('account reacted by invitation',acc)
+                console.log('account reacted by invitation', acc)
                 return resolve(acc);
             } catch (error) {
                 console.log(error);

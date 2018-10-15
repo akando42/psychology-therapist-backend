@@ -4,19 +4,18 @@ import { IAccount } from "../../../../models/account";
 
 
 
-export abstract class AbstractAccountsRepository extends AbstractRepository<IAccount>{
-    constructor(dao, converter) {
-        super(dao, converter);
-    }
+export interface IAccountsRepository {
 
-    abstract getByEmail(email: string): Promise<IAccount>
+    
+    getByEmail(email: string): Promise<IAccount>
 
-    abstract getById(id: string): Promise<IAccount>;
+    getById(id: string): Promise<IAccount>;
 
-    abstract updateAccount(id: number, data: IAccount): Promise<IAccount>;
+    updateAccount(id: number, data: IAccount): Promise<IAccount>;
 
-    abstract getByValidationHash(token: string): Promise<IAccount>;
+    getByValidationHash(token: string): Promise<IAccount>;
 
+    createAccount(account:IAccount):Promise<IAccount>;
 
 
 }

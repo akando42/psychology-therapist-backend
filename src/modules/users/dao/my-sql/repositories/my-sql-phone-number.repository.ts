@@ -11,10 +11,10 @@ const propsMap = {
     userId: 'UserID',
     countryCode: 'PhoneNumberCountryCode',
     verified: 'PhoneNumberVerified',
-    PhoneNumber: 'PhoneNumberChars'
+    phoneNumber: 'PhoneNumberChars'
 }
 
-@Repository('PhoneNumber')
+@Repository('Phone_Number')
 export class MySqlPhoneNumbersRepository implements IPhoneNumbersRepository {
 
 
