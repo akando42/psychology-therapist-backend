@@ -1,37 +1,33 @@
-import { GenericDao } from "../../../../../core/mysql/generic.dao";
-import { JoinQuery } from "../../../../../query-spec/my-sql/join.query";
-import { MySqlSystemDocumentsConverter } from "../../../converters/my-sql/my-sql-system-documents.converter";
 import { AbstractRequiredDocumentsRepository } from "../../required-document.repository";
 import { IRequiredDocument } from "../../../../../models/required-document";
 import { UsersRolEnum } from "../../../../../enums/users-rol.enum";
 import { Convert } from "../../../../../core/converters/converter.notation";
-import { CreateQuery } from "../../../../../core/queries/my-sql/create-query.notation";
-import { IDocumentRequired } from "../../../../../models/document-required";
-import { CustomQuery } from "../../../../../core/queries/my-sql/custom-query";
-import { Repository } from "../../../../../core/repositories/repositoy.notation";
+import { ByNameRepository } from "../../../../../core/repositories/by-name-repository.notation";
+import { JoinQuery, Join } from "../../../../../core/queries/my-sql/join-query.notation";
 
-@Repository('Document_required')
+const matchProp = {
+    id: 'DocumentRequiredID', active: 'DocumentRequiredActive',
+    role: 'DocumentRequiredRole',
+    documentId: 'DocumentID', systemDocumentId: 'SystemDocumentID'
+}
+
+@ByNameRepository('DOCUMENT_REQUIRED', {
+    converterProps: matchProp,
+    primaryKey: 'DocumentRequiredID',
+    resourceName: 'Documents Required',
+    create: { return: true }
+})
 export class MySqlRequiredDocumentsRepository implements AbstractRequiredDocumentsRepository {
 
-    @CreateQuery({ return: true, primary: 'DocumentRequiredID' },
-        { id: 'DocumentRequiredID', active: 'DocumentRequiredActive', 
-        role:'DocumentRequiredRole',
-        documentId: 'DocumentID', systemDocumentId: 'SystemDocumentID' })
-    saveDocumentsRequiredToRole(doc: IRequiredDocument): Promise<IRequiredDocument> {
+
+    createDocumentsRequiredToRole(doc: IRequiredDocument): Promise<IRequiredDocument> {
         return null
     }
 
-    @Convert({ id: 'DocumentRequiredID',name:'DocumentName' },true)
-    @CustomQuery(new JoinQuery({
-        mainTable: 'Document_required', mainProps: ['DocumentRequiredID'],
-        joinTables: [
-            {
-                matchProp: 'DocumentID',
-                properties: ['DOCUMENTS.DocumentID','DocumentTypeID', 'DocumentPath','DocumentName', 'RawDocumentID', 'DocumentUploadDate'], table: 'DOCUMENTS'
-            }
-        ]
-    }))
-    getDocumentsRequiredByRole(role: UsersRolEnum): Promise<IRequiredDocument[]> {
+    @Convert({ id: 'DocumentRequiredID', name: 'DocumentName' }, true)
+    @JoinQuery({ DocumentRequiredRole: 0 }, [
+        new Join('DOCUMENTS', 'DocumentID', ['DocumentName'])], 'DOCUMENT_REQUIRED')
+    c_getDocumentsRequiredByRole(role: UsersRolEnum): Promise<IRequiredDocument[]> {
         return null;
     }
 

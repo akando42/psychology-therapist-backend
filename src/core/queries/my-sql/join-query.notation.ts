@@ -17,17 +17,26 @@ export function JoinQuery(searchParam, joins: Join[], table?) {
             //create the condition a simple 'WHERE'
             let condition = ` `;
             let params = Object.keys(searchParam);
-            if (searchParam.length > 0) {
+            if (params.length > 0) {
 
                 params.forEach(
                     (key, i) => {
-                        condition += `${t}.${key} = ${args[0][searchParam[key]]} `
+                        switch (typeof args[0][searchParam[key]]) {
+                            case 'string':
+                                condition += `${t}.${key} = "${args[0][searchParam[key]]}"`;
+                                break;
+                            default:
+                                condition += `${t}.${key} = ${args[0][searchParam[key]]}`;
+                                break;
+                        }
+
+
                     });
             }
 
             //query creation   
             const query = createQuery(t, joins, condition)
-
+            console.log(query)
             //passing query object (string), to the repository with DAO    
             let r = target.query(query)
 
@@ -64,7 +73,7 @@ function createQuery(main, joins: Join[], condition: string): string {
     let query = `SELECT ${cols} from ${main} ${joinsq} `;
     //if there its a contition it will add it.
     if (condition) {
-        query += condition;
+        query += 'where ' + condition;
     }
     return query;
 }

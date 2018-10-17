@@ -1,6 +1,6 @@
-import { IHealthServiceRepository } from "../health-service.repository";
-import { IHealthService } from "../../../../models/health-service";
-import { ByNameRepository } from "../../../../core/repositories/by-name-repository.notation";
+import { IHealthServiceRepository } from "../../health-service.repository";
+import { IHealthService } from "../../../../../models/health-service";
+import { ByNameRepository } from "../../../../../core/repositories/by-name-repository.notation";
 
 const propsMatch = {
     description: 'HealthServiceDescription',

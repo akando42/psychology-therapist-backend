@@ -31,14 +31,14 @@ export abstract class AbstractAuthenticationModule {
     }
 
     init(): AbstractAuthenticationModule {
-       
+
         return this;
     }
 
 
     abstract authenticate(credentials: { password: string, email: string }, role?: string): Promise<any>;
 
-    abstract signup(account: INewAccountDTO): Promise<any>;
+    abstract signup(account: INewAccountDTO, role: UsersRolEnum): Promise<any>;
 
     abstract verifyEmail(email: string, verificationToken: string): Promise<any>;
 

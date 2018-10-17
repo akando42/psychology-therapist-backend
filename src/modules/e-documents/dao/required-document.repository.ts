@@ -9,8 +9,8 @@ export interface AbstractRequiredDocumentsRepository {
 
 
 
-    saveDocumentsRequiredToRole(role: IRequiredDocument): Promise<IRequiredDocument>;
+    createDocumentsRequiredToRole(role: IRequiredDocument): Promise<IRequiredDocument>;
 
-    getDocumentsRequiredByRole(role: UsersRolEnum): Promise<IRequiredDocument[]>;
+    c_getDocumentsRequiredByRole(role: UsersRolEnum): Promise<IRequiredDocument[]>;
 
 }

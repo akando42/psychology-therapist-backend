@@ -54,7 +54,7 @@ export class AccountsServiceImpl implements IAccountsService {
                 }
 
                 const account: IAccount = await this._accountsRepository.getByEmail(credentials.email);
-                console.log(account)
+             
                 //not match account
                 if (!account) { return reject(new InvalidCredentialsError()); }
                 //unverified account

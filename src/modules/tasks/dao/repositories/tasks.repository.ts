@@ -10,6 +10,9 @@ export interface ITasksRepository {
 
     getAllByAssignedId(assignedId: any): Promise<ITask[]>;
 
+    getTaskById(taskId: number): Promise<ITask>;
+
+    updateTask(task: ITask): Promise<ITask>;
 
 }
 

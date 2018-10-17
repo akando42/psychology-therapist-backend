@@ -31,7 +31,7 @@ const mysqlRequiredDocsRepo = new MySqlRequiredDocumentsRepository();
 const mysqlReportsRepo = new MySqlRequiredDocumentsReportsRepository();
 //services
 
-const documentService = new DocumentServiceImpl(mysqlDocRefRepo, mysqlRawDocRepo);
+const TODDocumentsService = new DocumentServiceImpl(mysqlDocRefRepo, mysqlRawDocRepo);
 const documentsCategoriesService = new DocumentsCategoriesImplService(mysqlCategoriesRepo);
 const documentsTypesService = new DocumentsTypeImplService(mysqlTypesRepo);
 const TODSystemDocService = new SystemDocumentService(mysqlSystemDocRepo, mysqlRequiredDocsRepo);
@@ -39,7 +39,7 @@ const TODRequiredDocumentReportService = new DocumentsReportServiceImpl(mysqlRep
 
 //components
 
-const documentsComponent = new DocumentsComponent(documentService);
+const documentsComponent = new DocumentsComponent(TODDocumentsService);
 const documentsClasificationComponent = new DocumentsClasificationComponent(documentsTypesService, documentsCategoriesService)
 const systemDocumentComponent = new SystemDocumentsComponent(documentsComponent, TODSystemDocService);
 const documentsReportComponent = new DocumentsReportComponent(TODRequiredDocumentReportService);
@@ -52,6 +52,7 @@ const TODDocumentsModule = new DocumentModuleImpl(
 
 
 export {
+    TODDocumentsService,
     TODSystemDocService,
     TODRequiredDocumentReportService,
     TODDocumentsModule

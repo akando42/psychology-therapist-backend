@@ -9,8 +9,5 @@ export interface ITasksCommentsRepository {
 
     createTaskComment(comment: ITaskComment): Promise<ITaskComment>;
 
-
-
-
 }
 

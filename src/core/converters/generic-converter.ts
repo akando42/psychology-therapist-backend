@@ -11,7 +11,6 @@ export class GenericConverter implements IDualConverter<any, any> {
         for (const domainProp in this.modelMap) {
             if (this.modelMap.hasOwnProperty(domainProp)) {
                 const dbProp = this.modelMap[domainProp];
-                console.log(`${domainProp}`,raw[domainProp])
                 converted[dbProp] = raw[domainProp];
             }
         }

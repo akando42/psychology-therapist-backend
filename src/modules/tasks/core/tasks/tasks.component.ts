@@ -4,6 +4,7 @@ import { UsersProfileComponent } from "../../../users/core/user-profile/user-pro
 import { ITasksCommentsService } from "../tasks-comments/i-tasks-comments.service";
 import { ITasksHistoryRepository } from "../../dao/repositories/tasks-history.repository";
 import { ITasksHistory } from "../tasks-action-history/i-task-action-history.service";
+import { IUserProfileService } from "../../../users/core/user-profile/user-profile.service.interface";
 
 
 
@@ -11,8 +12,7 @@ export class TasksComponent {
     constructor(
         private _taskService: ITasksService,
         private _taskCommentsService: ITasksCommentsService,
-        private _taskHistoryService: ITasksHistory,
-        private _userComponent: UsersProfileComponent) {
+        private _usersService: IUserProfileService) {
 
     }
 
@@ -28,20 +28,17 @@ export class TasksComponent {
 
     }
 
-    assignTaskTo(assigneId: number, taskId: number): Promise<ITask> {
-        return new Promise<ITask>(async (resolve, reject) => {
-            try {
-                //get user
-                const user = await this._userComponent.getUserProfileById(assigneId);
-                //assign
-                const task = await this._taskService.assignTaskTo(assigneId, taskId);
-                //notify probably but this may be on the notification module
+    async assignTaskTo(assigneId: number, taskId: number): Promise<ITask> {
+        try {
+            //get user
+            const user = await this._usersService.getUserById(assigneId);
+            //assign
+            const task = await this._taskService.assignTaskTo(assigneId, taskId);
+            //notify probably but this may be on the notification module
+            return task;
 
-                resolve(task);
-
-            } catch (error) {
-                return reject(error);
-            }
-        })
+        } catch (error) {
+            return error;
+        }
     }
 }

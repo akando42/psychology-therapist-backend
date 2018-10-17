@@ -1,15 +1,17 @@
+import { isNullOrUndefined } from "util";
+import * as fs from 'fs';
+
 import { IDocumentService } from "./i-document.service";
 import { IEDocument } from "../../../../models/e-document";
 import { IRawDocument } from "../../../../models/raw-document";
 import { AbstractRawDocumentRepository } from "../../dao/raw-document.repository";
-import { isNullOrUndefined } from "util";
-import { AbstractUserDocumentRepository } from "../../dao/user-document.repository";
 import { IDocumentUploadDTO } from "../../../../dto/document-upload.dto";
 import { AbstractEDocumentRepository } from "../../dao/e-document.repository";
 
 
 
 export class DocumentServiceImpl implements IDocumentService {
+
     constructor(
         private _documentsRefRepository: AbstractEDocumentRepository,
         private _rawDocumentRepository: AbstractRawDocumentRepository
@@ -60,5 +62,9 @@ export class DocumentServiceImpl implements IDocumentService {
                 return reject(error);
             }
         })
+    }
+
+    uploadDocumentToFileSystem(document: any): Promise<IEDocument> {
+        return null;
     }
 }

@@ -20,8 +20,21 @@ export class TaskImplService implements ITasksService {
     updateTask(task: ITask): Promise<ITask> {
         throw new Error("Method not implemented.");
     }
-    assignTaskTo(assignedId: number, taskId: number): Promise<ITask> {
-        throw new Error("Method not implemented.");
+
+    @Validate([
+        { name: 'assignedId', cb: Required, parameterIndex: 0 },
+        { name: 'taskId', cb: Required, parameterIndex: 1 }
+    ])
+    async assignTaskTo(assignedId: number, taskId: number): Promise<ITask> {
+        const tasksExist = await this._tasksRepository.getTaskById(taskId);
+        if (isNullOrUndefined(tasksExist)) {
+            throw { message: 'task does not exist' };
+        }
+        //set new assigned
+        tasksExist.assignedTo = assignedId;
+        
+        const updated = await this._tasksRepository.updateTask(tasksExist);
+        return updated;
     }
 
 

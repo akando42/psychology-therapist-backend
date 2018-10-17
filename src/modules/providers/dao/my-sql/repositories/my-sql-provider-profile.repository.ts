@@ -1,6 +1,6 @@
-import { IProvidersProfileRepository } from "../provider-profile.repository";
-import { IProviderProfile } from "../../../../models/provider-profile";
-import { ByNameRepository } from "../../../../core/repositories/by-name-repository.notation";
+import { ByNameRepository } from "../../../../../core/repositories/by-name-repository.notation";
+import { IProviderProfile } from "../../../../../models/provider-profile";
+import { IProvidersProfileRepository } from "../../repositories/provider-profile.repository";
 
 const propsMatch = {
     profileID: 'ProviderProfileID',
@@ -9,7 +9,7 @@ const propsMatch = {
 
 @ByNameRepository('PROVIDER_PROFILE', {
     converterProps: propsMatch,
-    primaryKey: 'ProvierProfileID',
+    primaryKey: 'ProviderProfileID',
     resourceName: 'Provider Profile'
 })
 export class MySqlProviderProfileRepository implements IProvidersProfileRepository {

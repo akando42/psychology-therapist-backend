@@ -30,14 +30,22 @@ export class SystemDocumentService implements ISystemDocumentsService {
         let documentsRequired = [];
         switch (role) {
             case UsersRolEnum.hr:
-                documentsRequired = await this._requiredDocumentsRepo.getDocumentsRequiredByRole(role);
+                documentsRequired = await this._requiredDocumentsRepo.c_getDocumentsRequiredByRole(role);
                 break;
-                
-                default:
+            case UsersRolEnum.provider:
+                documentsRequired = await this._requiredDocumentsRepo.c_getDocumentsRequiredByRole(role);
+                break;
+            case UsersRolEnum.admin:
+                documentsRequired = await this._requiredDocumentsRepo.c_getDocumentsRequiredByRole(role);
+                break;
+            case UsersRolEnum.sales:
+                documentsRequired = await this._requiredDocumentsRepo.c_getDocumentsRequiredByRole(role);
+                break;
+            default:
                 throw { message: 'no valid role' }
-                
-            }
-            
+
+        }
+
         return documentsRequired;
     }
     async pushDocumentRequestToRole(systemDoc: IRequiredDocument): Promise<any> {
@@ -48,11 +56,11 @@ export class SystemDocumentService implements ISystemDocumentsService {
         if (!doc) {
             throw { message: 'document do not exist, or was recently removed' }
         }
-       
+
         systemDoc.documentId = doc.documentId;
-      
-        
-        const saved = await this._requiredDocumentsRepo.saveDocumentsRequiredToRole(systemDoc);
+
+
+        const saved = await this._requiredDocumentsRepo.createDocumentsRequiredToRole(systemDoc);
         return saved;
     }
 }

@@ -56,11 +56,22 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
 
 
-    signup(newAccount: INewAccountDTO): Promise<{ success: boolean, message: string, used: boolean }> {
+    signup(newAccount: INewAccountDTO, role: UsersRolEnum): Promise<{ success: boolean, message: string, used: boolean }> {
         return new Promise(async (resolve, reject) => {
             try {
 
                 const { account, user } = await this._accountsComponent.createAccountAndProfile(newAccount);
+
+                switch (role) {
+                    case UsersRolEnum.provider:
+                        await this._providerProfileComponent.createProviderProfile({ userId: user.id });
+                        break;
+                    case UsersRolEnum.user:
+                        break;
+
+                    default:
+                        break;
+                }
 
                 const fullName: string = `${user.firstName}  ${user.lastName}`;
                 const verificatinLink: string =
@@ -99,7 +110,6 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                             roleProfile = await this._adminComponent.getProfile(user.id);
                             break;
                         case 'master':
-                            console.log('requestin')
                             roleProfile = await this._adminComponent.getMasterAdmin(user.id);
                             break;
                         default:
@@ -122,7 +132,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
 
 
             } catch (error) {
-               
+
                 reject(error);
             }
         });

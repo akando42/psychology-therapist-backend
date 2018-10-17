@@ -1,4 +1,5 @@
 import { IProviderService } from "../../../../models/provider-service";
+import { ProviderServiceStatusEnum } from "../../../../enums/provider-service-status.enum";
 
 
 export interface IProviderServicesService {
@@ -9,8 +10,10 @@ export interface IProviderServicesService {
 
     removeServiceFromProvider(id: any): Promise<IProviderService>;
 
-    changeServiceStatus(id: any, status: any): Promise<IProviderService>;
+    changeServiceStatus(id: any, status: ProviderServiceStatusEnum): Promise<IProviderService>;
 
     getAllProviderHealthService(providerId: any): Promise<IProviderService[]>;
+
+    moveProviderServiceToDocumentReview(service: IProviderService): Promise<IProviderService>;
 
 }

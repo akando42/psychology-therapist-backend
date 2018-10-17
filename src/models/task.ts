@@ -5,12 +5,8 @@ export interface ITask {
     id?: string;
     status: TaskStatusEnum;
     title?: string;
-    reportTo?:
-    { name?: string, id?: string };
-    assignedTo?: {
-        name?: string,
-        id?: string
-    };
+    reportTo?: any;
+    assignedTo?: any,
     creationDate?: number;
     resolutionDate?: number;
     details?: string;

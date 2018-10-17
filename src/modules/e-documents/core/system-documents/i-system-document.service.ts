@@ -30,7 +30,7 @@ export interface ISystemDocumentsService {
     /**
      * return the documents attached to a role in specficic
      */
-    getDocumentsRequiredByRole(role: UsersRolEnum): Promise<any>
+    getDocumentsRequiredByRole(role: UsersRolEnum): Promise<IRequiredDocument[]>
 
     /**
      * Set a document to a specific role

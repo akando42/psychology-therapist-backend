@@ -7,7 +7,9 @@ const propsMatch = {}
     converterProps: propsMatch, primaryKey: 'TaskID', resourceName: 'Task'
 })
 export class MySqlTasksRepository implements ITasksRepository {
-   
+    
+    updateTask(task: ITask): Promise<ITask> { return null; }
+
     createTask(task: ITask): Promise<ITask> {
         return null;
     }
@@ -17,6 +19,8 @@ export class MySqlTasksRepository implements ITasksRepository {
     getAllByAssignedId(assignedId: any): Promise<ITask[]> {
         return null;
     }
+
+    getTaskById(taskId: number): Promise<ITask> { return null; }
 
 
 }

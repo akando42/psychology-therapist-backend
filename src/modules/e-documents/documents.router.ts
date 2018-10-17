@@ -96,7 +96,7 @@ export class DocumentsRouter {
     async getRequiredDocuments(req: Request, res: Response) {
         try {
             const { role } = req.params;
-            console.log(role)
+           
             let response = await TODDocumentsModule.getRequiredDocumentsByRole(role);
             res.status(200).send(response);
         } catch (error) {
