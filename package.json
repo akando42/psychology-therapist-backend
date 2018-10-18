@@ -31,7 +31,6 @@
     "@types/nodemailer": "^4.6.0",
     "@types/sendgrid": "^4.3.0",
     "@types/twilio": "0.0.9",
-    "bcrypt": "^1.0.3",
     "body-parser": "^1.18.2",
     "compression": "^1.7.2",
     "cookie-parser": "^1.4.3",

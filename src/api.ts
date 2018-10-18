@@ -41,6 +41,9 @@ export class API {
 
 	private mountRoutes(): void {
 
+		this.express.use('/info', (req, res) => {
+			res.send('This its working perfectly')
+		})
 
 		this.express.use('/api/v1/admin', new AdminRouter().init());
 		// this.express.use('/api/v1', TasksRouterInstance.init());
