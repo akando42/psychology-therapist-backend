@@ -7,6 +7,8 @@ import { IRawDocument } from "../../../../models/raw-document";
 import { AbstractRawDocumentRepository } from "../../dao/raw-document.repository";
 import { IDocumentUploadDTO } from "../../../../dto/document-upload.dto";
 import { AbstractEDocumentRepository } from "../../dao/e-document.repository";
+import { ComposeValidation } from "../../../../core/validations/validate.notation";
+import { Required } from "../../../../core/validations/validation.function";
 
 
 
@@ -64,7 +66,26 @@ export class DocumentServiceImpl implements IDocumentService {
         })
     }
 
-    uploadDocumentToFileSystem(document: any): Promise<IEDocument> {
-        return null;
+    @ComposeValidation([{
+        index: 0, validators: [
+            { name: 'typeId', cb: Required },
+            { name: 'name', cb: Required },
+        ]
+    }])
+    uploadDocumentToFileSystem(refData: IEDocument, document: any): Promise<IEDocument> {
+        return new Promise<any>((resolve, reject) => {
+
+
+            const generateName = `./uploads/${document.name}`;
+
+            fs.writeFile(generateName, document.data, async (err) => {
+                if (err) throw err;
+
+                const ref = await this._documentsRefRepository.createDocumentRef(document)
+
+                return resolve(ref);
+            });
+
+        })
     }
 }

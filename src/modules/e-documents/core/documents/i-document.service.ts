@@ -5,7 +5,7 @@ import { IEDocument } from "../../../../models/e-document";
 
 export interface IDocumentService {
 
-    uploadDocumentToFileSystem(document:any):Promise<IEDocument>
+    uploadDocumentToFileSystem(refData: IEDocument, document: any): Promise<IEDocument>
 
     uploadDocument(document: any): Promise<any>;
 

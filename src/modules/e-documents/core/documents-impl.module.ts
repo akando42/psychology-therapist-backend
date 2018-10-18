@@ -18,8 +18,14 @@ export class DocumentModuleImpl extends AbstractDocumentModule {
             systemDocumentsComponent,
             requiredDocumentsReportComponent);
     }
-    uploadDocumentToFS(doc: any): Promise<TODResponse> {
-        throw new Error("Method not implemented.");
+    async uploadDocumentToFS(name, doc: any): Promise<TODResponse> {
+            try {
+                const uploadRef = await this._documentsComponent.uploadDocumentToFileSystem(name, doc);
+                console.log('upload result', uploadRef)
+                return { payload: uploadRef, timestamp: new Date() }
+            } catch (error) {
+                return { error: error , timestamp: new Date()}
+            }
     }
 
     uploadDocument(): Promise<TODResponse> {

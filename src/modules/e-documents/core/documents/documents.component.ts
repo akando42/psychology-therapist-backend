@@ -1,3 +1,4 @@
+import * as fs from 'fs'
 import { IRawDocument } from "../../../../models/raw-document";
 import { IDocumentService } from "./i-document.service";
 import { IEDocument } from "../../../../models/e-document";
@@ -8,10 +9,17 @@ export class DocumentsComponent {
     constructor(
         private _documentService?: IDocumentService
     ) {
+
+        if (!fs.existsSync('uploads/')) {
+            fs.mkdirSync('uploads/');
+        }
     }
 
 
-
+    async uploadDocumentToFileSystem(name: IEDocument, document: any): Promise<any> {
+        const ref =await this._documentService.uploadDocumentToFileSystem(name, document)
+        return ref;
+    }
     uploadDocument(document: any): Promise<IEDocument> {
         return new Promise<IEDocument>(async (resolve, reject) => {
             try {

@@ -22,7 +22,7 @@ export abstract class AbstractDocumentModule {
     ) {}
   
     abstract uploadDocumentAsBlob(doc): Promise<TODResponse>;
-    abstract uploadDocumentToFS(doc): Promise<TODResponse>;
+    abstract uploadDocumentToFS(name:string,doc): Promise<TODResponse>;
     abstract getDocumentsReportByUserAndRole(userId: number, userRole: UsersRolEnum, status?: DocumentReportStatusEnum): Promise<TODResponse>;
 
     getAllDocumentsType(): Promise<TODResponse> {

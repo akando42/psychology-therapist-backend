@@ -13,7 +13,7 @@ export class DocumentsRouter {
     init(): Router {
         let router = Router();
         //reports
-        router.get('/documents/reports',TokenValidationMiddleware, this.getRequiredDocumentsReports.bind(this));
+        router.get('/documents/reports', TokenValidationMiddleware, this.getRequiredDocumentsReports.bind(this));
 
         //required documents
         router.get('/documents/required/:role', this.getRequiredDocuments.bind(this));
@@ -22,6 +22,8 @@ export class DocumentsRouter {
         //system documents
         router.get('/documents/system', this.getSystemDocuments.bind(this));
         router.post('/documents/system', this.uploadSystemDocuments.bind(this));
+
+        router.post('/documents/test', this.test.bind(this));
 
         //types
         router.get('/documents/types', this.getDocumentsTypes.bind(this));
@@ -43,7 +45,7 @@ export class DocumentsRouter {
                 .getDocumentsReportByUserAndRole(req['userId'], role, status);
             res.status(200).send(response);
         } catch (error) {
-            
+
             res.status(400).send(error);
         }
     }
@@ -96,7 +98,7 @@ export class DocumentsRouter {
     async getRequiredDocuments(req: Request, res: Response) {
         try {
             const { role } = req.params;
-           
+
             let response = await TODDocumentsModule.getRequiredDocumentsByRole(role);
             res.status(200).send(response);
         } catch (error) {
@@ -127,6 +129,21 @@ export class DocumentsRouter {
             res.status(400).send(error);
         }
     }
+
+    async test(req: Request, res: Response) {
+        try {
+            const { files, body } = <any>req;
+            const { document } = files;
+           console.log(files)
+
+            let response = await TODDocumentsModule.uploadDocumentToFS('test', files.image);
+            res.status(200).send(response);
+        } catch (error) {
+            console.log(error)
+            res.status(400).send(error);
+        }
+    }
+
 
     getDocumentsCategories(req: Request, res: Response): void {
         TODDocumentsModule.getAllDocumentsCategories()
