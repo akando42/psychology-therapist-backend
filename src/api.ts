@@ -22,13 +22,13 @@ export class API {
 		this.express = express();
 		this.middleware();
 		this.mountRoutes();
-		// MySqlConnection.connect({
-		// 	"server": "localhost",
-		// 	"user": "root",
-		// 	"password": "",
-		// 	"database": "tod",
-		// 	"port": 3306
-		// })
+		MySqlConnection.connect({
+			"server": "localhost",
+			"user": "root",
+			"password": "password123",
+			"database": "tod",
+			"port": 3306
+		})
 	}
 
 	private middleware() {
