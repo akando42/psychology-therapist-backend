@@ -28,7 +28,8 @@ export class API {
 			"password": "password123",
 			"database": "tod",
 			"port": 3306
-		})
+		}).then(console.log)
+			.catch(console.log)
 	}
 
 	private middleware() {
