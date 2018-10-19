@@ -18,7 +18,7 @@ export class API {
 	// public appContext: AppContext;
 	constructor() {
 		//create App contenxt
-		// this.appContext = appContext;
+		////// this.appContext = appContext;
 		this.express = express();
 		this.middleware();
 		this.mountRoutes();
