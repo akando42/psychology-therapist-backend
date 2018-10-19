@@ -7,7 +7,7 @@ export class MySqlConnection {
     static connect(options: any): Promise<any> {
         return new Promise<any>((resolve, reject) => {
             try {
-
+                console.log(options)
                 MySqlConnection.pool = mysql.createPool(options);
                 this.pool.getConnection((err, connection) => {
                     if (err)
