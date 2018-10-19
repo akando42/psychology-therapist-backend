@@ -26,8 +26,7 @@ export class API {
 			"server": "localhost",
 			"user": "root",
 			"password": "password123",
-			"database": "tod",
-			"port": 3306
+			"database": "tod"
 		})
 	}
 
