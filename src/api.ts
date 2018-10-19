@@ -18,7 +18,7 @@ export class API {
 	// public appContext: AppContext;
 	constructor() {
 		//create App contenxt
-		////// this.appContext = appContext;
+		// this.appContext = appContext;
 		this.express = express();
 		this.middleware();
 		this.mountRoutes();
@@ -26,7 +26,8 @@ export class API {
 			"server": "localhost",
 			"user": "root",
 			"password": "password123",
-			"database": "tod"
+			"database": "tod",
+			"port": 3306
 		})
 	}
 

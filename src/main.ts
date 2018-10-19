@@ -7,7 +7,7 @@ process.on('uncaughtException', function (err) {
     console.log(err);
 });
 
-const port: any = process.env.PORT || '3000';
+const port: any = process.env.PORT || '8080';
 import { API } from "./api";
 const http = require('http');
 
