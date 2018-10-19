@@ -23,7 +23,7 @@ export class API {
 		this.middleware();
 		this.mountRoutes();
 		MySqlConnection.connect({
-			"server": "localhost",
+			"server": "35.229.112.16",
 			"user": "root",
 			"password": "password123",
 			"database": "tod",
