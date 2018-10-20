@@ -14,7 +14,7 @@ export class AuthenticationRouter {
         router.post('/authentication/login/:role', (req, res) => this.authenticate(req, res));
         router.post('/authentication/signup/:role', (req, res) => this.signup(req, res));
 
-        router.post('/authentication/signup/:invitation_token', (req, res) => this.signUpWithInvitation(req, res));
+        router.post('/authentication/signup/admin/:invitation_token', (req, res) => this.signUpWithInvitation(req, res));
 
         router.post('/authentication/change-password', (req, res) => this.signup(req, res));
 

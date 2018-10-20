@@ -5,6 +5,8 @@ import { propertiesMatcherUtil } from "../../../../utils/properties-matcher.util
 import { IUserIDVerification } from "../../../../models/user-id-verification";
 import { IUsersIDVerificationsRepository } from "../../dao/users-id-verifications.repository";
 import { isNullOrUndefined } from "util";
+import { Validate } from "../../../../core/validations/validate.notation";
+import { Required } from "../../../../core/validations/validation.function";
 
 export class UsersProfileServiceImpl implements IUserProfileService {
 
@@ -36,20 +38,18 @@ export class UsersProfileServiceImpl implements IUserProfileService {
 
     }
 
-    verifiedUserIdentity(id: number): Promise<IUser> {
-        return new Promise<IUser>(async (resolve, reject) => {
-            try {
-                // get user
-                const user: IUser = await this._usersRepository.getById(id);
+    @Validate([{ parameterIndex: 0, cb: Required, name: 'userId' }])
+    async verifiedUserIdentity(id: number): Promise<IUser> {
+        // get user
+        const user: IUser = await this._usersRepository.getById(id);
 
-                user.idVerified = true;
-                const updated: IUser = await this.updateUserProfile(id, user);
-                return resolve(updated);
+        if (isNullOrUndefined(user)) {
+            throw { message: 'User dosent exist' };
+        }
 
-            } catch (error) {
-                return reject(error);
-            }
-        });
+        user.idVerified = true;
+        const updated: IUser = await this.updateUserProfile(id, user);
+        return updated;
     }
 
     createVerificationReport(verifi: IUserIDVerification): Promise<IUserIDVerification> {
