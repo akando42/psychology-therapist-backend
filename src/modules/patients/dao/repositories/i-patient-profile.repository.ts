@@ -5,4 +5,6 @@ export interface IPatientProfileRepository {
 
     createPatientProfile(profile: IPatientProfile): Promise<IPatientProfile>;
 
+    getPatientProfileByUserId(usrId: number | string): Promise<IPatientProfile>;
+
 }

@@ -26,12 +26,12 @@ export class ProvidersProfileImplService implements IProvidersProfileService {
         //create the profile setting its status to 
         //under review by default.
         profile.status = ProviderProfileStatusEnum.UNDER_REVIEW;
-        const profileCreated = await this.createProviderProfile(profile);
+        const profileCreated = await this._providerProfileRepository.createProviderProfile(profile);
 
         return profileCreated;
     }
 
-    
+
     changeProviderStatus(profileId: number, status: ProviderProfileStatusEnum): Promise<IProviderProfile> {
         return null;
     }

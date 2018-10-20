@@ -23,9 +23,9 @@ export class API {
 		this.middleware();
 		this.mountRoutes();
 		MySqlConnection.connect({
-			"host": "35.229.112.16",
+			"host": "localhost",
 			"user": "root",
-			"password": "password123",
+			"password": "",
 			"database": "tod",
 			"port": 3306
 		}).then(console.log)

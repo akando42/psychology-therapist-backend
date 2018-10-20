@@ -5,19 +5,19 @@ import { IProviderDisponibility } from "../../../models/provider-disponibility";
 
 
 
-export abstract class ProviderModule {
+export abstract class AbstractProviderModule {
     constructor(
         protected _providerProfileComponent: ProviderProfileComponent,
         protected _providerServicesComponent: ProviderServicesComponent
     ) { }
 
-    abstract setDisponibility(disponibility: IProviderDisponibility): Promise<any>;
+    abstract setProviderDisponibility(disponibility: IProviderDisponibility): Promise<any>;
 
     abstract getProviderDisponibility(providerProfileId: number | string): Promise<any>;
 
     abstract getProviderServices(providerProfileId: number | string): Promise<any>;
-    
-    abstract addNewProviderServices(providerProfileId: number | string): Promise<any>;
-        
+
+    abstract addNewProviderServices(providerProfileId: number | string, providerId): Promise<any>;
+
 
 }

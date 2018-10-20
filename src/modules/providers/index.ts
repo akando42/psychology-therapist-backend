@@ -8,6 +8,7 @@ import { ProviderProfileComponent } from "./core/provider-profile/provider.profi
 import { ProviderServicesComponent } from "./core/provider-services/provider-services.component";
 import { TODDocumentsService, TODRequiredDocumentReportService, TODSystemDocService } from "../e-documents";
 import { TODHealthServiceService } from "../health-services";
+import { TODProvidersModule } from "./core/tod-providers.module";
 
 
 
@@ -39,8 +40,12 @@ const TODProviderServicesComponent = new ProviderServicesComponent(
     TODHealthServiceService,
     TODDocumentsService)
 
-
+const TODProvidersModuleInstance = new TODProvidersModule(
+    TODProvidersProfilesComponent,
+    TODProviderServicesComponent
+)
 
 export {
-    TODProvidersProfilesComponent
+    TODProvidersProfilesComponent,
+    TODProvidersModuleInstance
 }

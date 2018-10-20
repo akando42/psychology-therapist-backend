@@ -38,8 +38,12 @@ export class ProviderProfileComponent {
         return profileCreated;
     }
 
-    async setDisponibility(disponibility: IProviderDisponibility): Promise<IProviderDisponibility> {
+    async setProviderDisponibility(disponibility: IProviderDisponibility): Promise<IProviderDisponibility> {
         const disponibilityCreted = await this._providerDisponibilityService.setProviderDisponibility(disponibility);
+        return disponibilityCreted;
+    }
+    async getProviderDisponibility(profileId: string | number): Promise<IProviderDisponibility> {
+        const disponibility = await this._providerDisponibilityService.getProviderDisponibility(profileId);
         return disponibility;
     }
 

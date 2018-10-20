@@ -1,5 +1,5 @@
 {
-  "name": "TherapyOnDemand",
+  "name": "therapyondemand",
   "version": "1.0.0",
   "description": "Back end for Therapy on Demand",
   "main": "app.ts",
