@@ -16,7 +16,8 @@ const propsMatch = {
 @ByNameRepository('ACCOUNTS', {
     converterProps: propsMatch,
     primaryKey: 'AccountID',
-    resourceName: 'Accounts'
+    resourceName: 'Accounts',
+    create: { return: true }
 })
 export class MySqlAccountsRepository implements IAccountsRepository {
 
@@ -25,16 +26,16 @@ export class MySqlAccountsRepository implements IAccountsRepository {
         return null;
     }
 
-    getByEmail(email: string): Promise<IAccount> {
+    getAccountByEmail(email: string): Promise<IAccount> {
         return null;
     }
-    getById(id: string): Promise<IAccount> {
+    getAccountById(id: string): Promise<IAccount> {
         return null;
     }
     updateAccount(id: number, data: IAccount): Promise<IAccount> {
         return null;
     }
-    getByValidationHash(token: string): Promise<IAccount> {
+    getAccountByValidationHash(token: string): Promise<IAccount> {
         return null;
     }
 

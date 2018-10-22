@@ -24,9 +24,9 @@ export class MySqlRequiredDocumentsRepository implements AbstractRequiredDocumen
         return null
     }
 
-    @Convert({ id: 'DocumentRequiredID', name: 'DocumentName' }, true)
+    @Convert({ id: 'DocumentRequiredID', name: 'DocumentName',path:'DocumentPath',raw:'RawDocumentID' }, true)
     @JoinQuery({ DocumentRequiredRole: 0 }, [
-        new Join('DOCUMENTS', 'DocumentID', ['DocumentName'])], 'DOCUMENT_REQUIRED')
+        new Join('DOCUMENTS', 'DocumentID', ['DocumentName','RawDocumentID','DocumentPath'])], 'DOCUMENT_REQUIRED')
     c_getDocumentsRequiredByRole(role: UsersRolEnum): Promise<IRequiredDocument[]> {
         return null;
     }

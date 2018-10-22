@@ -112,14 +112,15 @@ export class AccountsComponent {
     @ComposeValidation([{ index: 0, validators: [{ name: 'password', cb: validatePassword }] }])
     async  createAccountAndProfile(account: INewAccountDTO, verified: boolean = false): Promise<{ user: IUser, account: IAccount }> {
         try {
-
+          
             const exist = await this._userProfileService.getUserByEmail(account.email);
             if (!isNullOrUndefined(exist)) {
                 throw { message: 'email already on use' };
             }
 
             //create the user.
-            const userCreated: IUser = await this._userProfileService.createUserProfile(account.profile);
+            const userCreated: IUser = await this._userProfileService.createUserProfile(account);
+            console.log(userCreated)
             //assign a account to that user.
             const accountCreated: IAccount = await this._acountService.createAccount(userCreated.id, account, verified);
             //sanatize

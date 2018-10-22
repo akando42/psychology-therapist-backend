@@ -4,7 +4,8 @@ import { IProvidersProfileRepository } from "../../repositories/provider-profile
 
 const propsMatch = {
     profileID: 'ProviderProfileID',
-    status: 'ProviderProfileStatus'
+    status: 'ProviderProfileStatus',
+    userId:'UserID'
 }
 
 @ByNameRepository('PROVIDER_PROFILE', {

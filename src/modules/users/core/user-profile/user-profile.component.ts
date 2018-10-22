@@ -19,7 +19,7 @@ export class UsersProfileComponent {
     }
 
     async   createUserProfile(user: IUser): Promise<IUser> {
-        user.idVerified = false;
+       
         const userCreated: IUser = await this._userService.createUserProfile(user);
 
         return userCreated;

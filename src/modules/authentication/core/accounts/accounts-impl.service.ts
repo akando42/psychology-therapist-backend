@@ -9,6 +9,8 @@ import { AccountStatusEnum } from "../../../../enums/account-stats.enum";
 import { InvalidCredentialsError } from "../../../../errors/invalid-credentials.error";
 import { UnverifiedAccountError } from "../../../../errors/unverfied-account.error";
 import { propertiesMatcherUtil } from "../../../../utils/properties-matcher.util";
+import { Validate } from '../../../../core/validations/validate.notation';
+import { Required } from '../../../../core/validations/validation.function';
 
 
 export class AccountsServiceImpl implements IAccountsService {
@@ -20,7 +22,7 @@ export class AccountsServiceImpl implements IAccountsService {
     generatePasswordReset(email): Promise<IResetPasswordRequest> {
         return new Promise<IResetPasswordRequest>(async (resolve, reject) => {
             try {
-                const account: IAccount = await this._accountsRepository.getByEmail(email);
+                const account: IAccount = await this._accountsRepository.getAccountByEmail(email);
                 //account not registered
                 if (!account.accountId) {
                     return resolve(null);
@@ -53,8 +55,8 @@ export class AccountsServiceImpl implements IAccountsService {
                     return reject({ message: 'no credentials provided' });
                 }
 
-                const account: IAccount = await this._accountsRepository.getByEmail(credentials.email);
-             
+                const account: IAccount = await this._accountsRepository.getAccountByEmail(credentials.email);
+
                 //not match account
                 if (!account) { return reject(new InvalidCredentialsError()); }
                 //unverified account
@@ -87,7 +89,7 @@ export class AccountsServiceImpl implements IAccountsService {
         return new Promise<IAccount>(async (resolve, reject) => {
             try {
                 console.log('cambios nuevos', account)
-                const stored = await this._accountsRepository.getById(accountId);
+                const stored = await this._accountsRepository.getAccountById(accountId);
 
                 if (!stored) { return reject({ message: 'account dosent exist' }); }
 
@@ -107,40 +109,33 @@ export class AccountsServiceImpl implements IAccountsService {
             }
         })
     }
-    createAccount(userId: any, newAccount: IAccount, verified = false): Promise<IAccount> {
-        return new Promise<IAccount>(async (resolve, reject) => {
-            try {
-                if (!userId) {
-                    return reject({ message: 'no user reference provided' });
-                }
-                console.log(newAccount)
-                const hashPassword = await bc.hash(newAccount.password, 10);
-                let account: IAccount = {
-                    email: newAccount.email,
-                    userId: userId,
-                    accountStatus: AccountStatusEnum.waiting,
-                    //change password of user for encrypted one (we dont save the password plain value ).
-                    password: hashPassword,
-                    signUpDate: Math.floor(Date.now() / 1000),
-                    verificationHash:
-                        bc.hashSync(JSON.stringify({ email: newAccount.email, userId: userId }), 10),
-                    emailVerified: verified
-                }
 
-                const id: any = await this._accountsRepository.createAccount(account);
+    @Validate([
+        { cb: Required, parameterIndex: 0, name: 'userId' },
+        { cb: Required, parameterIndex: 1, name: 'account' }
+    ])
+    async createAccount(userId: any, newAccount: IAccount, verified = false): Promise<IAccount> {
+        const hashPassword = await bc.hash(newAccount.password, 10);
+        let account: IAccount = {
+            email: newAccount.email,
+            userId: userId,
+            accountStatus: AccountStatusEnum.waiting,
+            //change password of user for encrypted one (we dont save the password plain value ).
+            password: hashPassword,
+            signUpDate: Math.floor(Date.now() / 1000),
+            verificationHash:
+                bc.hashSync(JSON.stringify({ email: newAccount.email, userId: userId }), 10),
+            emailVerified: verified
+        }
 
-                const acc = await this._accountsRepository.getById(id);
-                console.log('account reacted by invitation', acc)
-                return resolve(acc);
-            } catch (error) {
-                console.log(error);
-                return reject(error);
-            }
-        })
+        const accountCreated: any = await this._accountsRepository.createAccount(account);
+
+        return accountCreated;
+
     }
 
     getByEmail(email: string): Promise<IAccount> {
-        return this._accountsRepository.getByEmail(email);
+        return this._accountsRepository.getAccountByEmail(email);
     }
 
     verifyAccountEmail(verificationToken: string): Promise<any> {
@@ -150,7 +145,7 @@ export class AccountsServiceImpl implements IAccountsService {
                     return reject({ message: 'no email or hascode provided!' })
                 }
                 // const itMatch = bc.
-                const account: IAccount = await this._accountsRepository.getByValidationHash(verificationToken);
+                const account: IAccount = await this._accountsRepository.getAccountByValidationHash(verificationToken);
                 //verify hashed code;
                 if (account.verificationHash === verificationToken) {
                     account.emailVerified = true;
@@ -169,7 +164,7 @@ export class AccountsServiceImpl implements IAccountsService {
     }
 
     getById(id: string): Promise<IAccount> {
-        return this._accountsRepository.getById(id);
+        return this._accountsRepository.getAccountById(id);
     }
 }
 

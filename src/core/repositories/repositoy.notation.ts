@@ -101,10 +101,9 @@ export function customGetFunctionFactory(repo: { query: Function, converter: any
         getConfig.forEach((prop, i) => {
             params[prop] = args[i];
         });
-        console.log(getConfig)
+       
         let query = new GetByQuery(params, table);
         // const query = null
-        console.log(query.toDBQuery())
         let r = await repo.query(query.toDBQuery())
         if (r.length == 1) {
             let value = repo.converter.convertDBModelToDomain(r[0]);
@@ -181,20 +180,21 @@ export function createFunctionFactory(converter, table, configuration, target) {
 
         let result = await target.insert(q, dbModel);
 
-        if (configuration.create.return) {
-            let q2 = `SELECT * FROM ${target.table} WHERE ${configuration.primaryKey}=${result.insertId}`;
-            let result2 = await target.query(q2);
-
-            let domainModel = null;
-            if (data.length > 1) {
-                domainModel = converter.convertDBModelToDomain(result2);
-            } else {
-                domainModel = converter.convertDBModelToDomain(result2[0]);
-            }
-
-            return domainModel;
-
+        if (configuration.ignoreReturnOnCreate) {
             return result;
+
         }
+        let q2 = `SELECT * FROM ${target.table} WHERE ${configuration.primaryKey}=${result.insertId}`;
+        let result2 = await target.query(q2);
+
+        let domainModel = null;
+        if (data.length > 1) {
+            domainModel = converter.convertDBModelToDomain(result2);
+        } else {
+            domainModel = converter.convertDBModelToDomain(result2[0]);
+        }
+
+        return domainModel;
+
     }
 }

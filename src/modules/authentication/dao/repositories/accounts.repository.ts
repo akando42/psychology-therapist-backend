@@ -7,13 +7,13 @@ import { IAccount } from "../../../../models/account";
 export interface IAccountsRepository {
 
     
-    getByEmail(email: string): Promise<IAccount>
+    getAccountByEmail(email: string): Promise<IAccount>
 
-    getById(id: string): Promise<IAccount>;
+    getAccountById(id: string): Promise<IAccount>;
 
     updateAccount(id: number, data: IAccount): Promise<IAccount>;
 
-    getByValidationHash(token: string): Promise<IAccount>;
+    getAccountByValidationHash(token: string): Promise<IAccount>;
 
     createAccount(account:IAccount):Promise<IAccount>;
 

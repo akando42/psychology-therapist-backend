@@ -34,7 +34,6 @@ export class ProviderProfileComponent {
                     });
                 }
             })
-
         return profileCreated;
     }
 

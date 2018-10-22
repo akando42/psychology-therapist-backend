@@ -61,7 +61,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
             try {
 
                 const { account, user } = await this._accountsComponent.createAccountAndProfile(newAccount);
-
+console.log(user)
                 switch (role) {
                     case UsersRolEnum.provider:
                         await this._providerProfileComponent.createProviderProfile({ userId: user.id });
@@ -85,7 +85,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 this._communicationModule.sendEmailToOne(user.email, email);
 
                 //success resolve.
-                return resolve({ success: true, message: 'Account registed', used: false });
+                return resolve({ success: true, message: `Account registed as a ${role}`, used: false });
             } catch (e) {
                 console.log(e)
                 return reject(e)
