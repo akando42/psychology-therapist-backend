@@ -1,4 +1,4 @@
--- MySQL Workbench Forward Engineerings
+-- MySQL Workbench Forward Engineering
 
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
@@ -516,7 +516,7 @@ ENGINE = InnoDB;
 -- Table `tod`.`PROVIDER_PROFILE`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `tod`.`PROVIDER_PROFILE` (
-  `ProviderProfileID` INT NOT NULL,
+  `ProviderProfileID` INT NOT NULL AUTO_INCREMENT,
   `ProviderProfileStatus` VARCHAR(45) NULL,
   `UserID` INT NOT NULL,
   PRIMARY KEY (`ProviderProfileID`, `UserID`),
