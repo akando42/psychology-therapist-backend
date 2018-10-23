@@ -1,24 +1,17 @@
-import * as bc from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { IAccount } from '../../../models/account';
 import { INewAccountDTO } from '../../../dto/new-account.dto';
-import { IUser } from '../../../models/user';
 import { UsersRolEnum } from '../../../enums/users-rol.enum';
 import { NewAccountVerificationTemplate } from '../../../email-templates/new-account-verification.template';
-import { UnverifiedAccountError } from '../../../errors/unverfied-account.error';
-import { InvalidCredentialsError } from '../../../errors/invalid-credentials.error';
+
 import { AccountsComponent } from './accounts/accounts.component';
 import { AbstractAuthenticationModule } from './abstract-authentication.module';
 import { TODResponse } from '../../../dto/tod-response';
 import { AbstractUsersModule } from '../../users/core/users.module';
 import { AbtractCommunicationModule } from '../../communication/core/comunication.module';
-import { InvitationEmailTemplate } from '../../../email-templates/invitation-email.template';
-import { AbstractHumanResourcesModule } from '../../human-resources/core/abstract-human-resources.module';
 import { isNullOrUndefined } from 'util';
 import { AbstractAdminModule } from '../../admin/core/abstract-admin.module';
 import { CabinetComponent } from '../../admin/core/cabinet/cabinet.component';
 import { ICabinetInvitation } from '../../../models/cabinet-invitation';
-import { TODHumanResourcesModule } from '../../human-resources';
 import { HRProfileStatusEnum } from '../../../enums/hr-profile-status';
 import { HRProfilesComponent } from '../../human-resources/core/hr-profile/hr-profiles.component';
 import { AdminProfilesComponent } from '../../admin/core/admin-profile/admin-profiles.component';
@@ -100,23 +93,21 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 //authenticate
                 const { account, user } = await this._accountsComponent.authenticateAccount(credentials);
                 let roleProfile = null;
-                console.log(user)
-                console.log(role)
-                if (role) {
-                    switch (role) {
-                        case 'hr':
-                            roleProfile = await this._hrProfileComponent.getProfile(user.id);
-                            break;
-                        case 'admin':
-                            roleProfile = await this._adminComponent.getProfile(user.id);
-                            break;
-                        case 'master':
-                            roleProfile = await this._adminComponent.getMasterAdmin(user.id);
-                            break;
-                        default:
-                            break;
-                    }
+
+                switch (role) {
+                    case 'hr':
+                        roleProfile = await this._hrProfileComponent.getProfile(user.id);
+                        break;
+                    case 'admin':
+                        roleProfile = await this._adminComponent.getProfile(user.id);
+                        break;
+                    case 'master':
+                        roleProfile = await this._adminComponent.getMasterAdmin(user.id);
+                        break;
+                    default:
+                        break;
                 }
+
 
                 if (isNullOrUndefined(roleProfile)) {
                     return reject({ error: 'you have no such a role on the platform' });

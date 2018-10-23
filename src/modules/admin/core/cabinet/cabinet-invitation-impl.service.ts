@@ -1,3 +1,4 @@
+import * as jwt from 'jsonwebtoken';
 
 import { ICabinetInvitationService } from "./i-cabinet-invitation.service";
 import { ICabinetInvitation } from "../../../../models/cabinet-invitation";
@@ -35,9 +36,11 @@ export class CabinetInvitationsImplService implements ICabinetInvitationService 
         if (!isNullOrUndefined(exist)) {
             throw { message: 'email already under invitation for this cabinet and role.' };
         }
-        
+
         invitation.date = new Date().getTime();
-        invitation.token = generateInvitationToken(invitation);
+        invitation.token = jwt.sign(
+            invitation.email,
+            process.env.RESET_SECRET, { expiresIn: '1d' });;
         invitation.expired = false;
         let invitationCreated = await this._cabinetInvitationsRepo.createInvitation(invitation);
         return invitationCreated;
