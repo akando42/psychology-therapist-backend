@@ -1,15 +1,11 @@
-import { AbstractRepository } from "../../../core/repositories/repository.abstract";
 import { ISalesProfile } from "../../../models/sales-profile";
 
-export abstract class AbstractSalesProfilesRepository extends AbstractRepository<ISalesProfile>{
-    constructor(dbAccess, converter) {
-        super(dbAccess, converter);
-    }
+export interface ISalesProfileRepository {
 
-    abstract createSalesProfile(HRProfile: ISalesProfile): Promise<ISalesProfile>;
+    createSalesProfile(HRProfile: ISalesProfile): Promise<ISalesProfile>;
 
-    abstract deleteSalesProfile(id: number): Promise<void>;
+    deleteSalesProfile(id: number): Promise<void>;
 
-    abstract getSalesProfile(userID: number): Promise<ISalesProfile>;
+    getSalesProfileByUserId(userID: number): Promise<ISalesProfile>;
 
 }

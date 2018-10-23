@@ -35,7 +35,7 @@ export class CabinetInvitationsImplService implements ICabinetInvitationService 
         if (!isNullOrUndefined(exist)) {
             throw { message: 'email already under invitation for this cabinet and role.' };
         }
-
+        
         invitation.date = new Date().getTime();
         invitation.token = generateInvitationToken(invitation);
         invitation.expired = false;

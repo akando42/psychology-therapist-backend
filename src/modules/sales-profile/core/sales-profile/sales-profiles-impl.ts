@@ -1,37 +1,32 @@
 import { ISalesProfileService } from "./i-sales-profile.service";
 import { ISalesProfile } from "../../../../models/sales-profile";
-import { AbstractSalesProfilesRepository } from "../../dao/sales-profile.repository";
+import { ISalesProfileRepository } from "../../dao/sales-profile.repository";
+import { ComposeValidation } from "../../../../core/validations/validate.notation";
+import { Required } from "../../../../core/validations/validation.function";
 
 
 
 export class SalesProfilesImplService implements ISalesProfileService {
 
-    constructor(private _salesProfileRepo: AbstractSalesProfilesRepository) {
+    constructor(private _salesProfileRepo: ISalesProfileRepository) {
 
     }
 
-    createSalesProfile(profile: ISalesProfile): Promise<ISalesProfile> {
-        return new Promise<ISalesProfile>(async (resolve, reject) => {
-            try {
-                //validate here
-                const profileCreated: any = await this._salesProfileRepo.createSalesProfile(profile);
-                return resolve(profileCreated);
-            } catch (error) {
-                return reject(error);
-            }
-        })
+    @ComposeValidation([
+        {
+            index: 0, validators: [
+                { name: 'userId', cb: Required }
+            ]
+        }
+    ])
+    async createSalesProfile(profile: ISalesProfile): Promise<ISalesProfile> {
+        const profileCreated: any = await this._salesProfileRepo.createSalesProfile(profile);
+        return profileCreated;
+
     }
-    
-    updateSalesProfile(id: number, changes: ISalesProfile): Promise<ISalesProfile> {
-        return new Promise<ISalesProfile>(async (resolve, reject) => {
-            try {
-                //validate here
-                const profile: any = await this._salesProfileRepo.update(id, changes);
-                return resolve(profile);
-            } catch (error) {
-                return reject(error);
-            }
-        });
+
+    async updateSalesProfile(id: number, changes: ISalesProfile): Promise<ISalesProfile> {
+        return null;
     }
 
 

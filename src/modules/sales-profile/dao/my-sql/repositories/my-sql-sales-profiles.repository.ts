@@ -1,25 +1,26 @@
 import { GenericDao } from "../../../../../core/mysql/generic.dao";
 
 import { GetByQuery } from "../../../../../query-spec/my-sql/get-by.query";
-import { AbstractSalesProfilesRepository } from "../../sales-profile.repository";
+import { ISalesProfileRepository } from "../../sales-profile.repository";
 import { ISalesProfile } from "../../../../../models/sales-profile";
-import { MySqlSalesProfilesConverter } from "../../../converters/my-sql/my-sql-sales-profiles.converter";
-import { ISalesProfileMySql } from "../models/my-sql-sales-profile";
+import { ByNameRepository } from "../../../../../core/repositories/by-name-repository.notation";
 
-export class MySqlSalesProfilesRepository extends AbstractSalesProfilesRepository {
-    constructor() {
-        super(new GenericDao('SalesProfiles'), new MySqlSalesProfilesConverter());
-    }
-    createSalesProfile(HRProfile: ISalesProfile): Promise<ISalesProfile> {
-        return super.create(HRProfile)
-    }
-    deleteSalesProfile(id: number): Promise<any> {
-        return super.delete(id);
-    }
+const propsMatch = {
+    userId: 'UserID',
+    id: 'SalesProfileID'
+}
 
-    getSalesProfile(HRProfileId: number): Promise<ISalesProfile> {
-        return super.getBy(new GetByQuery(<ISalesProfileMySql>{ HRProfileID: HRProfileId })
-            .toDBQuery('SalesProfiles'));
-    }
+@ByNameRepository('Sales_Profile', {
+    converterProps: propsMatch,
+    resourceName: 'Sales Profiles',
+    primaryKey: 'SalesProfileID'
+})
+export class MySqlSalesProfilesRepository implements ISalesProfileRepository {
+
+    createSalesProfile(HRProfile: ISalesProfile): Promise<ISalesProfile> { return null; }
+
+    deleteSalesProfile(id: number): Promise<any> { return null; }
+
+    getSalesProfileByUserId(HRProfileId: number): Promise<ISalesProfile> { return null; }
 
 }

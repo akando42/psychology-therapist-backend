@@ -31,7 +31,7 @@ export class AdminRouter {
     createCabinet(req: Request, res: Response): void {
         let body = <ICabinet>req['body'];
         body.adminId = req['roleId'];
-        console.log(body)
+     
         TODAdminModule.createAdminCabinet(body)
             .then((result) => {
                 res.status(200).json(result);
@@ -39,7 +39,6 @@ export class AdminRouter {
                 res.status(400).json(err);
             });
     }
-
 
     createAdminInvitation(req: Request, res: Response): void {
         let body = <any>req['body'];
@@ -61,6 +60,7 @@ export class AdminRouter {
                 res.status(400).json(err);
             });
     }
+
     getMembers(req: Request, res: Response): void {
 
         TODAdminModule.getCabinetMembersByRole(1, UsersRolEnum.hr)
@@ -70,7 +70,6 @@ export class AdminRouter {
                 res.status(400).json(err);
             });
     }
-
 
     getCabinetInvitations(req: Request, res: Response): void {
         TODAdminModule.getCabinetInvitations(req.params['cabinet_id'])
@@ -105,7 +104,6 @@ export class AdminRouter {
                 res.status(400).json(err);
             });
     }
-
 
     getCabinetMembersByRole(req: Request, res: Response): void {
         TODAdminModule.getCabinetMembersByRole(req.params['cabinet_id'], req.params['role'])

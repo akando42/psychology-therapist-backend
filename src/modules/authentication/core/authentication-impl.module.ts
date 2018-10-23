@@ -61,7 +61,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
             try {
 
                 const { account, user } = await this._accountsComponent.createAccountAndProfile(newAccount);
-console.log(user)
+
                 switch (role) {
                     case UsersRolEnum.provider:
                         await this._providerProfileComponent.createProviderProfile({ userId: user.id });
@@ -100,7 +100,8 @@ console.log(user)
                 //authenticate
                 const { account, user } = await this._accountsComponent.authenticateAccount(credentials);
                 let roleProfile = null;
-
+                console.log(user)
+                console.log(role)
                 if (role) {
                     switch (role) {
                         case 'hr':
