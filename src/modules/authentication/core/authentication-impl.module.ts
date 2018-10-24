@@ -179,9 +179,8 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 //get the invitation
                 const invitation: ICabinetInvitation = await this._cabinetComponent.getCabinetInvitationByToken(inviteToken);
                 //create the user and the account
-
+                console.log('invitation',invitation)
                 newAccount.email = invitation.email;
-                newAccount.profile.email = invitation.email;
                 const { user } = await this._accountsComponent.createAccountAndProfile(newAccount, true);
 
                 switch (invitation.role) {
@@ -208,6 +207,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 return resolve(result);
 
             } catch (error) {
+                console.log(error)
                 const badResult: TODResponse = {
                     message: 'Something when wrong sorry',
                     error: error,

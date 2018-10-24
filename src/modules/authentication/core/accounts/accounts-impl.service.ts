@@ -150,11 +150,9 @@ export class AccountsServiceImpl implements IAccountsService {
 
                 // console.log('account from service', account.accountId)
                 const updated = await this.updateAccount(account.accountId, account);
-                console.log(updated);
                 return resolve({ message: 'verification success' });
 
             } catch (error) {
-                console.log(error)
                 return reject(error);
             }
         });

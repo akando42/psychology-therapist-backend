@@ -32,7 +32,7 @@ export class MySqlCabinetsRepository implements ICabinetsRepository {
     }
 
 
-    @Convert({ id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'CabinetName' }, true)
+    @Convert({ id: 'CabinetID', adminId: 'CabinetAdminProfileID', name: 'UserFirstName',lastName:'UserLastName' }, true)
     @JoinQuery({ 'CabinetID': 0 }, [
         new Join('HR_Profiles', 'CabinetID', ['HRProfileStatus']),
         new Join('Users', 'UserID', ['UserLastName', 'UserFirstName'], 'HR_Profiles'),

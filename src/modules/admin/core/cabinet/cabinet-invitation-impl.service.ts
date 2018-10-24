@@ -24,7 +24,13 @@ export class CabinetInvitationsImplService implements ICabinetInvitationService 
     }
 
     @ComposeValidation([
-        { index: 0, validators: [{ name: 'email', cb: validateEmail }] }])
+        {
+            index: 0, validators: [
+                { name: 'email', cb: validateEmail },
+                { name: 'cabinetId', cb: Required },
+                { name: 'role', cb: Required }
+            ]
+        }])
     async createInvitation(invitation: ICabinetInvitation): Promise<ICabinetInvitation> {
         if (isNullOrUndefined(invitation)) {
             throw new Error('no invitation provided');
@@ -39,8 +45,8 @@ export class CabinetInvitationsImplService implements ICabinetInvitationService 
 
         invitation.date = new Date().getTime();
         invitation.token = jwt.sign(
-            invitation.email,
-            process.env.RESET_SECRET, { expiresIn: '1d' });;
+            { data: invitation.email },
+            process.env.INVITATION_SECRET, { expiresIn: '1d' });;
         invitation.expired = false;
         let invitationCreated = await this._cabinetInvitationsRepo.createInvitation(invitation);
         return invitationCreated;

@@ -7,7 +7,6 @@ import { AdminProfilesComponent } from "./core/admin-profile/admin-profiles.comp
 import { AdminModuleImpl } from "./core/admin-impl.module";
 import { CabinetInvitationsImplService } from "./core/cabinet/cabinet-invitation-impl.service";
 import { MySqlCabinetInvitationsRepository } from "./dao/my-sql/repositories/my-sql-cabinet-invitations.repository";
-import { TODCommunicationModule } from "../communication/core/tod-communication.module";
 import { TODCommunicationModuleInstance } from "../communication";
 import { TODUsersModule, TODUserProfileService } from "../users";
 import { MySqlAdminInvitationsRepository } from "./dao/my-sql/repositories/my-sql-admin-invitations.repository.";

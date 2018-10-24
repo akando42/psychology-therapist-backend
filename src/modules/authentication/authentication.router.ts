@@ -33,7 +33,7 @@ export class AuthenticationRouter {
 
             }).catch((err) => {
                 //handler error propertly
-                res.status(HttpResponseCodes.loginError).json(err)
+                res.status(400).json(err)
                 console.log(err)
             });
     }
