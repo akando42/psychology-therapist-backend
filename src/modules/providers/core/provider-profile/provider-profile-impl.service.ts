@@ -1,7 +1,7 @@
 import { IProvidersProfileService } from "./I-providers-profile.service";
 import { IProviderProfile } from "../../../../models/provider-profile";
 import { ProviderProfileStatusEnum } from "../../../../enums/provider-profile-status.enum";
-import { ComposeValidation } from "../../../../core/validations/validate.notation";
+import { ComposeValidation, Validate } from "../../../../core/validations/validate.notation";
 import { Required } from "../../../../core/validations/validation.function";
 import { IProvidersProfileRepository } from "../../dao/repositories/provider-profile.repository";
 import { isNullOrUndefined } from "util";
@@ -12,6 +12,12 @@ export class ProvidersProfileImplService implements IProvidersProfileService {
     constructor(
         private _providerProfileRepository: IProvidersProfileRepository
     ) { }
+
+    @Validate([{ cb: Required, parameterIndex: 0 }])
+    async getProviderProfileByUserId(userId: any): Promise<IProviderProfile> {
+        const profile = await this._providerProfileRepository.getProviderProfileByUserId(userId);
+        return profile;
+    }
 
     @ComposeValidation([{ index: 0, validators: [{ cb: Required, name: 'userId' }] }])
     async createProviderProfile(profile: IProviderProfile): Promise<IProviderProfile> {

@@ -104,6 +104,9 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                     case 'master':
                         roleProfile = await this._adminComponent.getMasterAdmin(user.id);
                         break;
+                    case UsersRolEnum.provider:
+                        roleProfile = await this._providerProfileComponent.getProviderProfile(user.id);
+                        break;
                     default:
                         break;
                 }
@@ -179,7 +182,7 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 //get the invitation
                 const invitation: ICabinetInvitation = await this._cabinetComponent.getCabinetInvitationByToken(inviteToken);
                 //create the user and the account
-                console.log('invitation',invitation)
+                console.log('invitation', invitation)
                 newAccount.email = invitation.email;
                 const { user } = await this._accountsComponent.createAccountAndProfile(newAccount, true);
 

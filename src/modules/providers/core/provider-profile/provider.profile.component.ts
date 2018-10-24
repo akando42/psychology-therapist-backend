@@ -16,6 +16,12 @@ export class ProviderProfileComponent {
         private _reportDocsService: IDocumentsReportsService
     ) { }
 
+
+    async getProviderProfile(userId): Promise<IProviderProfile> {
+        const profile = await this._providerProfileService.getProviderProfileByUserId(userId);
+        return profile;
+    }
+
     async createProviderProfile(providerProfile: IProviderProfile): Promise<IProviderProfile> {
 
         const profileCreated = await this._providerProfileService.createProviderProfile(providerProfile);
