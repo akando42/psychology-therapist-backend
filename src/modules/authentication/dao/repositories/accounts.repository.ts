@@ -13,7 +13,7 @@ export interface IAccountsRepository {
 
     updateAccount(id: number, data: IAccount): Promise<IAccount>;
 
-    getAccountByValidationHash(token: string): Promise<IAccount>;
+    getAccountByVerificationHash(token: string): Promise<IAccount>;
 
     createAccount(account:IAccount):Promise<IAccount>;
 

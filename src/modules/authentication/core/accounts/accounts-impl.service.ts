@@ -142,7 +142,7 @@ export class AccountsServiceImpl implements IAccountsService {
                     return reject({ message: 'no email or hascode provided!' })
                 }
                 // const itMatch = bc.
-                const account: IAccount = await this._accountsRepository.getAccountByValidationHash(verificationToken);
+                const account: IAccount = await this._accountsRepository.getAccountByVerificationHash(verificationToken);
                 //verify hashed code;
                 if (account.verificationHash === verificationToken) {
                     account.emailVerified = true;

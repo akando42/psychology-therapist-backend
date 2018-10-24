@@ -35,7 +35,7 @@ export class MySqlAccountsRepository implements IAccountsRepository {
     updateAccount(id: number, data: IAccount): Promise<IAccount> {
         return null;
     }
-    getAccountByValidationHash(token: string): Promise<IAccount> {
+    getAccountByVerificationHash(token: string): Promise<IAccount> {
         return null;
     }
 
