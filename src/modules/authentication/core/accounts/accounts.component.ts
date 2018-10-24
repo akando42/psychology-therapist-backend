@@ -21,12 +21,12 @@ export class AccountsComponent {
         private _emailService?: any
     ) { }
 
-    updateAccount(accountId: number, account: IAccount): Promise<IAccount> {
+    updateAccount(id: number, account: IAccount): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
             try {
 
                 const accountCreated: IAccount =
-                    await this._acountService.updateAccount(accountId, account);
+                    await this._acountService.updateAccount(id, account);
                 return resolve(accountCreated);
 
             } catch (error) {
@@ -54,7 +54,7 @@ export class AccountsComponent {
                 const hashPassword: string = await bc.hash(changeRequest.newPassword, 10);
 
                 account.password = hashPassword;
-                const result = await this._acountService.updateAccount(account.accountId, account);
+                const result = await this._acountService.updateAccount(account.id, account);
                 if (result) {
                     //tood sent email with notification of the password change
 
@@ -101,7 +101,7 @@ export class AccountsComponent {
             //replace new password
             account.password = hashPassword;
             // TODO CAMBIAR EL ESTADO DEL REQUEST PARA HACERLO INVALIDO
-            const updatedAccount: any = await this._acountService.updateAccount(account.accountId, account);
+            const updatedAccount: any = await this._acountService.updateAccount(account.id, account);
 
             if (updatedAccount) {
                 return resolve({ message: 'password updated!', success: true });
@@ -123,9 +123,7 @@ export class AccountsComponent {
             console.log(userCreated)
             //assign a account to that user.
             const accountCreated: IAccount = await this._acountService.createAccount(userCreated.id, account, verified);
-            //sanatize
-            delete accountCreated.password;
-            delete accountCreated.verificationHash;
+           
 
             return { account: accountCreated, user: userCreated }
         }

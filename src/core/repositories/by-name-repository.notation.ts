@@ -1,4 +1,4 @@
-import { Constructor, functionCustomCreateFunctionFactory, customGetFunctionFactory, IRepositoryConfiguration, createFunctionFactory } from "./repositoy.notation";
+import { Constructor, functionCustomCreateFunctionFactory, customGetFunctionFactory, IRepositoryConfiguration, createFunctionFactory, updateFunctionFactory } from "./repositoy.notation";
 import { GenericConverter } from "../converters/generic-converter";
 import { GenericDao } from "../mysql/generic.dao";
 
@@ -65,6 +65,12 @@ export function ByNameRepository(table: string, configuration?: IRepositoryConfi
                             this[methodName] = customGetFunctionFactory(this, table, params);
 
                             break;
+                        case 'update':
+                        
+                            this[methodName] = updateFunctionFactory(this['converter'], table,
+                                configuration, this)
+                            break;
+
 
                         default:
                             break;

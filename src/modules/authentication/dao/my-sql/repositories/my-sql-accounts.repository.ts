@@ -3,7 +3,7 @@ import { IAccount } from "../../../../../models/account";
 import { ByNameRepository } from "../../../../../core/repositories/by-name-repository.notation";
 
 const propsMatch = {
-    accountId: 'AccountID',
+    id: 'AccountID',
     email: 'AccountEmail',
     password: 'AccountPassword',
     accountStatus: 'AccountStatus',

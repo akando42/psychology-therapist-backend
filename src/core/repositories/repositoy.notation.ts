@@ -101,7 +101,7 @@ export function customGetFunctionFactory(repo: { query: Function, converter: any
         getConfig.forEach((prop, i) => {
             params[prop] = args[i];
         });
-       
+
         let query = new GetByQuery(params, table);
         // const query = null
         let r = await repo.query(query.toDBQuery())
@@ -178,6 +178,48 @@ export function createFunctionFactory(converter, table, configuration, target) {
         let q = `INSERT INTO ${table || target.table} SET ?`;
 
 
+        let result = await target.insert(q, dbModel);
+
+        if (configuration.ignoreReturnOnCreate) {
+            return result;
+
+        }
+        let q2 = `SELECT * FROM ${target.table} WHERE ${configuration.primaryKey}=${result.insertId}`;
+        let result2 = await target.query(q2);
+
+        let domainModel = null;
+        if (data.length > 1) {
+            domainModel = converter.convertDBModelToDomain(result2);
+        } else {
+            domainModel = converter.convertDBModelToDomain(result2[0]);
+        }
+
+        return domainModel;
+
+    }
+}
+
+
+
+export function updateFunctionFactory(converter, table, configuration, target) {
+
+    return async (...args) => {
+        console.log('UPDATE')
+        let id = args[0];
+        let data = args[1];
+        console.log(args)
+
+        let dbModel = null;
+
+        if (data.length > 1) {
+            dbModel = converter.converManyDomainToDBModel(args);
+        } else {
+            dbModel = converter.converDomainToDBModel(data);
+        }
+
+        let q = `UPDATE  ${table || target.table} SET ? WHERE ${configuration.primaryKey} = ${data.id}`;
+
+        console.log(q)
         let result = await target.insert(q, dbModel);
 
         if (configuration.ignoreReturnOnCreate) {

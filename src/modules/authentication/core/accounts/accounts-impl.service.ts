@@ -11,6 +11,7 @@ import { UnverifiedAccountError } from "../../../../errors/unverfied-account.err
 import { propertiesMatcherUtil } from "../../../../utils/properties-matcher.util";
 import { Validate } from '../../../../core/validations/validate.notation';
 import { Required } from '../../../../core/validations/validation.function';
+import { isNullOrUndefined } from 'util';
 
 
 export class AccountsServiceImpl implements IAccountsService {
@@ -22,11 +23,11 @@ export class AccountsServiceImpl implements IAccountsService {
     async generatePasswordReset(email): Promise<IResetPasswordRequest> {
         const account: IAccount = await this._accountsRepository.getAccountByEmail(email);
         //account not registered
-        if (!account.accountId) {
+        if (!account.id) {
             throw { message: 'Account does not exist' };
         }
         const resetToken: string = jwt.sign(
-            account.accountId,
+            account.id,
             process.env.RESET_SECRET, { expiresIn: '1d' });
         //save new password
         const request: IResetPasswordRequest = await this._resetRequestRepository
@@ -39,7 +40,7 @@ export class AccountsServiceImpl implements IAccountsService {
 
         //block account     
         account.accountStatus = AccountStatusEnum.blocked;
-        this._accountsRepository.updateAccount(account.accountId, account);
+        this._accountsRepository.updateAccount(account.id, account);
         return request;
 
     }
@@ -82,20 +83,20 @@ export class AccountsServiceImpl implements IAccountsService {
         throw new Error("Method not implemented.");
     }
 
-    updateAccount(accountId: any, account: IAccount): Promise<IAccount> {
+    updateAccount(id: any, account: IAccount): Promise<IAccount> {
         return new Promise<IAccount>(async (resolve, reject) => {
             try {
-                console.log('cambios nuevos', account)
-                const stored = await this._accountsRepository.getAccountById(accountId);
+                const stored = await this._accountsRepository.getAccountById(id);
 
                 if (!stored) { return reject({ message: 'account dosent exist' }); }
 
                 const toSave = <IAccount>propertiesMatcherUtil(stored, account)
                 //protect sensitive data
-                toSave.accountId = stored.accountId;
+                toSave.id = stored.id;
                 toSave.verificationHash = stored.verificationHash;
+                console.log('cambios nuevos', toSave)
 
-                const saved = await this._accountsRepository.updateAccount(accountId, toSave);
+                const saved = await this._accountsRepository.updateAccount(id, toSave);
 
                 console.log(saved);
                 return resolve(saved);
@@ -138,18 +139,20 @@ export class AccountsServiceImpl implements IAccountsService {
     verifyAccountEmail(verificationToken: string): Promise<any> {
         return new Promise<any>(async (resolve, reject) => {
             try {
-                if (!verificationToken) {
+                if (isNullOrUndefined(verificationToken)) {
                     return reject({ message: 'no email or hascode provided!' })
                 }
+                console.log(verificationToken)
                 // const itMatch = bc.
                 const account: IAccount = await this._accountsRepository.getAccountByVerificationHash(verificationToken);
+                console.log(account)
                 //verify hashed code;
                 if (account.verificationHash === verificationToken) {
                     account.emailVerified = true;
                 }
 
-                // console.log('account from service', account.accountId)
-                const updated = await this.updateAccount(account.accountId, account);
+                // console.log('account from service', account.id)
+                const updated = await this._accountsRepository.updateAccount(account.id, account);
                 return resolve({ message: 'verification success' });
 
             } catch (error) {

@@ -4,7 +4,7 @@ import { IResetPasswordRequest } from "../../../../models/reset-password-request
 
 export interface IAccountsService {
 
-    updateAccount(accountId: number, account: IAccount): Promise<IAccount>;
+    updateAccount(id: number, account: IAccount): Promise<IAccount>;
 
     createAccount(userId: any, newAccount: IAccount, verified: boolean): Promise<IAccount>;
 
