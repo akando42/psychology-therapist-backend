@@ -26,12 +26,12 @@ export class API {
 			"host": "104.197.98.35",
 			"user": "root",
 			"password": "sF082mifJ3l6Nu0E",
-			"database": "tod_database",
+			"database": "tod",
 			"port": 3306
 		}).then(console.log)
 			.catch(console.log)
 	}
-	
+
 	private middleware() {
 		this.express.use(cors({ origin: '*' }));
 		this.express.use(bodyParser.json());
