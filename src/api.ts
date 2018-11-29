@@ -23,15 +23,15 @@ export class API {
 		this.middleware();
 		this.mountRoutes();
 		MySqlConnection.connect({
-			"host": "localhost",
+			"host": "104.197.98.35",
 			"user": "root",
-			"password": "",
-			"database": "tod",
+			"password": "sF082mifJ3l6Nu0E",
+			"database": "tod_database",
 			"port": 3306
 		}).then(console.log)
 			.catch(console.log)
 	}
-
+	
 	private middleware() {
 		this.express.use(cors({ origin: '*' }));
 		this.express.use(bodyParser.json());
