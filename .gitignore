@@ -67,3 +67,5 @@ typings/
 .next
 
 sendgrid.env
+
+uploads/

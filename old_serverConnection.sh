@@ -1,1 +1,0 @@
-gcloud compute --project "trusty-solution-203021" ssh --zone "us-east1-b" "instance-1"

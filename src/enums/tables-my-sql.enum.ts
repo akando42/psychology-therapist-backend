@@ -1,0 +1,7 @@
+
+
+export enum TablesMySqlEnum {
+    USERS_TABLE = "USERS",
+    NOTIFICATIONS_TABLE = "NOTIFICATIONS",
+    TASKS_TABLE = "TASKS"
+}

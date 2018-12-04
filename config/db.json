@@ -4,6 +4,6 @@
     "user":"root",
     "password":"sF082mifJ3l6Nu0E",
     "localPass":"mysql12345",
-    "database":"tod_database",
+    "database":"tod",
     "port":3306
 }
