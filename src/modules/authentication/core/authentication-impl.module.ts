@@ -94,6 +94,8 @@ export class AuthenticationImplModule extends AbstractAuthenticationModule {
                 const { account, user } = await this._accountsComponent.authenticateAccount(credentials);
                 let roleProfile = null;
 
+
+                // All avaiable roles in the app
                 switch (role) {
                     case 'hr':
                         roleProfile = await this._hrProfileComponent.getProfile(user.id);

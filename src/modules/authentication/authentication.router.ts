@@ -11,7 +11,9 @@ export class AuthenticationRouter {
 
     init(): Router {
         const router: Router = Router();
+        
         router.post('/authentication/login/:role', (req, res) => this.authenticate(req, res));
+        
         router.post('/authentication/signup/:role', (req, res) => this.signup(req, res));
 
         router.post('/authentication/signup/admin/:invitation_token', (req, res) => this.signUpWithInvitation(req, res));
