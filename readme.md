@@ -5,7 +5,7 @@
 $ curl localhost:3000/info
 ```
 
-## API 
+## APIs
 ### Root 
 ```
 $ curl localhost:3000/api/v1
@@ -14,8 +14,15 @@ $ curl localhost:3000/api/v1
 ```
 $ curl localhost:3000/api/v1/admins
 ```
-## Authentication
 
-## Documents
+### Authentication
+```
+## Sign Up
+$ curl localhost:3000/api/v1/signup/provider
 
-## Users 
+## Sign In
+$ curl localhost:3000/api/v1/signin/provider
+
+## Verify Email
+$ curl localhost:3000/api/v1/verify-email/
+```
