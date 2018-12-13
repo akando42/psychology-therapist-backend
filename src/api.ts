@@ -2,6 +2,7 @@ import { Application } from 'express';
 import * as express from 'express';
 import * as bodyParser from "body-parser";
 import * as cors from 'cors';
+
 import { MySqlConnection } from './database-connection/db-connection.mysql';
 
 import { AuthenticationRouter } from './modules/authentication';
@@ -10,6 +11,12 @@ import { UsersRouter } from './modules/users/users.router';
 import { AdminRouter } from './modules/admin/admin.router';
 import { MySqlAdminProfilesRepository } from './modules/admin/dao/my-sql/repositories/my-sql-admin-profiles.repository';
 const fileUpload = require('express-fileupload');
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
+
+
 
 export class API {
 
@@ -41,16 +48,9 @@ export class API {
 	}
 
 	private mountRoutes(): void {
-
-		this.express.use('/info', (req, res) => {
-			res.send('This its working perfectly')
-		})
-
+		this.express.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 		this.express.use('/api/v1/admin', new AdminRouter().init());
 		// this.express.use('/api/v1', TasksRouterInstance.init());
-
-
-
 		this.express.use('/api/v1', new AuthenticationRouter().init());
 		this.express.use('/api/v1', new DocumentsRouter().init());
 		this.express.use('/api/v1', new UsersRouter().init());
