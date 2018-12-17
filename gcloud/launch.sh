@@ -41,7 +41,7 @@ ln -s /opt/nodejs/bin/npm /usr/bin/npm
 ## Download sourcecode from remote source
 export HOME=/root
 git config --global credential.helper gcloud.sh
-git clone https://troydo42:Iwbaussi2042!@github.com/troydo42/TOD-backend.git opt/app
+git clone https://troydo42:Iwbaussi2042@github.com/troydo42/TOD-backend.git opt/app
 
 ## Install App NPM packages
 cd opt/app
