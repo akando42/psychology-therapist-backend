@@ -21,8 +21,12 @@ $ gcloud compute instances create tod_back_instance \
     --metadata-from-file startup-script=gcloud/launch.sh \
     --zone us-central1-f \
     --tags http-server
+```
 
-
+# Update Sourecode
+```
+$ git commit -am "Add New Code"
+$ gcloud compute instances update tod_back_instance
 ```
 
 
