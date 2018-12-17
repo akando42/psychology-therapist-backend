@@ -26,16 +26,15 @@ $ gcloud compute instances create tod_back_instance \
 # Update Sourecode
 ```
 $ git commit -am "Add New Code"
-$ gcloud compute instances update tod_back_instance
+$ gcloud compute instances update tod_back_instance --metadata-from-file startup-script=gcloud/launch.sh
 ```
 
-
 # API Endpoints
-** Live API: http://35.239.142.252:8080/info **
+** Live API: http://35.239.69.124:8080/api/v1/status **
 
 ## Info
 ```
-$ curl localhost:8080/info
+$ curl http://35.239.69.124:8080/api/v1/status
 ```
 
 ## APIs
@@ -58,5 +57,5 @@ $ curl localhost:8080/api/v1/signup/provider
 $ curl localhost:8080/api/v1/signin/provider
 
 ## Verify Email
-$ curl localhost:3000/api/v1/verify-email/
+$ curl localhost:8080/api/v1/verify-email/
 ```

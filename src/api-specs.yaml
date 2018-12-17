@@ -5,6 +5,7 @@ info:
   version: '0.1'
 servers:
   - url: 'http://localhost:8080'
+  - url: 'http://35.239.69.124:8080'
 paths:
   /api/v1/status:
     get:
