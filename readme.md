@@ -6,6 +6,8 @@ $ npm run start
 
 ```
 
+# Database Script
+* Database script its under datamodels/tod_databaseV2.sql **
 
 # Deploying App
 ```

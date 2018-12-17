@@ -1,0 +1,99 @@
+openapi: 3.0.1
+info:
+  title: TherapyCoach
+  description: API Specification
+  version: '0.1'
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  /api/v1/status:
+    get:
+      description: Auto generated using Swagger Inspector
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            text/html; charset=utf-8:
+              schema:
+                type: string
+              examples: {}
+  /api/v1/authentication/signup/provider:
+    post:
+      description: Auto generated using Swagger Inspector
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                password:
+                  type: string
+                retype_password:
+                  type: string
+                gender:
+                  type: string
+                         
+            examples:
+              '0':
+                value: |-
+                  {
+                      "firstName":"Hoang",
+                      "lastName":"Do",
+                      "email":"troy@topfligthapps.com",
+                      "password":"123123",
+                      "retype_password":"123123",
+                      "gender":"male"
+                  }
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+              examples: {}
+  /api/v1/authentication/verify-email:
+    post:
+      description: Auto generated using Swagger Inspector
+      responses:
+        '404':
+          description: Auto generated using Swagger Inspector
+          content:
+            text/html; charset=utf-8:
+              schema:
+                type: string
+              examples: {}
+  /api/v1/authentication/login/provider:
+    post:
+      description: Auto generated using Swagger Inspector
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                email:
+                  type: string
+            examples:
+              '0':
+                value: |-
+                  {
+                      "email":"troy@topflightapps.com",
+                      "password":"123123"
+                  }
+      responses:
+        '400':
+          description: Auto generated using Swagger Inspector
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: string
+              examples: {}

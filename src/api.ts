@@ -13,10 +13,8 @@ import { MySqlAdminProfilesRepository } from './modules/admin/dao/my-sql/reposit
 const fileUpload = require('express-fileupload');
 
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
-
-
-
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./src/api-specs.yaml');
 
 export class API {
 
@@ -48,9 +46,13 @@ export class API {
 	}
 
 	private mountRoutes(): void {
-		this.express.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+		this.express.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, { explorer: true}));
 		this.express.use('/api/v1/admin', new AdminRouter().init());
 		// this.express.use('/api/v1', TasksRouterInstance.init());
+		
+		this.express.use('/api/v1/status', (req, res) => {
+			res.send({'Status':'Normal'})
+		});
 		this.express.use('/api/v1', new AuthenticationRouter().init());
 		this.express.use('/api/v1', new DocumentsRouter().init());
 		this.express.use('/api/v1', new UsersRouter().init());
