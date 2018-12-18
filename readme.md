@@ -30,7 +30,7 @@ $ gcloud compute instances update tod_back_instance --metadata-from-file startup
 ```
 
 # API Endpoints
-** Live API: http://35.239.69.124:8080/api/v1/status **
+** Live API: http://35.201.124.88/api-docs/ **
 
 ## Info
 ```

@@ -3,7 +3,7 @@ set -ex
 
 ZONE=us-central1-f
 
-GROUP=tod-frontend
+GROUP=tod-backend
 TEMPLATE=$GROUP-tmpl
 MACHINE_TYPE=f1-micro
 IMAGE_FAMILY=debian-9
@@ -15,7 +15,7 @@ MIN_INSTANCES=1
 MAX_INSTANCES=10
 TARGET_UTILIZATION=0.6
 
-SERVICE=tod-back-instance
+SERVICE=tod-backend
 
 # Instance group setup
 #
@@ -81,7 +81,7 @@ gcloud compute http-health-checks create ah-health-check \
 # The backend service serves as a target for load balancing.
 
 # [START create_backend_service]
-gcloud compute backend-services create $SERVICE \
+gcloud compute backend-services create tod-backend \
   --http-health-checks ah-health-check \
   --port 8080
 # [END create_backend_service]
