@@ -34,7 +34,7 @@ $ gcloud compute instances update tod_back_instance --metadata-from-file startup
 
 ## Info
 ```
-$ curl http://35.239.69.124:8080/api/v1/status
+$ curl http://35.201.124.88/api/v1/status
 ```
 
 ## APIs
